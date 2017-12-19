@@ -6,26 +6,36 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 
-@Getter
-@Setter
-public abstract class FileComponent extends TreeItem<FileComponent> implements Iterable<FileComponent> {
+public abstract class FileComponent<T extends FileComponent<T>> extends TreeItem<T> implements Iterable<T> {
+    @Getter
+    @Setter
     protected int offset;
+
+    @Getter
+    @Setter
     protected int length;
+
+    @Getter
+    @Setter
     protected String name;
+
+    @Getter
+    @Setter
     protected String desc;
 
     protected boolean hasInit = false;
 
+    public void update() {
+        if (!hasInit) {
+            for (val fc : this) {
+                super.getChildren().add(fc);
+            }
+        }
+    }
+
     @Override
-    public ObservableList<TreeItem<FileComponent>> getChildren() {
-        if (hasInit) {
-            return super.getChildren();
-        }
-
-        for (val fc : this) {
-            super.getChildren().add(fc);
-        }
-
+    public ObservableList<TreeItem<T>> getChildren() {
+        update();
         return super.getChildren();
     }
 

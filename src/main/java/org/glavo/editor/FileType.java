@@ -1,7 +1,11 @@
 package org.glavo.editor;
 
-public abstract class FileType {
-    public static final FileType[] fileTypes = {
+import java.nio.file.Path;
+
+public interface FileType<T extends FileData> {
+    FileType[] fileTypes = {
 
     };
+
+    T parse(Path path);
 }
