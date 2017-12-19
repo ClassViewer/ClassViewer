@@ -37,7 +37,7 @@ public abstract class ClassFileComponent extends FileComponent {
     }
 
     protected int getUInt(String name) {
-        return ((UInt) get(name)).getValue();
+        return ((UInt) get(name)).getIntValue();
     }
 
     protected final void u1(String name) {

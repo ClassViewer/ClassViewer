@@ -7,7 +7,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.glavo.editor.gui.support.ImageHelper;
+import org.glavo.editor.gui.support.ImageUtils;
 import org.glavo.editor.helper.Log;
 
 import java.awt.*;
@@ -33,7 +33,7 @@ public class AboutDialog {
     private static BorderPane createAboutPane(Stage dialogStage) {
         BorderPane pane = new BorderPane();
         //pane.setTop(new Label("Classpy"));
-        pane.setCenter(ImageHelper.createImageView("/spy128.png"));
+        pane.setCenter(ImageUtils.createImageView("/spy128.png"));
         pane.setBottom(createHomeLink());
         pane.setOnMouseClicked(e -> dialogStage.close());
         

@@ -12,7 +12,7 @@ import org.glavo.editor.gui.jar.JarTreeLoader;
 import org.glavo.editor.gui.jar.JarTreeNode;
 import org.glavo.editor.gui.parsed.HexText;
 import org.glavo.editor.helper.Log;
-import org.glavo.editor.helper.UrlHelper;
+import org.glavo.editor.helper.UrlUtils;
 
 public class OpenFileTask extends Task<OpenFileResult> {
 
@@ -36,14 +36,14 @@ public class OpenFileTask extends Task<OpenFileResult> {
             return new OpenFileResult(url, fileType, rootNode);
         }
 
-        byte[] data = UrlHelper.readData(url);
+        byte[] data = UrlUtils.readData(url);
         if (fileType == FileType.UNKNOWN) {
             fileType = getFileType(data);
         }
 
         HexText hex = new HexText(data);
         FileComponent fc = parse(data, fileType);
-        fc.setName(UrlHelper.getFileName(url));
+        fc.setName(UrlUtils.getFileName(url));
 
         Log.log("finish loading");
         return new OpenFileResult(url, fileType, fc, hex);

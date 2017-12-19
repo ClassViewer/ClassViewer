@@ -125,7 +125,7 @@ public class RuntimeVisibleAnnotationsAttribute extends AttributeInfo {
         @Override
         protected void postRead(ConstantPool cp) {
             U1 tag = (U1) super.get("tag");
-            tag.setDesc(Character.toString((char) tag.getValue()));
+            tag.setDesc(Character.toString((char) tag.getIntValue()));
         }
 
     }

@@ -17,7 +17,7 @@ public class Bytes extends ClassFileComponent {
 
     @Override
     protected void readContent(ClassFileReader reader) {
-        reader.skipBytes(count.getValue());
+        reader.skipBytes(count.getIntValue());
     }
 
 }

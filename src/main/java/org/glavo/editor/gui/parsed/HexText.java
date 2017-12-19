@@ -1,6 +1,6 @@
 package org.glavo.editor.gui.parsed;
 
-import org.glavo.editor.helper.StringHelper;
+import org.glavo.editor.helper.StringUtils;
 
 /**
  * Displayed by HexPane.
@@ -57,7 +57,7 @@ public class HexText {
         for (int i = 0; i < BYTES_PER_ROW; i++) {
             if (offset + i < bytes.length) {
                 byte b = bytes[offset + i];
-                buf.append(StringHelper.toString(b));
+                buf.append(StringUtils.toString(b));
                 buf.append(' ');
             } else {
                 buf.append("   ");

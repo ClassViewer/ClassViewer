@@ -2,7 +2,7 @@ package org.glavo.editor.helper;
 
 import java.util.regex.Pattern;
 
-public class StringHelper {
+public class StringUtils {
 
     public static final String[] arr = new String[256];
 

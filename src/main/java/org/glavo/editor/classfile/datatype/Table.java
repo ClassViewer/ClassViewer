@@ -7,7 +7,7 @@ import org.glavo.editor.classfile.attribute.AttributeInfo;
 import org.glavo.editor.classfile.constant.ConstantPool;
 import org.glavo.editor.common.FileComponent;
 import org.glavo.editor.common.ParseException;
-import org.glavo.editor.helper.StringHelper;
+import org.glavo.editor.helper.StringUtils;
 
 /**
  * Array of class components.
@@ -25,7 +25,7 @@ public class Table extends ClassFileComponent {
     @Override
     protected void readContent(ClassFileReader reader) {
         try {
-            for (int i = 0; i < length.getValue(); i++) {
+            for (int i = 0; i < length.getIntValue(); i++) {
                 super.add(readEntry(reader));
             }
         } catch (ReflectiveOperationException e) {
@@ -58,7 +58,7 @@ public class Table extends ClassFileComponent {
     protected void postRead(ConstantPool cp) {
         int i = 0;
         for (FileComponent entry : super.getComponents()) {
-            String newName = StringHelper.formatIndex(length.getValue(), i++);
+            String newName = StringUtils.formatIndex(length.getIntValue(), i++);
             String oldName = entry.getName();
             if (oldName != null) {
                 newName += " (" + oldName + ")";

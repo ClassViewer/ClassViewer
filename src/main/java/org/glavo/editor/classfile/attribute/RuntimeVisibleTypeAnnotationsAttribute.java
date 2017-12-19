@@ -105,7 +105,7 @@ public class RuntimeVisibleTypeAnnotationsAttribute extends AttributeInfo {
         
         @Override
         protected void readContent(ClassFileReader reader) {
-            switch (targetType.getValue()) {
+            switch (targetType.getIntValue()) {
                 case 0x00:
                 case 0x01:
                     u1("typeParameterIndex");

@@ -5,7 +5,7 @@ import org.glavo.editor.classfile.ClassFileReader;
 import org.glavo.editor.classfile.datatype.U2;
 import org.glavo.editor.common.FileComponent;
 import org.glavo.editor.common.ParseException;
-import org.glavo.editor.helper.StringHelper;
+import org.glavo.editor.helper.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +26,9 @@ public class ConstantPool extends ClassFileComponent {
     
     @Override
     protected void readContent(ClassFileReader reader) {
-        constants = new ConstantInfo[cpCount.getValue()];
+        constants = new ConstantInfo[cpCount.getIntValue()];
         // The constant_pool table is indexed from 1 to constant_pool_count - 1. 
-        for (int i = 1; i < cpCount.getValue(); i++) {
+        for (int i = 1; i < cpCount.getIntValue(); i++) {
             ConstantInfo c = readConstantInfo(reader);
             setConstantName(c, i);
             constants[i] = c;
@@ -56,7 +56,7 @@ public class ConstantPool extends ClassFileComponent {
     
     // like #32: (Utf8)
     private void setConstantName(ConstantInfo constant, int idx) {
-        String idxStr = StringHelper.formatIndex(cpCount.getValue(), idx);
+        String idxStr = StringUtils.formatIndex(cpCount.getIntValue(), idx);
         String constantName = constant.getClass().getSimpleName()
                 .replace("Constant", "")
                 .replace("Info", "");

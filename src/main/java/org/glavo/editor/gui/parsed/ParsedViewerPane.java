@@ -40,10 +40,9 @@ public class ParsedViewerPane extends BorderPane {
     }
 
     private static TreeView<FileComponent> buildClassTree(FileComponent file) {
-        ParsedTreeItem root = new ParsedTreeItem(file);
-        root.setExpanded(true);
+        file.setExpanded(true);
 
-        TreeView<FileComponent> tree = new TreeView<>(root);
+        TreeView<FileComponent> tree = new TreeView<>(file);
         tree.setMinWidth(200);
 
         return tree;

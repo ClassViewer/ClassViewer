@@ -5,7 +5,7 @@ import org.glavo.editor.classfile.ClassFileReader;
 import org.glavo.editor.classfile.datatype.U2;
 import org.glavo.editor.classfile.jvm.Mutf8Decoder;
 import org.glavo.editor.common.ParseException;
-import org.glavo.editor.helper.StringHelper;
+import org.glavo.editor.helper.StringUtils;
 
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class ConstantUtf8Info extends ConstantInfo {
     @Override
     protected String loadDesc(ConstantPool cp) {
         Mutf8 bytes = (Mutf8) super.get("bytes");
-        return StringHelper.cutAndAppendEllipsis(bytes.getDesc(), 100);
+        return StringUtils.cutAndAppendEllipsis(bytes.getDesc(), 100);
     }
 
 
@@ -50,7 +50,7 @@ public class ConstantUtf8Info extends ConstantInfo {
 
         @Override
         protected void readContent(ClassFileReader reader) {
-            byte[] bytes = reader.readBytes(length.getValue());
+            byte[] bytes = reader.readBytes(length.getIntValue());
             try {
                 str = Mutf8Decoder.decodeMutf8(bytes);
             } catch (IOException e) {
