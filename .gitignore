@@ -18,4 +18,4 @@ gradle-app.setting
 /out/
 
 ClassEditor.iml
-/.idea/
+/.idea/*
