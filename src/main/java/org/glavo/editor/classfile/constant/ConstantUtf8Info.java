@@ -4,8 +4,8 @@ import org.glavo.editor.classfile.ClassFileComponent;
 import org.glavo.editor.classfile.ClassFileReader;
 import org.glavo.editor.classfile.datatype.U2;
 import org.glavo.editor.classfile.jvm.Mutf8Decoder;
-import org.glavo.editor.common.ParseException;
-import org.glavo.editor.helper.StringUtils;
+import org.glavo.editor.ParseException;
+import org.glavo.editor.util.StringUtils;
 
 
 import java.io.IOException;

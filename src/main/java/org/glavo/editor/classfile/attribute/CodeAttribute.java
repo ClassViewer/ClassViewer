@@ -8,7 +8,7 @@ import org.glavo.editor.classfile.bytecode.InstructionFactory;
 import org.glavo.editor.classfile.constant.ConstantPool;
 import org.glavo.editor.classfile.datatype.U4;
 import org.glavo.editor.classfile.jvm.Opcode;
-import org.glavo.editor.common.FileComponent;
+import org.glavo.editor.FileComponent;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import javafx.scene.control.ScrollPane;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
-import org.glavo.editor.common.FileComponent;
+import org.glavo.editor.FileComponent;
 import org.glavo.editor.gui.support.FontUtils;
 
 import static org.glavo.editor.gui.parsed.HexText.BYTES_PER_ROW;

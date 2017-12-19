@@ -7,7 +7,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
@@ -17,8 +16,8 @@ import javafx.stage.Stage;
 import org.glavo.editor.gui.jar.JarTreeView;
 import org.glavo.editor.gui.parsed.ParsedViewerPane;
 import org.glavo.editor.gui.support.*;
-import org.glavo.editor.helper.Log;
-import org.glavo.editor.helper.UrlUtils;
+import org.glavo.editor.util.Log;
+import org.glavo.editor.util.UrlUtils;
 import org.glavo.editor.gui.support.FontUtils;
 
 import java.awt.Toolkit;

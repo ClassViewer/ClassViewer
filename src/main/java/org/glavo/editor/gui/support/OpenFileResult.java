@@ -1,6 +1,6 @@
 package org.glavo.editor.gui.support;
 
-import org.glavo.editor.common.FileComponent;
+import org.glavo.editor.FileComponent;
 import org.glavo.editor.gui.jar.JarTreeNode;
 import org.glavo.editor.gui.parsed.HexText;
 

@@ -1,7 +1,7 @@
 package org.glavo.editor.gui.support;
 
 import javafx.scene.text.Font;
-import org.glavo.editor.helper.Log;
+import org.glavo.editor.util.Log;
 
 public class FontUtils {
     private FontUtils() {

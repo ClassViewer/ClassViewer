@@ -8,7 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.glavo.editor.gui.support.ImageUtils;
-import org.glavo.editor.helper.Log;
+import org.glavo.editor.util.Log;
 
 import java.awt.*;
 import java.io.IOException;

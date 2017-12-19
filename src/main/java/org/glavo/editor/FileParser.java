@@ -1,4 +1,4 @@
-package org.glavo.editor.common;
+package org.glavo.editor;
 
 public interface FileParser {
     FileComponent parse(byte[] data);

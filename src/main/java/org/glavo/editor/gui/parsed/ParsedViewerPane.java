@@ -6,8 +6,8 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
-import org.glavo.editor.common.FileComponent;
-import org.glavo.editor.helper.Log;
+import org.glavo.editor.FileComponent;
+import org.glavo.editor.util.Log;
 
 /**
  * Container of TreeView, HexPane, StatusBar and BytesBar.

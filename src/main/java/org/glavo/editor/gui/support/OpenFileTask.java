@@ -7,12 +7,12 @@ import java.util.function.Consumer;
 
 import javafx.concurrent.Task;
 import org.glavo.editor.classfile.ClassFileParser;
-import org.glavo.editor.common.FileComponent;
+import org.glavo.editor.FileComponent;
 import org.glavo.editor.gui.jar.JarTreeLoader;
 import org.glavo.editor.gui.jar.JarTreeNode;
 import org.glavo.editor.gui.parsed.HexText;
-import org.glavo.editor.helper.Log;
-import org.glavo.editor.helper.UrlUtils;
+import org.glavo.editor.util.Log;
+import org.glavo.editor.util.UrlUtils;
 
 public class OpenFileTask extends Task<OpenFileResult> {
 

@@ -1,4 +1,4 @@
-package org.glavo.editor.helper;
+package org.glavo.editor.util;
 
 public class Log {
     public static void log(Object message) {

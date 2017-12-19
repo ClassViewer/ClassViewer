@@ -1,6 +1,6 @@
 package org.glavo.editor.gui.support;
 
-import org.glavo.editor.helper.Log;
+import org.glavo.editor.util.Log;
 
 import java.io.File;
 import java.io.IOException;
