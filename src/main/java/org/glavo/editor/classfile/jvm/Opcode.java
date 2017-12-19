@@ -1,6 +1,6 @@
 package org.glavo.editor.classfile.jvm;
 
-import org.glavo.editor.common.ParseException;
+import org.glavo.editor.ParseException;
 
 public enum Opcode {
     

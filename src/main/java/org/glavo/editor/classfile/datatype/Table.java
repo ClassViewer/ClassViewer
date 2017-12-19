@@ -5,9 +5,9 @@ import org.glavo.editor.classfile.ClassFileReader;
 import org.glavo.editor.classfile.attribute.AttributeFactory;
 import org.glavo.editor.classfile.attribute.AttributeInfo;
 import org.glavo.editor.classfile.constant.ConstantPool;
-import org.glavo.editor.common.FileComponent;
-import org.glavo.editor.common.ParseException;
-import org.glavo.editor.helper.StringUtils;
+import org.glavo.editor.FileComponent;
+import org.glavo.editor.ParseException;
+import org.glavo.editor.util.StringUtils;
 
 /**
  * Array of class components.

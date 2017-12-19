@@ -1,8 +1,8 @@
 package org.glavo.editor.classfile;
 
 import org.glavo.editor.classfile.constant.ConstantPool;
-import org.glavo.editor.common.FileComponent;
-import org.glavo.editor.common.FileParser;
+import org.glavo.editor.FileComponent;
+import org.glavo.editor.FileParser;
 
 public class ClassFileParser implements FileParser {
     

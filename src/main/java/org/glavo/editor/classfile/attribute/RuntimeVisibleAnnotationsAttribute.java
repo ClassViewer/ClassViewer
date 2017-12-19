@@ -5,7 +5,7 @@ import org.glavo.editor.classfile.ClassFileComponent;
 import org.glavo.editor.classfile.ClassFileReader;
 import org.glavo.editor.classfile.constant.ConstantPool;
 import org.glavo.editor.classfile.datatype.U1;
-import org.glavo.editor.common.ParseException;
+import org.glavo.editor.ParseException;
 
 /*
 RuntimeVisibleAnnotations_attribute {

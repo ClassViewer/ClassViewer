@@ -3,7 +3,7 @@ package org.glavo.editor.gui.parsed;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import org.glavo.editor.common.FileComponent;
+import org.glavo.editor.FileComponent;
 
 public class BytesBar extends Pane {
 

@@ -4,7 +4,7 @@ import org.glavo.editor.classfile.ClassFileComponent;
 import org.glavo.editor.classfile.ClassFileReader;
 import org.glavo.editor.classfile.datatype.U1Hex;
 import org.glavo.editor.classfile.datatype.UInt;
-import org.glavo.editor.common.ParseException;
+import org.glavo.editor.ParseException;
 
 /*
 RuntimeVisibleTypeAnnotations_attribute {

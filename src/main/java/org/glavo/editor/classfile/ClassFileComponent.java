@@ -3,7 +3,7 @@ package org.glavo.editor.classfile;
 
 import org.glavo.editor.classfile.constant.ConstantPool;
 import org.glavo.editor.classfile.datatype.*;
-import org.glavo.editor.common.FileComponent;
+import org.glavo.editor.FileComponent;
 
 /**
  * Base class for all class file components.

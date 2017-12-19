@@ -1,4 +1,4 @@
-package org.glavo.editor.helper;
+package org.glavo.editor.util;
 
 import java.util.regex.Pattern;
 

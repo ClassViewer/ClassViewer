@@ -1,4 +1,4 @@
-package org.glavo.editor.common;
+package org.glavo.editor;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

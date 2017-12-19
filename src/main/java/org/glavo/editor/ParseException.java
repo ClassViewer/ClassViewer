@@ -1,4 +1,4 @@
-package org.glavo.editor.common;
+package org.glavo.editor;
 
 @SuppressWarnings("serial")
 public class ParseException extends RuntimeException {

@@ -1,7 +1,7 @@
 package org.glavo.editor.classfile.constant;
 
 
-import org.glavo.editor.common.ParseException;
+import org.glavo.editor.ParseException;
 
 public class ConstantFactory {
 

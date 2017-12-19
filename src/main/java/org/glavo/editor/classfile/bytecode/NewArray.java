@@ -2,7 +2,7 @@ package org.glavo.editor.classfile.bytecode;
 
 import org.glavo.editor.classfile.constant.ConstantPool;
 import org.glavo.editor.classfile.jvm.Opcode;
-import org.glavo.editor.common.ParseException;
+import org.glavo.editor.ParseException;
 
 public class NewArray extends Instruction {
 

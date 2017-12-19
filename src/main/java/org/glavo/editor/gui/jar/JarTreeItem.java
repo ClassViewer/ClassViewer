@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
-import org.glavo.editor.helper.Log;
+import org.glavo.editor.util.Log;
 
 public class JarTreeItem extends TreeItem<JarTreeNode> {
 

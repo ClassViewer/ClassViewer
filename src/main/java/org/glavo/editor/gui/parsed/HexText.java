@@ -1,6 +1,6 @@
 package org.glavo.editor.gui.parsed;
 
-import org.glavo.editor.helper.StringUtils;
+import org.glavo.editor.util.StringUtils;
 
 /**
  * Displayed by HexPane.

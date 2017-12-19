@@ -1,7 +1,7 @@
 package org.glavo.editor.classfile;
 
 import org.glavo.editor.classfile.constant.ConstantPool;
-import org.glavo.editor.common.BytesReader;
+import org.glavo.editor.BytesReader;
 
 import java.nio.ByteOrder;
 

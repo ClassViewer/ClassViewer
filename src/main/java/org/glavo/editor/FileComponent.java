@@ -1,10 +1,7 @@
-package org.glavo.editor.common;
+package org.glavo.editor;
 
-import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,22 +13,9 @@ public abstract class FileComponent extends TreeItem<FileComponent> {
     private String desc; // description
     private int offset; // the position of this FileComponent in the file
     private int length; // how many bytes this FileComponent has
-    private List<FileComponent> components; // sub-components
-    protected boolean hasInit = false;
 
     public FileComponent() {
         setValue(this);
-    }
-
-    @Override
-    public ObservableList<TreeItem<FileComponent>> getChildren() {
-        if (hasInit)
-            return super.getChildren();
-        else {
-            super.getChildren().setAll(components);
-            hasInit = true;
-            return super.getChildren();
-        }
     }
 
     // Getters & Setters
@@ -67,15 +51,15 @@ public abstract class FileComponent extends TreeItem<FileComponent> {
         this.length = length;
     }
 
+    @SuppressWarnings("unchecked")
     public List<FileComponent> getComponents() {
-        return components == null
-                ? Collections.emptyList()
-                : Collections.unmodifiableList(components);
+        List<?> children = getChildren();
+        return (List<FileComponent>) children;
     }
 
     @Override
     public boolean isLeaf() {
-        return components == null || components.isEmpty();
+        return getChildren().isEmpty();
     }
 
     /**
@@ -85,7 +69,7 @@ public abstract class FileComponent extends TreeItem<FileComponent> {
      * @return value of sub-component
      */
     protected final FileComponent get(String name) {
-        for (FileComponent c : components) {
+        for (FileComponent c : getComponents()) {
             if (name.equals(c.getName())) {
                 return c;
             }
@@ -97,10 +81,7 @@ public abstract class FileComponent extends TreeItem<FileComponent> {
         if (name != null) {
             subComponent.setName(name);
         }
-        if (components == null) {
-            components = new ArrayList<>();
-        }
-        components.add(subComponent);
+        getChildren().add(subComponent);
     }
 
     /**
