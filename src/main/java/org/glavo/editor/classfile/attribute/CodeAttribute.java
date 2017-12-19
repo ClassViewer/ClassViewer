@@ -69,7 +69,7 @@ public class CodeAttribute extends AttributeInfo {
         @Override
         protected void readContent(ClassFileReader reader) {
             final int startPosition = reader.getPosition();
-            final int endPosition = startPosition + codeLength.getValue();
+            final int endPosition = startPosition + codeLength.getIntValue();
 
             int position;
             while ((position = reader.getPosition()) < endPosition) {

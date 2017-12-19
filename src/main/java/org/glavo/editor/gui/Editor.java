@@ -7,6 +7,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
@@ -17,8 +18,8 @@ import org.glavo.editor.gui.jar.JarTreeView;
 import org.glavo.editor.gui.parsed.ParsedViewerPane;
 import org.glavo.editor.gui.support.*;
 import org.glavo.editor.helper.Log;
-import org.glavo.editor.helper.UrlHelper;
-import org.glavo.editor.helper.FontHelper;
+import org.glavo.editor.helper.UrlUtils;
+import org.glavo.editor.gui.support.FontUtils;
 
 import java.awt.Toolkit;
 import java.io.File;
@@ -30,17 +31,17 @@ import java.net.URL;
  */
 public class Editor extends Application {
 
-    private static final String TITLE = "Classpy";
+    private static final String TITLE = "ClassEditor";
 
-    public static final int DEFAULT_WIDTH = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 4 * 3;
-    public static final int DEFAULT_HEIGHT = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 4 * 3;
+    public static final int DEFAULT_WIDTH = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 7 * 4;
+    public static final int DEFAULT_HEIGHT = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 5 * 3;
 
     public static Cmd cmd = new Cmd();
 
     private Stage stage;
     private BorderPane root;
     private MyMenuBar menuBar;
-    private Font defaultFont = FontHelper.uiFont;
+    private Font defaultFont = FontUtils.uiFont;
 
     @Override
     public void start(Stage stage) {
@@ -56,8 +57,8 @@ public class Editor extends Application {
 
         stage.setScene(scene);
         stage.setTitle(TITLE);
-        stage.getIcons().add(ImageHelper.loadImage("/spy16.png"));
-        stage.getIcons().add(ImageHelper.loadImage("/spy32.png"));
+        stage.getIcons().add(ImageUtils.loadImage("/spy16.png"));
+        stage.getIcons().add(ImageUtils.loadImage("/spy32.png"));
 
         if (cmd.files != null) {
             for (String file : cmd.files) {
@@ -86,7 +87,7 @@ public class Editor extends Application {
 
     private Tab createTab(URL url) {
         Tab tab = new Tab();
-        tab.setText(UrlHelper.getFileName(url));
+        tab.setText(UrlUtils.getFileName(url));
         tab.setUserData(url);
         tab.setContent(new BorderPane(new ProgressBar()));
         ((TabPane) root.getCenter()).getTabs().add(tab);
@@ -166,6 +167,7 @@ public class Editor extends Application {
                 tab.setContent(treeView.getTreeView());
             } else {
                 ParsedViewerPane viewerPane = new ParsedViewerPane(ofr.fileRootNode, ofr.hexText);
+                tab.setGraphic(FileType.JAVA_CLASS.imageView());
                 tab.setContent(viewerPane);
             }
 

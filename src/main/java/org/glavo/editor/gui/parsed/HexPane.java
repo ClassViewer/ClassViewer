@@ -5,7 +5,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import org.glavo.editor.common.FileComponent;
-import org.glavo.editor.helper.FontHelper;
+import org.glavo.editor.gui.support.FontUtils;
 
 import static org.glavo.editor.gui.parsed.HexText.BYTES_PER_ROW;
 
@@ -63,9 +63,9 @@ public class HexPane extends ScrollPane {
     }
 
     private void initTextArea() {
-        textArea1.setFont(FontHelper.textFont);
-        textArea2.setFont(FontHelper.textFont);
-        textArea3.setFont(FontHelper.textFont);
+        textArea1.setFont(FontUtils.textFont);
+        textArea2.setFont(FontUtils.textFont);
+        textArea3.setFont(FontUtils.textFont);
 
         textArea1.setPrefColumnCount(6);
         textArea2.setPrefColumnCount(46);

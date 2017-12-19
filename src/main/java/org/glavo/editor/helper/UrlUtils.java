@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class UrlHelper {
+public class UrlUtils {
 
     public static byte[] readData(URL url) throws IOException {
         try (InputStream is = url.openStream()) {

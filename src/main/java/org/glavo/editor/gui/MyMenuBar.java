@@ -5,7 +5,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import org.glavo.editor.gui.support.FileType;
-import org.glavo.editor.gui.support.ImageHelper;
+import org.glavo.editor.gui.support.ImageUtils;
 import org.glavo.editor.gui.support.RecentFile;
 import org.glavo.editor.gui.support.RecentFiles;
 
@@ -42,7 +42,7 @@ public final class MyMenuBar extends MenuBar {
     }
 
     private Menu createOpenMenu() {
-        Menu openMenu = new Menu("_Open", ImageHelper.createImageView("/open.png"));
+        Menu openMenu = new Menu("_Open", ImageUtils.createImageView("/open.png"));
         openMenu.getItems().add(createOpenMenuItem(FileType.JAVA_JAR));
         openMenu.getItems().add(createOpenMenuItem(FileType.JAVA_CLASS));
         openMenu.setMnemonicParsing(true);
@@ -58,7 +58,7 @@ public final class MyMenuBar extends MenuBar {
     }
 
     private Menu createRecentMenu() {
-        Menu recentMenu = new Menu("Open _Recent", ImageHelper.createImageView("/clock.png"));
+        Menu recentMenu = new Menu("Open _Recent", ImageUtils.createImageView("/clock.png"));
         for (RecentFile rf : RecentFiles.INSTANCE.getAll()) {
             ImageView icon = new ImageView(rf.type.icon);
             MenuItem menuItem = new MenuItem(rf.url.toString(), icon);

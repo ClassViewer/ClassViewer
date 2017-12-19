@@ -27,7 +27,7 @@ public abstract class UInt extends ClassFileComponent {
 
     private final Function<ClassFileReader, Integer> intReader;
     private final BiFunction<Integer, ConstantPool, String> intDescriber;
-    private int value;
+    private int intValue;
 
     public UInt(Function<ClassFileReader, Integer> intReader,
                 BiFunction<Integer, ConstantPool, String> intDescriber) {
@@ -35,18 +35,18 @@ public abstract class UInt extends ClassFileComponent {
         this.intDescriber = intDescriber;
     }
 
-    public final int getValue() {
-        return value;
+    public final int getIntValue() {
+        return intValue;
     }
 
     @Override
     protected final void readContent(ClassFileReader reader) {
-        value = intReader.apply(reader);
+        intValue = intReader.apply(reader);
     }
 
     @Override
     protected final void postRead(ConstantPool cp) {
-        setDesc(intDescriber.apply(value, cp));
+        setDesc(intDescriber.apply(intValue, cp));
     }
     
 }
