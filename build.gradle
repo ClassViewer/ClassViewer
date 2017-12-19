@@ -16,6 +16,6 @@ dependencies {
 jar {
     manifest {
         attributes 'Implementation-Version': '1.2',
-                'Main-Class': 'org.glavo.editor.gui.Editor'
+                'Main-Class': 'org.glavo.viewer.gui.Viewer'
     }
 }
