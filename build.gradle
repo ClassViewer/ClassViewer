@@ -2,10 +2,7 @@ group 'org.glavo'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'application'
 
-
-mainClassName = 'org.glavo.editor.gui.Main'
 sourceCompatibility = 1.8
 
 repositories {
@@ -13,6 +10,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.18'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Version': '1.2',
+                'Main-Class': 'org.glavo.editor.gui.Editor'
+    }
 }

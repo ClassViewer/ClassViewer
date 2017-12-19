@@ -1,144 +1,124 @@
 package org.glavo.editor.classfile.constant;
 
-import org.glavo.editor.classfile.AbstractClassFileComponent;
 import org.glavo.editor.classfile.ClassFileComponent;
+import org.glavo.editor.classfile.ClassFileReader;
+import org.glavo.editor.classfile.datatype.U2;
+import org.glavo.editor.common.FileComponent;
+import org.glavo.editor.common.ParseException;
+import org.glavo.editor.helper.StringHelper;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-public final class ConstantPool extends AbstractClassFileComponent implements List<ClassFileComponent> {
-    public int size() {
-        return components.size();
+/**
+ * The constant pool in class file.
+ */
+public class ConstantPool extends ClassFileComponent {
+    
+    private final U2 cpCount;
+    private ConstantInfo[] constants;
+
+    public ConstantPool(U2 cpCount) {
+        this.cpCount = cpCount;
     }
-
-    public boolean isEmpty() {
-        return components.isEmpty();
+    
+    @Override
+    protected void readContent(ClassFileReader reader) {
+        constants = new ConstantInfo[cpCount.getValue()];
+        // The constant_pool table is indexed from 1 to constant_pool_count - 1. 
+        for (int i = 1; i < cpCount.getValue(); i++) {
+            ConstantInfo c = readConstantInfo(reader);
+            setConstantName(c, i);
+            constants[i] = c;
+            // http://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.5
+            // All 8-byte constants take up two entries in the constant_pool table of the class file.
+            // If a CONSTANT_Long_info or CONSTANT_Double_info structure is the item in the constant_pool
+            // table at index n, then the next usable item in the pool is located at index n+2. 
+            // The constant_pool index n+1 must be valid but is considered unusable. 
+            if (c instanceof ConstantLongInfo || c instanceof ConstantDoubleInfo) {
+                i++;
+            }
+        }
+        loadConstantDesc();
+        reader.setConstantPool(this);
     }
-
-    public boolean contains(Object o) {
-        return components.contains(o);
+    
+    private ConstantInfo readConstantInfo(ClassFileReader reader) {
+        byte tag = reader.getByte(reader.getPosition());
+        
+        ConstantInfo ci = ConstantFactory.create(tag);
+        ci.read(reader);
+        
+        return ci;
     }
-
-    public Iterator<ClassFileComponent> iterator() {
-        return components.iterator();
+    
+    // like #32: (Utf8)
+    private void setConstantName(ConstantInfo constant, int idx) {
+        String idxStr = StringHelper.formatIndex(cpCount.getValue(), idx);
+        String constantName = constant.getClass().getSimpleName()
+                .replace("Constant", "")
+                .replace("Info", "");
+        constant.setName(idxStr + " (" + constantName + ")");
     }
-
-    public Object[] toArray() {
-        return components.toArray();
-    }
-
-    public <T> T[] toArray(T[] ts) {
-        return components.toArray(ts);
-    }
-
-    public boolean add(ClassFileComponent classFileComponent) {
-        return components.add(classFileComponent);
-    }
-
-    public boolean remove(Object o) {
-        return components.remove(o);
-    }
-
-    public boolean containsAll(Collection<?> collection) {
-        return components.containsAll(collection);
-    }
-
-    public boolean addAll(Collection<? extends ClassFileComponent> collection) {
-        return components.addAll(collection);
-    }
-
-    public boolean addAll(int i, Collection<? extends ClassFileComponent> collection) {
-        return components.addAll(i, collection);
-    }
-
-    public boolean removeAll(Collection<?> collection) {
-        return components.removeAll(collection);
-    }
-
-    public boolean retainAll(Collection<?> collection) {
-        return components.retainAll(collection);
-    }
-
-    public void replaceAll(UnaryOperator<ClassFileComponent> unaryOperator) {
-        components.replaceAll(unaryOperator);
-    }
-
-    public void sort(Comparator<? super ClassFileComponent> comparator) {
-        components.sort(comparator);
-    }
-
-    public void clear() {
-        components.clear();
+    
+    private void loadConstantDesc() {
+        for (ConstantInfo c : constants) {
+            if (c != null) {
+                c.setDesc(c.loadDesc(this));
+            }
+        }
     }
 
     @Override
-    public boolean equals(Object o) {
-        return components.equals(o);
+    public List<FileComponent> getComponents() {
+        return Arrays.stream(constants)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public int hashCode() {
-        return components.hashCode();
+    public String getUtf8String(int index) {
+        return getConstant(ConstantUtf8Info.class, index).getString();
     }
-
-    public ClassFileComponent get(int i) {
-        return components.get(i);
+    
+    public ConstantUtf8Info getUtf8Info(int index) {
+        return getConstant(ConstantUtf8Info.class, index);
     }
-
-    public ClassFileComponent set(int i, ClassFileComponent classFileComponent) {
-        return components.set(i, classFileComponent);
+    
+    public ConstantClassInfo getClassInfo(int index) {
+        return getConstant(ConstantClassInfo.class, index);
     }
-
-    public void add(int i, ClassFileComponent classFileComponent) {
-        components.add(i, classFileComponent);
+    
+    public ConstantNameAndTypeInfo getNameAndTypeInfo(int index) {
+        return getConstant(ConstantNameAndTypeInfo.class, index);
     }
-
-    public ClassFileComponent remove(int i) {
-        return components.remove(i);
+    
+    public ConstantFieldrefInfo getFieldrefInfo(int index) {
+        return getConstant(ConstantFieldrefInfo.class, index);
     }
-
-    public int indexOf(Object o) {
-        return components.indexOf(o);
+    
+    public ConstantMethodrefInfo getMethodrefInfo(int index) {
+        return getConstant(ConstantMethodrefInfo.class, index);
     }
-
-    public int lastIndexOf(Object o) {
-        return components.lastIndexOf(o);
+    
+    public ConstantInterfaceMethodrefInfo getInterfaceMethodrefInfo(int index) {
+        return getConstant(ConstantInterfaceMethodrefInfo.class, index);
     }
-
-    public ListIterator<ClassFileComponent> listIterator() {
-        return components.listIterator();
+    
+    private <T> T getConstant(Class<T> classOfT, int index) {
+        ConstantInfo c = constants[index];
+        if (c.getClass() != classOfT) {
+            throw new ParseException("Constant#" + index
+                    + " is " + c.getClass().getSimpleName()
+                    + " not " + classOfT.getSimpleName() + "!");
+        }
+        return classOfT.cast(c);
     }
-
-    public ListIterator<ClassFileComponent> listIterator(int i) {
-        return components.listIterator(i);
+    
+    public String getConstantDesc(int index) {
+        ConstantInfo c = constants[index];
+        return c.getDesc();
     }
-
-    public List<ClassFileComponent> subList(int i, int i1) {
-        return components.subList(i, i1);
-    }
-
-    @Override
-    public Spliterator<ClassFileComponent> spliterator() {
-        return components.spliterator();
-    }
-
-    public boolean removeIf(Predicate<? super ClassFileComponent> predicate) {
-        return components.removeIf(predicate);
-    }
-
-    public Stream<ClassFileComponent> stream() {
-        return components.stream();
-    }
-
-    public Stream<ClassFileComponent> parallelStream() {
-        return components.parallelStream();
-    }
-
-    @Override
-    public void forEach(Consumer<? super ClassFileComponent> consumer) {
-        components.forEach(consumer);
-    }
+    
 }
