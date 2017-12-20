@@ -53,8 +53,7 @@ public abstract class FileComponent extends TreeItem<FileComponent> {
 
     @SuppressWarnings("unchecked")
     public List<FileComponent> getComponents() {
-        List<?> children = getChildren();
-        return (List<FileComponent>) children;
+        return (List) getChildren();
     }
 
     @Override
