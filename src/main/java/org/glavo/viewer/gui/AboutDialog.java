@@ -16,7 +16,7 @@ import java.net.URI;
 
 public class AboutDialog {
 
-    public static final String homeUrl = "https://github.com/Glavo/ClassEditor";
+    public static final String homeUrl = "https://github.com/Glavo/ClassViewer";
     
     public static void showDialog() {
         Stage stage = new Stage();
@@ -32,7 +32,6 @@ public class AboutDialog {
     
     private static BorderPane createAboutPane(Stage dialogStage) {
         BorderPane pane = new BorderPane();
-        //pane.setTop(new Label("Classpy"));
         pane.setCenter(ImageUtils.createImageView("/spy128.png"));
         pane.setBottom(createHomeLink());
         pane.setOnMouseClicked(e -> dialogStage.close());

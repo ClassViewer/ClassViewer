@@ -11,29 +11,31 @@ import org.glavo.viewer.gui.support.RecentFiles;
 
 import java.net.URL;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Classpy menu bar.
- * 
+ * <p>
  * File              Window        Help
- *  |-Open >         |-New Window  |-About
- *    |-Java Class...
- *    |-Java Jar...
- *    |-Luac Out...
- *  |-Open Recent >
+ * |-Open >         |-New Window  |-About
+ * |-Java Class...
+ * |-Java Jar...
+ * |-Luac Out...
+ * |-Open Recent >
  */
 public final class MyMenuBar extends MenuBar {
 
-    private BiConsumer<FileType, URL> onOpenFile;
+    private BiConsumer<FileType, URL> onOpenFileWithType;
+    private Consumer<URL> onOpenFile;
     private Runnable onNewWindow;
 
     public MyMenuBar() {
-        createFileMenu();
-        createWindowMenu();
-        createHelpMenu();
+        addFileMenu();
+        addWindowMenu();
+        addHelpMenu();
     }
-    
-    private void createFileMenu() {
+
+    private void addFileMenu() {
         Menu fileMenu = new Menu("_File");
         fileMenu.getItems().add(createOpenMenu());
         fileMenu.getItems().add(createRecentMenu());
@@ -41,20 +43,11 @@ public final class MyMenuBar extends MenuBar {
         getMenus().add(fileMenu);
     }
 
-    private Menu createOpenMenu() {
-        Menu openMenu = new Menu("_Open", ImageUtils.createImageView("/open.png"));
-        openMenu.getItems().add(createOpenMenuItem(FileType.JAVA_JAR));
-        openMenu.getItems().add(createOpenMenuItem(FileType.JAVA_CLASS));
+    private MenuItem createOpenMenu() {
+        MenuItem openMenu = new MenuItem("_Open...", ImageUtils.createImageView("/open.png"));
+        openMenu.setOnAction(e -> onOpenFile.accept(null));
         openMenu.setMnemonicParsing(true);
         return openMenu;
-    }
-
-    private MenuItem createOpenMenuItem(FileType ft) {
-        String text = ft.filter.getDescription() + " ...";
-        ImageView icon = new ImageView(ft.icon);
-        MenuItem item = new MenuItem(text, icon);
-        item.setOnAction(e -> onOpenFile.accept(ft, null));
-        return item;
     }
 
     private Menu createRecentMenu() {
@@ -62,25 +55,25 @@ public final class MyMenuBar extends MenuBar {
         for (RecentFile rf : RecentFiles.INSTANCE.getAll()) {
             ImageView icon = new ImageView(rf.type.icon);
             MenuItem menuItem = new MenuItem(rf.url.toString(), icon);
-            menuItem.setOnAction(e -> onOpenFile.accept(rf.type, rf.url));
+            menuItem.setOnAction(e -> onOpenFileWithType.accept(rf.type, rf.url));
             recentMenu.getItems().add(menuItem);
         }
         recentMenu.setMnemonicParsing(true);
         return recentMenu;
     }
-    
-    private void createWindowMenu() {
+
+    private void addWindowMenu() {
         MenuItem newWinMenuItem = new MenuItem("New Window");
         newWinMenuItem.setOnAction(e -> onNewWindow.run());
-        
+
         Menu winMenu = new Menu("_Window");
         winMenu.getItems().add(newWinMenuItem);
         winMenu.setMnemonicParsing(true);
 
         getMenus().add(winMenu);
     }
-    
-    private void createHelpMenu() {
+
+    private void addHelpMenu() {
         MenuItem aboutMenuItem = new MenuItem("_About");
         aboutMenuItem.setOnAction(e -> AboutDialog.showDialog());
         aboutMenuItem.setMnemonicParsing(true);
@@ -92,7 +85,11 @@ public final class MyMenuBar extends MenuBar {
         getMenus().add(helpMenu);
     }
 
-    public void setOnOpenFile(BiConsumer<FileType, URL> onOpenFile) {
+    public void setOnOpenFileWithType(BiConsumer<FileType, URL> onOpenFileWithType) {
+        this.onOpenFileWithType = onOpenFileWithType;
+    }
+
+    public void setOnOpenFile(Consumer<URL> onOpenFile) {
         this.onOpenFile = onOpenFile;
     }
 
@@ -104,5 +101,4 @@ public final class MyMenuBar extends MenuBar {
         Menu fileMenu = getMenus().get(0);
         fileMenu.getItems().set(1, createRecentMenu());
     }
-
 }

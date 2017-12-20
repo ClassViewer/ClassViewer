@@ -28,4 +28,24 @@ public class MyFileChooser {
         return fileChooser.showOpenDialog(stage);
     }
 
+    public static File showFileChooser(Stage stage) {
+        if (fileChooser == null) {
+            fileChooser = new FileChooser();
+            fileChooser.setTitle("Open file");
+        }
+
+        File lastOpenFile = RecentFiles.INSTANCE.getLastOpenFile();
+        if (lastOpenFile != null && lastOpenFile.getParentFile().isDirectory()) {
+            fileChooser.setInitialDirectory(lastOpenFile.getParentFile());
+        }
+
+        fileChooser.getExtensionFilters().add(FileType.allFiles);
+
+        for (FileType type: FileType.fileTypes) {
+            fileChooser.getExtensionFilters().add(type.filter);
+        }
+
+        return fileChooser.showOpenDialog(stage);
+    }
+
 }
