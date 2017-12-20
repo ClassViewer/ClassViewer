@@ -17,8 +17,6 @@ public class HexPane extends ScrollPane {
     private final TextArea textArea2;
     private final TextArea textArea3;
 
-    private HBox hbox;
-
     public HexPane(HexText hex) {
         this.hex = hex;
         textArea1 = new TextArea(hex.rowHeaderText);
@@ -27,7 +25,7 @@ public class HexPane extends ScrollPane {
 
         initTextArea();
 
-        hbox = new HBox();
+        HBox hbox = new HBox();
 
         hbox.getChildren().addAll(textArea1, textArea2, textArea3);
 

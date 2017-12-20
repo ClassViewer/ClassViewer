@@ -11,10 +11,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
 public class HexPaneMenu extends ContextMenu {
-    private TextArea textArea;
 
     public HexPaneMenu(TextArea textArea) {
-        this.textArea = textArea;
         MenuItem copy = new MenuItem("_Copy");
         copy.setMnemonicParsing(true);
         copy.setOnAction(e -> {
