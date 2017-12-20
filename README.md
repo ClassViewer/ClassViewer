@@ -21,7 +21,7 @@ gradle jar
 
 ## Run
 ```shell
-gradle run
+java -jar build/libs/ClassViewer-2.0-SNAPSHOT.jar
 ```
 
 ## Screenshots
