@@ -39,4 +39,16 @@ public final class U2AccessFlags extends UInt {
     public boolean isFinal() {
         return (getIntValue() & AccessFlags.ACC_FINAL.flag)!= 0;
     }
+
+    public boolean isPrivate() {
+        return (getIntValue() & AccessFlags.ACC_PRIVATE.flag)!= 0;
+    }
+
+    public boolean isProtected() {
+        return (getIntValue() & AccessFlags.ACC_PROTECTED.flag)!= 0;
+    }
+
+    public boolean isPublic() {
+        return (getIntValue() & AccessFlags.ACC_PUBLIC.flag)!= 0;
+    }
 }

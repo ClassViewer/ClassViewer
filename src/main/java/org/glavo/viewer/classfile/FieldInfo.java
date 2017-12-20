@@ -1,8 +1,10 @@
 package org.glavo.viewer.classfile;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.classfile.constant.ConstantPool;
+import org.glavo.viewer.classfile.datatype.U2AccessFlags;
 import org.glavo.viewer.classfile.jvm.AccessFlagType;
 import org.glavo.viewer.gui.support.ImageUtils;
 
@@ -18,10 +20,10 @@ field_info {
 public class FieldInfo extends ClassFileComponent {
 
     {
-        u2af ("access_flags", AccessFlagType.AF_FIELD);
-        u2cp ("name_index");
-        u2cp ("descriptor_index");
-        u2   ("attributes_count");
+        u2af("access_flags", AccessFlagType.AF_FIELD);
+        u2cp("name_index");
+        u2cp("descriptor_index");
+        u2("attributes_count");
         table("attributes", AttributeInfo.class);
     }
 
@@ -33,7 +35,22 @@ public class FieldInfo extends ClassFileComponent {
             setDesc(cp.getUtf8String(nameIndex));
         }
 
-        setGraphic(new ImageView(ImageUtils.fieldImage));
+        U2AccessFlags acc = (U2AccessFlags) get("access_flags");
+
+        HBox box = new HBox();
+        box.getChildren().add(new ImageView(ImageUtils.fieldImage));
+
+        if (acc.isPrivate()) {
+            box.getChildren().add(new ImageView(ImageUtils.privateImage));
+        } else if (acc.isProtected()) {
+            box.getChildren().add(new ImageView(ImageUtils.protectedImage));
+        } else if (acc.isPublic()) {
+            box.getChildren().add(new ImageView(ImageUtils.publicImage));
+        } else {
+            box.getChildren().add(new ImageView(ImageUtils.plocalImage));
+        }
+
+        setGraphic(box);
     }
-    
+
 }
