@@ -1,11 +1,13 @@
 package org.glavo.viewer.classfile;
 
 
+import javafx.scene.image.ImageView;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.datatype.U2;
 import org.glavo.viewer.classfile.datatype.U2CpIndex;
 import org.glavo.viewer.classfile.jvm.AccessFlagType;
+import org.glavo.viewer.gui.support.FileType;
 
 /*
 ClassFile {
@@ -48,6 +50,8 @@ public class ClassFile extends ClassFileComponent {
         table("methods", MethodInfo.class);
         u2   ("attributes_count");
         table("attributes", AttributeInfo.class);
+
+        setGraphic(new ImageView(FileType.JAVA_CLASS.icon));
     }
 
     public ConstantPool getConstantPool() {
