@@ -39,8 +39,9 @@ public class MyFileChooser {
             fileChooser.setInitialDirectory(lastOpenFile.getParentFile());
         }
 
-        fileChooser.getExtensionFilters().add(FileType.allFiles);
+        fileChooser.getExtensionFilters().clear();
 
+        fileChooser.getExtensionFilters().add(FileType.allFiles);
         for (FileType type: FileType.fileTypes) {
             fileChooser.getExtensionFilters().add(type.filter);
         }

@@ -2,8 +2,7 @@ package org.glavo.viewer.gui.support;
 
 import org.glavo.viewer.util.Log;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -13,6 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 /**
@@ -27,9 +28,9 @@ public class RecentFiles {
     private boolean listChanged = false;
 
     private RecentFiles() {
-        loadFromTmp();
+        load();
         Runtime.getRuntime()
-                .addShutdownHook(new Thread(this::saveToTmp));
+                .addShutdownHook(new Thread(this::save));
     }
 
     public File getLastOpenFile(FileType ft) {
@@ -69,6 +70,7 @@ public class RecentFiles {
     }
 
     public void add(FileType fileType, URL fileUrl) {
+        Log.warning("RecentFiles: " + fileType + ", " + fileUrl);
         add(new RecentFile(fileType, fileUrl));
     }
 
@@ -82,38 +84,33 @@ public class RecentFiles {
         }
     }
 
-    private void saveToTmp() {
-        if (!list.isEmpty() && listChanged) {
-            byte[] bytes = list.stream()
-                    .map(RecentFile::toString)
-                    .collect(Collectors.joining("\n"))
-                    .getBytes(StandardCharsets.UTF_8);
-
-            Path tmp = Paths.get(System.getProperty("java.io.tmpdir"), "classpy.tmp");
-            Log.log("saving " + tmp + " ...");
-            try {
-                Files.write(tmp, bytes);
-            } catch (IOException e) {
-                e.printStackTrace(System.err);
-            }
+    private void save() {
+        Preferences preferences = Preferences.userRoot().node("ClassViewer");
+        Log.log("saving recent files...");
+        preferences.put("recentfiles", list.stream()
+                .map(RecentFile::toString)
+                .collect(Collectors.joining("\n")));
+        try {
+            preferences.flush();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
         }
     }
 
-    private void loadFromTmp() {
-        Path tmp = Paths.get(System.getProperty("java.io.tmpdir"), "classpy.tmp");
-        if (Files.exists(tmp)) {
-            Log.log("loading " + tmp + " ...");
-            try {
-                List<String> rfs = Files.readAllLines(tmp, StandardCharsets.UTF_8);
-                for (String rf : rfs) {
-                    if (rf.contains("#=>")) {
-                        list.addLast(new RecentFile(rf));
+    private void load() {
+        Preferences preferences = Preferences.userRoot().node("ClassViewer");
+        String data = preferences.get("recentfiles", null);
+        if (data != null) {
+            Log.log("loading recent files..");
+            for (String line : data.split("\n")) {
+                if (line.contains("#=>")) {
+                    try {
+                        list.addLast(new RecentFile(line));
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace(System.err);
             }
         }
     }
-
 }
