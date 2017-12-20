@@ -20,8 +20,17 @@ public class ImageUtils {
         return new Image(imgUrl.toString());
     }
 
-    public static final Image copyImage = loadImage("/copy.png");
-    public static final Image openFileImage = loadImage("/open.png");
-    public static final Image openFileImage2 = loadImage("/open2.png");
-    public static final Image helpImage = loadImage("/help.png");
+    public static final Image copyImage = loadImage("/icons/copy.png");
+    public static final Image openFileImage = loadImage("/icons/open.png");
+    public static final Image packageImage = loadImage("/icons/package.png");
+    public static final Image helpImage = loadImage("/icons/help.png");
+    public static final Image methodImage = loadImage("/icons/method.png");
+    public static final Image abstractMethodImage = loadImage("/icons/abstractMethod.png");
+    public static final Image annotationImage = loadImage("/icons/annotationtype.png");
+    public static final Image finalClassImage = loadImage("/icons/finalClass.png");
+    public static final Image abstractClassImage = loadImage("/icons/abstractClass.png");
+    public static final Image enumImage = loadImage("/icons/enum.png");
+    public static final Image fieldImage = loadImage("/icons/field.png");
+    public static final Image interfaceImage = loadImage("/icons/interface.png");
+    public static final Image classImage = loadImage("/icons/class.png");
 }

@@ -6,7 +6,7 @@ import org.glavo.viewer.classfile.jvm.AccessFlags;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class U2AccessFlags extends UInt {
+public final class U2AccessFlags extends UInt {
 
     public U2AccessFlags(int afType) {
         super(READ_U2, (val, cp) -> describe(afType, val));
@@ -20,4 +20,23 @@ public class U2AccessFlags extends UInt {
                 .collect(Collectors.joining(", "));
     }
 
+    public boolean isInterface() {
+        return (getIntValue() & AccessFlags.ACC_INTERFACE.flag)!= 0;
+    }
+
+    public boolean isEnum() {
+        return (getIntValue() & AccessFlags.ACC_ENUM.flag)!= 0;
+    }
+
+    public boolean isAbstract() {
+        return (getIntValue() & AccessFlags.ACC_ABSTRACT.flag)!= 0;
+    }
+
+    public boolean isAnnotation() {
+        return (getIntValue() & AccessFlags.ACC_ANNOTATION.flag)!= 0;
+    }
+
+    public boolean isFinal() {
+        return (getIntValue() & AccessFlags.ACC_FINAL.flag)!= 0;
+    }
 }

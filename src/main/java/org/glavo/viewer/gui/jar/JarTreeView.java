@@ -29,8 +29,7 @@ public class JarTreeView {
         this.openClassHandler = openClassHandler;
     }
 
-    private TreeView<JarTreeNode> createTreeView(JarTreeNode rootNode) {
-        JarTreeItem rootItem = new JarTreeItem(rootNode);
+    private TreeView<JarTreeNode> createTreeView(JarTreeNode rootItem) {
         rootItem.setExpanded(true);
 
         TreeView<JarTreeNode> tree = new TreeView<>(rootItem);

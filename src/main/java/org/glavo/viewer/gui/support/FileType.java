@@ -12,9 +12,9 @@ import java.util.Arrays;
  */
 public enum FileType {
 
-    JAVA_JAR("/JarFile.png", "Java JAR File (*.jar)", "*.jar"),
-    JAVA_CLASS("/ClassFile.png", "Java Class File (*.class)", "*.class"),
-    UNKNOWN("/UnknownFile.png", "Unknown", "*.*"),;
+    JAVA_JAR("/icons/JarFile.png", "Java JAR File (*.jar)", "*.jar"),
+    JAVA_CLASS("/icons/ClassFile.png", "Java Class File (*.class)", "*.class"),
+    UNKNOWN("/icons/UnknownFile.png", "Unknown", "*.*"),;
 
     public static final FileType[] fileTypes = {
             JAVA_JAR,
