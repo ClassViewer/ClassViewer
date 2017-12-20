@@ -21,5 +21,6 @@ public class ImageUtils {
     }
 
     public static final Image copyImage = loadImage("/copy.png");
+    public static final Image openFileImage = loadImage("/open.png");
 
 }

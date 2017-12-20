@@ -3,13 +3,11 @@ package org.glavo.viewer.gui;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -40,6 +38,7 @@ public class Viewer extends Application {
     private Stage stage;
     private BorderPane root;
     private MyMenuBar menuBar;
+    private MyToolBar toolBar;
     private Font defaultFont = FontUtils.uiFont;
 
     @Override
@@ -47,7 +46,10 @@ public class Viewer extends Application {
         this.stage = stage;
 
         root = new BorderPane();
-        root.setTop(createMenuBar());
+        root.setTop(new VBox(
+                createMenuBar(),
+                createToolBar()
+        ));
         root.setCenter(createTabPane());
 
         Scene scene = new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -104,6 +106,11 @@ public class Viewer extends Application {
         return menuBar;
     }
 
+    private ToolBar createToolBar() {
+        toolBar = new MyToolBar(menuBar);
+
+        return toolBar;
+    }
     // http://www.java2s.com/Code/Java/JavaFX/DraganddropfiletoScene.htm
     private void enableDragAndDrop(Scene scene) {
         scene.setOnDragOver(event -> {

@@ -25,9 +25,9 @@ import java.util.function.Consumer;
  */
 public final class MyMenuBar extends MenuBar {
 
-    private BiConsumer<FileType, URL> onOpenFileWithType;
-    private Consumer<URL> onOpenFile;
-    private Runnable onNewWindow;
+    BiConsumer<FileType, URL> onOpenFileWithType;
+    Consumer<URL> onOpenFile;
+    Runnable onNewWindow;
 
     public MyMenuBar() {
         addFileMenu();
@@ -44,7 +44,7 @@ public final class MyMenuBar extends MenuBar {
     }
 
     private MenuItem createOpenMenu() {
-        MenuItem openMenu = new MenuItem("_Open...", ImageUtils.createImageView("/open.png"));
+        MenuItem openMenu = new MenuItem("_Open...", new ImageView(ImageUtils.openFileImage));
         openMenu.setOnAction(e -> onOpenFile.accept(null));
         openMenu.setMnemonicParsing(true);
         return openMenu;
