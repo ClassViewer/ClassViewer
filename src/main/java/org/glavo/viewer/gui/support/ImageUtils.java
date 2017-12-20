@@ -11,8 +11,6 @@ import org.glavo.viewer.gui.AboutDialog;
  */
 public class ImageUtils {
 
-    private static final Image classFileIcon = loadImage("/ClassFile.png");
-
     public static ImageView createImageView(String imgName) {
         return new ImageView(loadImage(imgName));
     }
@@ -22,5 +20,6 @@ public class ImageUtils {
         return new Image(imgUrl.toString());
     }
 
+    public static final Image copyImage = loadImage("/copy.png");
 
 }
