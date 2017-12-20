@@ -3,7 +3,9 @@ package org.glavo.viewer.classfile;
 import javafx.scene.image.ImageView;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.classfile.constant.ConstantPool;
+import org.glavo.viewer.classfile.datatype.U2AccessFlags;
 import org.glavo.viewer.classfile.jvm.AccessFlagType;
+import org.glavo.viewer.classfile.jvm.AccessFlags;
 import org.glavo.viewer.gui.support.ImageUtils;
 
 /*
@@ -23,8 +25,6 @@ public class MethodInfo extends ClassFileComponent {
         u2cp ("descriptor_index");
         u2   ("attributes_count");
         table("attributes", AttributeInfo.class);
-
-        setGraphic(new ImageView(ImageUtils.methodImage));
     }
 
     @Override
@@ -33,6 +33,15 @@ public class MethodInfo extends ClassFileComponent {
         if (nameIndex > 0) {
             // todo fix loading java.lang.String from rt.jar
             setDesc(cp.getUtf8String(nameIndex));
+        }
+        U2AccessFlags flags = (U2AccessFlags) get("access_flags");
+
+        if(flags.isAbstract()) {
+            setGraphic(new ImageView(ImageUtils.abstractMethodImage));
+        } else if (flags.isFinal()) {
+            setGraphic(new ImageView(ImageUtils.methodImage)); //todo
+        } else {
+            setGraphic(new ImageView(ImageUtils.methodImage));
         }
     }
     
