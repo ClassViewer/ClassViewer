@@ -1,6 +1,7 @@
 package org.glavo.viewer.classfile;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.datatype.U2AccessFlags;
@@ -34,15 +35,29 @@ public class MethodInfo extends ClassFileComponent {
             // todo fix loading java.lang.String from rt.jar
             setDesc(cp.getUtf8String(nameIndex));
         }
-        U2AccessFlags flags = (U2AccessFlags) get("access_flags");
+        U2AccessFlags acc = (U2AccessFlags) get("access_flags");
 
-        if(flags.isAbstract()) {
-            setGraphic(new ImageView(ImageUtils.abstractMethodImage));
-        } else if (flags.isFinal()) {
-            setGraphic(new ImageView(ImageUtils.methodImage)); //todo
+        HBox box = new HBox();
+
+        if(acc.isAbstract()) {
+            box.getChildren().add(new ImageView(ImageUtils.abstractMethodImage));
+        } else if (acc.isFinal()) {
+            box.getChildren().add(new ImageView(ImageUtils.methodImage)); //todo
         } else {
-            setGraphic(new ImageView(ImageUtils.methodImage));
+            box.getChildren().add(new ImageView(ImageUtils.methodImage));
         }
+
+        if (acc.isPrivate()) {
+            box.getChildren().add(new ImageView(ImageUtils.privateImage));
+        } else if (acc.isProtected()) {
+            box.getChildren().add(new ImageView(ImageUtils.protectedImage));
+        } else if (acc.isPublic()) {
+            box.getChildren().add(new ImageView(ImageUtils.publicImage));
+        } else {
+            box.getChildren().add(new ImageView(ImageUtils.plocalImage));
+        }
+
+        setGraphic(box);
     }
     
 }
