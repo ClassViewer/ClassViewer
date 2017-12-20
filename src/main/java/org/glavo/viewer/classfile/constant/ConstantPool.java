@@ -1,5 +1,7 @@
 package org.glavo.viewer.classfile.constant;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.TreeItem;
 import org.glavo.viewer.classfile.ClassFileComponent;
 import org.glavo.viewer.classfile.ClassFileReader;
 import org.glavo.viewer.classfile.datatype.U2;
@@ -16,18 +18,20 @@ import java.util.stream.Collectors;
  * The constant pool in class file.
  */
 public class ConstantPool extends ClassFileComponent {
-    
+
     private final U2 cpCount;
     private ConstantInfo[] constants;
+
+    private boolean hasInit = false;
 
     public ConstantPool(U2 cpCount) {
         this.cpCount = cpCount;
     }
-    
+
     @Override
     protected void readContent(ClassFileReader reader) {
         constants = new ConstantInfo[cpCount.getIntValue()];
-        // The constant_pool table is indexed from 1 to constant_pool_count - 1. 
+        // The constant_pool table is indexed from 1 to constant_pool_count - 1.
         for (int i = 1; i < cpCount.getIntValue(); i++) {
             ConstantInfo c = readConstantInfo(reader);
             setConstantName(c, i);
@@ -44,16 +48,16 @@ public class ConstantPool extends ClassFileComponent {
         loadConstantDesc();
         reader.setConstantPool(this);
     }
-    
+
     private ConstantInfo readConstantInfo(ClassFileReader reader) {
         byte tag = reader.getByte(reader.getPosition());
-        
+
         ConstantInfo ci = ConstantFactory.create(tag);
         ci.read(reader);
-        
+
         return ci;
     }
-    
+
     // like #32: (Utf8)
     private void setConstantName(ConstantInfo constant, int idx) {
         String idxStr = StringUtils.formatIndex(cpCount.getIntValue(), idx);
@@ -62,7 +66,7 @@ public class ConstantPool extends ClassFileComponent {
                 .replace("Info", "");
         constant.setName(idxStr + " (" + constantName + ")");
     }
-    
+
     private void loadConstantDesc() {
         for (ConstantInfo c : constants) {
             if (c != null) {
@@ -81,31 +85,31 @@ public class ConstantPool extends ClassFileComponent {
     public String getUtf8String(int index) {
         return getConstant(ConstantUtf8Info.class, index).getString();
     }
-    
+
     public ConstantUtf8Info getUtf8Info(int index) {
         return getConstant(ConstantUtf8Info.class, index);
     }
-    
+
     public ConstantClassInfo getClassInfo(int index) {
         return getConstant(ConstantClassInfo.class, index);
     }
-    
+
     public ConstantNameAndTypeInfo getNameAndTypeInfo(int index) {
         return getConstant(ConstantNameAndTypeInfo.class, index);
     }
-    
+
     public ConstantFieldrefInfo getFieldrefInfo(int index) {
         return getConstant(ConstantFieldrefInfo.class, index);
     }
-    
+
     public ConstantMethodrefInfo getMethodrefInfo(int index) {
         return getConstant(ConstantMethodrefInfo.class, index);
     }
-    
+
     public ConstantInterfaceMethodrefInfo getInterfaceMethodrefInfo(int index) {
         return getConstant(ConstantInterfaceMethodrefInfo.class, index);
     }
-    
+
     private <T> T getConstant(Class<T> classOfT, int index) {
         ConstantInfo c = constants[index];
         if (c.getClass() != classOfT) {
@@ -115,10 +119,26 @@ public class ConstantPool extends ClassFileComponent {
         }
         return classOfT.cast(c);
     }
-    
+
     public String getConstantDesc(int index) {
         ConstantInfo c = constants[index];
         return c.getDesc();
     }
-    
+
+    @Override
+    public boolean isLeaf() {
+        return constants == null || constants.length == 0;
+    }
+
+    @Override
+    public ObservableList<TreeItem<FileComponent>> getChildren() {
+        if(!hasInit) {
+            for(ConstantInfo info : constants) {
+                if(info != null)
+                    super.getChildren().add(info);
+            }
+            hasInit = true;
+        }
+        return super.getChildren();
+    }
 }
