@@ -12,7 +12,7 @@ public class FontUtils {
     }
 
 
-    public static Font uiFont = Font.loadFont(FontUtils.class.getResourceAsStream("/UI.ttf"), 12);
+    public static Font uiFont = Font.loadFont(FontUtils.class.getResourceAsStream("/UI.ttf"), 15);
 
     public static Font textFont = Font.loadFont(FontUtils.class.getResourceAsStream("/Text.ttf"), 15);
 }

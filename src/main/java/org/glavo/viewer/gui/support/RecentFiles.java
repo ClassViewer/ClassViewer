@@ -46,6 +46,20 @@ public class RecentFiles {
         return null;
     }
 
+    public File getLastOpenFile() {
+        for (RecentFile rf : list) {
+            if (rf.url.toString().startsWith("file")) {
+                try {
+                    return new File(rf.url.toURI());
+                } catch (URISyntaxException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public List<RecentFile> getAll() {
         return list;
     }

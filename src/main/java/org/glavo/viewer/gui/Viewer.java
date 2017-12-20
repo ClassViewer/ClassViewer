@@ -96,6 +96,7 @@ public class Viewer extends Application {
     private MenuBar createMenuBar() {
         menuBar = new MyMenuBar();
 
+        menuBar.setOnOpenFileWithType(this::onOpenFile);
         menuBar.setOnOpenFile(this::onOpenFile);
         menuBar.setOnNewWindow(this::openNewWindow);
         //menuBar.setUseSystemMenuBar(true);
@@ -139,6 +140,18 @@ public class Viewer extends Application {
     private void onOpenFile(FileType ft, URL url) {
         if (url == null) {
             File file = MyFileChooser.showFileChooser(stage, ft);
+            if (file != null) {
+                openFile(file);
+            }
+        } else {
+            openFile(url);
+        }
+    }
+
+
+    private void onOpenFile(URL url) {
+        if (url == null) {
+            File file = MyFileChooser.showFileChooser(stage);
             if (file != null) {
                 openFile(file);
             }
