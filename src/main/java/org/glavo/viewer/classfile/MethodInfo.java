@@ -1,8 +1,10 @@
 package org.glavo.viewer.classfile;
 
+import javafx.scene.image.ImageView;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.jvm.AccessFlagType;
+import org.glavo.viewer.gui.support.ImageUtils;
 
 /*
 method_info {
@@ -21,6 +23,8 @@ public class MethodInfo extends ClassFileComponent {
         u2cp ("descriptor_index");
         u2   ("attributes_count");
         table("attributes", AttributeInfo.class);
+
+        setGraphic(new ImageView(ImageUtils.methodImage));
     }
 
     @Override

@@ -1,5 +1,9 @@
 package org.glavo.viewer.gui.jar;
 
+import javafx.scene.image.ImageView;
+import org.glavo.viewer.gui.support.FileType;
+import org.glavo.viewer.gui.support.ImageUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -24,13 +28,16 @@ public class JarTreeLoader {
 
             @Override
             public FileVisitResult visitFile(Path subPath, BasicFileAttributes attrs) throws IOException {
-                if (isFolder(subPath)) {
+                if (Files.isDirectory(subPath)) {
                     JarTreeNode subNode = path2node(subPath);
+                    subNode.setGraphic(new ImageView(ImageUtils.packageImage));
                     if (subNode.hasSubNodes()) {
                         node.addSubNode(subNode);
                     }
                 } else if (isClassFile(subPath)) {
-                    node.addSubNode(new JarTreeNode(subPath));
+                    JarTreeNode n = new JarTreeNode(subPath);
+                    n.setGraphic(new ImageView(FileType.JAVA_CLASS.icon));
+                    node.addSubNode(n);
                 }
 
                 return FileVisitResult.CONTINUE;
@@ -40,11 +47,6 @@ public class JarTreeLoader {
 
         node.sortSubNodes();
         return node;
-    }
-
-
-    private static boolean isFolder(Path p) {
-        return p.toString().endsWith("/");
     }
 
     private static boolean isClassFile(Path p) {

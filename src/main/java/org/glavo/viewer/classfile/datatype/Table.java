@@ -12,7 +12,7 @@ import org.glavo.viewer.util.StringUtils;
 /**
  * Array of class components.
  */
-public class Table extends ClassFileComponent {
+public final class Table extends ClassFileComponent {
 
     private final UInt length;
     private final Class<? extends ClassFileComponent> entryClass;

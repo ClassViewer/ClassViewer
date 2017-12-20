@@ -2,6 +2,7 @@ package org.glavo.viewer.gui.parsed;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import org.glavo.viewer.gui.support.ImageUtils;
@@ -26,7 +27,10 @@ public class HexPaneMenu extends ContextMenu {
         });
         copy.setGraphic(new ImageView(ImageUtils.copyImage));
 
-        getItems().addAll(copy);
+
+        getItems().addAll(
+                copy
+        );
     }
 
 

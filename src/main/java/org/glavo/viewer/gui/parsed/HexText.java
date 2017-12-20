@@ -36,7 +36,7 @@ public class HexText {
     }
 
     private String formatBytesText(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(bytes.length * 3 + bytes.length / BYTES_PER_ROW + 1);
         for (int i = 0; i < bytes.length; i += BYTES_PER_ROW) {
             rowToHex(bytes, i, sb);
             sb.append('\n');

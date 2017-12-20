@@ -1,22 +1,44 @@
 package org.glavo.viewer.gui.jar;
 
+import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
+import org.glavo.viewer.gui.support.FileType;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JarTreeNode {
+public final class JarTreeNode extends TreeItem<JarTreeNode> {
 
     final String path;
     final String name;
-    List<JarTreeNode> subNodes;
 
     JarTreeNode(Path path) {
+        setValue(this);
         this.path = path.toString();
         if (path.getFileName() != null) {
+
             this.name = path.getFileName().toString();
+
         } else {
-            this.name = path.toString();
+            String s = path.toString();
+            if (s.equals("/")) {
+                this.name = "";
+                this.setGraphic(new ImageView(FileType.JAVA_JAR.icon));
+            } else {
+                this.name = s;
+            }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<JarTreeNode> getSubNodes() {
+        return (List) super.getChildren();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return getSubNodes().isEmpty();
     }
 
     @Override
@@ -25,20 +47,15 @@ public class JarTreeNode {
     }
 
     boolean hasSubNodes() {
-        return subNodes != null && !subNodes.isEmpty();
+        return !getSubNodes().isEmpty();
     }
 
     void addSubNode(JarTreeNode node) {
-        if (subNodes == null) {
-            subNodes = new ArrayList<>();
-        }
-        subNodes.add(node);
+        getSubNodes().add(node);
     }
 
     void sortSubNodes() {
-        if (subNodes != null) {
-            subNodes.sort(JarTreeNode::comparePaths);
-        }
+        getSubNodes().sort(JarTreeNode::comparePaths);
     }
 
     static int comparePaths(JarTreeNode n1, JarTreeNode n2) {

@@ -7,7 +7,7 @@ import org.glavo.viewer.classfile.ClassFileReader;
 /**
  * Unparsed bytes.
  */
-public class Bytes extends ClassFileComponent {
+public final class Bytes extends ClassFileComponent {
 
     private UInt count;
 

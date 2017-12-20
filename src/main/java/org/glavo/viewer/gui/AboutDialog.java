@@ -32,7 +32,7 @@ public class AboutDialog {
     
     private static BorderPane createAboutPane(Stage dialogStage) {
         BorderPane pane = new BorderPane();
-        pane.setCenter(ImageUtils.createImageView("/spy128.png"));
+        pane.setCenter(ImageUtils.createImageView("/icons/spy128.png"));
         pane.setBottom(createHomeLink());
         pane.setOnMouseClicked(e -> dialogStage.close());
         

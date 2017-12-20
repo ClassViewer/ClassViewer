@@ -58,8 +58,8 @@ public class Viewer extends Application {
 
         stage.setScene(scene);
         stage.setTitle(TITLE);
-        stage.getIcons().add(ImageUtils.loadImage("/spy16.png"));
-        stage.getIcons().add(ImageUtils.loadImage("/spy32.png"));
+        stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));
+        stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
 
         if (cmd.files != null) {
             for (String file : cmd.files) {
@@ -218,9 +218,7 @@ public class Viewer extends Application {
         }
     }
 
-
     public static void main(String[] args) {
         launch(Viewer.class, cmd.parse(args));
     }
-
 }

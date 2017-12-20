@@ -85,7 +85,7 @@ public class RecentFiles {
     }
 
     private void save() {
-        Preferences preferences = Preferences.userRoot().node("ClassViewer");
+        Preferences preferences = Preferences.userNodeForPackage(RecentFiles.class);
         Log.log("saving recent files...");
         preferences.put("recentfiles", list.stream()
                 .map(RecentFile::toString)
@@ -98,7 +98,7 @@ public class RecentFiles {
     }
 
     private void load() {
-        Preferences preferences = Preferences.userRoot().node("ClassViewer");
+        Preferences preferences = Preferences.userNodeForPackage(RecentFiles.class);
         String data = preferences.get("recentfiles", null);
         if (data != null) {
             Log.log("loading recent files..");

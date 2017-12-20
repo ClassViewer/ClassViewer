@@ -51,7 +51,7 @@ public final class MyMenuBar extends MenuBar {
     }
 
     private Menu createRecentMenu() {
-        Menu recentMenu = new Menu("Open _Recent", ImageUtils.createImageView("/clock.png"));
+        Menu recentMenu = new Menu("Open _Recent", ImageUtils.createImageView("/icons/clock.png"));
         for (RecentFile rf : RecentFiles.INSTANCE.getAll()) {
             ImageView icon = new ImageView(rf.type.icon);
             MenuItem menuItem = new MenuItem(rf.url.toString(), icon);
