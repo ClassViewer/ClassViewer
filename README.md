@@ -26,5 +26,7 @@ java -jar build/libs/ClassViewer-2.0-SNAPSHOT.jar
 
 ## Screenshots
 
-![Ubuntu](Ubuntu.jpg)
-![Windows](Windows.jpg)
+![Screenshot](Screenshot1.png)
+![Screenshot](Screenshot2.png)
+![Screenshot](Screenshot3.png)
+![Screenshot](Screenshot4.png)
