@@ -2,17 +2,19 @@ package org.glavo.viewer.gui.jar;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import org.glavo.viewer.util.Log;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class JarTreeView extends TreeView<JarTreeNode> {
 
-    private final URL jarURL;
+     final URL jarURL;
     private Consumer<String> openClassHandler;
 
     public JarTreeView(URL jarURL, JarTreeNode rootNode) {
@@ -28,6 +30,8 @@ public class JarTreeView extends TreeView<JarTreeNode> {
                 }
             }
         });
+
+        this.setContextMenu(new JarTreeMenu(this));
     }
 
     public void setOpenClassHandler(Consumer<String> openClassHandler) {
@@ -36,7 +40,7 @@ public class JarTreeView extends TreeView<JarTreeNode> {
 
 
     // jar:file:/absolute/location/of/yourJar.jar!/path/to/ClassName.class
-    private String getSelectedClass() {
+    String getSelectedClass() {
         TreeItem<JarTreeNode> selectedItem = getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             JarTreeNode selectedPath = selectedItem.getValue();
