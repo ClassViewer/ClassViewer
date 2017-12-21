@@ -54,7 +54,7 @@ public final class MyMenuBar extends MenuBar {
     }
 
     private MenuItem createOpenFolderMenu() {
-        MenuItem openMenu = new MenuItem("Open Folder", new ImageView(ImageUtils.openFoldermage));
+        MenuItem openMenu = new MenuItem("Open Folder", new ImageView(ImageUtils.openFolderImage));
         openMenu.setOnAction(e -> onOpenFolder.accept(null));
         openMenu.setMnemonicParsing(true);
         return openMenu;

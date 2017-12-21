@@ -105,7 +105,7 @@ public class RecentFiles {
                 if (line.contains("#=>")) {
                     try {
                         list.addLast(new RecentFile(line));
-                    } catch (MalformedURLException e) {
+                    } catch (MalformedURLException | IllegalArgumentException e) {
                         Log.log(e);
                     }
                 }
