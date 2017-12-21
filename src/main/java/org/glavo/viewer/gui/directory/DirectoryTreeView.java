@@ -2,6 +2,9 @@ package org.glavo.viewer.gui.directory;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
+import org.glavo.viewer.gui.support.FileType;
+import org.glavo.viewer.gui.support.ImageUtils;
 
 import java.io.File;
 import java.net.URI;
@@ -28,6 +31,7 @@ public class DirectoryTreeView extends TreeView<DirectoryTreeNode> {
                 }
             }
         });
+        rootNode.setGraphic(new ImageView(FileType.FOLDER.icon));
     }
 
     public void setOpenClassHandler(Consumer<String> openClassHandler) {
