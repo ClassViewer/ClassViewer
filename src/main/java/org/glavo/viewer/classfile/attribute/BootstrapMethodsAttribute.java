@@ -14,7 +14,7 @@ BootstrapMethods_attribute {
     } bootstrap_methods[num_bootstrap_methods];
 }
  */
-public class BootstrapMethodsAttribute extends AttributeInfo {
+public final class BootstrapMethodsAttribute extends AttributeInfo {
 
     {
         u2   ("num_bootstrap_methods");

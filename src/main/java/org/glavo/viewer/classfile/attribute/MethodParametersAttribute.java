@@ -12,7 +12,7 @@ MethodParameters_attribute {
     } parameters[parameters_count];
 }
  */
-public class MethodParametersAttribute extends AttributeInfo {
+public final class MethodParametersAttribute extends AttributeInfo {
 
     {
         u1   ("parameters_count");

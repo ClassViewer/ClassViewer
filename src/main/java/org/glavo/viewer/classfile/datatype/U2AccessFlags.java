@@ -36,6 +36,10 @@ public final class U2AccessFlags extends UInt {
         return (getIntValue() & AccessFlags.ACC_ANNOTATION.flag)!= 0;
     }
 
+    public boolean isStatic() {
+        return (getIntValue() & AccessFlags.ACC_STATIC.flag)!= 0;
+    }
+
     public boolean isFinal() {
         return (getIntValue() & AccessFlags.ACC_FINAL.flag)!= 0;
     }

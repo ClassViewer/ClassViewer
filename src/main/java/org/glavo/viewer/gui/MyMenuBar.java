@@ -27,6 +27,7 @@ public final class MyMenuBar extends MenuBar {
 
     BiConsumer<FileType, URL> onOpenFileWithType;
     Consumer<URL> onOpenFile;
+    Consumer<URL> onOpenFolder;
     Runnable onNewWindow;
 
     public MyMenuBar() {
@@ -37,8 +38,11 @@ public final class MyMenuBar extends MenuBar {
 
     private void addFileMenu() {
         Menu fileMenu = new Menu("_File");
-        fileMenu.getItems().add(createOpenMenu());
-        fileMenu.getItems().add(createRecentMenu());
+        fileMenu.getItems().addAll(
+                createOpenMenu(),
+                createOpenFolderMenu(),
+                createRecentMenu()
+        );
         fileMenu.setMnemonicParsing(true);
         getMenus().add(fileMenu);
     }
@@ -46,6 +50,13 @@ public final class MyMenuBar extends MenuBar {
     private MenuItem createOpenMenu() {
         MenuItem openMenu = new MenuItem("_Open...", new ImageView(ImageUtils.openFileImage));
         openMenu.setOnAction(e -> onOpenFile.accept(null));
+        openMenu.setMnemonicParsing(true);
+        return openMenu;
+    }
+
+    private MenuItem createOpenFolderMenu() {
+        MenuItem openMenu = new MenuItem("Open Folder", new ImageView(ImageUtils.openFileImage));
+        openMenu.setOnAction(e -> onOpenFolder.accept(null));
         openMenu.setMnemonicParsing(true);
         return openMenu;
     }
@@ -91,6 +102,10 @@ public final class MyMenuBar extends MenuBar {
 
     public void setOnOpenFile(Consumer<URL> onOpenFile) {
         this.onOpenFile = onOpenFile;
+    }
+
+    public void setOnOpenFolder(Consumer<URL> onOpenFolder) {
+        this.onOpenFolder = onOpenFolder;
     }
 
     public void setOnNewWindow(Runnable onNewWindow) {

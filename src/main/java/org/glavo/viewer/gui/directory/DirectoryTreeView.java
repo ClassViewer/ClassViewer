@@ -1,4 +1,4 @@
-package org.glavo.viewer.gui.jar;
+package org.glavo.viewer.gui.directory;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -10,14 +10,14 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.util.function.Consumer;
 
-public class JarTreeView extends TreeView<JarTreeNode> {
+public class DirectoryTreeView extends TreeView<DirectoryTreeNode> {
 
-    private final URL jarURL;
+    private final URL url;
     private Consumer<String> openClassHandler;
 
-    public JarTreeView(URL jarURL, JarTreeNode rootNode) {
+    public DirectoryTreeView(URL url, DirectoryTreeNode rootNode) {
         super(rootNode);
-        this.jarURL = jarURL;
+        this.url = url;
         rootNode.setExpanded(true);
         this.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
@@ -35,28 +35,18 @@ public class JarTreeView extends TreeView<JarTreeNode> {
     }
 
 
-    // jar:file:/absolute/location/of/yourJar.jar!/path/to/ClassName.class
     private String getSelectedClass() {
-        TreeItem<JarTreeNode> selectedItem = getSelectionModel().getSelectedItem();
+        TreeItem<DirectoryTreeNode> selectedItem = getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
-            JarTreeNode selectedPath = selectedItem.getValue();
+            DirectoryTreeNode selectedPath = selectedItem.getValue();
             if (selectedPath.toString().endsWith(".class")) {
-                String classUrl = String.format("jar:%s!%s", jarURL, selectedPath.path);
+                String classUrl = "file:" + selectedPath.path;
                 classUrl = classUrl.replace('\\', '/');
                 //System.out.println(classUrl);
                 return classUrl;
             }
         }
         return null;
-    }
-
-    public static boolean isOpen(File jarFile) throws Exception {
-        URI jarUri = new URI("jar", jarFile.toPath().toUri().toString(), null);
-        try {
-            return FileSystems.getFileSystem(jarUri) != null;
-        } catch (FileSystemNotFoundException e) {
-            return false;
-        }
     }
 
 }

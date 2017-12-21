@@ -7,7 +7,7 @@ Signature_attribute {
     u2 signature_index;
 }
  */
-public class SignatureAttribute extends AttributeInfo {
+public final class SignatureAttribute extends AttributeInfo {
 
     {
         u2cp("signature_index");

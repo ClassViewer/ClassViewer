@@ -42,6 +42,7 @@ public class ImageUtils {
     public static final Image fieldImage = loadImage("/icons/field.png");
     public static final Image interfaceImage = loadImage("/icons/interface.png");
     public static final Image classImage = loadImage("/icons/class.png");
+    public static final Image javaSourceImage = loadImage("/icons/javaSource.png");
 
     public static final Image privateImage = loadImage("/icons/c_private.png");
     public static final Image plocalImage = loadImage("/icons/c_plocal.png");

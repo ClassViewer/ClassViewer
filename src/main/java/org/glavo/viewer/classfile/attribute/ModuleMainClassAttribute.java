@@ -7,7 +7,7 @@ ModuleMainClass_attribute {
     u2 main_class_index;
 }
  */
-public class ModuleMainClassAttribute extends AttributeInfo {
+public final class ModuleMainClassAttribute extends AttributeInfo {
 
     {
         u2cp("main_class_index");

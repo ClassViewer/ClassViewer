@@ -14,7 +14,7 @@ LineNumberTable_attribute {
     } line_number_table[line_number_table_length];
 }
  */
-public class LineNumberTableAttribute extends AttributeInfo {
+public final class LineNumberTableAttribute extends AttributeInfo {
 
     {
         u2   ("line_number_table_length");

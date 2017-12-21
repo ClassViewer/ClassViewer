@@ -11,7 +11,7 @@ StackMapTable_attribute {
     stack_map_frame entries[number_of_entries];
 }
  */
-public class StackMapTableAttribute extends AttributeInfo {
+public final class StackMapTableAttribute extends AttributeInfo {
 
     {
         u2("number_of_entries");

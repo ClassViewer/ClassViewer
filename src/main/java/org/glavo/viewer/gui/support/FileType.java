@@ -14,6 +14,7 @@ public enum FileType {
 
     JAVA_JAR("/icons/JarFile.png", "Java JAR File (*.jar)", "*.jar"),
     JAVA_CLASS("/icons/ClassFile.png", "Java Class File (*.class)", "*.class"),
+    FOLDER("/icons/folder.png", "Folder", (String[]) null),
     UNKNOWN("/icons/UnknownFile.png", "Unknown", "*.*"),;
 
     public static final FileType[] fileTypes = {
@@ -39,7 +40,10 @@ public enum FileType {
 
     FileType(String icon, String description, String... extension) {
         this.icon = ImageUtils.loadImage(icon);
-        this.filter = new ExtensionFilter(description, extension);
+        if (extension != null)
+            this.filter = new ExtensionFilter(description, extension);
+        else
+            filter = null;
         this.extendsions = extension;
     }
 

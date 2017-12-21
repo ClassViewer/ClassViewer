@@ -30,7 +30,7 @@ Code_attribute {
     attribute_info attributes[attributes_count];
 }
  */
-public class CodeAttribute extends AttributeInfo {
+public final class CodeAttribute extends AttributeInfo {
 
     {
         U4 codeLength = new U4();

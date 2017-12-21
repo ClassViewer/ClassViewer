@@ -1,5 +1,9 @@
 package org.glavo.viewer.classfile.attribute;
 
+import javafx.scene.image.ImageView;
+import org.glavo.viewer.classfile.constant.ConstantPool;
+import org.glavo.viewer.gui.support.ImageUtils;
+
 /*
 SourceFile_attribute {
     u2 attribute_name_index;
@@ -7,10 +11,14 @@ SourceFile_attribute {
     u2 sourcefile_index;
 }
  */
-public class SourceFileAttribute extends AttributeInfo {
+public final class SourceFileAttribute extends AttributeInfo {
 
     {
         u2cp("source_file_index");
     }
 
+    @Override
+    protected void postRead(ConstantPool cp) {
+        setGraphic(new ImageView(ImageUtils.javaSourceImage));
+    }
 }
