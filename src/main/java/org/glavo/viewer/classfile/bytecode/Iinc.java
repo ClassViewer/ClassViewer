@@ -3,7 +3,7 @@ package org.glavo.viewer.classfile.bytecode;
 import org.glavo.viewer.classfile.ClassFileReader;
 import org.glavo.viewer.classfile.jvm.Opcode;
 
-public class Iinc extends Instruction {
+public final class Iinc extends Instruction {
 
     public Iinc(Opcode opcode, int pc) {
         super(opcode, pc);

@@ -3,7 +3,7 @@ package org.glavo.viewer.classfile.bytecode;
 import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.jvm.Opcode;
 
-public class InvokeInterface extends Instruction {
+public final class InvokeInterface extends Instruction {
 
     {
         u1  ("opcode");

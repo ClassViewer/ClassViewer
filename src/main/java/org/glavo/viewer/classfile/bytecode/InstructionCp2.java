@@ -6,7 +6,7 @@ import org.glavo.viewer.classfile.jvm.Opcode;
 /**
  * The instruction whose operand is U2CpIndex.
  */
-public class InstructionCp2 extends Instruction {
+public final class InstructionCp2 extends Instruction {
 
     {
         u1  ("opcode");

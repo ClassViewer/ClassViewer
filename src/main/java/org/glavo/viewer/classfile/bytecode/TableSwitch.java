@@ -22,7 +22,7 @@ import org.glavo.viewer.classfile.jvm.Opcode;
     highbyte4
     jump offsets...
  */
-public class TableSwitch extends Instruction {
+public final class TableSwitch extends Instruction {
 
     //private final List<JumpOffset> jumpOffsets = new ArrayList<>();
     
