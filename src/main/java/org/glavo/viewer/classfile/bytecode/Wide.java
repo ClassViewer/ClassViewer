@@ -4,7 +4,7 @@ package org.glavo.viewer.classfile.bytecode;
 import org.glavo.viewer.classfile.ClassFileReader;
 import org.glavo.viewer.classfile.jvm.Opcode;
 
-public class Wide extends Instruction {
+public final class Wide extends Instruction {
 
     public Wide(Opcode opcode, int pc) {
         super(opcode, pc);

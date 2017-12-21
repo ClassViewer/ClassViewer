@@ -4,7 +4,7 @@ import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.jvm.Opcode;
 import org.glavo.viewer.ParseException;
 
-public class NewArray extends Instruction {
+public final class NewArray extends Instruction {
 
     {
         u1("opcode");

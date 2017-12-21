@@ -4,7 +4,7 @@ package org.glavo.viewer.classfile.bytecode;
 import org.glavo.viewer.classfile.ClassFileReader;
 import org.glavo.viewer.classfile.jvm.Opcode;
 
-public class Multianewarray extends Instruction {
+public final class Multianewarray extends Instruction {
 
     {
         u1  ("opcode");

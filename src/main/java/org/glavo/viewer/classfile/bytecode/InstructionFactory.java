@@ -3,7 +3,7 @@ package org.glavo.viewer.classfile.bytecode;
 
 import org.glavo.viewer.classfile.jvm.Opcode;
 
-public class InstructionFactory {
+public final class InstructionFactory {
 
     /**
      * Create instruction by opcode.

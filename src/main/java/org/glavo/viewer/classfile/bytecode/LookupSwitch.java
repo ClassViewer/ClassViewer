@@ -18,7 +18,7 @@ npairs3
 npairs4
 match-offset pairs...
  */
-public class LookupSwitch extends Instruction {
+public final class LookupSwitch extends Instruction {
 
     //private final List<MatchOffset> matchOffsets = new ArrayList<>();
     
