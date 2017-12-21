@@ -258,7 +258,7 @@ public class Viewer extends Application {
         return task;
     }
 
-    private void openFileInThisThread(URL url) {
+    public void openFileInThisThread(URL url) {
         makeOpenFileTask(url).run();
     }
 
