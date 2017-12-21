@@ -70,7 +70,6 @@ public class RecentFiles {
     }
 
     public void add(FileType fileType, URL fileUrl) {
-        Log.warning("RecentFiles: " + fileType + ", " + fileUrl);
         add(new RecentFile(fileType, fileUrl));
     }
 
