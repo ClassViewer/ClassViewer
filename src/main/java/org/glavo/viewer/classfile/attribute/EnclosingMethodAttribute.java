@@ -8,7 +8,7 @@ EnclosingMethod_attribute {
     u2 method_index;
 }
  */
-public class EnclosingMethodAttribute extends AttributeInfo {
+public final class EnclosingMethodAttribute extends AttributeInfo {
 
     {
         u2cp("class_index");

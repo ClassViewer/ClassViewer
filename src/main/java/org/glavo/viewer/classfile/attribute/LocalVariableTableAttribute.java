@@ -17,7 +17,7 @@ LocalVariableTable_attribute {
     } local_variable_table[local_variable_table_length];
 }
  */
-public class LocalVariableTableAttribute extends AttributeInfo {
+public final class LocalVariableTableAttribute extends AttributeInfo {
 
     {
         u2   ("local_variable_table_length");

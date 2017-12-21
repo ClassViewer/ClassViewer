@@ -4,13 +4,17 @@ import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.glavo.viewer.gui.directory.DirectoryTreeNode;
+import org.glavo.viewer.gui.directory.DirectoryTreeView;
 import org.glavo.viewer.gui.jar.JarTreeView;
 import org.glavo.viewer.gui.parsed.ParsedViewerPane;
 import org.glavo.viewer.gui.support.*;
@@ -22,6 +26,8 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import static javafx.scene.control.TabPane.STYLE_CLASS_FLOATING;
 
 /**
  * Main class.
@@ -83,6 +89,7 @@ public class Viewer extends Application {
                         stage.setTitle(TITLE + " - " + url);
                     }
                 });
+        tp.getStyleClass().add(STYLE_CLASS_FLOATING);
         return tp;
     }
 
@@ -100,6 +107,7 @@ public class Viewer extends Application {
 
         menuBar.setOnOpenFileWithType(this::onOpenFile);
         menuBar.setOnOpenFile(this::onOpenFile);
+        menuBar.setOnOpenFolder(this::onOpenFolder);
         menuBar.setOnNewWindow(this::openNewWindow);
         //menuBar.setUseSystemMenuBar(true);
 
@@ -111,6 +119,7 @@ public class Viewer extends Application {
 
         return toolBar;
     }
+
     // http://www.java2s.com/Code/Java/JavaFX/DraganddropfiletoScene.htm
     private void enableDragAndDrop(Scene scene) {
         scene.setOnDragOver(event -> {
@@ -167,6 +176,17 @@ public class Viewer extends Application {
         }
     }
 
+    private void onOpenFolder(URL url) {
+        if (url == null) {
+            File file = MyFileChooser.showDirectoryChooser(stage);
+            if (file != null) {
+                openFile(file);
+            }
+        } else {
+            openFile(url);
+        }
+    }
+
     private void openFile(File file) {
         try {
             openFile(file.toURI().toURL());
@@ -175,6 +195,7 @@ public class Viewer extends Application {
         }
     }
 
+
     private OpenFileTask makeOpenFileTask(URL url) {
 
         OpenFileTask task = new OpenFileTask(url);
@@ -182,9 +203,16 @@ public class Viewer extends Application {
         task.setOnSucceeded((OpenFileResult ofr) -> {
             Tab tab = createTab(url);
             if (ofr.fileType == FileType.JAVA_JAR) {
+                assert ofr.jarRootNode != null;
                 JarTreeView treeView = new JarTreeView(ofr.url, ofr.jarRootNode);
                 treeView.setOpenClassHandler(this::openClassInJar);
-                tab.setContent(treeView.getTreeView());
+                tab.setGraphic(new ImageView(FileType.JAVA_JAR.icon));
+                tab.setContent(treeView);
+            } else if (ofr.fileType == FileType.FOLDER) {
+                DirectoryTreeView treeView = new DirectoryTreeView(ofr.url, ofr.directoryTreeNode);
+                treeView.setOpenClassHandler(this::openClassInJar);
+                tab.setGraphic(new ImageView(FileType.FOLDER.icon));
+                tab.setContent(treeView);
             } else {
                 ParsedViewerPane viewerPane = new ParsedViewerPane(ofr.fileRootNode, ofr.hexText);
                 tab.setGraphic(FileType.JAVA_CLASS.imageView());

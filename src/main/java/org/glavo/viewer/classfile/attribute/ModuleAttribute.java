@@ -45,7 +45,7 @@ Module_attribute {
     } provides[provides_count];
 }
  */
-public class ModuleAttribute extends AttributeInfo {
+public final class ModuleAttribute extends AttributeInfo {
 
     {
         u2cp ("module_name_index");

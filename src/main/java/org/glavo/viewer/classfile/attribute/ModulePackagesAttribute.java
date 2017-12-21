@@ -11,7 +11,7 @@ ModulePackages_attribute {
     u2 package_index[package_count];
 }
  */
-public class ModulePackagesAttribute extends AttributeInfo {
+public final class ModulePackagesAttribute extends AttributeInfo {
 
     {
         u2("package_count");

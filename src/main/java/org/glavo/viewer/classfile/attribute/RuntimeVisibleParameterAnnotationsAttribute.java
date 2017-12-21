@@ -12,7 +12,7 @@ RuntimeVisibleParameterAnnotations_attribute {
     } parameter_annotations[num_parameters];
 }
  */
-public class RuntimeVisibleParameterAnnotationsAttribute extends AttributeInfo {
+public final class RuntimeVisibleParameterAnnotationsAttribute extends AttributeInfo {
 
     {
         u1   ("num_parameters");

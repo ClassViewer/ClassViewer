@@ -7,10 +7,10 @@ attribute_info {
     u1 info[attribute_length];
 }
  */
-public class UndefinedAttribute extends AttributeInfo {
+public final class UndefinedAttribute extends AttributeInfo {
 
     {
         bytes("info");
     }
-    
+
 }

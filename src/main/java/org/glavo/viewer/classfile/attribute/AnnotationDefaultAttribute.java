@@ -9,7 +9,7 @@ AnnotationDefault_attribute {
     element_value default_value;
 }
  */
-public class AnnotationDefaultAttribute extends AttributeInfo {
+public final class AnnotationDefaultAttribute extends AttributeInfo {
 
     {
         add("default_value", new ElementValue());

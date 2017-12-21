@@ -15,7 +15,7 @@ InnerClasses_attribute {
     } classes[number_of_classes];
 }
  */
-public class InnerClassesAttribute extends AttributeInfo {
+public final class InnerClassesAttribute extends AttributeInfo {
 
     {
         u2   ("number_of_classes");

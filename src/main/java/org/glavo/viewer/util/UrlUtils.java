@@ -18,9 +18,8 @@ public class UrlUtils {
     }
 
     public static String getFileName(URL url) {
-        String urlStr = url.toString();
-        int idxOfDot = urlStr.lastIndexOf('/');
-        return idxOfDot < 0 ? urlStr : urlStr.substring(idxOfDot + 1);
+        String[] arr = url.toString().split("/");
+        return arr[arr.length - 1];
     }
-    
+
 }

@@ -11,7 +11,7 @@ Exceptions_attribute {
     u2 exception_index_table[number_of_exceptions];
 }
  */
-public class ExceptionsAttribute extends AttributeInfo {
+public final class ExceptionsAttribute extends AttributeInfo {
 
     {
         u2   ("number_of_exceptions");

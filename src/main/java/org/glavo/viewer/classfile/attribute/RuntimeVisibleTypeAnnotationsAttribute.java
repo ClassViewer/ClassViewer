@@ -14,7 +14,7 @@ RuntimeVisibleTypeAnnotations_attribute {
     type_annotation annotations[num_annotations];
 }
  */
-public class RuntimeVisibleTypeAnnotationsAttribute extends AttributeInfo {
+public final class RuntimeVisibleTypeAnnotationsAttribute extends AttributeInfo {
 
     {
         u2   ("num_annotations");
