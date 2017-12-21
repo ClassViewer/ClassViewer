@@ -20,7 +20,6 @@ import java.util.function.Consumer;
  * |-Open >         |-New Window  |-About
  * |-Java Class...
  * |-Java Jar...
- * |-Luac Out...
  * |-Open Recent >
  */
 public final class MyMenuBar extends MenuBar {
@@ -55,7 +54,7 @@ public final class MyMenuBar extends MenuBar {
     }
 
     private MenuItem createOpenFolderMenu() {
-        MenuItem openMenu = new MenuItem("Open Folder", new ImageView(ImageUtils.openFileImage));
+        MenuItem openMenu = new MenuItem("Open Folder", new ImageView(ImageUtils.openFoldermage));
         openMenu.setOnAction(e -> onOpenFolder.accept(null));
         openMenu.setMnemonicParsing(true);
         return openMenu;
