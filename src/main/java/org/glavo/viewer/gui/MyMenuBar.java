@@ -114,6 +114,6 @@ public final class MyMenuBar extends MenuBar {
 
     public void updateRecentFiles() {
         Menu fileMenu = getMenus().get(0);
-        fileMenu.getItems().set(1, createRecentMenu());
+        fileMenu.getItems().set(2, createRecentMenu());
     }
 }
