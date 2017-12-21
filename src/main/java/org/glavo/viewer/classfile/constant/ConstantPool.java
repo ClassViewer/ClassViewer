@@ -22,8 +22,6 @@ public class ConstantPool extends ClassFileComponent {
     private final U2 cpCount;
     private ConstantInfo[] constants;
 
-    private boolean hasInit = false;
-
     public ConstantPool(U2 cpCount) {
         this.cpCount = cpCount;
     }
@@ -47,6 +45,9 @@ public class ConstantPool extends ClassFileComponent {
         }
         loadConstantDesc();
         reader.setConstantPool(this);
+
+        Arrays.stream(constants).filter(Objects::nonNull)
+                .forEach(info -> super.getChildren().add(info));
     }
 
     private ConstantInfo readConstantInfo(ClassFileReader reader) {
@@ -132,11 +133,7 @@ public class ConstantPool extends ClassFileComponent {
 
     @Override
     public ObservableList<TreeItem<FileComponent>> getChildren() {
-        if(!hasInit) {
-            Arrays.stream(constants).filter(Objects::nonNull)
-                    .forEach(info -> super.getChildren().add(info));
-            hasInit = true;
-        }
+
         return super.getChildren();
     }
 }
