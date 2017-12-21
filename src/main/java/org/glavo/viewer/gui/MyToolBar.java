@@ -31,7 +31,7 @@ public class MyToolBar extends ToolBar {
     }
 
     public void addOpenFolderBottom() {
-        Button button = new Button(null, new ImageView(ImageUtils.openFoldermage));
+        Button button = new Button(null, new ImageView(ImageUtils.openFolderImage));
         button.setOnAction(e -> menuBar.onOpenFolder.accept(null));
         button.setTooltip(new Tooltip("Open folder"));
         this.getItems().add(button);
