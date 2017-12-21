@@ -176,10 +176,11 @@ public class Viewer extends Application {
     }
 
     private OpenFileTask makeOpenFileTask(URL url) {
-        Tab tab = createTab(url);
+
         OpenFileTask task = new OpenFileTask(url);
 
         task.setOnSucceeded((OpenFileResult ofr) -> {
+            Tab tab = createTab(url);
             if (ofr.fileType == FileType.JAVA_JAR) {
                 JarTreeView treeView = new JarTreeView(ofr.url, ofr.jarRootNode);
                 treeView.setOpenClassHandler(this::openClassInJar);
@@ -195,8 +196,11 @@ public class Viewer extends Application {
         });
 
         task.setOnFailed((Throwable err) -> {
-            Text errMsg = new Text(err.toString());
-            tab.setContent(errMsg);
+            MyAlert alert = MyAlert.mkAlert(err);
+            alert.setTitle("Open file failed");
+            alert.setHeaderText(err.getMessage());
+            alert.setContentText(err.toString());
+            alert.showAndWait();
         });
 
         return task;

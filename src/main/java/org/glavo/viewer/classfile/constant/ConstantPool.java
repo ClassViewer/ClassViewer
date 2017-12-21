@@ -133,10 +133,8 @@ public class ConstantPool extends ClassFileComponent {
     @Override
     public ObservableList<TreeItem<FileComponent>> getChildren() {
         if(!hasInit) {
-            for(ConstantInfo info : constants) {
-                if(info != null)
-                    super.getChildren().add(info);
-            }
+            Arrays.stream(constants).filter(Objects::nonNull)
+                    .forEach(info -> super.getChildren().add(info));
             hasInit = true;
         }
         return super.getChildren();
