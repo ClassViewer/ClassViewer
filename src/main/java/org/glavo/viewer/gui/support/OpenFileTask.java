@@ -85,7 +85,7 @@ public class OpenFileTask extends Task<OpenFileResult> {
     public void setOnFailed(Consumer<Throwable> callback) {
         super.setOnFailed(event -> {
             Throwable err = event.getSource().getException();
-            err.printStackTrace(System.err);
+            Log.log(err);
             
             callback.accept(err);
         });

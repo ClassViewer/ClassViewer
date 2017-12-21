@@ -39,7 +39,7 @@ public class RecentFiles {
                 try {
                     return new File(rf.url.toURI());
                 } catch (URISyntaxException e) {
-                    e.printStackTrace(System.err);
+                    Log.log(e);
                 }
             }
         }
@@ -53,7 +53,7 @@ public class RecentFiles {
                 try {
                     return new File(rf.url.toURI());
                 } catch (URISyntaxException e) {
-                    e.printStackTrace(System.err);
+                    Log.log(e);
                 }
             }
         }
@@ -92,7 +92,7 @@ public class RecentFiles {
         try {
             preferences.flush();
         } catch (BackingStoreException e) {
-            e.printStackTrace();
+            Log.log(e);
         }
     }
 
@@ -106,7 +106,7 @@ public class RecentFiles {
                     try {
                         list.addLast(new RecentFile(line));
                     } catch (MalformedURLException e) {
-                        e.printStackTrace();
+                        Log.log(e);
                     }
                 }
             }

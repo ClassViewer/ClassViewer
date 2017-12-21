@@ -171,7 +171,7 @@ public class Viewer extends Application {
         try {
             openFile(file.toURI().toURL());
         } catch (MalformedURLException e) {
-            e.printStackTrace(System.err);
+            Log.log(e);
         }
     }
 
@@ -218,7 +218,7 @@ public class Viewer extends Application {
         try {
             openFile(new URL(url));
         } catch (MalformedURLException e) {
-            e.printStackTrace(System.err);
+            Log.log(e);
         }
     }
 
