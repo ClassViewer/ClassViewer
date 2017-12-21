@@ -18,6 +18,7 @@ public class MyToolBar extends ToolBar {
         this.menuBar = menuBar;
 
         addOpenFileBottom();
+        addOpenFolderBottom();
         getItems().add(new Separator());
         addOtherBottom();
     }
