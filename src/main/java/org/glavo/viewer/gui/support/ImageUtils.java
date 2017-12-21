@@ -31,6 +31,7 @@ public class ImageUtils {
 
     public static final Image copyImage = loadImage("/icons/copy.png");
     public static final Image openFileImage = loadImage("/icons/open.png");
+    public static final Image openFoldermage = loadImage("/icons/openFolder.png");
     public static final Image packageImage = loadImage("/icons/package.png");
     public static final Image helpImage = loadImage("/icons/help.png");
     public static final Image methodImage = loadImage("/icons/method.png");

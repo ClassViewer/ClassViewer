@@ -19,7 +19,7 @@ public class MyToolBar extends ToolBar {
 
         addOpenFileBottom();
         getItems().add(new Separator());
-        addOtherButtom();
+        addOtherBottom();
     }
 
     public void addOpenFileBottom() {
@@ -29,7 +29,14 @@ public class MyToolBar extends ToolBar {
         this.getItems().add(button);
     }
 
-    public void addOtherButtom() {
+    public void addOpenFolderBottom() {
+        Button button = new Button(null, new ImageView(ImageUtils.openFoldermage));
+        button.setOnAction(e -> menuBar.onOpenFolder.accept(null));
+        button.setTooltip(new Tooltip("Open folder"));
+        this.getItems().add(button);
+    }
+
+    public void addOtherBottom() {
         Button button = new Button(null, new ImageView(ImageUtils.helpImage));
         button.setOnAction(e -> {
             try {
