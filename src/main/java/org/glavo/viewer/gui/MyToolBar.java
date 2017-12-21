@@ -4,6 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import org.glavo.viewer.gui.support.ImageUtils;
+import org.glavo.viewer.util.Log;
 
 import java.awt.*;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class MyToolBar extends ToolBar {
             try {
                 Desktop.getDesktop().browse(URI.create("https://github.com/Glavo/ClassViewer/wiki"));
             } catch (IOException e1) {
-                e1.printStackTrace();
+                Log.log(e1);
             }
         });
         button.setTooltip(new Tooltip("Open user guide in browser"));
