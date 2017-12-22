@@ -28,6 +28,7 @@ public final class MyMenuBar extends MenuBar {
     Consumer<URL> onOpenFile;
     Consumer<URL> onOpenFolder;
     Runnable onNewWindow;
+    Menu recentMenu;
 
     public MyMenuBar() {
         addFileMenu();
@@ -62,13 +63,9 @@ public final class MyMenuBar extends MenuBar {
 
     private Menu createRecentMenu() {
         Menu recentMenu = new Menu("Open _Recent", ImageUtils.createImageView("/icons/clock.png"));
-        for (RecentFile rf : RecentFiles.INSTANCE.getAll()) {
-            ImageView icon = new ImageView(rf.type.icon);
-            MenuItem menuItem = new MenuItem(rf.url.toString(), icon);
-            menuItem.setOnAction(e -> onOpenFileWithType.accept(rf.type, rf.url));
-            recentMenu.getItems().add(menuItem);
-        }
         recentMenu.setMnemonicParsing(true);
+        this.recentMenu = recentMenu;
+        updateRecentFiles();
         return recentMenu;
     }
 
@@ -112,7 +109,12 @@ public final class MyMenuBar extends MenuBar {
     }
 
     public void updateRecentFiles() {
-        Menu fileMenu = getMenus().get(0);
-        fileMenu.getItems().set(2, createRecentMenu());
+        recentMenu.getItems().clear();
+        for (RecentFile rf : RecentFiles.INSTANCE.getAll()) {
+            ImageView icon = new ImageView(rf.type.icon);
+            MenuItem menuItem = new MenuItem(rf.url.toString(), icon);
+            menuItem.setOnAction(e -> onOpenFileWithType.accept(rf.type, rf.url));
+            recentMenu.getItems().add(menuItem);
+        }
     }
 }

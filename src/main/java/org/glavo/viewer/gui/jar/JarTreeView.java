@@ -14,8 +14,8 @@ import java.util.function.Consumer;
 
 public class JarTreeView extends TreeView<JarTreeNode> {
 
-     final URL jarURL;
-    private Consumer<String> openClassHandler;
+    final URL jarURL;
+    Consumer<String> openClassHandler;
 
     public JarTreeView(URL jarURL, JarTreeNode rootNode) {
         super(rootNode);
