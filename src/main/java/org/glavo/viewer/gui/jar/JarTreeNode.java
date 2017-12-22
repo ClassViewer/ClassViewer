@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public final class JarTreeNode extends TreeItem<JarTreeNode> implements MyTreeNode {
-
+    public String jarPath = null;
     public final String path;
     public final String name;
 
@@ -68,6 +68,11 @@ public final class JarTreeNode extends TreeItem<JarTreeNode> implements MyTreeNo
     @Override
     public String getName() {
         return name;
+    }
+
+    public void setJarPath(String jarPath) {
+        this.jarPath = jarPath;
+        getSubNodes().forEach(it -> it.setJarPath(jarPath));
     }
 
     void addSubNode(JarTreeNode node) {

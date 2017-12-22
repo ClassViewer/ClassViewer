@@ -5,6 +5,7 @@ import org.glavo.viewer.gui.jar.JarTreeLoader;
 import org.glavo.viewer.gui.jar.JarTreeNode;
 import org.glavo.viewer.gui.support.FileType;
 import org.glavo.viewer.gui.support.ImageUtils;
+import org.glavo.viewer.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class DirectoryTreeLoader {
                 } else if (isJarFile(subPath)) {
                     try (FileSystem fs = FileSystems.newFileSystem(subPath, null)) {
                         JarTreeNode subNode = JarTreeLoader.path2node(fs.getPath("/"), subPath.getFileName().toString());
+                        subNode.setJarPath(subPath.toString());
                         subNode.setGraphic(new ImageView(FileType.JAVA_JAR.icon));
                         node.addSubNode(subNode);
                     }
