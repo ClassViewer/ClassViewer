@@ -21,8 +21,17 @@ public class JarTreeMenu extends ContextMenu {
 
     public JarTreeMenu(JarTreeView view) {
         this.view = view;
-        MenuItem item1 = new MenuItem("Open in New Tab");
-        item1.setOnAction(event -> {
+        setOnShowing(event -> updateMenu());
+        addOpenInNewTabItem();
+        addOpenInNewWindowItem();
+        addSeparator();
+        addCopyPathItem();
+    }
+
+    void addOpenInNewTabItem() {
+        MenuItem item = new MenuItem("Open in New Tab");
+
+        item.setOnAction(event -> {
             String selectedClass = view.getSelectedClass();
             if (selectedClass != null && view.openClassHandler != null) {
                 System.out.println(selectedClass);
@@ -30,8 +39,12 @@ public class JarTreeMenu extends ContextMenu {
             }
         });
 
-        MenuItem item2 = new MenuItem("Open in New Window");
-        item2.setOnAction(event -> {
+        getItems().add(item);
+    }
+
+    void addOpenInNewWindowItem() {
+        MenuItem it = new MenuItem("Open in New Window");
+        it.setOnAction(event -> {
             Viewer viewer = new Viewer();
             viewer.start(new Stage());
             if (view.getSelectedClass() != null) {
@@ -45,10 +58,13 @@ public class JarTreeMenu extends ContextMenu {
                 }
             }
         });
+        getItems().add(it);
+    }
 
-        MenuItem item3 = new MenuItem("Copy Path");
-        item3.setGraphic(new ImageView(ImageUtils.copyImage));
-        item3.setOnAction(e -> {
+    void addCopyPathItem() {
+        MenuItem it = new MenuItem("Copy Path");
+        it.setGraphic(new ImageView(ImageUtils.copyImage));
+        it.setOnAction(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             JarTreeNode item = (JarTreeNode) view.getSelectionModel().getSelectedItem();
 
@@ -57,13 +73,23 @@ public class JarTreeMenu extends ContextMenu {
             );
             clipboard.setContents(selection, null);
         });
+        getItems().add(it);
+    }
 
+    void addSeparator() {
+        getItems().add(new SeparatorMenuItem());
+    }
 
-        this.getItems().addAll(
-                item1,
-                item2,
-                new SeparatorMenuItem(),
-                item3
-        );
+    void updateMenu() {
+        getItems().clear();
+        JarTreeNode node = view.getSelected();
+        if (node != null) {
+            if (view.getSelected().toString().endsWith(".class")) {
+                addOpenInNewTabItem();
+                addOpenInNewWindowItem();
+                addSeparator();
+            }
+            addCopyPathItem();
+        }
     }
 }
