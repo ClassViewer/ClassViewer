@@ -1,10 +1,12 @@
 package org.glavo.viewer.classfile.attribute;
 
 
+import javafx.scene.image.ImageView;
 import org.glavo.viewer.classfile.ClassFileComponent;
 import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.datatype.U2CpIndex;
 import org.glavo.viewer.classfile.jvm.AccessFlagType;
+import org.glavo.viewer.gui.support.ImageUtils;
 
 /*
 Module_attribute {
@@ -48,19 +50,25 @@ Module_attribute {
 public final class ModuleAttribute extends AttributeInfo {
 
     {
-        u2cp ("module_name_index");
-        u2   ("module_flags");
-        u2cp ("module_version_index");
-        u2   ("requires_count");
+        u2cp("module_name_index");
+        u2("module_flags");
+        u2cp("module_version_index");
+        u2("requires_count");
         table("requires", Require.class);
-        u2   ("exports_count");
+        u2("exports_count");
         table("exports", Export.class);
-        u2   ("opens_count");
+        u2("opens_count");
         table("opens", Open.class);
-        u2   ("uses_count");
+        u2("uses_count");
         table("uses_index", U2CpIndex.class);
-        u2   ("provides_count");
+        u2("provides_count");
         table("provides", Provide.class);
+    }
+
+    @Override
+    protected void postRead(ConstantPool cp) {
+        super.postRead(cp);
+        setGraphic(new ImageView(ImageUtils.javaModuleImage));
     }
 
     public static class Require extends ClassFileComponent {
@@ -83,9 +91,9 @@ public final class ModuleAttribute extends AttributeInfo {
     public static class Export extends ClassFileComponent {
 
         {
-            u2cp ("exports_index");
-            u2af ("exports_flags", AccessFlagType.AF_MODULE_ATTR);
-            u2   ("exports_to_count");
+            u2cp("exports_index");
+            u2af("exports_flags", AccessFlagType.AF_MODULE_ATTR);
+            u2("exports_to_count");
             table("exports_to", U2CpIndex.class);
         }
 
@@ -99,9 +107,9 @@ public final class ModuleAttribute extends AttributeInfo {
     public static class Open extends ClassFileComponent {
 
         {
-            u2cp ("opens_index");
-            u2af ("opens_flags", AccessFlagType.AF_MODULE_ATTR);
-            u2   ("opens_to_count");
+            u2cp("opens_index");
+            u2af("opens_flags", AccessFlagType.AF_MODULE_ATTR);
+            u2("opens_to_count");
             table("opens_to_index", U2CpIndex.class);
         }
 
@@ -115,8 +123,8 @@ public final class ModuleAttribute extends AttributeInfo {
     public static class Provide extends ClassFileComponent {
 
         {
-            u2cp ("provides_index");
-            u2   ("provides_with_count");
+            u2cp("provides_index");
+            u2("provides_with_count");
             table("provides_with_index", U2CpIndex.class);
         }
 
