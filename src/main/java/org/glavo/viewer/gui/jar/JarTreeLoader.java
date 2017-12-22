@@ -17,7 +17,9 @@ public final class JarTreeLoader {
     public static JarTreeNode load(File jarFile) throws Exception {
         URI jarUri = new URI("jar", jarFile.toPath().toUri().toString(), null);
         try (FileSystem zipFs = FileSystems.newFileSystem(jarUri, new HashMap<>())) {
-            return path2node(zipFs.getPath("/"), jarFile.getName());
+            JarTreeNode node = path2node(zipFs.getPath("/"), jarFile.getName());
+            node.isRoot = true;
+            return node;
         }
     }
 

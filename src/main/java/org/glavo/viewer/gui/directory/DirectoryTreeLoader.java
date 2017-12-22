@@ -41,6 +41,7 @@ public class DirectoryTreeLoader {
                         JarTreeNode subNode = JarTreeLoader.path2node(fs.getPath("/"), subPath.getFileName().toString());
                         subNode.setJarPath(subPath.toString());
                         subNode.setGraphic(new ImageView(FileType.JAVA_JAR.icon));
+                        subNode.isRoot = true;
                         node.addSubNode(subNode);
                     }
                 }
