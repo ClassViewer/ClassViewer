@@ -71,6 +71,10 @@ public final class JarTreeNode extends TreeItem<JarTreeNode> implements MyTreeNo
         return name;
     }
 
+    public String getPath() {
+        return path;
+    }
+
     public void setJarPath(String jarPath) {
         this.jarPath = jarPath;
         getSubNodes().forEach(it -> it.setJarPath(jarPath));
