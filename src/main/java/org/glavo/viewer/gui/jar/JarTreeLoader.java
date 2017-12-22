@@ -12,20 +12,26 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
 import java.util.HashMap;
 
-public class JarTreeLoader {
+public final class JarTreeLoader {
 
     public static JarTreeNode load(File jarFile) throws Exception {
         URI jarUri = new URI("jar", jarFile.toPath().toUri().toString(), null);
         try (FileSystem zipFs = FileSystems.newFileSystem(jarUri, new HashMap<>())) {
-            return path2node(zipFs.getPath("/"));
+            return path2node(zipFs.getPath("/"), jarFile.getName());
         }
     }
 
-    private static JarTreeNode path2node(Path path) throws IOException {
-        JarTreeNode node = new JarTreeNode(path);
+    public static JarTreeNode path2node(Path path) throws IOException {
+        return path2node(path, null);
+    }
 
+    public static JarTreeNode path2node(Path path, String rootPathName) throws IOException {
+        JarTreeNode node;
+        if (rootPathName != null)
+            node = new JarTreeNode(path, rootPathName);
+        else
+            node = new JarTreeNode(path);
         Files.walkFileTree(path, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
-
             @Override
             public FileVisitResult visitFile(Path subPath, BasicFileAttributes attrs) throws IOException {
                 if (Files.isDirectory(subPath)) {

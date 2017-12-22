@@ -3,9 +3,12 @@ package org.glavo.viewer.gui.directory;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.gui.MyTreeNode;
+import org.glavo.viewer.gui.jar.JarTreeNode;
 import org.glavo.viewer.gui.support.FileType;
 import org.glavo.viewer.gui.support.ImageUtils;
 
+import javax.swing.tree.TreeNode;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -13,7 +16,7 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.util.function.Consumer;
 
-public class DirectoryTreeView extends TreeView<DirectoryTreeNode> {
+public class DirectoryTreeView extends TreeView<MyTreeNode> {
 
     private final URL url;
     private Consumer<String> openClassHandler;
@@ -40,11 +43,18 @@ public class DirectoryTreeView extends TreeView<DirectoryTreeNode> {
 
 
     private String getSelectedClass() {
-        TreeItem<DirectoryTreeNode> selectedItem = getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            DirectoryTreeNode selectedPath = selectedItem.getValue();
-            if (selectedPath.toString().endsWith(".class")) {
-                String classUrl = "file:" + selectedPath.path;
+        TreeItem<?> selected = getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            if (selected.toString().endsWith(".class")) {
+
+                String classUrl;
+                if (selected instanceof DirectoryTreeNode) {
+                    classUrl = "file:" + ((DirectoryTreeNode) selected).path;
+                } else if (selected instanceof JarTreeNode) {
+                    classUrl = "file:" + ((JarTreeNode) selected).path;
+                } else {
+                    return null;
+                }
                 classUrl = classUrl.replace('\\', '/');
                 //System.out.println(classUrl);
                 return classUrl;

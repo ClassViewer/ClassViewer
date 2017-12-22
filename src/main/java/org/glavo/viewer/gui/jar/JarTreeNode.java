@@ -2,30 +2,46 @@ package org.glavo.viewer.gui.jar;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.gui.MyTreeNode;
 import org.glavo.viewer.gui.support.FileType;
 
 import java.nio.file.Path;
 import java.util.List;
 
-public final class JarTreeNode extends TreeItem<JarTreeNode> {
+public final class JarTreeNode extends TreeItem<JarTreeNode> implements MyTreeNode {
 
-    final String path;
-    final String name;
+    public final String path;
+    public final String name;
 
-    JarTreeNode(Path path) {
+    public JarTreeNode(Path path) {
         setValue(this);
         this.path = path.toString();
         if (path.getFileName() != null) {
-
-            this.name = path.getFileName().toString();
-
+            String s = path.getFileName().toString();
+            if (s.endsWith("/")) {
+                s = s.substring(0, s.length() - 1);
+            }
+            this.name = s;
         } else {
             String s = path.toString();
             if (s.equals("/")) {
                 this.name = "";
                 this.setGraphic(new ImageView(FileType.JAVA_JAR.icon));
             } else {
+
                 this.name = s;
+            }
+        }
+    }
+
+    public JarTreeNode(Path path, String name) {
+        setValue(this);
+        this.path = path.toString();
+        this.name = name;
+        if (path.getFileName() == null) {
+            String s = path.toString();
+            if (s.equals("/")) {
+                this.setGraphic(new ImageView(FileType.JAVA_JAR.icon));
             }
         }
     }
@@ -45,8 +61,13 @@ public final class JarTreeNode extends TreeItem<JarTreeNode> {
         return name;
     }
 
-    boolean hasSubNodes() {
+    public boolean hasSubNodes() {
         return !getSubNodes().isEmpty();
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     void addSubNode(JarTreeNode node) {
@@ -57,7 +78,7 @@ public final class JarTreeNode extends TreeItem<JarTreeNode> {
         getSubNodes().sort(JarTreeNode::comparePaths);
     }
 
-    static int comparePaths(JarTreeNode n1, JarTreeNode n2) {
+    public static int comparePaths(JarTreeNode n1, JarTreeNode n2) {
         if (n1.hasSubNodes() && !n2.hasSubNodes()) {
             return -1;
         } else if (!n1.hasSubNodes() && n2.hasSubNodes()) {
