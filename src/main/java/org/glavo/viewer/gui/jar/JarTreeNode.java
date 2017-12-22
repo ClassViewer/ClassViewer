@@ -12,6 +12,7 @@ public final class JarTreeNode extends TreeItem<JarTreeNode> implements MyTreeNo
     public String jarPath = null;
     public final String path;
     public final String name;
+    public boolean isRoot = false;
 
     public JarTreeNode(Path path) {
         setValue(this);

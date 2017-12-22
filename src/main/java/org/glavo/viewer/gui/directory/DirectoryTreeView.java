@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 public class DirectoryTreeView extends TreeView<MyTreeNode> {
 
     private final URL url;
-    private Consumer<String> openClassHandler;
+    Consumer<String> openClassHandler;
 
     public DirectoryTreeView(URL url, DirectoryTreeNode rootNode) {
         super(rootNode);
@@ -37,6 +37,7 @@ public class DirectoryTreeView extends TreeView<MyTreeNode> {
             }
         });
         rootNode.setGraphic(new ImageView(FileType.FOLDER.icon));
+        setContextMenu(new DirectoryTreeMenu(this));
     }
 
     public void setOpenClassHandler(Consumer<String> openClassHandler) {
@@ -44,7 +45,7 @@ public class DirectoryTreeView extends TreeView<MyTreeNode> {
     }
 
 
-    private String getSelectedClass() {
+    String getSelectedClass() {
         TreeItem<?> selected = getSelectionModel().getSelectedItem();
         String classUrl = null;
         if (selected instanceof DirectoryTreeNode) {
