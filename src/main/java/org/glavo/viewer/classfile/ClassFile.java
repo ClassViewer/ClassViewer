@@ -67,6 +67,7 @@ public final class ClassFile extends ClassFileComponent {
         U2AccessFlags acc = (U2AccessFlags) get("access_flags");
 
         HBox box = new HBox();
+        boolean isKt = isKotlin();
 
         if (acc.isAnnotation()) {
             box.getChildren().add(new ImageView(ImageUtils.annotationImage));
@@ -93,5 +94,9 @@ public final class ClassFile extends ClassFileComponent {
         }
 
         setGraphic(box);
+    }
+
+    private boolean isKotlin() {
+        return false;
     }
 }
