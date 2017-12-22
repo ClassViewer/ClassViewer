@@ -12,6 +12,7 @@ import java.util.List;
 public final class DirectoryTreeNode extends TreeItem<MyTreeNode> implements MyTreeNode {
 
     final String path;
+
     final String name;
 
     DirectoryTreeNode(Path path) {
@@ -47,6 +48,12 @@ public final class DirectoryTreeNode extends TreeItem<MyTreeNode> implements MyT
     public String getName() {
         return name;
     }
+
+
+    public String getPath() {
+        return path;
+    }
+
 
     void addSubNode(MyTreeNode node) {
         getSubNodes().add(node);
