@@ -2,12 +2,14 @@ package org.glavo.viewer.gui.directory;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.gui.MyTreeNode;
+import org.glavo.viewer.gui.jar.JarTreeNode;
 import org.glavo.viewer.gui.support.FileType;
 
 import java.nio.file.Path;
 import java.util.List;
 
-public final class DirectoryTreeNode extends TreeItem<DirectoryTreeNode> {
+public final class DirectoryTreeNode extends TreeItem<MyTreeNode> implements MyTreeNode {
 
     final String path;
     final String name;
@@ -23,7 +25,7 @@ public final class DirectoryTreeNode extends TreeItem<DirectoryTreeNode> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<DirectoryTreeNode> getSubNodes() {
+    public List<MyTreeNode> getSubNodes() {
         return (List) super.getChildren();
     }
 
@@ -37,11 +39,16 @@ public final class DirectoryTreeNode extends TreeItem<DirectoryTreeNode> {
         return name;
     }
 
-    boolean hasSubNodes() {
+    public boolean hasSubNodes() {
         return !getSubNodes().isEmpty();
     }
 
-    void addSubNode(DirectoryTreeNode node) {
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    void addSubNode(MyTreeNode node) {
         getSubNodes().add(node);
     }
 
@@ -49,13 +56,13 @@ public final class DirectoryTreeNode extends TreeItem<DirectoryTreeNode> {
         getSubNodes().sort(DirectoryTreeNode::comparePaths);
     }
 
-    static int comparePaths(DirectoryTreeNode n1, DirectoryTreeNode n2) {
+    public static int comparePaths(MyTreeNode n1, MyTreeNode n2) {
         if (n1.hasSubNodes() && !n2.hasSubNodes()) {
             return -1;
         } else if (!n1.hasSubNodes() && n2.hasSubNodes()) {
             return 1;
         } else {
-            return n1.name.compareTo(n2.name);
+            return n1.getName().compareTo(n2.getName());
         }
     }
 

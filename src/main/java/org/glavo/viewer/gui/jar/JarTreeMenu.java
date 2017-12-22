@@ -22,10 +22,7 @@ public class JarTreeMenu extends ContextMenu {
     public JarTreeMenu(JarTreeView view) {
         this.view = view;
         setOnShowing(event -> updateMenu());
-        addOpenInNewTabItem();
-        addOpenInNewWindowItem();
         addSeparator();
-        addCopyPathItem();
     }
 
     void addOpenInNewTabItem() {

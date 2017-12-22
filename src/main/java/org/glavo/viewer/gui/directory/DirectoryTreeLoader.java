@@ -1,6 +1,8 @@
 package org.glavo.viewer.gui.directory;
 
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.gui.jar.JarTreeLoader;
+import org.glavo.viewer.gui.jar.JarTreeNode;
 import org.glavo.viewer.gui.support.FileType;
 import org.glavo.viewer.gui.support.ImageUtils;
 
@@ -28,13 +30,17 @@ public class DirectoryTreeLoader {
                 if (Files.isDirectory(subPath)) {
                     DirectoryTreeNode subNode = path2node(subPath);
                     subNode.setGraphic(new ImageView(FileType.FOLDER.icon));
-                    if (subNode.hasSubNodes()) {
-                        node.addSubNode(subNode);
-                    }
+                    node.addSubNode(subNode);
                 } else if (isClassFile(subPath)) {
                     DirectoryTreeNode n = new DirectoryTreeNode(subPath);
                     n.setGraphic(new ImageView(FileType.JAVA_CLASS.icon));
                     node.addSubNode(n);
+                } else if (isJarFile(subPath)) {
+                    try (FileSystem fs = FileSystems.newFileSystem(subPath, null)) {
+                        JarTreeNode subNode = JarTreeLoader.path2node(fs.getPath("/"), subPath.getFileName().toString());
+                        subNode.setGraphic(new ImageView(FileType.JAVA_JAR.icon));
+                        node.addSubNode(subNode);
+                    }
                 }
 
                 return FileVisitResult.CONTINUE;
@@ -48,6 +54,10 @@ public class DirectoryTreeLoader {
 
     private static boolean isClassFile(Path p) {
         return p.toString().endsWith(".class");
+    }
+
+    private static boolean isJarFile(Path p) {
+        return p.toString().endsWith(".jar");
     }
 
 }
