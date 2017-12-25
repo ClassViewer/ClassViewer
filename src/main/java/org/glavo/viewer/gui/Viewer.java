@@ -43,11 +43,14 @@ public class Viewer extends Application {
 
     public static Cmd cmd = new Cmd();
 
+    static {
+        FontUtils.init();
+    }
+
     private Stage stage;
     private BorderPane root;
     private MyMenuBar menuBar;
     private MyToolBar toolBar;
-    private Font defaultFont = FontUtils.uiFont;
 
     @Override
     public void start(Stage stage) {
@@ -68,28 +71,6 @@ public class Viewer extends Application {
         stage.setTitle(TITLE);
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
-
-        scene.setOnDragOver(event -> {
-            Dragboard db = event.getDragboard();
-            if (db.hasFiles()) {
-                event.acceptTransferModes(TransferMode.COPY);
-            } else {
-                event.consume();
-            }
-        });
-
-        scene.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasFiles()) {
-                success = true;
-                for (File file : db.getFiles()) {
-                    openFile(file);
-                }
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
 
         if (cmd.files != null) {
             for (String file : cmd.files) {
@@ -133,7 +114,7 @@ public class Viewer extends Application {
         menuBar.setOnOpenFile(this::onOpenFile);
         menuBar.setOnOpenFolder(this::onOpenFolder);
         menuBar.setOnNewWindow(this::openNewWindow);
-        //menuBar.setUseSystemMenuBar(true);
+        menuBar.setUseSystemMenuBar(true);
 
         return menuBar;
     }
