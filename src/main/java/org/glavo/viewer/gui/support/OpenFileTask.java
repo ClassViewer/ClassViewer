@@ -19,8 +19,6 @@ import org.glavo.viewer.util.UrlUtils;
 public class OpenFileTask extends Task<OpenFileResult> {
 
     private static final byte[] classMagicNumber = {(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
-    private static final byte[] binaryChunkSig = {0x1B, 'L', 'u', 'a'};
-
 
     private final URL url;
 

@@ -17,5 +17,5 @@ gradle-app.setting
 
 /out/
 
-ClassEditor.iml
+*.iml
 /.idea/*

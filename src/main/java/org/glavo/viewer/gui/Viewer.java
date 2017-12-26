@@ -2,20 +2,14 @@ package org.glavo.viewer.gui;
 
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import org.glavo.viewer.gui.directory.DirectoryTreeNode;
 import org.glavo.viewer.gui.directory.DirectoryTreeView;
 import org.glavo.viewer.gui.jar.JarTreeView;
 import org.glavo.viewer.gui.parsed.ParsedViewerPane;
@@ -41,7 +35,7 @@ public class Viewer extends Application {
     public static final int DEFAULT_WIDTH = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 7 * 4;
     public static final int DEFAULT_HEIGHT = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 5 * 3;
 
-    public static Cmd cmd = new Cmd();
+    public static Command globalCommand = new Command();
 
     static {
         FontUtils.init();
@@ -51,6 +45,15 @@ public class Viewer extends Application {
     private BorderPane root;
     private MyMenuBar menuBar;
     private MyToolBar toolBar;
+    private Command command;
+
+    public Viewer() {
+        command = globalCommand;
+    }
+
+    public Viewer(Command command) {
+        this.command = command;
+    }
 
     @Override
     public void start(Stage stage) {
@@ -72,10 +75,11 @@ public class Viewer extends Application {
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
 
-        if (cmd.files != null) {
-            for (String file : cmd.files) {
+
+        if (command.getArgs() != null) {
+            for (String file : command.getArgs()) {
                 try {
-                    openFileInThisThread(new File(file).toURI().toURL());
+                    openFileInThisThread(new URL(file));
                 } catch (MalformedURLException e) {
                     Log.log(e);
                 }
@@ -256,6 +260,7 @@ public class Viewer extends Application {
     }
 
     public static void main(String[] args) {
-        launch(Viewer.class, cmd.parse(args));
+        globalCommand = new Command(args);
+        launch(Viewer.class, globalCommand.getArgs());
     }
 }
