@@ -1,19 +1,23 @@
-package org.glavo.viewer.gui.support;
+package org.glavo.viewer.util;
 
 import javafx.scene.text.Font;
-import org.glavo.viewer.util.Log;
 
 public class FontUtils {
     private FontUtils() {
     }
 
     static {
-        Log.log("loading fonts...");
+        Log.info("Load fonts");
     }
 
     public static Font uiFont = Font.loadFont(FontUtils.class.getResourceAsStream("/fonts/UI.ttf"), 15);
 
     public static Font textFont = Font.loadFont(FontUtils.class.getResourceAsStream("/fonts/Text.ttf"), 15);
+
+    static {
+        Log.debug("UIFont=" + uiFont);
+        Log.debug("TextFont=" + textFont);
+    }
 
     public static void init() {
 

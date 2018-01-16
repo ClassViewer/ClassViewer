@@ -4,7 +4,7 @@ package org.glavo.viewer.classfile.attribute;
 import javafx.scene.image.ImageView;
 import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.datatype.U2CpIndex;
-import org.glavo.viewer.gui.support.ImageUtils;
+import org.glavo.viewer.util.ImageUtils;
 
 /*
 Exceptions_attribute {

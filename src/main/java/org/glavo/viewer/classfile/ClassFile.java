@@ -3,16 +3,13 @@ package org.glavo.viewer.classfile;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import org.glavo.viewer.FileComponent;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.datatype.U2;
 import org.glavo.viewer.classfile.datatype.U2AccessFlags;
 import org.glavo.viewer.classfile.datatype.U2CpIndex;
 import org.glavo.viewer.classfile.jvm.AccessFlagType;
-import org.glavo.viewer.classfile.jvm.AccessFlags;
-import org.glavo.viewer.gui.support.FileType;
-import org.glavo.viewer.gui.support.ImageUtils;
+import org.glavo.viewer.util.ImageUtils;
 
 /*
 ClassFile {

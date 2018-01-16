@@ -6,8 +6,7 @@ import org.glavo.viewer.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.datatype.U2AccessFlags;
 import org.glavo.viewer.classfile.jvm.AccessFlagType;
-import org.glavo.viewer.classfile.jvm.AccessFlags;
-import org.glavo.viewer.gui.support.ImageUtils;
+import org.glavo.viewer.util.ImageUtils;
 
 /*
 method_info {

@@ -1,48 +1,67 @@
 package org.glavo.viewer.util;
 
-import java.util.Objects;
+import static org.glavo.viewer.gui.Options.color;
+import static org.glavo.viewer.gui.Options.debug;
 
-public class Log {
-    public static boolean color = !System.getProperty("os.name").toLowerCase().contains("win");
-
-    static {
-        String s = System.getProperty("viewer.color");
-        if (s != null) {
-            s = s.toLowerCase();
-            if (s.equals("true"))
-                color = true;
-            else if (s.equals("false"))
-                color = false;
-        }
-    }
-
-    public static void log(Object message) {
-        System.out.print("\u001b[32m\u001b[1m[INFO]\u001b[0m ");
-        System.out.println(message);
-    }
-
-    public static void log(Throwable exception) {
-        System.err.print("\u001b[31m\u001b[1m[ERROR]\u001b[0m ");
-        exception.printStackTrace(System.err);
-    }
-
-    public static void info(String message) {
-        System.out.print("\u001b[32m\u001b[1m[INFO]\u001b[0m ");
-        System.out.println(message);
-    }
-
-    public static void warning(String message) {
-        System.out.print("\u001b[33m\u001b[1m[WARNING]\u001b[0m ");
-        System.out.println(message);
-    }
-
-    public static void error(String message) {
-        System.err.print("\u001b[31m\u001b[1m[ERROR]\u001b[0m ");
-        System.err.println(message);
+public final class Log {
+    public static void trace(Object obj) {
+        if (!debug) return;
+        if (color)
+            System.out.print("\u001b[36m\u001b[1m[TRACE]\u001b[0m ");
+        else
+            System.out.print("[TRACE] ");
+        System.out.println(obj);
     }
 
     public static void debug(Object obj) {
-        System.out.print("\u001b[34m\u001b[1m[DEBUG]\u001b[0m ");
-        System.out.println(Objects.toString(obj));
+        if (!debug) return;
+        if (color)
+            System.out.print("\u001b[34m\u001b[1m[DEBUG]\u001b[0m ");
+        else
+            System.out.print("[DEBUG] ");
+        System.out.println(obj);
     }
+
+    public static void info(Object message) {
+        if (color)
+            System.out.print("\u001b[32m\u001b[1m[INFO]\u001b[0m ");
+        else
+            System.out.print("[INFO] ");
+        System.out.println(message);
+    }
+
+    public static void warning(Object message) {
+        if (color)
+            System.out.print("\u001b[33m\u001b[1m[WARNING]\u001b[0m ");
+        else
+            System.out.print("[WARNING] ");
+        System.out.println(message);
+    }
+
+    public static void error(Object message) {
+        if (color)
+            System.err.print("\u001b[31m\u001b[1m[ERROR]\u001b[0m ");
+        else
+            System.err.print("[ERROR] ");
+        System.err.println(message);
+    }
+
+
+    public static void error(Throwable exception) {
+        error(exception != null ? exception.getMessage() : "", exception);
+    }
+
+
+    public static void error(Object message, Throwable exception) {
+        if (color)
+            System.err.println("\u001b[31m\u001b[1m[ERROR]\u001b[0m " + message);
+        else
+            System.err.println("[ERROR] " + message);
+        if (exception != null)
+            exception.printStackTrace(System.err);
+        else
+            System.err.println("null");
+    }
+
 }
+
