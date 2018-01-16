@@ -2,11 +2,9 @@ group 'org.glavo'
 version '3.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
-mainClassName = 'org.glavo.viewer.gui.Viewer'
 repositories {
     mavenCentral()
 }
@@ -20,4 +18,13 @@ jar {
         attributes 'Implementation-Version': '1.2',
                 'Main-Class': 'org.glavo.viewer.gui.Viewer'
     }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+task run(type: JavaExec, dependsOn: jar) {
+    main = "-jar"
+    args jar.archivePath
 }

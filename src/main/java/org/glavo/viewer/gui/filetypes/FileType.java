@@ -11,6 +11,7 @@ public abstract class FileType {
             ClassFileType.Instance
     };
 
+
     public FileChooser.ExtensionFilter filter = null;
 
     public abstract boolean accept(URL url);
