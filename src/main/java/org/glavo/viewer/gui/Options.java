@@ -1,5 +1,7 @@
 package org.glavo.viewer.gui;
 
+import javafx.scene.text.Font;
+import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.Log;
 
 import java.util.Arrays;
@@ -38,6 +40,21 @@ public final class Options {
         }
         Log.debug("Options.color=" + Options.color);
 
+        String uiFont = get(properties, "viewer.fonts.ui");
+        if (uiFont != null) {
+            FontUtils.uiFont =  Font.font(uiFont, 15);
+        } else {
+            FontUtils.initUiFont();
+        }
+        Log.debug("UIFont=" + FontUtils.uiFont);
+
+        String textFont = get(properties, "viewer.fonts.text");
+        if (textFont != null) {
+            FontUtils.textFont =  Font.font(textFont, 15);
+        } else {
+            FontUtils.initTextFont();
+        }
+        Log.debug("TextFont=" + FontUtils.textFont);
     }
 
     private static String get(List<Properties> properties, String key) {
