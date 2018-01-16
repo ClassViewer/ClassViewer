@@ -11,6 +11,13 @@ public abstract class FileType {
             ClassFileType.Instance
     };
 
+    public static FileType valueOf(String name) {
+        switch (name) {
+            case "JAVA_CLASS":
+                return ClassFileType.Instance;
+        }
+        return null;
+    }
 
     public FileChooser.ExtensionFilter filter = null;
 

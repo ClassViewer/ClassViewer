@@ -25,4 +25,9 @@ public final class ClassFileType extends FileType {
     public void open(Viewer viewer, URL url, boolean createNewTab) {
 
     }
+
+    @Override
+    public String toString() {
+        return "JAVA_CLASS";
+    }
 }
