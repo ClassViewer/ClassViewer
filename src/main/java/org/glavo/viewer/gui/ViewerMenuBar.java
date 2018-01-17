@@ -21,6 +21,9 @@ public final class ViewerMenuBar extends MenuBar {
 
             openFile.setGraphic(new ImageView(ImageUtils.openFileImage));
             openFolder.setGraphic(new ImageView(ImageUtils.openFolderImage));
+
+            openFile.setOnAction(event -> viewer.openFile());
+
             this.getItems().addAll(openFile, openFolder, openRecent);
         }
     }

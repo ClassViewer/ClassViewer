@@ -2,15 +2,21 @@ package org.glavo.viewer.gui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.util.Log;
+
+import java.io.File;
+import java.util.List;
 
 public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
 
-    public static final int DEFAULT_WIDTH = 800;
-    public static final int DEFAULT_HEIGHT = 500;
+    public static final int DEFAULT_WIDTH = 1000;
+    public static final int DEFAULT_HEIGHT = 700;
 
     public static void main(String[] args) {
         Options.init();
@@ -43,6 +49,32 @@ public final class Viewer extends Application {
         stage.show();
     }
 
+    @SuppressWarnings("unchecked")
+    public void openFile() {
+        try {
+            File file = ViewerFileChooser.showFileChooser(stage);
+            Log.info("Open file: " + file);
+            if (file != null) {
+                OpenFileTask task = new OpenFileTask(this, file.toURI().toURL());
+                task.setOnSucceeded(event -> {
+                    List<Tab> tabs = (List<Tab>) event.getSource().getValue();
+                    if (tabs != null && !tabs.isEmpty()) {
+                        if (tabs.size() == 1) {
+                            tabPane.getTabs().add(tabs.get(0));
+                            tabPane.getSelectionModel().select(tabs.get(0));
+                        } else {
+                            tabPane.getTabs().addAll(tabs);
+                        }
+                    }
+                });
+                task.runInNewThread();
+            }
+        } catch (Exception e) {
+            Log.error(e);
+            ViewerAlert.exceptionAlert(e);
+        }
+    }
+
     public Stage getStage() {
         return stage;
     }
@@ -57,5 +89,9 @@ public final class Viewer extends Application {
 
     public ViewerMenuBar getMenuBar() {
         return menuBar;
+    }
+
+    public ViewerTabPane getTabPane() {
+        return tabPane;
     }
 }

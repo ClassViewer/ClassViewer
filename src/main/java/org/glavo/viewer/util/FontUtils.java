@@ -22,26 +22,33 @@ public class FontUtils {
         setFont(node, uiFont);
     }
 
+    public static String setUIFont(String style) {
+        return setFont(style, uiFont);
+    }
+
     public static void setTextFont(Node node) {
         setFont(node, textFont);
     }
 
-    public static void setFont(Node node, Font font) {
-        Matcher ans = fontFamily.matcher(node.getStyle());
+    public static String setFont(String style, Font font) {
+        return setFont(style != null ? style : "", font.getFamily());
+    }
+
+    public static String setFont(String style, String font) {
+        Matcher ans = fontFamily.matcher(style);
         if (ans.find()) {
-            node.setStyle(ans.replaceFirst("-fx-font-family: \"" + font.getFamily() + "\";"));
+            return ans.replaceFirst("-fx-font-family: \"" + font + "\";");
         } else {
-            node.setStyle(node.getStyle() + "-fx-font-family: \"" + font.getFamily() + "\";");
+            return (style + "-fx-font-family: \"" + font + "\";");
         }
     }
 
+    public static void setFont(Node node, Font font) {
+        node.setStyle(setFont(node.getStyle(), font));
+    }
+
     public static void setFont(Node node, String name) {
-        Matcher ans = fontFamily.matcher(node.getStyle());
-        if (ans.find()) {
-            node.setStyle(ans.replaceFirst("-fx-font-family: \"" + name + "\""));
-        } else {
-            node.setStyle(node.getStyle() + "-fx-font-family: \"" + name + "\"");
-        }
+        node.setStyle(setFont(node.getStyle(), name));
     }
 
     public static void initUiFont() {

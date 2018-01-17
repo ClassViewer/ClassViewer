@@ -4,6 +4,11 @@ import javafx.scene.text.Font;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,8 +18,36 @@ public final class Options {
     public static boolean color = true;
     public static boolean debug = false;
 
+    public static Path path = Paths.get(System.getProperty("user.home")).resolve(".viewer");
+
     public static void init() {
-        init(System.getProperties());
+        String p = System.getProperty("viewer.path");
+        if (p != null) {
+            path = Paths.get(p);
+        }
+        try {
+            if (Files.notExists(path)) {
+                Files.createDirectories(path);
+            }
+        } catch (IOException e) {
+            Log.error(e);
+        }
+        if (Files.exists(path.resolve("viewer.properties"))) {
+            Log.info("Load Properties file: " + path.resolve("viewer.properties"));
+            try (InputStream is = Files.newInputStream(path.resolve("viewer.properties"))) {
+                Properties ps = new Properties();
+                ps.load(is);
+                init(System.getProperties(), ps);
+            } catch (IOException e) {
+                Log.error(e);
+                init(System.getProperties());
+            }
+        } else {
+            Log.info("Not found Properties file");
+            init(System.getProperties());
+        }
+
+        RecentFiles.init();
     }
 
     public static void init(Properties... properties) {
@@ -30,6 +63,7 @@ public final class Options {
         }
 
         Options.debug = defined(properties, "viewer.debug");
+        Log.setting("DEBUG", debug);
 
         boolean color = defined(properties, "viewer.color");
         if (System.getProperty("os.name", "windows").toLowerCase().contains("win")) {
@@ -38,23 +72,23 @@ public final class Options {
         if (color) {
             Options.color = !Options.color;
         }
-        Log.debug("Options.color=" + Options.color);
+        Log.setting("Options.color", Options.color);
 
         String uiFont = get(properties, "viewer.fonts.ui");
         if (uiFont != null) {
-            FontUtils.uiFont =  Font.font(uiFont, 15);
+            FontUtils.uiFont = Font.font(uiFont, 15);
         } else {
             FontUtils.initUiFont();
         }
-        Log.debug("UIFont=" + FontUtils.uiFont);
+        Log.setting("UIFont", FontUtils.uiFont);
 
         String textFont = get(properties, "viewer.fonts.text");
         if (textFont != null) {
-            FontUtils.textFont =  Font.font(textFont, 15);
+            FontUtils.textFont = Font.font(textFont, 15);
         } else {
             FontUtils.initTextFont();
         }
-        Log.debug("TextFont=" + FontUtils.textFont);
+        Log.setting("TextFont", FontUtils.textFont);
     }
 
     private static String get(List<Properties> properties, String key) {

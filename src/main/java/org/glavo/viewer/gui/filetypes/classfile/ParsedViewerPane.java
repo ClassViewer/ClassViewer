@@ -7,7 +7,10 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import org.glavo.viewer.FileComponent;
+import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.Log;
+
+import java.awt.*;
 
 /**
  * Container of TreeView, HexPane, StatusBar and BytesBar.
@@ -34,6 +37,8 @@ public class ParsedViewerPane extends BorderPane {
         bytesBar.setMaxHeight(statusLabel.getMaxHeight());
         bytesBar.setPrefWidth(200);
 
+        FontUtils.setUIFont(statusLabel);
+
         super.setCenter(buildSplitPane());
         super.setBottom(buildStatusBar());
         listenTreeItemSelection();
@@ -44,7 +49,7 @@ public class ParsedViewerPane extends BorderPane {
 
         TreeView<FileComponent> tree = new TreeView<>(file);
         tree.setMinWidth(200);
-
+        FontUtils.setUIFont(tree);
         return tree;
     }
 
@@ -64,22 +69,23 @@ public class ParsedViewerPane extends BorderPane {
     }
 
     private void listenTreeItemSelection() {
-        tree.getSelectionModel().getSelectedItems().addListener(
-                (ListChangeListener.Change<? extends TreeItem<FileComponent>> c) -> {
-                    if (c.next() && c.wasAdded()) {
-                        TreeItem<FileComponent> node = c.getList().get(c.getFrom());
-                        if (node != null && node.getParent() != null) {
-                            FileComponent cc = node.getValue();
-                            Log.info("Select " + cc);
-                            statusLabel.setText(cc.toString());
-                            if (cc.getLength() > 0) {
-                                hexPane.select(cc);
-                                bytesBar.select(cc);
-                            }
-                        }
-                    }
+        tree.getSelectionModel().getSelectedItems().addListener(this::selectItemAction);
+    }
+
+
+    private void selectItemAction(ListChangeListener.Change<? extends TreeItem<FileComponent>> c) {
+        if (c.next() && c.wasAdded()) {
+            TreeItem<FileComponent> node = c.getList().get(c.getFrom());
+            if (node != null && node.getParent() != null) {
+                FileComponent cc = node.getValue();
+                Log.info("Select " + cc);
+                statusLabel.setText(cc.toString());
+                if (cc.getLength() > 0) {
+                    hexPane.select(cc);
+                    bytesBar.select(cc);
                 }
-        );
+            }
+        }
     }
 
 }
