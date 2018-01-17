@@ -3,7 +3,10 @@ package org.glavo.viewer.gui;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.Log;
@@ -11,7 +14,9 @@ import org.glavo.viewer.util.Log;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
@@ -30,6 +35,7 @@ public final class Viewer extends Application {
 
     private ViewerMenuBar menuBar;
     private ViewerTabPane tabPane;
+    private ViewerToolBar toolBar;
 
     @Override
     public void start(Stage stage) {
@@ -37,17 +43,40 @@ public final class Viewer extends Application {
         this.pane = new BorderPane();
         this.menuBar = new ViewerMenuBar(this);
         this.tabPane = new ViewerTabPane(this);
+        this.toolBar = new ViewerToolBar(this);
 
-        pane.setTop(menuBar);
+        pane.setTop(new VBox(
+                menuBar,
+                toolBar
+        ));
         pane.setCenter(tabPane);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
+        enableDragAndDrop(scene);
 
         stage.setScene(scene);
         stage.setTitle(TITLE);
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
+
         stage.show();
+
+        List<String> args = this.getParameters().getUnnamed();
+        try {
+            tabPane.getTabs().addAll(new OpenFileTask(this, args.stream().map(it -> {
+                try {
+                    return new File(it).toURI().toURL();
+                } catch (MalformedURLException e) {
+                    Log.error(e);
+                    ViewerAlert.exceptionAlert(e);
+                    return null;
+                }
+            }).toArray(URL[]::new)).call());
+        } catch (Exception e) {
+            Log.error(e);
+            ViewerAlert.exceptionAlert(e);
+        }
     }
 
     public void openFile() {
@@ -82,14 +111,7 @@ public final class Viewer extends Application {
                 OpenFileTask task = new OpenFileTask(this, url);
                 task.setOnSucceeded(event -> {
                     List<Tab> tabs = (List<Tab>) event.getSource().getValue();
-                    if (tabs != null && !tabs.isEmpty()) {
-                        if (tabs.size() == 1) {
-                            tabPane.getTabs().add(tabs.get(0));
-                            tabPane.getSelectionModel().select(tabs.get(0));
-                        } else {
-                            tabPane.getTabs().addAll(tabs);
-                        }
-                    }
+                    addTabs(tabs);
                     menuBar.updateRecentFiles();
                 });
                 task.runInNewThread();
@@ -100,7 +122,52 @@ public final class Viewer extends Application {
         }
     }
 
+    public void addTabs(List<Tab> tabs) {
+        if (tabs == null || tabs.isEmpty()) {
+            return;
+        }
 
+        if (tabs.size() == 1) {
+            Tab tab = tabs.get(0);
+            tabPane.getTabs().add(tabPane.getSelectionModel().getSelectedIndex() + 1, tab);
+            tabPane.getSelectionModel().select(tab);
+            return;
+        }
+
+        tabPane.getTabs().addAll(tabPane.getSelectionModel().getSelectedIndex() + 1, tabs);
+    }
+
+
+    private void enableDragAndDrop(Scene scene) {
+        scene.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            } else {
+                event.consume();
+            }
+        });
+
+        // Dropping over surface
+        scene.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasFiles()) {
+                success = true;
+                for (File file : db.getFiles()) {
+                    //System.out.println(file.getAbsolutePath());
+                    try {
+                        openFile(file.toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        Log.error(e);
+                        ViewerAlert.exceptionAlert(e);
+                    }
+                }
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+    }
 
     public Stage getStage() {
         return stage;
