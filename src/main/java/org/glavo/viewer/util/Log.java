@@ -1,25 +1,20 @@
 package org.glavo.viewer.util;
 
-import java.util.Objects;
-
 import static org.glavo.viewer.gui.Options.color;
 import static org.glavo.viewer.gui.Options.debug;
 
 public final class Log {
     public static void setting(String name, Object value) {
-        if (!debug) return;
-        if (color){
+        if (color) {
             System.out.print("\u001b[35m\u001b[1m[Setting]\u001b[0m ");
             System.out.println("\u001b[34m\u001b[1m" + name + "\u001b[0m=\u001b[1m" + value + "\u001b[0m");
-        }
-        else{
+        } else {
             System.out.print("[Setting] ");
             System.out.println(name + "=" + value);
         }
     }
 
     public static void trace(Object obj) {
-        if (!debug) return;
         if (color)
             System.out.print("\u001b[36m\u001b[1m[TRACE]\u001b[0m ");
         else

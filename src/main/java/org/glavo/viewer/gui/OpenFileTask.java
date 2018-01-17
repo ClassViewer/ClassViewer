@@ -14,7 +14,7 @@ public class OpenFileTask extends Task<List<Tab>> {
     private Viewer viewer;
     private URL[] urls;
 
-    public OpenFileTask(Viewer viewer, URL ...urls) {
+    public OpenFileTask(Viewer viewer, URL... urls) {
         this.viewer = viewer;
         this.urls = urls;
 
