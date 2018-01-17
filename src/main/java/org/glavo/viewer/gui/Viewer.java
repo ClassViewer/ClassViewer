@@ -9,6 +9,8 @@ import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.Log;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 public final class Viewer extends Application {
@@ -48,13 +50,24 @@ public final class Viewer extends Application {
         stage.show();
     }
 
-    @SuppressWarnings("unchecked")
     public void openFile() {
+        File file = ViewerFileChooser.showFileChooser(stage);
+        if (file != null) {
+            try {
+                openFile(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                Log.error(e);
+                ViewerAlert.exceptionAlert(e);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void openFile(URL url) {
         try {
-            File file = ViewerFileChooser.showFileChooser(stage);
-            Log.info("Open file: " + file);
-            if (file != null) {
-                OpenFileTask task = new OpenFileTask(this, file.toURI().toURL());
+            Log.info("Open file: " + url);
+            if (url != null) {
+                OpenFileTask task = new OpenFileTask(this, url);
                 task.setOnSucceeded(event -> {
                     List<Tab> tabs = (List<Tab>) event.getSource().getValue();
                     if (tabs != null && !tabs.isEmpty()) {
@@ -65,6 +78,7 @@ public final class Viewer extends Application {
                             tabPane.getTabs().addAll(tabs);
                         }
                     }
+                    menuBar.updateRecentFiles();
                 });
                 task.runInNewThread();
             }
@@ -73,6 +87,7 @@ public final class Viewer extends Application {
             ViewerAlert.exceptionAlert(e);
         }
     }
+
 
     public Stage getStage() {
         return stage;

@@ -24,6 +24,11 @@ public final class RecentFile {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof RecentFile && (((RecentFile)obj).type == type) && (((RecentFile)obj).url.equals(url));
+    }
+
+    @Override
     public String toString() {
         return type + "#=>" + url;
     }

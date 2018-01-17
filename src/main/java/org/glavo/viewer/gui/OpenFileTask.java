@@ -8,7 +8,6 @@ import org.glavo.viewer.util.Log;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OpenFileTask extends Task<List<Tab>> {
@@ -34,6 +33,7 @@ public class OpenFileTask extends Task<List<Tab>> {
             for (FileType type : FileType.fileTypes) {
                 if (type.accept(url)) {
                     ans.add(type.open(viewer, url));
+                    RecentFiles.Instance.add(type, url);
                 }
             }
         }

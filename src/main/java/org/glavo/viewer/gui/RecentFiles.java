@@ -21,7 +21,6 @@ public final class RecentFiles {
     }
 
     private final LinkedList<RecentFile> list = new LinkedList<>();
-    private boolean listChanged = false;
 
     private RecentFiles() {
         load();
@@ -70,10 +69,9 @@ public final class RecentFiles {
     }
 
     private void add(RecentFile rf) {
-        listChanged = true;
         list.remove(rf);
         list.addFirst(rf);
-        // todo
+
         if (list.size() > 20) {
             list.removeLast();
         }
@@ -110,7 +108,7 @@ public final class RecentFiles {
                 reader.lines().forEach(line -> {
                     if (line.contains("#=>")) {
                         try {
-                            list.addLast(RecentFile.parse(line));
+                            list.add(RecentFile.parse(line));
                         } catch (MalformedURLException | IllegalArgumentException e) {
                             Log.error(e);
                         }

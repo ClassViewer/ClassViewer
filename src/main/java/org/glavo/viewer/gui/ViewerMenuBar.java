@@ -6,6 +6,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.util.UrlUtils;
 
 import static org.glavo.viewer.util.FontUtils.setUIFont;
 
@@ -56,6 +57,16 @@ public final class ViewerMenuBar extends MenuBar {
     public ViewerMenuBar(Viewer viewer) {
         this.viewer = viewer;
         this.getMenus().addAll(fileMenu, windowMenu, helpMenu);
+        updateRecentFiles();
         setUIFont(this);
+    }
+
+    public void updateRecentFiles() {
+        this.fileMenu.openRecent.getItems().clear();
+        for (RecentFile file : RecentFiles.Instance.getAll()) {
+            MenuItem item = new MenuItem(file.url.toString(), new ImageView(file.type.icon));
+            item.setOnAction(event -> viewer.openFile(file.url));
+            this.fileMenu.openRecent.getItems().add(item);
+        }
     }
 }
