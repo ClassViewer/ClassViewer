@@ -89,7 +89,19 @@ public final class JarFileType extends FileType {
         tab.setStyle(FontUtils.setUIFont(tab.getStyle()));
         tab.setText(UrlUtils.getFileName(url));
         tab.setGraphic(new ImageView(icon));
-        tab.setContent(new FileTreeView(viewer, load(url)));
+
+        FileTreeView view = new FileTreeView(viewer, load(url));
+        view.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                FileTreeNode node = view.getSelected();
+                if(node != null && node.getUrl().toString().endsWith(".class")) {
+                    Log.info("Open Class File: " + node.getUrl());
+                    viewer.openFile(node.getUrl());
+                }
+            }
+        });
+
+        tab.setContent(view);
 
         return tab;
     }

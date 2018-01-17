@@ -12,4 +12,8 @@ public class FileTreeView extends TreeView<FileTreeNode> {
         root.setExpanded(true);
         FontUtils.setUIFont(this);
     }
+
+    public FileTreeNode getSelected() {
+        return (FileTreeNode) getSelectionModel().getSelectedItem();
+    }
 }
