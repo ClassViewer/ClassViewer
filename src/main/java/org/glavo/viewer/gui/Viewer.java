@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.Log;
 
@@ -16,7 +15,7 @@ public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
 
     public static final int DEFAULT_WIDTH = 1000;
-    public static final int DEFAULT_HEIGHT = 700;
+    public static final int DEFAULT_HEIGHT = 600;
 
     public static void main(String[] args) {
         Options.init();

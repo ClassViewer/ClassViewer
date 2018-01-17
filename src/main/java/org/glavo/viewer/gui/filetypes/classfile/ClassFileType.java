@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import org.glavo.viewer.classfile.ClassFile;
 import org.glavo.viewer.classfile.ClassFileParser;
+import org.glavo.viewer.gui.RecentFiles;
 import org.glavo.viewer.gui.Viewer;
 import org.glavo.viewer.gui.filetypes.FileType;
 import org.glavo.viewer.util.FontUtils;
@@ -36,6 +37,8 @@ public final class ClassFileType extends FileType {
         byte[] bytes = UrlUtils.readData(url);
         ClassFile classFile = new ClassFileParser().parse(bytes);
         ParsedViewerPane pane = new ParsedViewerPane(classFile, new HexText(bytes));
+
+        RecentFiles.Instance.add(Instance, url);
 
         tab.setContent(pane);
         tab.setStyle(FontUtils.setUIFont(tab.getStyle()));
