@@ -8,6 +8,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.Log;
 
@@ -50,6 +51,8 @@ public final class Viewer extends Application {
                 toolBar
         ));
         pane.setCenter(tabPane);
+
+        FontUtils.setUIFont(tabPane);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 

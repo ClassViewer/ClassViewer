@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public final class RecentFiles {
 
     }
 
-    private final LinkedList<RecentFile> list = new LinkedList<>();
+    private final List<RecentFile> list = Collections.synchronizedList(new LinkedList<>());
 
     private RecentFiles() {
         load();
@@ -70,10 +71,10 @@ public final class RecentFiles {
 
     private void add(RecentFile rf) {
         list.remove(rf);
-        list.addFirst(rf);
+        list.add(0, rf);
 
         if (list.size() > 20) {
-            list.removeLast();
+            list.remove(list.size() - 1);
         }
     }
 
