@@ -47,7 +47,6 @@ public final class JarFileType extends FileType {
         Files.walkFileTree(p, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path subPath, BasicFileAttributes attrs) throws IOException {
-                Log.trace(subPath);
                 if (Files.isDirectory(subPath)) {
                     FileTreeNode subNode = path2node(subPath);
                     subNode.setGraphic(new ImageView(ImageUtils.packageImage));
@@ -65,7 +64,7 @@ public final class JarFileType extends FileType {
                 return FileVisitResult.CONTINUE;
             }
         });
-
+        node.getChildren().sort((n1, n2) -> FileTreeNode.comparePaths((FileTreeNode) n1, (FileTreeNode) n2));
         return node;
     }
 

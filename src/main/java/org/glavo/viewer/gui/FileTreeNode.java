@@ -7,6 +7,16 @@ import java.net.URL;
 import java.util.function.Consumer;
 
 public class FileTreeNode extends TreeItem<FileTreeNode> {
+    public static int comparePaths(FileTreeNode n1, FileTreeNode n2) {
+        if (!n1.getChildren().isEmpty() && n2.getChildren().isEmpty()) {
+            return -1;
+        } else if (n1.getChildren().isEmpty() && !n2.getChildren().isEmpty()) {
+            return 1;
+        } else {
+            return n1.toString().compareTo(n2.toString());
+        }
+    }
+
     private Consumer<ContextMenu> updateMenu = menu -> menu.getItems().clear();
 
     private String desc = "";
