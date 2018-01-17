@@ -58,6 +58,7 @@ public final class JarFileType extends FileType {
                     subNode.setUrl(UrlUtils.pathToUrl(subPath));
                     subNode.setDesc(UrlUtils.getFileName(subNode.getUrl()));
                     subNode.setGraphic(new ImageView(ClassFileType.Instance.icon));
+                    subNode.setUpdateMenu(subNode::setClassFileMenu);
                     node.getChildren().add(subNode);
                 }
 
@@ -93,7 +94,7 @@ public final class JarFileType extends FileType {
         view.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 FileTreeNode node = view.getSelected();
-                if(node != null && node.getUrl().toString().endsWith(".class")) {
+                if (node != null && node.getUrl().toString().endsWith(".class")) {
                     Log.info("Open Class File: " + node.getUrl());
                     viewer.openFile(node.getUrl());
                 }

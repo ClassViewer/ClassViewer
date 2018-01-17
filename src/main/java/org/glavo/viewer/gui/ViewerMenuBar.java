@@ -49,7 +49,10 @@ public final class ViewerMenuBar extends MenuBar {
             super("_Help");
             this.setMnemonicParsing(true);
 
+            MenuItem about = new MenuItem("About");
+            about.setOnAction(event -> ViewerAboutDialog.show());
 
+            this.getItems().add(about);
         }
     }
 

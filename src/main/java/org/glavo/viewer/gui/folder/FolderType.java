@@ -55,6 +55,7 @@ public final class FolderType extends FileType {
                     subNode.setUrl(UrlUtils.pathToUrl(subPath));
                     subNode.setDesc(UrlUtils.getFileName(subNode.getUrl()));
                     subNode.setGraphic(new ImageView(ClassFileType.Instance.icon));
+                    subNode.setUpdateMenu(subNode::setClassFileMenu);
                     node.getChildren().add(subNode);
                 } else if (JarFileType.Instance.accept(subUrl)) {
                     try {
