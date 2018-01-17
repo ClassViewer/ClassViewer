@@ -68,10 +68,6 @@ public final class JarFileType extends FileType {
         return node;
     }
 
-    private static final FileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
-
-    };
-
     private JarFileType() {
         this.icon = ImageUtils.loadImage("/icons/filetype/JarFile.png");
         this.filter = new FileChooser.ExtensionFilter("Jar or zip file", "*.jar", "*.zip");
@@ -90,7 +86,10 @@ public final class JarFileType extends FileType {
         tab.setText(UrlUtils.getFileName(url));
         tab.setGraphic(new ImageView(icon));
 
-        FileTreeView view = new FileTreeView(viewer, load(url));
+        FileTreeNode root = load(url);
+        root.setExpanded(true);
+
+        FileTreeView view = new FileTreeView(viewer, root);
         view.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 FileTreeNode node = view.getSelected();
@@ -102,7 +101,7 @@ public final class JarFileType extends FileType {
         });
 
         tab.setContent(view);
-
+        tab.setUserData(url);
         return tab;
     }
 

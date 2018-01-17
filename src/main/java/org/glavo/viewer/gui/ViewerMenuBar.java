@@ -24,6 +24,7 @@ public final class ViewerMenuBar extends MenuBar {
             openFolder.setGraphic(new ImageView(ImageUtils.openFolderImage));
 
             openFile.setOnAction(event -> viewer.openFile());
+            openFolder.setOnAction(event -> viewer.openFolder());
 
             this.getItems().addAll(openFile, openFolder, openRecent);
         }
@@ -42,9 +43,13 @@ public final class ViewerMenuBar extends MenuBar {
     }
 
     public class HelpMenu extends Menu {
+        private MenuItem about = new MenuItem("About");
+
         public HelpMenu() {
             super("_Help");
             this.setMnemonicParsing(true);
+
+
         }
     }
 

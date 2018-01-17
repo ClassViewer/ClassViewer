@@ -6,13 +6,15 @@ import javafx.stage.FileChooser;
 import org.glavo.viewer.gui.Viewer;
 import org.glavo.viewer.gui.filetypes.classfile.ClassFileType;
 import org.glavo.viewer.gui.filetypes.jar.JarFileType;
+import org.glavo.viewer.gui.folder.FolderType;
 
 import java.net.URL;
 
 public abstract class FileType {
     public static final FileType[] fileTypes = {
             ClassFileType.Instance,
-            JarFileType.Instance
+            JarFileType.Instance,
+            FolderType.Instance
     };
 
     public static final FileChooser.ExtensionFilter allFiles = new FileChooser.ExtensionFilter(

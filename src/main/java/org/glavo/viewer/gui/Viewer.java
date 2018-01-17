@@ -62,6 +62,18 @@ public final class Viewer extends Application {
         }
     }
 
+    public void openFolder() {
+        File file = ViewerFileChooser.showDirectoryChooser(stage);
+        if (file != null) {
+            try {
+                openFile(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                Log.error(e);
+                ViewerAlert.exceptionAlert(e);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public void openFile(URL url) {
         try {
@@ -87,6 +99,7 @@ public final class Viewer extends Application {
             ViewerAlert.exceptionAlert(e);
         }
     }
+
 
 
     public Stage getStage() {

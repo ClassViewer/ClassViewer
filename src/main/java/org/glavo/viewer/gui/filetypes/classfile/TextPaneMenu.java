@@ -4,6 +4,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 
 import java.awt.*;
@@ -16,6 +17,7 @@ public class TextPaneMenu extends ContextMenu {
     public TextPaneMenu(TextArea textArea) {
         this.textArea = textArea;
         MenuItem copy = new MenuItem("_Copy");
+        this.setStyle(FontUtils.setUIFont(this.getStyle()));
         copy.setMnemonicParsing(true);
         copy.setOnAction(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

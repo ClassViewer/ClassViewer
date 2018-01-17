@@ -18,7 +18,8 @@ public final class ViewerFileChooser {
 
             fileChooser.getExtensionFilters().add(FileType.allFiles);
             for (FileType type : FileType.fileTypes) {
-                fileChooser.getExtensionFilters().add(type.filter);
+                if (type.filter != null)
+                    fileChooser.getExtensionFilters().add(type.filter);
             }
         }
 

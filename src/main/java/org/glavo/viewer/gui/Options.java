@@ -63,7 +63,7 @@ public final class Options {
         }
 
         Options.debug = defined(properties, "viewer.debug");
-        Log.setting("DEBUG", debug);
+        Log.setting("viewer.debug", debug);
 
         boolean color = defined(properties, "viewer.color");
         if (System.getProperty("os.name", "windows").toLowerCase().contains("win")) {
@@ -72,7 +72,7 @@ public final class Options {
         if (color) {
             Options.color = !Options.color;
         }
-        Log.setting("Options.color", Options.color);
+        Log.setting("viewer.color", Options.color);
 
         String uiFont = get(properties, "viewer.fonts.ui");
         if (uiFont != null) {
@@ -80,7 +80,7 @@ public final class Options {
         } else {
             FontUtils.initUiFont();
         }
-        Log.setting("UIFont", FontUtils.uiFont);
+        Log.setting("viewer.fonts.ui", FontUtils.uiFont);
 
         String textFont = get(properties, "viewer.fonts.text");
         if (textFont != null) {
@@ -88,7 +88,7 @@ public final class Options {
         } else {
             FontUtils.initTextFont();
         }
-        Log.setting("TextFont", FontUtils.textFont);
+        Log.setting("viewer.fonts.text", FontUtils.textFont);
     }
 
     private static String get(List<Properties> properties, String key) {

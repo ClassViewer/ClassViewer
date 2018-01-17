@@ -1,4 +1,120 @@
 package org.glavo.viewer.gui.folder;
 
-public final class FolderType {
+import javafx.scene.control.Tab;
+import javafx.scene.image.ImageView;
+import org.glavo.viewer.gui.FileTreeNode;
+import org.glavo.viewer.gui.FileTreeView;
+import org.glavo.viewer.gui.Viewer;
+import org.glavo.viewer.gui.ViewerAlert;
+import org.glavo.viewer.gui.filetypes.FileType;
+import org.glavo.viewer.gui.filetypes.classfile.ClassFileType;
+import org.glavo.viewer.gui.filetypes.jar.JarFileType;
+import org.glavo.viewer.util.FontUtils;
+import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.util.Log;
+import org.glavo.viewer.util.UrlUtils;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.EnumSet;
+
+public final class FolderType extends FileType {
+    public static final FolderType Instance = new FolderType();
+
+    public static FileTreeNode load(URL url) throws URISyntaxException, IOException {
+        Path path = Paths.get(url.toURI());
+
+        FileTreeNode root = path2node(path);
+
+        root.setUrl(url);
+        root.setGraphic(new ImageView(Instance.icon));
+        root.setDesc(url.toString());
+        return root;
+    }
+
+    public static FileTreeNode path2node(Path p) throws IOException {
+        FileTreeNode node = new FileTreeNode();
+        node.setUrl(UrlUtils.pathToUrl(p));
+        node.setDesc(UrlUtils.getFileName(node.getUrl()));
+
+        Files.walkFileTree(p, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path subPath, BasicFileAttributes attrs) throws IOException {
+                URL subUrl = UrlUtils.pathToUrl(subPath);
+                if (Files.isDirectory(subPath)) {
+                    FileTreeNode subNode = path2node(subPath);
+                    subNode.setGraphic(new ImageView(Instance.icon));
+                    if (!subNode.getChildren().isEmpty()) {
+                        node.getChildren().add(subNode);
+                    }
+                } else if (ClassFileType.Instance.accept(subUrl)) {
+                    FileTreeNode subNode = new FileTreeNode();
+                    subNode.setUrl(UrlUtils.pathToUrl(subPath));
+                    subNode.setDesc(UrlUtils.getFileName(subNode.getUrl()));
+                    subNode.setGraphic(new ImageView(ClassFileType.Instance.icon));
+                    node.getChildren().add(subNode);
+                } else if (JarFileType.Instance.accept(subUrl)) {
+                    try {
+                        FileTreeNode subNode = JarFileType.load(subUrl);
+                        subNode.setUrl(subUrl);
+                        subNode.setGraphic(new ImageView(JarFileType.Instance.icon));
+                        subNode.setDesc(UrlUtils.getFileName(subUrl));
+                        node.getChildren().add(subNode);
+                    } catch (URISyntaxException e) {
+                        Log.error(e);
+                        ViewerAlert.exceptionAlert(e);
+                    }
+
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        node.getChildren().sort((n1, n2) -> FileTreeNode.comparePaths((FileTreeNode) n1, (FileTreeNode) n2));
+        return node;
+    }
+
+    public FolderType() {
+        this.icon = ImageUtils.loadImage("/icons/folder.png");
+    }
+
+    @Override
+    public boolean accept(URL url) {
+        return url.toString().endsWith("/");
+    }
+
+    @Override
+    public Tab open(Viewer viewer, URL url) throws Exception {
+        Tab tab = new Tab(UrlUtils.getFileName(url));
+        tab.setStyle(FontUtils.setUIFont(tab.getStyle()));
+        tab.setText(UrlUtils.getFileName(url));
+        tab.setGraphic(new ImageView(icon));
+
+        FileTreeNode root = load(url);
+        root.setExpanded(true);
+
+        FileTreeView view = new FileTreeView(viewer, root);
+        view.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                FileTreeNode node = view.getSelected();
+                if (node != null && node.getUrl().toString().endsWith(".class")) {
+                    Log.info("Open Class File: " + node.getUrl());
+                    viewer.openFile(node.getUrl());
+                }
+            }
+        });
+
+        tab.setContent(view);
+        tab.setUserData(url);
+
+        return tab;
+    }
+
+    @Override
+    public String toString() {
+        return "FOLDER";
+    }
 }
