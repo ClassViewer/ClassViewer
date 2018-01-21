@@ -66,7 +66,7 @@ public final class FolderType extends FileType {
                         node.getChildren().add(subNode);
                     } catch (URISyntaxException e) {
                         Log.error(e);
-                        ViewerAlert.exceptionAlert(e);
+                        ViewerAlert.showExceptionAlert(e);
                     }
 
                 }

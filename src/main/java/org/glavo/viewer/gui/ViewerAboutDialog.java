@@ -2,7 +2,6 @@ package org.glavo.viewer.gui;
 
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -46,7 +45,7 @@ public class ViewerAboutDialog extends BorderPane {
                 Throwable exception = e.getSource().getException();
                 if (exception != null) {
                     Log.error(exception);
-                    ViewerAlert.exceptionAlert(exception);
+                    ViewerAlert.showExceptionAlert(exception);
                 }
             });
 

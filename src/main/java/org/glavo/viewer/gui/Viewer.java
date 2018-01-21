@@ -15,9 +15,7 @@ import org.glavo.viewer.util.Log;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
@@ -72,13 +70,13 @@ public final class Viewer extends Application {
                     return new File(it).toURI().toURL();
                 } catch (MalformedURLException e) {
                     Log.error(e);
-                    ViewerAlert.exceptionAlert(e);
+                    ViewerAlert.showExceptionAlert(e);
                     return null;
                 }
             }).toArray(URL[]::new)).call());
         } catch (Exception e) {
             Log.error(e);
-            ViewerAlert.exceptionAlert(e);
+            ViewerAlert.showExceptionAlert(e);
         }
     }
 
@@ -89,7 +87,7 @@ public final class Viewer extends Application {
                 openFile(file.toURI().toURL());
             } catch (MalformedURLException e) {
                 Log.error(e);
-                ViewerAlert.exceptionAlert(e);
+                ViewerAlert.showExceptionAlert(e);
             }
         }
     }
@@ -101,7 +99,7 @@ public final class Viewer extends Application {
                 openFile(file.toURI().toURL());
             } catch (MalformedURLException e) {
                 Log.error(e);
-                ViewerAlert.exceptionAlert(e);
+                ViewerAlert.showExceptionAlert(e);
             }
         }
     }
@@ -121,7 +119,7 @@ public final class Viewer extends Application {
             }
         } catch (Exception e) {
             Log.error(e);
-            ViewerAlert.exceptionAlert(e);
+            ViewerAlert.showExceptionAlert(e);
         }
     }
 
@@ -163,7 +161,7 @@ public final class Viewer extends Application {
                         openFile(file.toURI().toURL());
                     } catch (MalformedURLException e) {
                         Log.error(e);
-                        ViewerAlert.exceptionAlert(e);
+                        ViewerAlert.showExceptionAlert(e);
                     }
                 }
             }

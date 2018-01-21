@@ -44,6 +44,6 @@ public class OpenFileTask extends Task<List<Tab>> {
     private void onFailed(WorkerStateEvent event) {
         Throwable e = event.getSource().getException();
         Log.error(e);
-        ViewerAlert.exceptionAlert(e);
+        ViewerAlert.showExceptionAlert(e);
     }
 }
