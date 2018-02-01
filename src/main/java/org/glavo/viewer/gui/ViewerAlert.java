@@ -31,8 +31,6 @@ public class ViewerAlert extends Alert {
         textArea.setWrapText(true);
         textArea.setFont(FontUtils.textFont);
 
-        //textArea.setMaxWidth(Double.MAX_VALUE);
-        //textArea.setMaxHeight(Double.MAX_VALUE);
         GridPane.setVgrow(textArea, Priority.ALWAYS);
         GridPane.setHgrow(textArea, Priority.ALWAYS);
 

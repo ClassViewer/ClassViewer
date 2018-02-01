@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
  *
  */
 public class ImageUtils {
-
     public static ImageView createImageView(String imgName) {
         return new ImageView(loadImage(imgName));
     }
@@ -33,6 +32,12 @@ public class ImageUtils {
     public static final Image openFolderImage = loadImage("/icons/openFolder.png");
     public static final Image packageImage = loadImage("/icons/package.png");
     public static final Image helpImage = loadImage("/icons/help.png");
+
+    //searchImage
+    public static final Image searchImage = loadImage("/icons/search.png");
+    public static final Image nextOccurenceImage = loadImage("/icons/nextOccurence.png");
+    public static final Image previousOccurenceImage = loadImage("/icons/previousOccurence.png");
+
     public static final Image methodImage = loadImage("/icons/java/method.png");
     public static final Image abstractMethodImage = loadImage("/icons/java/abstractMethod.png");
     public static final Image annotationImage = loadImage("/icons/java/annotationtype.png");

@@ -10,8 +10,6 @@ import org.glavo.viewer.FileComponent;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.Log;
 
-import java.awt.*;
-
 /**
  * Container of TreeView, HexPane, StatusBar and BytesBar.
  * <p>
@@ -25,22 +23,31 @@ import java.awt.*;
 public class ParsedViewerPane extends BorderPane {
 
     private final TreeView<FileComponent> tree;
+    //private final SearchBar searchBar;
     private final HexPane hexPane;
     private final Label statusLabel;
     private final BytesBar bytesBar;
+    private final Label rightLabel;
 
     public ParsedViewerPane(FileComponent file, HexText hex) {
         tree = buildClassTree(file);
+        //searchBar = new SearchBar(this);
         hexPane = new HexPane(hex);
         statusLabel = new Label(" ");
+        rightLabel = new Label();
+        rightLabel.setPrefWidth(10);
+
         bytesBar = new BytesBar(file.getLength());
         bytesBar.setMaxHeight(statusLabel.getMaxHeight());
         bytesBar.setPrefWidth(200);
 
         FontUtils.setUIFont(statusLabel);
 
-        super.setCenter(buildSplitPane());
-        super.setBottom(buildStatusBar());
+        //this.setTop(searchBar);
+        this.setCenter(buildSplitPane());
+        this.setBottom(buildStatusBar());
+        this.setRight(rightLabel);
+
         listenTreeItemSelection();
     }
 
@@ -72,7 +79,6 @@ public class ParsedViewerPane extends BorderPane {
         tree.getSelectionModel().getSelectedItems().addListener(this::selectItemAction);
     }
 
-
     private void selectItemAction(ListChangeListener.Change<? extends TreeItem<FileComponent>> c) {
         if (c.next() && c.wasAdded()) {
             TreeItem<FileComponent> node = c.getList().get(c.getFrom());
@@ -88,4 +94,28 @@ public class ParsedViewerPane extends BorderPane {
         }
     }
 
+    public TreeView<FileComponent> getTree() {
+        return tree;
+    }
+
+    public SearchBar getSearchBar() {
+        return null;
+        //return searchBar;
+    }
+
+    public HexPane getHexPane() {
+        return hexPane;
+    }
+
+    public Label getStatusLabel() {
+        return statusLabel;
+    }
+
+    public BytesBar getBytesBar() {
+        return bytesBar;
+    }
+
+    public Label getRightLabel() {
+        return rightLabel;
+    }
 }
