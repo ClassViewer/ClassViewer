@@ -16,11 +16,11 @@ import java.net.URI;
 public class ViewerAboutDialog extends BorderPane {
     public static final String homeUrl = "https://github.com/Glavo/ClassViewer";
 
-    public static void show() {
+    public static void show(Viewer viewer) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
 
-        ViewerAboutDialog dialog = new ViewerAboutDialog(stage);
+        ViewerAboutDialog dialog = new ViewerAboutDialog(viewer, stage);
         Scene scene = new Scene(dialog, 300, 180);
 
         stage.setScene(scene);
@@ -28,29 +28,11 @@ public class ViewerAboutDialog extends BorderPane {
         stage.show();
     }
 
-    public ViewerAboutDialog(Stage stage) {
+    public ViewerAboutDialog(Viewer viewer, Stage stage) {
         ImageView image = ImageUtils.createImageView("/icons/spy128.png");
         this.setCenter(image);
         this.setOnMouseClicked(e -> stage.close());
 
-        image.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            Task<Void> task = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    Desktop.getDesktop().browse(URI.create(homeUrl));
-                    return null;
-                }
-            };
-            task.setOnFailed(e -> {
-                Throwable exception = e.getSource().getException();
-                if (exception != null) {
-                    Log.error(exception);
-                    ViewerAlert.showExceptionAlert(exception);
-                }
-            });
-
-            new Thread(task).start();
-        });
-
+        image.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> viewer.getHostServices().showDocument(homeUrl));
     }
 }

@@ -50,7 +50,7 @@ public final class ViewerMenuBar extends MenuBar {
             this.setMnemonicParsing(true);
 
             MenuItem about = new MenuItem("About");
-            about.setOnAction(event -> ViewerAboutDialog.show());
+            about.setOnAction(event -> ViewerAboutDialog.show(viewer));
 
             this.getItems().add(about);
         }
