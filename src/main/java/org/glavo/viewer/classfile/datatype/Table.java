@@ -21,7 +21,7 @@ public final class Table extends ClassFileComponent {
         this.length = length;
         this.entryClass = entryClass;
     }
-    
+
     @Override
     protected void readContent(ClassFileReader reader) {
         try {
@@ -37,20 +37,20 @@ public final class Table extends ClassFileComponent {
         if (entryClass == AttributeInfo.class) {
             return readAttributeInfo(reader);
         } else {
-            ClassFileComponent c = entryClass.newInstance();
+            ClassFileComponent c = entryClass.getDeclaredConstructor().newInstance();
             c.read(reader);
             return c;
         }
     }
-    
+
     private AttributeInfo readAttributeInfo(ClassFileReader reader) {
         int attrNameIndex = reader.getShort(reader.getPosition());
         String attrName = reader.getConstantPool().getUtf8String(attrNameIndex);
-        
+
         AttributeInfo attr = AttributeFactory.create(attrName);
         attr.setName(attrName);
         attr.read(reader);
-        
+
         return attr;
     }
 

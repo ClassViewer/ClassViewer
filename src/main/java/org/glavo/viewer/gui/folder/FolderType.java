@@ -24,7 +24,7 @@ import java.util.EnumSet;
 public final class FolderType extends FileType {
     public static final FolderType Instance = new FolderType();
 
-    public static FileTreeNode load(URL url) throws URISyntaxException, IOException {
+    public FileTreeNode load(URL url) throws URISyntaxException, IOException {
         Path path = Paths.get(url.toURI());
 
         FileTreeNode root = path2node(path);
@@ -35,7 +35,7 @@ public final class FolderType extends FileType {
         return root;
     }
 
-    public static FileTreeNode path2node(Path p) throws IOException {
+    public FileTreeNode path2node(Path p) throws IOException {
         FileTreeNode node = new FileTreeNode();
         node.setUrl(UrlUtils.pathToUrl(p));
         node.setDesc(UrlUtils.getFileName(node.getUrl()));
@@ -59,7 +59,7 @@ public final class FolderType extends FileType {
                     node.getChildren().add(subNode);
                 } else if (JarFileType.Instance.accept(subUrl)) {
                     try {
-                        FileTreeNode subNode = JarFileType.load(subUrl);
+                        FileTreeNode subNode = JarFileType.Instance.load(subUrl);
                         subNode.setUrl(subUrl);
                         subNode.setGraphic(new ImageView(JarFileType.Instance.icon));
                         subNode.setDesc(UrlUtils.getFileName(subUrl));

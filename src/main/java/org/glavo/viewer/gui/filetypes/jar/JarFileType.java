@@ -23,23 +23,23 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.EnumSet;
 
-public final class JarFileType extends FileType {
+public class JarFileType extends FileType {
     public static final JarFileType Instance = new JarFileType();
 
-    public static FileTreeNode load(URL url) throws URISyntaxException, IOException {
+    public FileTreeNode load(URL url) throws URISyntaxException, IOException {
         Path path = Paths.get(url.toURI());
 
         try (FileSystem fs = FileSystems.newFileSystem(path, null)) {
             FileTreeNode root = path2node(fs.getPath("/"));
 
             root.setUrl(url);
-            root.setGraphic(new ImageView(Instance.icon));
+            root.setGraphic(new ImageView(icon));
             root.setDesc(url.toString());
             return root;
         }
     }
 
-    public static FileTreeNode path2node(Path p) throws IOException {
+    public FileTreeNode path2node(Path p) throws IOException {
         FileTreeNode node = new FileTreeNode();
         node.setUrl(UrlUtils.pathToUrl(p));
         node.setDesc(UrlUtils.getFileName(node.getUrl()));
@@ -69,9 +69,9 @@ public final class JarFileType extends FileType {
         return node;
     }
 
-    private JarFileType() {
+    protected JarFileType() {
         this.icon = ImageUtils.loadImage("/icons/filetype/JarFile.png");
-        this.filter = new FileChooser.ExtensionFilter("Jar or zip file", "*.jar", "*.zip");
+        this.filter = new FileChooser.ExtensionFilter("Jar or Zip File (*.jar, *.zip)", "*.jar", "*.zip");
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public final class RecentFiles {
 
@@ -31,7 +32,7 @@ public final class RecentFiles {
 
     public File getLastOpenFile(FileType ft) {
         for (RecentFile rf : list) {
-            if (rf.type == ft && rf.url.toString().startsWith("file:")) {
+            if (rf.type == ft && Objects.equals(rf.url.getProtocol(), "file")) {
                 try {
                     return new File(rf.url.toURI());
                 } catch (URISyntaxException e) {
@@ -45,7 +46,7 @@ public final class RecentFiles {
 
     public File getLastOpenFile() {
         for (RecentFile rf : list) {
-            if (rf.url.toString().startsWith("file:")) {
+            if (Objects.equals(rf.url.getProtocol(), "file")) {
                 try {
                     return new File(rf.url.toURI());
                 } catch (URISyntaxException e) {
@@ -92,6 +93,7 @@ public final class RecentFiles {
             }
         } catch (IOException e) {
             Log.error(e);
+            ViewerAlert.showExceptionAlert(e);
         }
     }
 
@@ -119,6 +121,7 @@ public final class RecentFiles {
 
         } catch (IOException e) {
             Log.error(e);
+            ViewerAlert.showExceptionAlert(e);
         }
     }
 }

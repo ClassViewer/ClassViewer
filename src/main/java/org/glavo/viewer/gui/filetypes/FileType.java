@@ -6,6 +6,7 @@ import javafx.stage.FileChooser;
 import org.glavo.viewer.gui.Viewer;
 import org.glavo.viewer.gui.filetypes.classfile.ClassFileType;
 import org.glavo.viewer.gui.filetypes.jar.JarFileType;
+import org.glavo.viewer.gui.filetypes.jmod.JModFileType;
 import org.glavo.viewer.gui.folder.FolderType;
 
 import java.net.URL;
@@ -14,11 +15,12 @@ public abstract class FileType {
     public static final FileType[] fileTypes = {
             ClassFileType.Instance,
             JarFileType.Instance,
+            JModFileType.Instance,
             FolderType.Instance
     };
 
     public static final FileChooser.ExtensionFilter allFiles = new FileChooser.ExtensionFilter(
-            "All files (*.class, *.jar, *.zip)", "*.class", "*.jar", "*.zip"
+            "All files (*.class, *.jar, *.zip, *.jmod)", "*.class", "*.jar", "*.zip", "*.jmod"
     );
 
     public static FileType valueOf(String name) {
