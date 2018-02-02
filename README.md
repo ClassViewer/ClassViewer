@@ -2,13 +2,9 @@
 
 ClassViewer is a GUI tool for investigating Java class files.
 
-## Inspiration
+This tool is base on [classpy](https://github.com/zxh0/classpy). 
 
-This tool forked from [classpy](https://github.com/zxh0/classpy). 
-
-
-
-Features
+## Features
 
 * Understands class files described by [JVMS9](https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html)
 * Displays parsed class file as tree and hex text
