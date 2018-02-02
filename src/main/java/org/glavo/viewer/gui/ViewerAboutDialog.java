@@ -1,6 +1,5 @@
 package org.glavo.viewer.gui;
 
-import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -9,9 +8,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.Log;
-
-import java.awt.*;
-import java.net.URI;
 
 public class ViewerAboutDialog extends BorderPane {
     public static final String homeUrl = "https://github.com/Glavo/ClassViewer";
@@ -33,6 +29,9 @@ public class ViewerAboutDialog extends BorderPane {
         this.setCenter(image);
         this.setOnMouseClicked(e -> stage.close());
 
-        image.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> viewer.getHostServices().showDocument(homeUrl));
+        image.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            Log.info("Open Home Page");
+            viewer.getHostServices().showDocument(homeUrl);
+        });
     }
 }

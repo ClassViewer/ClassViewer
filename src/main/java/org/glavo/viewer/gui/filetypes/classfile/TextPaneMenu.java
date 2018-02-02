@@ -4,14 +4,11 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-
-public class TextPaneMenu extends ContextMenu {
+public final class TextPaneMenu extends ContextMenu {
     private TextArea textArea;
 
     public TextPaneMenu(TextArea textArea) {
@@ -20,13 +17,10 @@ public class TextPaneMenu extends ContextMenu {
         this.setStyle(FontUtils.setUIFont(this.getStyle()));
         copy.setMnemonicParsing(true);
         copy.setOnAction(e -> {
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-
-            StringSelection s = new StringSelection(
-                    textArea.getSelectedText()
-            );
-
-            clipboard.setContents(s, null);
+            javafx.scene.input.Clipboard clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(textArea.getSelectedText());
+            clipboard.setContent(content);
         });
         copy.setGraphic(new ImageView(ImageUtils.copyImage));
 

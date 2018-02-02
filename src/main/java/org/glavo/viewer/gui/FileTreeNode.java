@@ -5,13 +5,12 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -57,9 +56,10 @@ public class FileTreeNode extends TreeItem<FileTreeNode> {
         menu.setStyle(FontUtils.setUIFont(menu.getStyle()));
         menu.setGraphic(new ImageView(ImageUtils.copyImage));
         menu.setOnAction(event -> {
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            StringSelection selection = new StringSelection(url.toString());
-            clipboard.setContents(selection, null);
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(url.toString());
+            clipboard.setContent(content);
         });
 
         return menu;
