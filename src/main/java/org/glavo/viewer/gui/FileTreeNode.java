@@ -13,7 +13,6 @@ import org.glavo.viewer.util.ImageUtils;
 
 import java.net.URL;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class FileTreeNode extends TreeItem<FileTreeNode> {
     public static int comparePaths(FileTreeNode n1, FileTreeNode n2) {
@@ -34,7 +33,6 @@ public class FileTreeNode extends TreeItem<FileTreeNode> {
     public FileTreeNode() {
         this.setValue(this);
     }
-
     public void updateMenu(Viewer viewer, ContextMenu menu) {
         if (updateMenu != null) {
             updateMenu.accept(viewer, menu);

@@ -1,11 +1,13 @@
-import java.nio.file.Paths
-
 group 'org.glavo'
 version '3.0-beta4-SNAPSHOT'
 
 apply plugin: 'java'
 
 sourceCompatibility = 1.9
+
+if(sourceCompatibility.isJava9Compatible()) {
+    sourceSets.main.java.srcDirs += 'src/main/java9'
+}
 
 repositories {
     mavenCentral()
@@ -22,9 +24,9 @@ jar {
     }
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+javadoc.options.encoding = "UTF-8"
 
 task run(type: JavaExec, dependsOn: jar) {
     main = "-jar"

@@ -13,8 +13,10 @@ import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.FileSystemNotFoundException;
 import java.util.List;
 
 public final class Viewer extends Application {

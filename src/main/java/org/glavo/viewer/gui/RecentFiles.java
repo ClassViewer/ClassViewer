@@ -70,6 +70,10 @@ public final class RecentFiles {
         add(new RecentFile(fileType, fileUrl));
     }
 
+    public void remove(URL url) {
+        list.removeIf(f -> f != null && Objects.equals(f.url, url));
+    }
+
     private void add(RecentFile rf) {
         list.remove(rf);
         list.add(0, rf);
