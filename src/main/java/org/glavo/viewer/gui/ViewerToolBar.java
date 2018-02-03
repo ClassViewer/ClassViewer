@@ -5,6 +5,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 
 
@@ -16,11 +17,15 @@ public class ViewerToolBar extends ToolBar {
 
         Button openFile = new Button(null, new ImageView(ImageUtils.openFileImage));
         openFile.setOnAction(event -> viewer.openFile());
-        openFile.setTooltip(new Tooltip("Open file"));
+        Tooltip openFileTip = new Tooltip("Open file");
+        openFileTip.setFont(FontUtils.getUiFont());
+        openFile.setTooltip(openFileTip);
 
         Button openFolder = new Button(null, new ImageView(ImageUtils.openFolderImage));
-        openFile.setOnAction(event -> viewer.openFile());
-        openFile.setTooltip(new Tooltip("Open folder"));
+        openFolder.setOnAction(event -> viewer.openFolder());
+        Tooltip openFolderTip = new Tooltip("Open folder");
+        openFolderTip.setFont(FontUtils.getUiFont());
+        openFolder.setTooltip(openFolderTip);
 
         this.getItems().addAll(openFile, openFolder);
     }
