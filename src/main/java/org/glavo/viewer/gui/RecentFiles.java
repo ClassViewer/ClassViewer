@@ -115,7 +115,7 @@ public final class RecentFiles {
                 reader.lines().forEach(line -> {
                     if (line.contains("#=>")) {
                         try {
-                            list.add(RecentFile.parse(line));
+                            this.add(RecentFile.parse(line));
                         } catch (MalformedURLException | IllegalArgumentException e) {
                             Log.error(e);
                         }
