@@ -7,6 +7,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import org.glavo.viewer.FileComponent;
+import org.glavo.viewer.gui.filetypes.binary.BytesBar;
+import org.glavo.viewer.gui.filetypes.binary.HexPane;
+import org.glavo.viewer.gui.filetypes.binary.HexText;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.Log;
 

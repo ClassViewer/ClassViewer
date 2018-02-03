@@ -1,6 +1,5 @@
 package org.glavo.viewer.gui.filetypes.jar;
 
-import javafx.concurrent.Task;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
@@ -15,13 +14,10 @@ import org.glavo.viewer.util.Log;
 import org.glavo.viewer.util.UrlUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collections;
 import java.util.EnumSet;
 
 public class JarFileType extends FileType {
@@ -82,13 +78,9 @@ public class JarFileType extends FileType {
     }
 
     @Override
-    public Tab open(Viewer viewer, URL url) throws Exception {
-        Tab tab = new Tab(UrlUtils.getFileName(url));
-        tab.setStyle(FontUtils.setUIFont(tab.getStyle()));
-        tab.setText(UrlUtils.getFileName(url));
+    public ViewerTab open(Viewer viewer, URL url) throws Exception {
+        ViewerTab tab = ViewerTab.create(url);
         tab.setGraphic(new ImageView(icon));
-        tab.setUserData(url);
-        tab.setContent(new BorderPane(new ProgressBar()));
 
         ViewerTask<FileTreeNode> task = new ViewerTask<FileTreeNode>() {
             @Override

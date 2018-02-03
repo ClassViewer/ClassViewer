@@ -1,6 +1,5 @@
-package org.glavo.viewer.gui.filetypes.classfile;
+package org.glavo.viewer.gui.filetypes.binary;
 
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;

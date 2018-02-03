@@ -1,4 +1,4 @@
-package org.glavo.viewer.gui.filetypes.classfile;
+package org.glavo.viewer.gui.filetypes.binary;
 
 import org.glavo.viewer.util.StringUtils;
 

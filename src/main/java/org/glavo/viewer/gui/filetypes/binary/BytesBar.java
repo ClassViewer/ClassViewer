@@ -1,4 +1,4 @@
-package org.glavo.viewer.gui.filetypes.classfile;
+package org.glavo.viewer.gui.filetypes.binary;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;

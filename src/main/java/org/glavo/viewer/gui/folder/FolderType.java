@@ -86,14 +86,9 @@ public final class FolderType extends FileType {
     }
 
     @Override
-    public Tab open(Viewer viewer, URL url) throws Exception {
-        Tab tab = new Tab(UrlUtils.getFileName(url));
-        tab.setStyle(FontUtils.setUIFont(tab.getStyle()));
-        tab.setText(UrlUtils.getFileName(url));
+    public ViewerTab open(Viewer viewer, URL url) throws Exception {
+        ViewerTab tab = ViewerTab.create(url);
         tab.setGraphic(new ImageView(icon));
-        tab.setUserData(url);
-
-        tab.setContent(new BorderPane(new ProgressBar()));
 
         ViewerTask<FileTreeNode> task = new ViewerTask<FileTreeNode>() {
             @Override

@@ -8,15 +8,15 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.glavo.viewer.gui.filetypes.FileType;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.FileSystemNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class Viewer extends Application {
@@ -66,18 +66,11 @@ public final class Viewer extends Application {
         stage.show();
 
         List<String> args = this.getParameters().getUnnamed();
-        try {
-            tabPane.getTabs().addAll(new OpenFileTask(this, args.stream().map(it -> {
-                try {
-                    return new File(it).toURI().toURL();
-                } catch (MalformedURLException e) {
-                    ViewerAlert.logAndShowExceptionAlert(e);
-                    return null;
-                }
-            }).toArray(URL[]::new)).call());
-        } catch (Exception e) {
-            ViewerAlert.logAndShowExceptionAlert(e);
+        ArrayList<File> files = new ArrayList<>(args.size());
+        for (String arg : args) {
+            files.add(new File(arg));
         }
+        openFiles(files);
     }
 
     public void openFile() {
@@ -104,22 +97,52 @@ public final class Viewer extends Application {
 
     @SuppressWarnings("unchecked")
     public void openFile(URL url) {
+        openFile(null, url);
+    }
+
+    public void openFile(FileType type, URL url) {
         try {
             Log.info("Open file: " + url);
             if (url != null) {
-                OpenFileTask task = new OpenFileTask(this, url);
-                task.setOnSucceeded((List<Tab> tabs) -> {
-                    addTabs(tabs);
+                OpenFileTask task = new OpenFileTask(this, type, url);
+                task.setOnSucceeded((ViewerTab tab) -> {
+                    addTab(tab);
                     menuBar.updateRecentFiles();
                 });
-                task.runInNewThread();
+                task.startInNewThread();
             }
         } catch (Exception e) {
             ViewerAlert.logAndShowExceptionAlert(e);
         }
     }
 
-    public void addTabs(List<Tab> tabs) {
+    public void addTab(ViewerTab tab) {
+        if (tab != null) {
+            tabPane.getTabs().add(tabPane.getSelectionModel().getSelectedIndex() + 1, tab);
+            tabPane.getSelectionModel().select(tab);
+        }
+    }
+
+    public void openFiles(List<File> files) {
+        ArrayList<URL> urls = new ArrayList<>(files.size());
+        for (File file : files) {
+            if (file != null) {
+                try {
+                    urls.add(file.toURI().toURL());
+                } catch (MalformedURLException e) {
+                    ViewerAlert.logAndShowExceptionAlert(e);
+                }
+            }
+        }
+        openUrls(urls);
+    }
+
+    public void openUrls(List<URL> urls) {
+        OpenFilesTask task = new OpenFilesTask(this, urls);
+        task.setOnSucceeded(this::addTabs);
+    }
+
+    public void addTabs(List<ViewerTab> tabs) {
         if (tabs == null || tabs.isEmpty()) {
             return;
         }
@@ -134,6 +157,9 @@ public final class Viewer extends Application {
         tabPane.getTabs().addAll(tabPane.getSelectionModel().getSelectedIndex() + 1, tabs);
     }
 
+    public void removeTab(ViewerTab tab) {
+        tabPane.getTabs().remove(tab);
+    }
 
     private void enableDragAndDrop(Scene scene) {
         scene.setOnDragOver(event -> {

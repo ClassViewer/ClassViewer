@@ -31,7 +31,9 @@ task run(type: JavaExec, dependsOn: jar) {
 
 def java_home = System.getProperty("java.home")
 
-task link(type: Exec, dependsOn: jar) {
+task link(type: Exec) {
+    dependsOn clean
+    dependsOn jar
     workingDir 'build'
 
     commandLine "${java_home}/bin/jlink",

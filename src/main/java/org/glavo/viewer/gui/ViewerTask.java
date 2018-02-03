@@ -9,8 +9,6 @@ public abstract class ViewerTask<T> extends Task<T> {
     public void setOnSucceeded(Consumer<T> callback) {
         super.setOnSucceeded(
                 e -> callback.accept((T) e.getSource().getValue()));
-
-
     }
 
     public void setOnFailed(Consumer<Throwable> callback) {

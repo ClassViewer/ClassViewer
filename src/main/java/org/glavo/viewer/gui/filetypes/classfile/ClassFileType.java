@@ -1,7 +1,5 @@
 package org.glavo.viewer.gui.filetypes.classfile;
 
-import javafx.concurrent.Task;
-import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
@@ -10,14 +8,11 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import org.glavo.viewer.classfile.ClassFile;
 import org.glavo.viewer.classfile.ClassFileParser;
-import org.glavo.viewer.gui.RecentFiles;
-import org.glavo.viewer.gui.Viewer;
-import org.glavo.viewer.gui.ViewerAlert;
-import org.glavo.viewer.gui.ViewerTask;
+import org.glavo.viewer.gui.*;
 import org.glavo.viewer.gui.filetypes.FileType;
+import org.glavo.viewer.gui.filetypes.binary.HexText;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
-import org.glavo.viewer.util.Log;
 import org.glavo.viewer.util.UrlUtils;
 
 import java.net.URL;
@@ -37,26 +32,22 @@ public final class ClassFileType extends FileType {
         return url.toString().toLowerCase().endsWith(".class");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Tab open(Viewer viewer, URL url) throws Exception {
-        Tab tab = new Tab(UrlUtils.getFileName(url));
+    public ViewerTab open(Viewer viewer, URL url) throws Exception {
+        ViewerTab tab = ViewerTab.create(url);
         tab.setGraphic(new ImageView(icon));
-        tab.setContent(new BorderPane(new ProgressBar()));
 
-        ViewerTask<Pair<ClassFile, byte[]>> task = new ViewerTask<Pair<ClassFile, byte[]>>() {
+        ViewerTask<Pair<ClassFile, HexText>> task = new ViewerTask<Pair<ClassFile, HexText>>() {
             @Override
-            protected Pair<ClassFile, byte[]> call() throws Exception {
+            protected Pair<ClassFile, HexText> call() throws Exception {
                 byte[] bytes = UrlUtils.readData(url);
                 ClassFile classFile = new ClassFileParser().parse(bytes);
                 RecentFiles.Instance.add(Instance, url);
-                return new Pair<>(classFile, bytes);
+                return new Pair<>(classFile, new HexText(bytes));
             }
         };
-        task.setOnSucceeded((Pair<ClassFile, byte[]> value) -> {
-            tab.setContent(new ParsedViewerPane(value.getKey(), new HexText(value.getValue())));
-            tab.setStyle(FontUtils.setUIFont(tab.getStyle()));
-            tab.setUserData(url);
+        task.setOnSucceeded((Pair<ClassFile, HexText> value) -> {
+            tab.setContent(new ParsedViewerPane(value.getKey(), value.getValue()));
             RecentFiles.Instance.add(Instance, url);
         });
         task.setOnFailed((Throwable e) -> {

@@ -4,6 +4,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import org.glavo.viewer.gui.Viewer;
+import org.glavo.viewer.gui.ViewerTab;
+import org.glavo.viewer.gui.filetypes.binary.BinaryFileType;
 import org.glavo.viewer.gui.filetypes.classfile.ClassFileType;
 import org.glavo.viewer.gui.filetypes.jar.JarFileType;
 import org.glavo.viewer.gui.filetypes.jmod.JModFileType;
@@ -16,11 +18,12 @@ public abstract class FileType {
             ClassFileType.Instance,
             JarFileType.Instance,
             JModFileType.Instance,
+            BinaryFileType.Instance,
             FolderType.Instance
     };
 
     public static final FileChooser.ExtensionFilter allFiles = new FileChooser.ExtensionFilter(
-            "All files (*.class, *.jar, *.zip, *.jmod)", "*.class", "*.jar", "*.zip", "*.jmod"
+            "All files", "*.*"
     );
 
     public static FileType valueOf(String name) {
@@ -47,5 +50,8 @@ public abstract class FileType {
 
     public abstract boolean accept(URL url);
 
-    public abstract Tab open(Viewer viewer, URL url) throws Exception;
+    public abstract ViewerTab open(Viewer viewer, URL url) throws Exception;
+
+    @Override
+    public abstract String toString();
 }
