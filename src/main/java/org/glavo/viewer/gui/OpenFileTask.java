@@ -1,6 +1,5 @@
 package org.glavo.viewer.gui;
 
-import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.Tab;
 import org.glavo.viewer.gui.filetypes.FileType;
@@ -10,7 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenFileTask extends Task<List<Tab>> {
+public class OpenFileTask extends ViewerTask<List<Tab>> {
     private Viewer viewer;
     private URL[] urls;
 

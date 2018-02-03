@@ -1,11 +1,12 @@
 package org.glavo.viewer.gui.filetypes.jar;
 
+import javafx.concurrent.Task;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import org.glavo.viewer.gui.FileTreeNode;
-import org.glavo.viewer.gui.FileTreeView;
-import org.glavo.viewer.gui.Viewer;
+import org.glavo.viewer.gui.*;
 import org.glavo.viewer.gui.filetypes.FileType;
 import org.glavo.viewer.gui.filetypes.classfile.ClassFileType;
 import org.glavo.viewer.util.FontUtils;
@@ -86,23 +87,40 @@ public class JarFileType extends FileType {
         tab.setStyle(FontUtils.setUIFont(tab.getStyle()));
         tab.setText(UrlUtils.getFileName(url));
         tab.setGraphic(new ImageView(icon));
+        tab.setUserData(url);
+        tab.setContent(new BorderPane(new ProgressBar()));
 
-        FileTreeNode root = load(url);
-        root.setExpanded(true);
-
-        FileTreeView view = new FileTreeView(viewer, root);
-        view.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                FileTreeNode node = view.getSelected();
-                if (node != null && node.getUrl().toString().endsWith(".class")) {
-                    Log.info("Open Class File: " + node.getUrl());
-                    viewer.openFile(node.getUrl());
-                }
+        ViewerTask<FileTreeNode> task = new ViewerTask<FileTreeNode>() {
+            @Override
+            protected FileTreeNode call() throws Exception {
+                FileTreeNode root = JarFileType.this.load(url);
+                root.setExpanded(true);
+                return root;
             }
+        };
+
+        task.setOnSucceeded((FileTreeNode root) -> {
+            FileTreeView view = new FileTreeView(viewer, root);
+            view.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    FileTreeNode node = view.getSelected();
+                    if (node != null && node.getUrl().toString().endsWith(".class")) {
+                        Log.info("Open Class File: " + node.getUrl());
+                        viewer.openFile(node.getUrl());
+                    }
+                }
+            });
+            tab.setContent(view);
         });
 
-        tab.setContent(view);
-        tab.setUserData(url);
+        task.setOnFailed((Throwable e) -> {
+            viewer.getTabPane().getTabs().remove(tab);
+            Log.error(e);
+            ViewerAlert.showExceptionAlert(e);
+        });
+
+        task.startInNewThread();
+
         return tab;
     }
 

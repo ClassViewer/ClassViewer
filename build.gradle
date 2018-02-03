@@ -13,10 +13,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
 jar {
     manifest {
         attributes 'Implementation-Version': '1.2',

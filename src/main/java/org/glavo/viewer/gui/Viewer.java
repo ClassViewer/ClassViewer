@@ -112,8 +112,7 @@ public final class Viewer extends Application {
             Log.info("Open file: " + url);
             if (url != null) {
                 OpenFileTask task = new OpenFileTask(this, url);
-                task.setOnSucceeded(event -> {
-                    List<Tab> tabs = (List<Tab>) event.getSource().getValue();
+                task.setOnSucceeded((List<Tab> tabs) -> {
                     addTabs(tabs);
                     menuBar.updateRecentFiles();
                 });
