@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.glavo.viewer.util.FontUtils;
+import org.glavo.viewer.util.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -41,18 +42,23 @@ public class ViewerAlert extends Alert {
         expContent.add(label, 0, 0);
         expContent.add(textArea, 0, 1);
 
-        alert.getDialogPane().expandedProperty().addListener( (obs, oldValue, newValue) -> {
-            Platform.runLater( () -> {
+        alert.getDialogPane().expandedProperty().addListener((obs, oldValue, newValue) -> {
+            Platform.runLater(() -> {
                 alert.getDialogPane().requestLayout();
                 alert.getDialogPane().getScene().getWindow().sizeToScene();
-            } );
-        } );
+            });
+        });
         alert.getDialogPane().setExpandableContent(expContent);
         return alert;
     }
 
     public static void showExceptionAlert(Throwable ex) {
         exceptionAlert(ex).show();
+    }
+
+    public static void logAndShowExceptionAlert(Throwable ex) {
+        Log.error(ex);
+        showExceptionAlert(ex);
     }
 
     public ViewerAlert(AlertType alertType) {

@@ -28,3 +28,17 @@ task run(type: JavaExec, dependsOn: jar) {
     main = "-jar"
     args jar.archivePath
 }
+
+def java_home = System.getProperty("java.home")
+
+task link(type: Exec, dependsOn: jar) {
+    workingDir 'build'
+
+    commandLine "${java_home}/bin/jlink",
+            '--no-header-files',
+            '--no-man-pages',
+            '--module-path', "${jar.archivePath}${File.pathSeparatorChar}${java_home}/jmods",
+            '--add-modules', 'org.glavo.viewer',
+            '--launcher', 'viewer=org.glavo.viewer/org.glavo.viewer.gui.Viewer',
+            '--output', "ClassViewer-${version}"
+}

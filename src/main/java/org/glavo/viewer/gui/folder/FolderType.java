@@ -64,8 +64,7 @@ public final class FolderType extends FileType {
                         subNode.setDesc(UrlUtils.getFileName(subUrl));
                         node.getChildren().add(subNode);
                     } catch (URISyntaxException e) {
-                        Log.error(e);
-                        ViewerAlert.showExceptionAlert(e);
+                        ViewerAlert.logAndShowExceptionAlert(e);
                     }
 
                 }
@@ -122,8 +121,7 @@ public final class FolderType extends FileType {
 
         task.setOnFailed((Throwable e) -> {
             viewer.getTabPane().getTabs().remove(tab);
-            Log.error(e);
-            ViewerAlert.showExceptionAlert(e);
+            ViewerAlert.logAndShowExceptionAlert(e);
         });
 
         task.startInNewThread();

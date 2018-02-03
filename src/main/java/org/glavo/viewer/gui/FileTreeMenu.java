@@ -19,9 +19,7 @@ public class FileTreeMenu extends ContextMenu {
                 try {
                     node.updateMenu(view.getViewer(), this);
                 } catch (Exception e) {
-                    Log.error(e);
-                    ViewerAlert.showExceptionAlert(e);
-                    this.getItems().clear();
+                    ViewerAlert.logAndShowExceptionAlert(e);
                 }
             }
         });

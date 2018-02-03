@@ -96,8 +96,7 @@ public final class RecentFiles {
                 }
             }
         } catch (IOException e) {
-            Log.error(e);
-            ViewerAlert.showExceptionAlert(e);
+            ViewerAlert.logAndShowExceptionAlert(e);
         }
     }
 
@@ -124,8 +123,7 @@ public final class RecentFiles {
             }
 
         } catch (IOException e) {
-            Log.error(e);
-            ViewerAlert.showExceptionAlert(e);
+            ViewerAlert.logAndShowExceptionAlert(e);
         }
     }
 }

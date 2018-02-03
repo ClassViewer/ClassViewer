@@ -71,14 +71,12 @@ public final class Viewer extends Application {
                 try {
                     return new File(it).toURI().toURL();
                 } catch (MalformedURLException e) {
-                    Log.error(e);
-                    ViewerAlert.showExceptionAlert(e);
+                    ViewerAlert.logAndShowExceptionAlert(e);
                     return null;
                 }
             }).toArray(URL[]::new)).call());
         } catch (Exception e) {
-            Log.error(e);
-            ViewerAlert.showExceptionAlert(e);
+            ViewerAlert.logAndShowExceptionAlert(e);
         }
     }
 
@@ -88,8 +86,7 @@ public final class Viewer extends Application {
             try {
                 openFile(file.toURI().toURL());
             } catch (MalformedURLException e) {
-                Log.error(e);
-                ViewerAlert.showExceptionAlert(e);
+                ViewerAlert.logAndShowExceptionAlert(e);
             }
         }
     }
@@ -100,8 +97,7 @@ public final class Viewer extends Application {
             try {
                 openFile(file.toURI().toURL());
             } catch (MalformedURLException e) {
-                Log.error(e);
-                ViewerAlert.showExceptionAlert(e);
+                ViewerAlert.logAndShowExceptionAlert(e);
             }
         }
     }
@@ -119,8 +115,7 @@ public final class Viewer extends Application {
                 task.runInNewThread();
             }
         } catch (Exception e) {
-            Log.error(e);
-            ViewerAlert.showExceptionAlert(e);
+            ViewerAlert.logAndShowExceptionAlert(e);
         }
     }
 
@@ -161,8 +156,7 @@ public final class Viewer extends Application {
                     try {
                         openFile(file.toURI().toURL());
                     } catch (MalformedURLException e) {
-                        Log.error(e);
-                        ViewerAlert.showExceptionAlert(e);
+                        ViewerAlert.logAndShowExceptionAlert(e);
                     }
                 }
             }

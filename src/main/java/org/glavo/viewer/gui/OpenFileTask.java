@@ -1,9 +1,7 @@
 package org.glavo.viewer.gui;
 
-import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.Tab;
 import org.glavo.viewer.gui.filetypes.FileType;
-import org.glavo.viewer.util.Log;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,7 +15,7 @@ public class OpenFileTask extends ViewerTask<List<Tab>> {
         this.viewer = viewer;
         this.urls = urls;
 
-        this.setOnFailed(this::onFailed);
+        this.setOnFailed(ViewerAlert::logAndShowExceptionAlert);
     }
 
     public void runInNewThread() {
@@ -38,11 +36,5 @@ public class OpenFileTask extends ViewerTask<List<Tab>> {
         }
 
         return ans;
-    }
-
-    private void onFailed(WorkerStateEvent event) {
-        Throwable e = event.getSource().getException();
-        Log.error(e);
-        ViewerAlert.showExceptionAlert(e);
     }
 }

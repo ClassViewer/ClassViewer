@@ -61,8 +61,7 @@ public final class ClassFileType extends FileType {
         });
         task.setOnFailed((Throwable e) -> {
             viewer.getTabPane().getTabs().remove(tab);
-            Log.error(e);
-            ViewerAlert.showExceptionAlert(e);
+            ViewerAlert.logAndShowExceptionAlert(e);
         });
 
         task.startInNewThread();
