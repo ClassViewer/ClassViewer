@@ -56,4 +56,10 @@ public class ImageUtils {
     public static final Image plocalImage = loadImage("/icons/classfile/c_plocal.png");
     public static final Image protectedImage = loadImage("/icons/classfile/c_protected.png");
     public static final Image publicImage = loadImage("/icons/classfile/c_public.png");
+
+    public static final Image finalMarkImage = loadImage("/icons/finalMark.png");
+    public static final Image errorMarkImage = loadImage("/icons/errorMark.png");
+    public static final Image junitTestMarkImage = loadImage("/icons/junitTestMark.png");
+    public static final Image runnableMarkImage = loadImage("/icons/runnableMark.png");
+    public static final Image staticMarkImage = loadImage("/icons/staticMark.png");
 }

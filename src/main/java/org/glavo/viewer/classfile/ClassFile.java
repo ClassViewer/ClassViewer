@@ -1,6 +1,8 @@
 package org.glavo.viewer.classfile;
 
 
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
@@ -62,35 +64,46 @@ public final class ClassFile extends ClassFileComponent {
     @Override
     protected void postRead(ConstantPool cp) {
         U2AccessFlags acc = (U2AccessFlags) get("access_flags");
+        if (acc != null) {
 
-        HBox box = new HBox();
-        boolean isKt = isKotlin();
+            HBox box = new HBox();
+            boolean isKt = isKotlin();
+            Node view = null;
 
-        if (acc.isAnnotation()) {
-            box.getChildren().add(new ImageView(ImageUtils.annotationImage));
-        } else if (acc.isEnum()) {
-            box.getChildren().add(new ImageView(ImageUtils.enumImage));
-        } else if (acc.isInterface()) {
-            box.getChildren().add(new ImageView(ImageUtils.interfaceImage));
-        } else if (acc.isAbstract()) {
-            box.getChildren().add(new ImageView(ImageUtils.abstractClassImage));
-        } else if (acc.isFinal()) {
-            box.getChildren().add(new ImageView(ImageUtils.finalClassImage));
-        } else {
-            box.getChildren().add(new ImageView(ImageUtils.classImage));
+            if (acc.isAnnotation()) {
+                view = new ImageView(ImageUtils.annotationImage);
+            } else if (acc.isEnum()) {
+                view = new ImageView(ImageUtils.enumImage);
+            } else if (acc.isInterface()) {
+                view = new ImageView(ImageUtils.interfaceImage);
+            } else if (acc.isAbstract()) {
+                view = new ImageView(ImageUtils.abstractClassImage);
+            } else {
+                view = new ImageView(ImageUtils.classImage);
+            }
+
+            if (acc.isFinal()) {
+                view = new Group(view, new ImageView(ImageUtils.finalMarkImage));
+            }
+
+            if (acc.isStatic()) {
+                view = new Group(view, new ImageView(ImageUtils.staticMarkImage));
+            }
+
+            box.getChildren().add(view);
+
+            if (acc.isPrivate()) {
+                box.getChildren().add(new ImageView(ImageUtils.privateImage));
+            } else if (acc.isProtected()) {
+                box.getChildren().add(new ImageView(ImageUtils.protectedImage));
+            } else if (acc.isPublic()) {
+                box.getChildren().add(new ImageView(ImageUtils.publicImage));
+            } else {
+                box.getChildren().add(new ImageView(ImageUtils.plocalImage));
+            }
+
+            setGraphic(box);
         }
-
-        if (acc.isPrivate()) {
-            box.getChildren().add(new ImageView(ImageUtils.privateImage));
-        } else if (acc.isProtected()) {
-            box.getChildren().add(new ImageView(ImageUtils.protectedImage));
-        } else if (acc.isPublic()) {
-            box.getChildren().add(new ImageView(ImageUtils.publicImage));
-        } else {
-            box.getChildren().add(new ImageView(ImageUtils.plocalImage));
-        }
-
-        setGraphic(box);
     }
 
     private boolean isKotlin() {

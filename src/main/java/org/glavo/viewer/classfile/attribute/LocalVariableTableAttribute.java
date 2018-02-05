@@ -25,7 +25,7 @@ public final class LocalVariableTableAttribute extends AttributeInfo {
     }
 
     
-    public static class LocalVariableTableEntry extends ClassFileComponent {
+    public static final class LocalVariableTableEntry extends ClassFileComponent {
 
         {
             u2  ("start_pc");

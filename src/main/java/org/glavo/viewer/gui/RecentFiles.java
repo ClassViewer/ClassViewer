@@ -83,6 +83,16 @@ public final class RecentFiles {
         }
     }
 
+    private void addLast(RecentFile rf) {
+        list.remove(rf);
+        list.add(list.size(), rf);
+
+        if (list.size() > 20) {
+            list.remove(0);
+        }
+    }
+
+
     private void save() {
         try {
             Path p = Options.path.resolve("recentfiles");
@@ -114,7 +124,7 @@ public final class RecentFiles {
                 reader.lines().forEach(line -> {
                     if (line.contains("#=>")) {
                         try {
-                            this.add(RecentFile.parse(line));
+                            this.addLast(RecentFile.parse(line));
                         } catch (MalformedURLException | IllegalArgumentException e) {
                             Log.error(e);
                         }
