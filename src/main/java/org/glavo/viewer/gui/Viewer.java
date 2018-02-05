@@ -8,6 +8,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.glavo.viewer.gui.filetypes.FileType;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
@@ -34,30 +35,29 @@ public final class Viewer extends Application {
     private Scene scene;
     private BorderPane pane;
 
-    private ViewerMenuBar menuBar;
+    private ViewerTopBar topBar;
     private ViewerTabPane tabPane;
-    private ViewerToolBar toolBar;
 
     @Override
     public void start(Stage stage) {
         this.stage = stage;
         this.pane = new BorderPane();
-        this.menuBar = new ViewerMenuBar(this);
+        this.topBar = new ViewerTopBar(this);
         this.tabPane = new ViewerTabPane(this);
-        this.toolBar = new ViewerToolBar(this);
 
-        pane.setTop(new VBox(
-                menuBar,
-                toolBar
-        ));
+        pane.setTop(topBar);
         pane.setCenter(tabPane);
 
         FontUtils.setUIFont(tabPane);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        scene.getStylesheets().add(Viewer.class.getResource("/css/viewer.css").toExternalForm());
 
         enableDragAndDrop(scene);
 
+        if (!Options.useSystemTilteBar) {
+            stage.initStyle(StageStyle.UNDECORATED);
+        }
         stage.setScene(scene);
         stage.setTitle(TITLE);
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));
@@ -107,7 +107,7 @@ public final class Viewer extends Application {
                 OpenFileTask task = new OpenFileTask(this, type, url);
                 task.setOnSucceeded((ViewerTab tab) -> {
                     addTab(tab);
-                    menuBar.updateRecentFiles();
+                    topBar.getMenuBar().updateRecentFiles();
                 });
                 task.startInNewThread();
             }
@@ -203,8 +203,8 @@ public final class Viewer extends Application {
         return pane;
     }
 
-    public ViewerMenuBar getMenuBar() {
-        return menuBar;
+    public ViewerTopBar getTopBar() {
+        return topBar;
     }
 
     public ViewerTabPane getTabPane() {

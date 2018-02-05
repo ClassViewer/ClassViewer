@@ -17,6 +17,8 @@ import java.util.Properties;
 public final class Options {
     public static boolean color = true;
     public static boolean debug = false;
+    public static boolean useSystemTilteBar = false;
+
 
     public static Path path = Paths.get(System.getProperty("user.home")).resolve(".viewer");
 

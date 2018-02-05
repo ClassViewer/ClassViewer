@@ -42,7 +42,6 @@ public class ImageUtils {
     public static final Image classInitializerImage = loadImage("/icons/java/classInitializer.png");
     public static final Image abstractMethodImage = loadImage("/icons/java/abstractMethod.png");
     public static final Image annotationImage = loadImage("/icons/java/annotationtype.png");
-    public static final Image finalClassImage = loadImage("/icons/java/finalClass.png");
     public static final Image abstractClassImage = loadImage("/icons/java/abstractClass.png");
     public static final Image enumImage = loadImage("/icons/java/enum.png");
     public static final Image fieldImage = loadImage("/icons/java/field.png");
@@ -63,4 +62,9 @@ public class ImageUtils {
     public static final Image junitTestMarkImage = loadImage("/icons/junitTestMark.png");
     public static final Image runnableMarkImage = loadImage("/icons/runnableMark.png");
     public static final Image staticMarkImage = loadImage("/icons/staticMark.png");
+
+    public static final Image maximizeImage = loadImage("/icons/maximize.png");
+    public static final Image minimizeImage = loadImage("/icons/minimize.png");
+    public static final Image closeImage = loadImage("/icons/close.png");
+    public static final Image restoreImage = loadImage("/icons/restore.png");
 }
