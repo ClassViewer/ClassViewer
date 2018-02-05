@@ -67,7 +67,7 @@ public class ParsedViewerPane extends BorderPane {
         SplitPane sp = new SplitPane();
         sp.getItems().add(tree);
         sp.getItems().add(hexPane);
-        sp.setDividerPositions(0.3, 0.7);
+        sp.setDividerPositions(0.36, 0.64);
         return sp;
     }
 
