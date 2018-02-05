@@ -5,13 +5,17 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import org.glavo.viewer.FileComponent;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.classfile.constant.ConstantPool;
+import org.glavo.viewer.classfile.datatype.Table;
 import org.glavo.viewer.classfile.datatype.U2;
 import org.glavo.viewer.classfile.datatype.U2AccessFlags;
 import org.glavo.viewer.classfile.datatype.U2CpIndex;
 import org.glavo.viewer.classfile.jvm.AccessFlagType;
 import org.glavo.viewer.util.ImageUtils;
+
+import java.util.List;
 
 /*
 ClassFile {
@@ -34,7 +38,6 @@ ClassFile {
 }
 */
 public final class ClassFile extends ClassFileComponent {
-
     {
         U2 cpCount = new U2();
 
@@ -90,6 +93,10 @@ public final class ClassFile extends ClassFileComponent {
                 view = new Group(view, new ImageView(ImageUtils.staticMarkImage));
             }
 
+            if (isRunnable()) {
+                view = new Group(view, new ImageView(ImageUtils.runnableMarkImage));
+            }
+
             box.getChildren().add(view);
 
             if (acc.isPrivate()) {
@@ -107,6 +114,22 @@ public final class ClassFile extends ClassFileComponent {
     }
 
     private boolean isKotlin() {
+        return false; //todo
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean isRunnable() {
+        Table methods = (Table) get("methods");
+        if (methods == null)
+            return false;
+        for (MethodInfo method : (List<MethodInfo>) (List) methods.getComponents()) {
+            if (method != null
+                    && "main".equals(method.getDesc())
+                    && "([Ljava/lang/String;)V".equals(getConstantPool().getUtf8String(
+                    method.getUInt("descriptor_index"))))
+                return true;
+        }
+
         return false;
     }
 }

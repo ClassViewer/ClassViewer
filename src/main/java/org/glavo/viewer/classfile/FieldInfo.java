@@ -1,5 +1,7 @@
 package org.glavo.viewer.classfile;
 
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.classfile.attribute.AttributeInfo;
@@ -37,20 +39,36 @@ public class FieldInfo extends ClassFileComponent {
 
         U2AccessFlags acc = (U2AccessFlags) get("access_flags");
 
-        HBox box = new HBox();
-        box.getChildren().add(new ImageView(ImageUtils.fieldImage));
+        if (acc != null) {
+            HBox box = new HBox();
+            Node view;
 
-        if (acc.isPrivate()) {
-            box.getChildren().add(new ImageView(ImageUtils.privateImage));
-        } else if (acc.isProtected()) {
-            box.getChildren().add(new ImageView(ImageUtils.protectedImage));
-        } else if (acc.isPublic()) {
-            box.getChildren().add(new ImageView(ImageUtils.publicImage));
-        } else {
-            box.getChildren().add(new ImageView(ImageUtils.plocalImage));
+            if (acc.isAbstract()) {
+                view = new ImageView(ImageUtils.abstractMethodImage);
+            } else {
+                view = new ImageView(ImageUtils.methodImage);
+            }
+
+            if (acc.isFinal()) {
+                view = new Group(view, new ImageView(ImageUtils.finalMarkImage));
+            } else if(acc.isStatic()) {
+                view = new Group(view, new ImageView(ImageUtils.staticMarkImage));
+            }
+
+            box.getChildren().add(view);
+
+            if (acc.isPrivate()) {
+                box.getChildren().add(new ImageView(ImageUtils.privateImage));
+            } else if (acc.isProtected()) {
+                box.getChildren().add(new ImageView(ImageUtils.protectedImage));
+            } else if (acc.isPublic()) {
+                box.getChildren().add(new ImageView(ImageUtils.publicImage));
+            } else {
+                box.getChildren().add(new ImageView(ImageUtils.plocalImage));
+            }
+
+            setGraphic(box);
         }
-
-        setGraphic(box);
     }
 
 }

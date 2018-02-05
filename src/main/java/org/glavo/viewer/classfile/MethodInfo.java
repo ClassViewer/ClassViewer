@@ -44,13 +44,15 @@ public class MethodInfo extends ClassFileComponent {
 
             if (acc.isAbstract()) {
                 view = new ImageView(ImageUtils.abstractMethodImage);
+            } else if (("<init>".equals(this.getDesc()) || "<clinit>".equals(this.getDesc()))) {
+                view = new ImageView(ImageUtils.classInitializerImage);
             } else {
                 view = new ImageView(ImageUtils.methodImage);
             }
 
             if (acc.isFinal()) {
                 view = new Group(view, new ImageView(ImageUtils.finalMarkImage));
-            } else if(acc.isStatic()) {
+            } else if (acc.isStatic()) {
                 view = new Group(view, new ImageView(ImageUtils.staticMarkImage));
             }
 

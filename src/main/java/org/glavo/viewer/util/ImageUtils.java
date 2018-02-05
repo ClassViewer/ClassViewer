@@ -39,6 +39,7 @@ public class ImageUtils {
     public static final Image previousOccurenceImage = loadImage("/icons/previousOccurence.png");
 
     public static final Image methodImage = loadImage("/icons/java/method.png");
+    public static final Image classInitializerImage = loadImage("/icons/java/classInitializer.png");
     public static final Image abstractMethodImage = loadImage("/icons/java/abstractMethod.png");
     public static final Image annotationImage = loadImage("/icons/java/annotationtype.png");
     public static final Image finalClassImage = loadImage("/icons/java/finalClass.png");
