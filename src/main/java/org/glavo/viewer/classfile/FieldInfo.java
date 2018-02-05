@@ -43,15 +43,11 @@ public class FieldInfo extends ClassFileComponent {
             HBox box = new HBox();
             Node view;
 
-            if (acc.isAbstract()) {
-                view = new ImageView(ImageUtils.abstractMethodImage);
-            } else {
-                view = new ImageView(ImageUtils.methodImage);
-            }
+            view = new ImageView(ImageUtils.fieldImage);
 
             if (acc.isFinal()) {
                 view = new Group(view, new ImageView(ImageUtils.finalMarkImage));
-            } else if(acc.isStatic()) {
+            } else if (acc.isStatic()) {
                 view = new Group(view, new ImageView(ImageUtils.staticMarkImage));
             }
 
