@@ -14,7 +14,7 @@ import java.util.*;
 public final class Options {
     public static boolean color = true;
     public static boolean debug = false;
-    public static boolean useSystemTilteBar = false;
+    public static boolean useSystemTilteBar = true;
 
     public static Path path = Paths.get(System.getProperty("user.home")).resolve(".viewer");
     public static List<Properties> properties = new ArrayList<>();
@@ -104,10 +104,15 @@ public final class Options {
         Log.setting("viewer.fonts.text", FontUtils.textFont);
 
         String locale = get("viewer.locale");
-        if(locale != null) {
+        if (locale != null) {
             Locale.setDefault(Locale.forLanguageTag(locale));
         }
         Log.setting("viewer.locale", Locale.getDefault());
+
+        if (defined("viewer.disableSystemTitleBar")) {
+            useSystemTilteBar = false;
+        }
+        Log.setting("viewer.disableSystemTitleBar", !useSystemTilteBar);
     }
 
     private static String get(List<Properties> properties, String key) {
