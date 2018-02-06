@@ -9,18 +9,16 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public final class Options {
     public static boolean color = true;
     public static boolean debug = false;
     public static boolean useSystemTilteBar = false;
 
-
     public static Path path = Paths.get(System.getProperty("user.home")).resolve(".viewer");
+    public static List<Properties> properties = new ArrayList<>();
+
 
     public static void init() {
         String p = System.getProperty("viewer.path");
@@ -63,11 +61,12 @@ public final class Options {
         if (properties == null) {
             properties = Collections.emptyList();
         }
+        Options.properties = properties;
 
-        Options.debug = defined(properties, "viewer.debug");
+        Options.debug = defined("viewer.debug");
         Log.setting("viewer.debug", debug);
 
-        boolean color = defined(properties, "viewer.color");
+        boolean color = defined("viewer.color");
         if (System.getProperty("os.name", "windows").toLowerCase().contains("win")) {
             Options.color = false;
         }
@@ -76,21 +75,35 @@ public final class Options {
         }
         Log.setting("viewer.color", Options.color);
 
-        String uiFont = get(properties, "viewer.fonts.ui");
+
+        Double uiFontSize = getDouble("viewer.fonts.ui.size");
+        if (uiFontSize != null) {
+            FontUtils.uiFontSize = uiFontSize;
+        }
+
+        String uiFont = get("viewer.fonts.ui");
         if (uiFont != null) {
-            FontUtils.uiFont = Font.font(uiFont, 15);
+            FontUtils.uiFont = Font.font(uiFont, FontUtils.uiFontSize);
         } else {
             FontUtils.initUiFont();
         }
         Log.setting("viewer.fonts.ui", FontUtils.uiFont);
+        Log.setting("viewer.fonts.ui.size", FontUtils.uiFontSize);
 
-        String textFont = get(properties, "viewer.fonts.text");
+
+        Double textFontSize = getDouble("viewer.fonts.text.size");
+        if (textFontSize != null) {
+            FontUtils.textFontSize = textFontSize;
+        }
+
+        String textFont = get("viewer.fonts.text");
         if (textFont != null) {
-            FontUtils.textFont = Font.font(textFont, 15);
+            FontUtils.textFont = Font.font(textFont, FontUtils.textFontSize);
         } else {
             FontUtils.initTextFont();
         }
         Log.setting("viewer.fonts.text", FontUtils.textFont);
+        Log.setting("viewer.fonts.text.size", FontUtils.textFontSize);
     }
 
     private static String get(List<Properties> properties, String key) {
@@ -103,6 +116,10 @@ public final class Options {
         return null;
     }
 
+    private static String get(String key) {
+        return get(properties, key);
+    }
+
     private static String get(List<Properties> properties, String key, String defaultValue) {
         for (Properties property : properties) {
             String value = property.getProperty(key, null);
@@ -111,6 +128,10 @@ public final class Options {
             }
         }
         return defaultValue;
+    }
+
+    private static String get(String key, String defaultValue) {
+        return get(properties, key, defaultValue);
     }
 
     private static boolean defined(List<Properties> properties, String key) {
@@ -122,6 +143,10 @@ public final class Options {
         }
 
         return false;
+    }
+
+    private static boolean defined(String key) {
+        return defined(properties, key);
     }
 
     private static Integer getInt(List<Properties> properties, String key) {
@@ -136,5 +161,27 @@ public final class Options {
             }
         }
         return null;
+    }
+
+    private static Integer getInt(String key) {
+        return getInt(properties, key);
+    }
+
+    private static Double getDouble(List<Properties> properties, String key) {
+        for (Properties property : properties) {
+            String value = property.getProperty(key, null);
+            if (value != null) {
+                value = value.trim();
+                try {
+                    return Double.valueOf(value);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Double getDouble(String key) {
+        return getDouble(properties, key);
     }
 }

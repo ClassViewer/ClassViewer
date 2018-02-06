@@ -3,10 +3,11 @@ package org.glavo.viewer.gui;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.glavo.viewer.gui.filetypes.FileType;
@@ -47,7 +48,7 @@ public final class Viewer extends Application {
 
         pane.setTop(topBar);
         pane.setCenter(tabPane);
-
+        pane.setEffect(new DropShadow(2d, 0d, +2d, Color.BLACK));
         FontUtils.setUIFont(tabPane);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);

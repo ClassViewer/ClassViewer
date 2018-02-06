@@ -9,21 +9,49 @@ import java.util.regex.Pattern;
 
 public class FontUtils {
     private static final Pattern fontFamily = Pattern.compile("-fx-font-family:\\s*\"[^\"]+\"\\s*;");
+    private static final Pattern fontSize = Pattern.compile("-fx-font-size:\\s*\"[^\"]+\"\\s*;");
 
     private FontUtils() {
     }
 
 
-    public static Font uiFont = Font.font("Dialog", 15);
+    public static Font uiFont = null;
 
-    public static Font textFont = Font.loadFont("Monospaced", 15);
+    public static double uiFontSize = 15;
+
+    public static Font textFont = null;
+
+    public static double textFontSize = 15;
 
     public static void setUIFont(Node node) {
-        setFont(node, uiFont);
+        String s = node.getStyle();
+        if (s == null) {
+            s = "";
+        }
+
+        node.setStyle(setUIFont(s));
     }
 
     public static String setUIFont(String style) {
-        return setFont(style, uiFont);
+        Matcher m;
+        if(style == null) {
+            style = "";
+        }
+        m = fontFamily.matcher(style);
+        if (m.matches()) {
+            style = m.replaceAll("-fx-font-family: \"" + uiFont.getFamily() + "\";");
+        } else {
+            style += ("-fx-font-family: \"" + uiFont.getFamily() + "\";");
+        }
+
+        m = fontSize.matcher(style);
+        if (m.matches()) {
+            style = m.replaceAll("-fx-font-size: " + uiFontSize + ";");
+        } else {
+            style += ("-fx-font-size: " + uiFontSize + ";");
+        }
+
+        return style;
     }
 
     public static void setTextFont(Node node) {
@@ -54,26 +82,30 @@ public class FontUtils {
     public static void initUiFont() {
         List<String> fonts = Font.getFamilies();
         if (fonts.contains("PingFang SC")) {
-            uiFont = Font.font("PingFang SC", 15);
+            uiFont = Font.font("PingFang SC", uiFontSize);
         } else if (fonts.contains("Microsoft YaHei UI")) {
-            uiFont = Font.font("Microsoft YaHei UI", 15);
+            uiFont = Font.font("Microsoft YaHei UI", uiFontSize);
         } else if (fonts.contains("Ubuntu")) {
-            uiFont = Font.font("Ubuntu", 15);
+            uiFont = Font.font("Ubuntu", uiFontSize);
         } else if (fonts.contains("Segoe UI")) {
-            uiFont = Font.font("Segoe UI", 15);
+            uiFont = Font.font("Segoe UI", uiFontSize);
+        } else {
+            uiFont = Font.font("Dialog", uiFontSize);
         }
     }
 
     public static void initTextFont() {
         List<String> fonts = Font.getFamilies();
         if (fonts.contains("Consolas")) {
-            textFont = Font.font("Consolas", 15);
+            textFont = Font.font("Consolas", textFontSize);
         } else if (fonts.contains("Source Code Pro")) {
-            textFont = Font.font("Source Code Pro", 15);
+            textFont = Font.font("Source Code Pro", textFontSize);
         } else if (fonts.contains("Fira Code")) {
-            textFont = Font.font("Fira Code", 15);
+            textFont = Font.font("Fira Code", textFontSize);
         } else if (fonts.contains("DejaVu Sans Mono")) {
-            textFont = Font.font("DejaVu Sans Mono", 15);
+            textFont = Font.font("DejaVu Sans Mono", textFontSize);
+        } else {
+            textFont = Font.loadFont("Monospaced", textFontSize);
         }
     }
 

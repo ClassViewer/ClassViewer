@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
@@ -32,19 +33,23 @@ public class ViewerTitleBar extends ToolBar {
         this.viewer = viewer;
 
         this.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 viewer.getStage().setMaximized(!viewer.getStage().isMaximized());
             }
         });
 
         this.setOnMousePressed((event) -> {
-            xOffset = event.getSceneX();
-            yOffset = event.getSceneY();
+            if (event.getButton() == MouseButton.PRIMARY) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
         });
 
         this.setOnMouseDragged((event) -> {
-            viewer.getStage().setX(event.getScreenX() - xOffset);
-            viewer.getStage().setY(event.getScreenY() - yOffset);
+            if (event.getButton() == MouseButton.PRIMARY) {
+                viewer.getStage().setX(event.getScreenX() - xOffset);
+                viewer.getStage().setY(event.getScreenY() - yOffset);
+            }
         });
 
         viewer.getStage().titleProperty().addListener((observable, oldValue, newValue) -> titleLabel.setText(newValue));
