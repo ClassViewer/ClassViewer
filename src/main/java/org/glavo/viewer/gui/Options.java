@@ -88,7 +88,6 @@ public final class Options {
             FontUtils.initUiFont();
         }
         Log.setting("viewer.fonts.ui", FontUtils.uiFont);
-        Log.setting("viewer.fonts.ui.size", FontUtils.uiFontSize);
 
 
         Double textFontSize = getDouble("viewer.fonts.text.size");
@@ -103,7 +102,12 @@ public final class Options {
             FontUtils.initTextFont();
         }
         Log.setting("viewer.fonts.text", FontUtils.textFont);
-        Log.setting("viewer.fonts.text.size", FontUtils.textFontSize);
+
+        String locale = get("viewer.locale");
+        if(locale != null) {
+            Locale.setDefault(Locale.forLanguageTag(locale));
+        }
+        Log.setting("viewer.locale", Locale.getDefault());
     }
 
     private static String get(List<Properties> properties, String key) {

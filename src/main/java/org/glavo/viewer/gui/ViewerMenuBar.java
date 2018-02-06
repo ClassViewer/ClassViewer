@@ -6,53 +6,62 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import org.glavo.viewer.util.ImageUtils;
-import org.glavo.viewer.util.UrlUtils;
+
+import java.util.ResourceBundle;
 
 import static org.glavo.viewer.util.FontUtils.setUIFont;
 
 public final class ViewerMenuBar extends MenuBar {
+    public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.gui.ViewerMenuBar");
+
     public class FileMenu extends Menu {
-        private MenuItem openFile = new MenuItem("Open...");
-        private MenuItem openFolder = new MenuItem("Open Folder");
-        private Menu openRecent = new Menu("Open Recent");
+        private MenuItem openFileItem = new MenuItem(resource.getString("fileMenu.openFileItem.text"));
+        private MenuItem openFolderItem = new MenuItem(resource.getString("fileMenu.openFolderItem.text"));
+        private Menu openRecentMenu = new Menu(resource.getString("fileMenu.openRecentMenu.text"));
 
         public FileMenu() {
-            super("_File");
+            super(resource.getString("fileMenu.text"));
             this.setMnemonicParsing(true);
 
-            openFile.setGraphic(new ImageView(ImageUtils.openFileImage));
-            openFolder.setGraphic(new ImageView(ImageUtils.openFolderImage));
+            openFileItem.setGraphic(new ImageView(ImageUtils.openFileImage));
+            openFolderItem.setGraphic(new ImageView(ImageUtils.openFolderImage));
 
-            openFile.setOnAction(event -> viewer.openFile());
-            openFolder.setOnAction(event -> viewer.openFolder());
+            openFileItem.setOnAction(event -> viewer.openFile());
+            openFolderItem.setOnAction(event -> viewer.openFolder());
 
-            this.getItems().addAll(openFile, openFolder, openRecent);
+            openFileItem.setMnemonicParsing(true);
+            openFolderItem.setMnemonicParsing(true);
+            openRecentMenu.setMnemonicParsing(true);
+
+            this.getItems().addAll(openFileItem, openFolderItem, openRecentMenu);
         }
     }
 
     public class WindowMenu extends Menu {
-        private MenuItem newWindow = new MenuItem("New Window");
+        private MenuItem newWindowItem = new MenuItem(resource.getString("windowMenu.newWindowItem.text"));
 
         public WindowMenu() {
-            super("_Window");
+            super(resource.getString("windowMenu.text"));
             this.setMnemonicParsing(true);
 
-            newWindow.setOnAction(event -> new Viewer().start(new Stage()));
-            this.getItems().add(newWindow);
+            newWindowItem.setOnAction(event -> new Viewer().start(new Stage()));
+            newWindowItem.setMnemonicParsing(true);
+
+            this.getItems().add(newWindowItem);
         }
     }
 
     public class HelpMenu extends Menu {
-        private MenuItem about = new MenuItem("About");
+        private MenuItem aboutItem = new MenuItem(resource.getString("helpMenu.aboutItem.text"));
 
         public HelpMenu() {
-            super("_Help");
+            super(resource.getString("helpMenu.text"));
             this.setMnemonicParsing(true);
 
-            MenuItem about = new MenuItem("About");
-            about.setOnAction(event -> ViewerAboutDialog.show(viewer));
+            aboutItem.setMnemonicParsing(true);
+            aboutItem.setOnAction(event -> ViewerAboutDialog.show(viewer));
 
-            this.getItems().add(about);
+            this.getItems().add(aboutItem);
         }
     }
 
@@ -70,11 +79,11 @@ public final class ViewerMenuBar extends MenuBar {
     }
 
     public void updateRecentFiles() {
-        this.fileMenu.openRecent.getItems().clear();
+        this.fileMenu.openRecentMenu.getItems().clear();
         for (RecentFile file : RecentFiles.Instance.getAll()) {
             MenuItem item = new MenuItem(file.url.toString(), new ImageView(file.type.icon));
             item.setOnAction(event -> viewer.openFile(file.url));
-            this.fileMenu.openRecent.getItems().add(item);
+            this.fileMenu.openRecentMenu.getItems().add(item);
         }
     }
 }

@@ -47,7 +47,8 @@ public final class ClassFileType extends FileType {
             }
         };
         task.setOnSucceeded((Pair<ClassFile, HexText> value) -> {
-            tab.setContent(new ParsedViewerPane(value.getKey(), value.getValue()));
+            ParsedViewerPane pane = new ParsedViewerPane(value.getKey(), value.getValue());
+            tab.setContent(pane);
             RecentFiles.Instance.add(Instance, url);
         });
         task.setOnFailed((Throwable e) -> {

@@ -17,7 +17,7 @@ public class FontUtils {
 
     public static Font uiFont = null;
 
-    public static double uiFontSize = 15;
+    public static double uiFontSize = 14;
 
     public static Font textFont = null;
 
