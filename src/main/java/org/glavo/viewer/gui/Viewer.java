@@ -48,7 +48,6 @@ public final class Viewer extends Application {
 
         pane.setTop(topBar);
         pane.setCenter(tabPane);
-        pane.setEffect(new DropShadow(2d, 0d, +2d, Color.BLACK));
         FontUtils.setUIFont(tabPane);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
