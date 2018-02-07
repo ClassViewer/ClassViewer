@@ -30,7 +30,7 @@ public final class ClassFileType extends FileType {
     }
 
     @Override
-    public ViewerTab open(Viewer viewer, URL url) throws Exception {
+    public ViewerTab open(Viewer viewer, URL url) {
         ViewerTab tab = ViewerTab.create(url);
         tab.setGraphic(new ImageView(icon));
 

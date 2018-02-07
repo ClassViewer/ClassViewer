@@ -10,15 +10,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import org.glavo.viewer.classfile.ClassFile;
 import org.glavo.viewer.classfile.ClassFileComponent;
-import org.glavo.viewer.classfile.datatype.UInt;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,13 +83,13 @@ public final class SearchBar extends ToolBar {
         UInt("UInt", new StringConverter<Integer>() {
             @Override
             public String toString(Integer object) {
-                return object == null ? "0" : object.toString();
+                return object == null ? "0" : Integer.toUnsignedString(object);
             }
 
             @Override
             public Integer fromString(String string) {
                 try {
-                    return Integer.parseUnsignedInt(string);
+                    return Integer.parseUnsignedInt(string.trim());
                 } catch (Exception e) {
                     return null;
                 }
