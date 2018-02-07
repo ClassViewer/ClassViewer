@@ -67,7 +67,7 @@ public abstract class FileComponent extends TreeItem<FileComponent> {
      * @param name name of sub-component
      * @return value of sub-component
      */
-    protected final FileComponent get(String name) {
+    public final FileComponent get(String name) {
         for (FileComponent c : getComponents()) {
             if (name.equals(c.getName())) {
                 return c;

@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import static org.glavo.viewer.util.FontUtils.setUIFont;
 
 public final class ViewerMenuBar extends MenuBar {
+
     public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.gui.ViewerMenuBar");
 
     public class FileMenu extends Menu {
@@ -75,6 +76,7 @@ public final class ViewerMenuBar extends MenuBar {
         this.viewer = viewer;
         this.getMenus().addAll(fileMenu, windowMenu, helpMenu);
         updateRecentFiles();
+
         setUIFont(this);
     }
 

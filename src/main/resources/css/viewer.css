@@ -16,3 +16,17 @@
     -fx-content-display: LEFT;
 }
 
+.combo-box {
+    -fx-background-color: transparent;
+}
+
+.combo-box:hover {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-text-fill: -fx-text-base-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+}
+
+.combo-box .arrow, .combo-box .arrow-button{
+    -fx-background-color: transparent;
+}

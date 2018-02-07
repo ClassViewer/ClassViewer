@@ -12,6 +12,8 @@ import java.net.URL;
 public class ViewerTab extends Tab {
     public class UserData {
         public URL url = null;
+        public Runnable showOrHideSearchBar = null;
+
 
         public ViewerTab getTab() {
             return ViewerTab.this;
@@ -40,6 +42,13 @@ public class ViewerTab extends Tab {
         super(text, content);
         this.setStyle(FontUtils.setUIFont(this.getStyle()));
         this.setUserData(new UserData());
+    }
+
+    public void showSearchBar() {
+        UserData data = getUserData();
+        if(data.showOrHideSearchBar != null) {
+            data.showOrHideSearchBar.run();
+        }
     }
 
     @Override

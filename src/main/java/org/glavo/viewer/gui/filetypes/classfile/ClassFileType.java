@@ -1,9 +1,6 @@
 package org.glavo.viewer.gui.filetypes.classfile;
 
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import org.glavo.viewer.classfile.ClassFile;
@@ -11,7 +8,6 @@ import org.glavo.viewer.classfile.ClassFileParser;
 import org.glavo.viewer.gui.*;
 import org.glavo.viewer.gui.filetypes.FileType;
 import org.glavo.viewer.gui.filetypes.binary.HexText;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.UrlUtils;
 
@@ -47,8 +43,9 @@ public final class ClassFileType extends FileType {
             }
         };
         task.setOnSucceeded((Pair<ClassFile, HexText> value) -> {
-            ParsedViewerPane pane = new ParsedViewerPane(value.getKey(), value.getValue());
+            ParsedViewerPane pane = new ParsedViewerPane(viewer, value.getKey(), value.getValue());
             tab.setContent(pane);
+            tab.getUserData().showOrHideSearchBar = pane::showOrHideSearchBar;
             RecentFiles.Instance.add(Instance, url);
         });
         task.setOnFailed((Throwable e) -> {

@@ -4,8 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -62,7 +61,15 @@ public final class Viewer extends Application {
         stage.setTitle(TITLE);
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
-
+        stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN).match(event)) {
+                ViewerTab tab = (ViewerTab) tabPane.getSelectionModel().getSelectedItem();
+                if (tab != null) {
+                    tab.showSearchBar();
+                }
+                event.consume();
+            }
+        });
         stage.show();
 
         List<String> args = this.getParameters().getUnnamed();

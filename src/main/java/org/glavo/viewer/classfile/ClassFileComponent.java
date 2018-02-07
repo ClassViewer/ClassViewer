@@ -5,6 +5,8 @@ import org.glavo.viewer.classfile.constant.ConstantPool;
 import org.glavo.viewer.classfile.datatype.*;
 import org.glavo.viewer.FileComponent;
 
+import java.util.List;
+
 /**
  * Base class for all class file components.
  */
@@ -12,6 +14,7 @@ public abstract class ClassFileComponent extends FileComponent {
 
     /**
      * Reads content, records offset and length.
+     *
      * @param reader
      */
     public final void read(ClassFileReader reader) {
@@ -24,6 +27,7 @@ public abstract class ClassFileComponent extends FileComponent {
 
     /**
      * Reads content using ClassFileReader.
+     *
      * @param reader
      */
     protected void readContent(ClassFileReader reader) {
@@ -83,6 +87,16 @@ public abstract class ClassFileComponent extends FileComponent {
 
     protected final void add(ClassFileComponent subComponent) {
         this.add(null, subComponent);
+    }
+
+    @SuppressWarnings("unchecked")
+    public final void walkComponentTree(java.util.function.Consumer<ClassFileComponent> f) {
+        f.accept(this);
+        for (ClassFileComponent component : (List<ClassFileComponent>) (List) getComponents()) {
+            if (component != null) {
+                component.walkComponentTree(f);
+            }
+        }
     }
 
 }

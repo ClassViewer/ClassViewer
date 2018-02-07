@@ -5,8 +5,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.glavo.viewer.FileComponent;
+import org.glavo.viewer.gui.Viewer;
 import org.glavo.viewer.gui.filetypes.binary.BytesBar;
 import org.glavo.viewer.gui.filetypes.binary.HexPane;
 import org.glavo.viewer.gui.filetypes.binary.HexText;
@@ -25,16 +30,19 @@ import org.glavo.viewer.util.Log;
  */
 public class ParsedViewerPane extends BorderPane {
 
+    private Viewer viewer;
+
     private final TreeView<FileComponent> tree;
-    //private final SearchBar searchBar;
+    private final SearchBar searchBar;
     private final HexPane hexPane;
     private final Label statusLabel;
     private final BytesBar bytesBar;
     private final Label rightLabel;
 
-    public ParsedViewerPane(FileComponent file, HexText hex) {
+    public ParsedViewerPane(Viewer viewer, FileComponent file, HexText hex) {
+        this.viewer = viewer;
         tree = buildClassTree(file);
-        //searchBar = new SearchBar(this);
+        searchBar = new SearchBar(this);
         hexPane = new HexPane(hex);
         statusLabel = new Label(" ");
         rightLabel = new Label();
@@ -51,7 +59,7 @@ public class ParsedViewerPane extends BorderPane {
         this.setBottom(buildStatusBar());
         this.setRight(rightLabel);
 
-        listenTreeItemSelection();
+        tree.getSelectionModel().getSelectedItems().addListener(this::selectItemAction);
     }
 
     private static TreeView<FileComponent> buildClassTree(FileComponent file) {
@@ -78,10 +86,6 @@ public class ParsedViewerPane extends BorderPane {
         return statusBar;
     }
 
-    private void listenTreeItemSelection() {
-        tree.getSelectionModel().getSelectedItems().addListener(this::selectItemAction);
-    }
-
     private void selectItemAction(ListChangeListener.Change<? extends TreeItem<FileComponent>> c) {
         if (c.next() && c.wasAdded()) {
             TreeItem<FileComponent> node = c.getList().get(c.getFrom());
@@ -102,8 +106,15 @@ public class ParsedViewerPane extends BorderPane {
     }
 
     public SearchBar getSearchBar() {
-        return null;
-        //return searchBar;
+        return searchBar;
+    }
+
+    public void showOrHideSearchBar() {
+        if (this.getTop() == null) {
+            this.setTop(searchBar);
+        } else {
+            this.setTop(null);
+        }
     }
 
     public HexPane getHexPane() {
@@ -120,5 +131,9 @@ public class ParsedViewerPane extends BorderPane {
 
     public Label getRightLabel() {
         return rightLabel;
+    }
+
+    public Viewer getViewer() {
+        return viewer;
     }
 }
