@@ -25,9 +25,18 @@ public class UrlUtils {
         return arr[arr.length - 1];
     }
 
+    public static String getClassName(URL url) {
+        String name = getFileName(url);
+        if (name.endsWith(".class")) {
+            return name.substring(0, name.length() - 6);
+        } else {
+            return null;
+        }
+    }
+
     @SuppressWarnings("deprecation")
     public static URL pathToUrl(Path path) throws MalformedURLException {
-        if(path == null)
+        if (path == null)
             return null;
 
         return new URL(URLDecoder.decode(path.toUri().toString()));

@@ -20,6 +20,7 @@ public class HexPane extends ScrollPane {
         textArea2 = new TextArea(hex.bytesText);
         textArea3 = new TextArea(hex.asciiString);
 
+        //textArea1.select
         initTextArea();
 
         HBox hbox = new HBox();
@@ -27,6 +28,10 @@ public class HexPane extends ScrollPane {
         hbox.getChildren().addAll(textArea1, textArea2, textArea3);
 
         setContent(hbox);
+    }
+
+    public void textArea1OnSeled() {
+
     }
 
     public void select(FileComponent cc) {

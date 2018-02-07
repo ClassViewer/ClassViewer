@@ -1,8 +1,12 @@
 package org.glavo.viewer.gui.filetypes.classfile;
 
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import org.glavo.viewer.classfile.ClassFile;
 import org.glavo.viewer.classfile.ClassFileComponent;
@@ -143,7 +147,7 @@ public final class SearchBar extends ToolBar {
     private ComboBox<SearchRange> searchRangeBox = new ComboBox<>(FXCollections.observableArrayList(SearchRange.values()));
     private Button previousButton = new Button(null, new ImageView(ImageUtils.previousOccurenceImage));
     private Button nextButton = new Button(null, new ImageView(ImageUtils.nextOccurenceImage));
-
+    private Label count = new Label("");
 
     public SearchBar(ParsedViewerPane pane) {
         this.pane = pane;
@@ -160,14 +164,12 @@ public final class SearchBar extends ToolBar {
 
         this.setFont();
 
-        this.searchButton.setOnAction(event -> {
-            List<ClassFileComponent> ans = searcherBox.getSelectionModel().getSelectedItem().search(this);
-            if (ans == null) {
-                return;
+        this.textField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (new KeyCodeCombination(KeyCode.ENTER).match(event)) {
+                search(null);
             }
-
-            this.iterator = ans.listIterator();
         });
+        this.searchButton.setOnAction(this::search);
         this.previousButton.setOnAction(event -> {
             if (iterator == null) {
                 return;
@@ -209,8 +211,33 @@ public final class SearchBar extends ToolBar {
                 new Label("in"),
                 searchRangeBox,
                 previousButton,
-                nextButton
+                nextButton,
+                count
         );
+    }
+
+    public void search(ActionEvent event) {
+        List<ClassFileComponent> ans = searcherBox.getSelectionModel().getSelectedItem().search(this);
+        if (ans == null) {
+            count.setText("No matches");
+            return;
+        }
+
+        switch (ans.size()) {
+            case 0:
+                count.setText("No matches");
+                this.iterator = null;
+                return;
+            case 1:
+                count.setText("One match");
+                break;
+            case 2:
+                count.setText("Two matches");
+            default:
+                count.setText(ans.size() + " matches");
+        }
+
+        this.iterator = ans.listIterator();
     }
 
     public void setColor(String color) {
