@@ -116,7 +116,7 @@ public final class Options {
         Log.setting("viewer.disableSystemTitleBar", !useSystemTilteBar);
 
         if (defined("viewer.skin")) {
-            if (get("viewer.skin").toLowerCase().equals("")) {
+            if (get("viewer.skin").toUpperCase().equals("CASPIAN")) {
                 skin = "CASPIAN";
             } else {
                 skin = "MODENA";
