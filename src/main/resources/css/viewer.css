@@ -4,6 +4,7 @@
 
 .button {
     -fx-background-color: transparent;
+    -fx-padding: 0.333333em 0.666667em 0.333333em 0.666667em; /* 4 8 4 8 */
 }
 
 .button:hover {

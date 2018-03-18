@@ -15,6 +15,7 @@ public final class Options {
     public static boolean color = true;
     public static boolean debug = false;
     public static boolean useSystemTilteBar = true;
+    public static String skin = null;
 
     public static Path path = Paths.get(System.getProperty("user.home")).resolve(".viewer");
     public static List<Properties> properties = new ArrayList<>();
@@ -113,6 +114,17 @@ public final class Options {
             useSystemTilteBar = false;
         }
         Log.setting("viewer.disableSystemTitleBar", !useSystemTilteBar);
+
+        if (defined("viewer.skin")) {
+            if (get("viewer.skin").toLowerCase().equals("")) {
+                skin = "CASPIAN";
+            } else {
+                skin = "MODENA";
+            }
+        } else {
+            skin = "MODENA";
+        }
+        Log.setting("viewer.skin", skin);
     }
 
     private static String get(List<Properties> properties, String key) {

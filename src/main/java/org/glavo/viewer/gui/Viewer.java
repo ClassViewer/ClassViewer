@@ -37,6 +37,11 @@ public final class Viewer extends Application {
     private ViewerTabPane tabPane;
 
     @Override
+    public void init() throws Exception {
+        Application.setUserAgentStylesheet(Options.skin);
+    }
+
+    @Override
     public void start(Stage stage) {
         this.stage = stage;
         this.pane = new BorderPane();

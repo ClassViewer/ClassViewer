@@ -1,5 +1,6 @@
 package org.glavo.viewer.gui.filetypes.classfile;
 
+import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
@@ -44,11 +45,13 @@ public final class ClassFileType extends FileType {
             }
         };
         task.setOnSucceeded((Pair<ClassFile, HexText> value) -> {
-            ParsedViewerPane pane = new ParsedViewerPane(viewer, value.getKey(), value.getValue());
-            ((ClassFileComponent)pane.getTree().getRoot()).setName(UrlUtils.getClassName(url));
-            tab.setContent(pane);
-            tab.getUserData().showOrHideSearchBar = pane::showOrHideSearchBar;
-            RecentFiles.Instance.add(Instance, url);
+            Platform.runLater(() -> {
+                ParsedViewerPane pane = new ParsedViewerPane(viewer, value.getKey(), value.getValue());
+                ((ClassFileComponent)pane.getTree().getRoot()).setName(UrlUtils.getClassName(url));
+                tab.setContent(pane);
+                tab.getUserData().showOrHideSearchBar = pane::showOrHideSearchBar;
+                RecentFiles.Instance.add(Instance, url);
+            });
         });
         task.setOnFailed((Throwable e) -> {
             viewer.getTabPane().getTabs().remove(tab);

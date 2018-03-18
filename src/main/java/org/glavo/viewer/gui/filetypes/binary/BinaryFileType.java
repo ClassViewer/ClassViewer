@@ -1,5 +1,6 @@
 package org.glavo.viewer.gui.filetypes.binary;
 
+import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
@@ -27,7 +28,7 @@ public class BinaryFileType extends FileType {
 
     @Override
     public ViewerTab open(Viewer viewer, URL url) {
-        ViewerTab tab =  ViewerTab.create(url);
+        ViewerTab tab = ViewerTab.create(url);
         tab.setGraphic(new ImageView(icon));
 
         ViewerTask<HexText> task = new ViewerTask<HexText>() {
@@ -37,10 +38,10 @@ public class BinaryFileType extends FileType {
                 return new HexText(bytes);
             }
         };
-        task.setOnSucceeded((HexText text) -> {
+        task.setOnSucceeded((HexText text) -> Platform.runLater(() -> {
             tab.setContent(new HexPane(text));
             RecentFiles.Instance.add(this, url);
-        });
+        }));
 
         task.setOnFailed((Throwable ex) -> {
             viewer.getTabPane().getTabs().remove(tab);
