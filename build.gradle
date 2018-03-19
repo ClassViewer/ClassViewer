@@ -1,5 +1,5 @@
 group 'org.glavo'
-version '3.2-SNAPSHOT'
+version '3.3-SNAPSHOT'
 
 apply plugin: 'java'
 
