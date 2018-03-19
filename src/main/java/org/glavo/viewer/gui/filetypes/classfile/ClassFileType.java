@@ -35,24 +35,23 @@ public final class ClassFileType extends FileType {
         ViewerTab tab = ViewerTab.create(url);
         tab.setGraphic(new ImageView(icon));
 
-        ViewerTask<Pair<ClassFile, HexText>> task = new ViewerTask<Pair<ClassFile, HexText>>() {
+        ViewerTask<Void> task = new ViewerTask<Void>() {
             @Override
-            protected Pair<ClassFile, HexText> call() throws Exception {
+            protected Void call() throws Exception {
                 byte[] bytes = UrlUtils.readData(url);
                 ClassFile classFile = new ClassFileParser().parse(bytes);
                 RecentFiles.Instance.add(Instance, url);
-                return new Pair<>(classFile, new HexText(bytes));
+                HexText text = new HexText(bytes);
+                Platform.runLater(() -> {
+                    ParsedViewerPane pane = new ParsedViewerPane(viewer, classFile, text);
+                    ((ClassFileComponent)pane.getTree().getRoot()).setName(UrlUtils.getClassName(url));
+                    tab.setContent(pane);
+                    tab.getUserData().showOrHideSearchBar = pane::showOrHideSearchBar;
+                    RecentFiles.Instance.add(Instance, url);
+                });
+                return null;
             }
         };
-        task.setOnSucceeded((Pair<ClassFile, HexText> value) -> {
-            Platform.runLater(() -> {
-                ParsedViewerPane pane = new ParsedViewerPane(viewer, value.getKey(), value.getValue());
-                ((ClassFileComponent)pane.getTree().getRoot()).setName(UrlUtils.getClassName(url));
-                tab.setContent(pane);
-                tab.getUserData().showOrHideSearchBar = pane::showOrHideSearchBar;
-                RecentFiles.Instance.add(Instance, url);
-            });
-        });
         task.setOnFailed((Throwable e) -> {
             viewer.getTabPane().getTabs().remove(tab);
             ViewerAlert.logAndShowExceptionAlert(e);

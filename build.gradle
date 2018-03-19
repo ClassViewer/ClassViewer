@@ -24,6 +24,15 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 javadoc.options.encoding = "UTF-8"
 
+import org.apache.tools.ant.filters.EscapeUnicode
+
+tasks.withType(ProcessResources).each { task ->
+    task.from(task.getSource()) {
+        include '**/*.properties'
+        filter(EscapeUnicode)
+    }
+}
+
 task run(type: JavaExec, dependsOn: jar) {
     main = "-jar"
     args jar.archivePath
