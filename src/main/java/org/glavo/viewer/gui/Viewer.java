@@ -15,8 +15,7 @@ import org.glavo.viewer.util.Log;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
@@ -180,7 +179,6 @@ public final class Viewer extends Application {
                 event.consume();
             }
         });
-
         // Dropping over surface
         scene.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();

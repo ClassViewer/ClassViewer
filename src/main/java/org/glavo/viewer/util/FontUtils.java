@@ -105,7 +105,7 @@ public class FontUtils {
         } else if (fonts.contains("DejaVu Sans Mono")) {
             textFont = Font.font("DejaVu Sans Mono", textFontSize);
         } else {
-            textFont = Font.loadFont("Monospaced", textFontSize);
+            textFont = Font.font("Monospaced", textFontSize);
         }
     }
 
