@@ -2,6 +2,7 @@ package org.glavo.viewer.gui;
 
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import org.glavo.viewer.util.FontUtils;
@@ -21,7 +22,10 @@ public class ViewerTab extends Tab {
     }
 
     public static ViewerTab create(String text) {
-        return new ViewerTab(text, new BorderPane(new ProgressBar()));
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        progressIndicator.setMaxWidth(75);
+        progressIndicator.setMaxHeight(75);
+        return new ViewerTab(text, new BorderPane(progressIndicator));
     }
 
     public static ViewerTab create(URL url) {

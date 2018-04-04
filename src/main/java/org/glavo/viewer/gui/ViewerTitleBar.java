@@ -52,7 +52,7 @@ public class ViewerTitleBar extends ToolBar {
             }
         });
 
-        viewer.getStage().titleProperty().addListener((observable, oldValue, newValue) -> titleLabel.setText(newValue));
+        titleLabel.textProperty().bind(viewer.getStage().titleProperty());
         viewer.getStage().maximizedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 this.getItems().set(5, restoreButton);

@@ -72,14 +72,16 @@ public final class Viewer extends Application {
                 event.consume();
             }
         });
-        stage.show();
 
-        List<String> args = this.getParameters().getUnnamed();
-        ArrayList<File> files = new ArrayList<>(args.size());
-        for (String arg : args) {
-            files.add(new File(arg));
+        if (this.getParameters() != null && this.getParameters().getUnnamed() != null) {
+            List<String> args = this.getParameters().getUnnamed();
+            ArrayList<File> files = new ArrayList<>(args.size());
+            for (String arg : args) {
+                files.add(new File(arg));
+            }
+            javafx.application.Platform.runLater(() -> openFiles(files));
         }
-        openFiles(files);
+        stage.show();
     }
 
     public void openFile() {
