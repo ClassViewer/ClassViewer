@@ -56,7 +56,7 @@ mainClassName = 'org.glavo.viewer/org.glavo.viewer.gui.Viewer'
 jlink {
     moduleName = 'org.glavo.viewer'
     imageDir = file("$buildDir/ClassViewer-$version-${jforeign.Platform.PLATFORM}")
-    imageZip = file("$buildDir/ClassViewer-$version${jforeign.Platform.PLATFORM}.zip")
+    imageZip = file("$buildDir/ClassViewer-$version-${jforeign.Platform.PLATFORM}.zip")
     addOptions '--strip-debug',
             '--compress', '1',
             '--no-header-files',
