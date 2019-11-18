@@ -1,16 +1,45 @@
+import org.apache.tools.ant.filters.EscapeUnicode
+
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://dl.bintray.com/jforeign/maven' }
+    }
+    dependencies {
+        classpath 'xyz.jforeign:jforeign-common:0.1.2'
+    }
+}
+
+plugins {
+    id 'java'
+    id "org.javamodularity.moduleplugin" version "1.6.0"
+    id 'org.beryx.jlink' version '2.16.4'
+}
+
 group 'org.glavo'
 version '3.3-SNAPSHOT'
 
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
-
-if(sourceCompatibility.isJava9Compatible()) {
-    sourceSets.main.java.srcDirs += 'src/main/java9'
-}
+modularity.mixedJavaRelease 8
 
 repositories {
+    maven { url 'https://maven.aliyun.com/repository/public/' }
     mavenCentral()
+}
+
+String javafx(String moduleName) {
+    if (jforeign.Platform.isWindows()) {
+        return "org.openjfx:javafx-$moduleName:11:win"
+    } else if (jforeign.Platform.isMac()) {
+        return "org.openjfx:javafx-$moduleName:11:mac"
+    } else if (jforeign.Platform.isUnix()) {
+        return "org.openjfx:javafx-$moduleName:11:linux"
+    }
+}
+
+dependencies {
+    implementation javafx('base')
+    implementation javafx('graphics')
+    implementation javafx('controls')
 }
 
 jar {
@@ -24,8 +53,6 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 javadoc.options.encoding = "UTF-8"
 
-import org.apache.tools.ant.filters.EscapeUnicode
-
 tasks.withType(ProcessResources).each { task ->
     task.from(task.getSource()) {
         include '**/*.properties'
@@ -33,23 +60,17 @@ tasks.withType(ProcessResources).each { task ->
     }
 }
 
-task run(type: JavaExec, dependsOn: jar) {
-    main = "-jar"
-    args jar.archivePath
-}
+mainClassName = 'org.glavo.viewer/org.glavo.viewer.gui.Viewer'
 
-def java_home = System.getProperty("java.home")
-
-task link(type: Exec) {
-    dependsOn clean
-    dependsOn jar
-    workingDir 'build'
-
-    commandLine "${java_home}/bin/jlink",
+jlink {
+    moduleName = 'org.glavo.viewer'
+    imageDir = file("$buildDir/ClassViewer-$version-${jforeign.Platform.PLATFORM}")
+    imageZip = file("$buildDir/ClassViewer-$version${jforeign.Platform.PLATFORM}.zip")
+    addOptions '--strip-debug',
+            '--compress', '1',
             '--no-header-files',
-            '--no-man-pages',
-            '--module-path', "${jar.archivePath}${File.pathSeparatorChar}${java_home}/jmods",
-            '--add-modules', 'org.glavo.viewer',
-            '--launcher', 'viewer=org.glavo.viewer/org.glavo.viewer.gui.Viewer',
-            '--output', "ClassViewer-${version}"
+            '--no-man-pages'
+    launcher {
+        name = 'ClassViewer'
+    }
 }
