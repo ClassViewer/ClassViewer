@@ -13,7 +13,7 @@ import static org.glavo.viewer.util.FontUtils.setUIFont;
 
 public final class ViewerMenuBar extends MenuBar {
 
-    public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.gui.ViewerMenuBar");
+    public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.gui.ViewerMenuBarResources");
 
     public class FileMenu extends Menu {
         private MenuItem openFileItem = new MenuItem(resource.getString("fileMenu.openFileItem.text"));
