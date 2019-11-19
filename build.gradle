@@ -61,7 +61,22 @@ jlink {
             '--compress', '1',
             '--no-header-files',
             '--no-man-pages'
-    launcher {
-        name = 'ClassViewer'
+
+    if (file("launcher/${jforeign.Platform.PLATFORM}").exists()) {
+        project.tasks.getByName('jlink').doLast {
+            delete {
+                delete "$imageDir/bin/ClassViewer",
+                        "$imageDir/bin/ClassViewer.bat"
+            }
+            copy {
+                from "launcher/${jforeign.Platform.PLATFORM}"
+                into "$imageDir/bin"
+            }
+        }
+
+    } else {
+        launcher {
+            name = 'ClassViewer'
+        }
     }
 }
