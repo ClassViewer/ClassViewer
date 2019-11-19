@@ -26,11 +26,11 @@ repositories {
 
 String javafx(String moduleName) {
     if (jforeign.Platform.isWindows()) {
-        return "org.openjfx:javafx-$moduleName:11:win"
+        return "org.openjfx:javafx-$moduleName:13:win"
     } else if (jforeign.Platform.isMac()) {
-        return "org.openjfx:javafx-$moduleName:11:mac"
+        return "org.openjfx:javafx-$moduleName:13:mac"
     } else if (jforeign.Platform.isUnix()) {
-        return "org.openjfx:javafx-$moduleName:11:linux"
+        return "org.openjfx:javafx-$moduleName:13:linux"
     }
 }
 
@@ -77,6 +77,13 @@ jlink {
     } else {
         launcher {
             name = 'ClassViewer'
+        }
+        if(!jforeign.Platform.isWindows()) {
+            project.tasks.getByName('jlink').doLast {
+                delete {
+                    delete "$imageDir/bin/ClassViewer.bat"
+                }
+            }
         }
     }
 }
