@@ -26,7 +26,7 @@ public class JarFileType extends FileType {
     public FileTreeNode load(URL url) throws URISyntaxException, IOException {
         Path path = Paths.get(url.toURI());
 
-        try (FileSystem fs = FileSystems.newFileSystem(path, null)) {
+        try (FileSystem fs = FileSystems.newFileSystem(path, (ClassLoader) null)) {
             FileTreeNode root = path2node(fs.getPath("/"));
 
             root.setUrl(url);

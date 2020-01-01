@@ -20,8 +20,8 @@ import java.util.*;
 public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
 
-    public static final int DEFAULT_WIDTH = 1150;
-    public static final int DEFAULT_HEIGHT = 725;
+    public static final int DEFAULT_WIDTH = 1080;
+    public static final int DEFAULT_HEIGHT = 608;
 
     public static void main(String[] args) {
         Options.init();
