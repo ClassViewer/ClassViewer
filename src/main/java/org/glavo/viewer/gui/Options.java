@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public final class Options {
-    public static boolean color = true;
+    public static boolean color = false;
     public static boolean debug = false;
     public static boolean useSystemTilteBar = true;
     public static String skin = null;
@@ -49,6 +49,7 @@ public final class Options {
         }
 
         RecentFiles.init();
+        Log.info("loading finished");
     }
 
     public static void init(Properties... properties) {

@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'org.glavo'
-version '3.5'
+version '3.6'
 
 modularity.mixedJavaRelease 8
 
@@ -61,29 +61,11 @@ jlink {
             '--compress', '1',
             '--no-header-files',
             '--no-man-pages'
-
-    if (file("launcher/${jforeign.Platform.PLATFORM}").exists()) {
+    if (jforeign.Platform.isWindows()) {
+        addOptions '--strip-native-commands'
         project.tasks.getByName('jlink').doLast {
-            delete {
-                delete "$imageDir/bin/ClassViewer",
-                        "$imageDir/bin/ClassViewer.bat"
-            }
-            copy {
-                from "launcher/${jforeign.Platform.PLATFORM}"
-                into "$imageDir/bin"
-            }
-        }
-
-    } else {
-        launcher {
-            name = 'ClassViewer'
-        }
-        if(!jforeign.Platform.isWindows()) {
-            project.tasks.getByName('jlink').doLast {
-                delete {
-                    delete "$imageDir/bin/ClassViewer.bat"
-                }
-            }
+            delete "$imageDir/bin/ClassViewer"
+            delete "$imageDir/bin/ClassViewer.bat"
         }
     }
 }

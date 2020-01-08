@@ -16,10 +16,10 @@ import java.util.Objects;
 
 public final class RecentFiles {
 
-    public static final RecentFiles Instance = new RecentFiles();
+    public static RecentFiles Instance = null;
 
     public static void init() {
-
+        Instance = new RecentFiles();
     }
 
     private final List<RecentFile> list = Collections.synchronizedList(new LinkedList<>());
@@ -115,7 +115,7 @@ public final class RecentFiles {
             Path p = Options.path.resolve("recentfiles");
 
             if (Files.notExists(p)) {
-                Log.warning("Recent files not exists");
+                Log.info("Recent files not exists");
                 return;
             }
             Log.info("Load recent files from file: " + p);
@@ -132,8 +132,8 @@ public final class RecentFiles {
                 });
             }
 
-        } catch (IOException e) {
-            ViewerAlert.logAndShowExceptionAlert(e);
+        } catch (Throwable e) {
+            Log.error(e);
         }
     }
 }

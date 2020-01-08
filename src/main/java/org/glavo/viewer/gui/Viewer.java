@@ -25,6 +25,7 @@ public final class Viewer extends Application {
 
     public static void main(String[] args) {
         Options.init();
+        Log.info("launch application");
         Application.launch(Viewer.class, args);
     }
 
@@ -38,6 +39,7 @@ public final class Viewer extends Application {
     @Override
     public void init() throws Exception {
         Application.setUserAgentStylesheet(Options.skin);
+        Log.info("info " + this);
     }
 
     @Override
@@ -82,6 +84,10 @@ public final class Viewer extends Application {
             javafx.application.Platform.runLater(() -> openFiles(files));
         }
         stage.show();
+        stage.setOnCloseRequest(event -> {
+            Log.info("close " + this);
+        });
+        Log.info("show " + this);
     }
 
     public void openFile() {
