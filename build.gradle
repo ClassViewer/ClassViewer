@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'org.glavo'
-version '3.6'
+version '3.7'
 
 modularity.mixedJavaRelease 8
 
@@ -43,7 +43,7 @@ dependencies {
 jar {
     manifest {
         attributes 'Implementation-Version': '1.2',
-                'Main-Class': 'org.glavo.viewer.gui.Viewer'
+                'Main-Class': 'org.glavo.viewer.Main'
     }
 }
 
@@ -51,14 +51,14 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 javadoc.options.encoding = "UTF-8"
 
-mainClassName = 'org.glavo.viewer/org.glavo.viewer.gui.Viewer'
+mainClassName = 'org.glavo.viewer/org.glavo.viewer.Main'
 
+//jlink  --strip-debug --no-header-files --no-man-pages --module-path ClassViewer-3.6.jar --add-modules org.glavo.viewer --output ClassViewer --vm=server --launcher ClassViewer=org.glavo.viewer/org.glavo.viewer.gui.Viewer
 jlink {
     moduleName = 'org.glavo.viewer'
     imageDir = file("$buildDir/ClassViewer")
     imageZip = file("$buildDir/ClassViewer-$version-${jforeign.Platform.PLATFORM}.zip")
     addOptions '--strip-debug',
-            '--compress', '1',
             '--no-header-files',
             '--no-man-pages'
     if (jforeign.Platform.isWindows()) {

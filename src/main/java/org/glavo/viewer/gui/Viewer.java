@@ -1,10 +1,17 @@
 package org.glavo.viewer.gui;
 
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.glavo.viewer.gui.filetypes.FileType;
@@ -19,19 +26,16 @@ import java.util.*;
 
 public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
+    public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.gui.ViewerResources");
 
     public static final int DEFAULT_WIDTH = 1080;
     public static final int DEFAULT_HEIGHT = 608;
 
-    public static void main(String[] args) {
-        Options.init();
-        Log.info("launch application");
-        Application.launch(Viewer.class, args);
-    }
-
     private Stage stage;
     private Scene scene;
     private BorderPane pane;
+
+    private Pane defaultText;
 
     private ViewerTopBar topBar;
     private ViewerTabPane tabPane;
@@ -48,9 +52,16 @@ public final class Viewer extends Application {
         this.pane = new BorderPane();
         this.topBar = new ViewerTopBar(this);
         this.tabPane = new ViewerTabPane(this);
+        this.defaultText = this.createDefaultText();
 
         pane.setTop(topBar);
-        pane.setCenter(tabPane);
+        pane.setCenter(defaultText);
+        pane.centerProperty().bind(Bindings.createObjectBinding(() -> {
+            if (tabPane.getTabs().isEmpty()) {
+                return defaultText;
+            }
+            return tabPane;
+        }, tabPane.getTabs()));
         FontUtils.setUIFont(tabPane);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -225,5 +236,29 @@ public final class Viewer extends Application {
 
     public ViewerTabPane getTabPane() {
         return tabPane;
+    }
+
+    private Pane createDefaultText() {
+        VBox pane = new VBox();
+        pane.setAlignment(Pos.CENTER);
+
+        Text openFileText = new Text(resource.getString("defaultText.openFile"));
+        openFileText.setFill(Color.GRAY);
+        Hyperlink openFileLink = new Hyperlink(topBar.getMenuBar().fileMenu.openFileItem.getAccelerator().getDisplayText());
+        openFileLink.setOnAction(event -> openFile());
+
+        Text openFolderText = new Text(resource.getString("defaultText.openFolder"));
+        openFolderText.setFill(Color.GRAY);
+        Hyperlink openFolderLink = new Hyperlink(topBar.getMenuBar().fileMenu.openFolderItem.getAccelerator().getDisplayText());
+        openFolderLink.setOnAction(event -> openFolder());
+
+        TextFlow text = new TextFlow(
+                openFileText, new Text(" "), openFileLink, new Text("\n"),
+                openFolderText, new Text(" "), openFolderLink
+        );
+        text.setTextAlignment(TextAlignment.CENTER);
+
+        pane.getChildren().add(text);
+        return pane;
     }
 }

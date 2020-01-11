@@ -4,21 +4,23 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import org.glavo.viewer.util.ImageUtils;
 
-import java.util.ResourceBundle;
+import static org.glavo.viewer.gui.Viewer.resource;
 
 import static org.glavo.viewer.util.FontUtils.setUIFont;
 
 public final class ViewerMenuBar extends MenuBar {
 
-    public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.gui.ViewerMenuBarResources");
 
     public class FileMenu extends Menu {
-        private MenuItem openFileItem = new MenuItem(resource.getString("fileMenu.openFileItem.text"));
-        private MenuItem openFolderItem = new MenuItem(resource.getString("fileMenu.openFolderItem.text"));
-        private Menu openRecentMenu = new Menu(resource.getString("fileMenu.openRecentMenu.text"));
+        MenuItem openFileItem = new MenuItem(resource.getString("fileMenu.openFileItem.text"));
+        MenuItem openFolderItem = new MenuItem(resource.getString("fileMenu.openFolderItem.text"));
+        Menu openRecentMenu = new Menu(resource.getString("fileMenu.openRecentMenu.text"));
 
         public FileMenu() {
             super(resource.getString("fileMenu.text"));
@@ -33,6 +35,9 @@ public final class ViewerMenuBar extends MenuBar {
             openFileItem.setMnemonicParsing(true);
             openFolderItem.setMnemonicParsing(true);
             openRecentMenu.setMnemonicParsing(true);
+
+            openFileItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+            openFolderItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN, KeyCodeCombination.SHIFT_DOWN));
 
             this.getItems().addAll(openFileItem, openFolderItem, openRecentMenu);
         }
@@ -81,6 +86,7 @@ public final class ViewerMenuBar extends MenuBar {
     }
 
     public void updateRecentFiles() {
+        RecentFiles.init();
         this.fileMenu.openRecentMenu.getItems().clear();
         for (RecentFile file : RecentFiles.Instance.getAll()) {
             MenuItem item = new MenuItem(file.url.toString(), new ImageView(file.type.icon));

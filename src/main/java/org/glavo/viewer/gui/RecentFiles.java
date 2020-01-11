@@ -19,7 +19,13 @@ public final class RecentFiles {
     public static RecentFiles Instance = null;
 
     public static void init() {
-        Instance = new RecentFiles();
+        if (Instance == null) {
+            synchronized (RecentFiles.class) {
+                if (Instance == null) {
+                    Instance = new RecentFiles();
+                }
+            }
+        }
     }
 
     private final List<RecentFile> list = Collections.synchronizedList(new LinkedList<>());

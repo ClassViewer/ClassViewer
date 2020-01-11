@@ -6,10 +6,10 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-public class ViewerMenuBarResources extends ResourceBundle {
+public class ViewerResources extends ResourceBundle {
     private final Properties properties = new Properties();
 
-    public ViewerMenuBarResources() {
+    public ViewerResources() {
         try (Reader in = new BufferedReader(
                 new InputStreamReader(
                         this.getClass().getResourceAsStream(

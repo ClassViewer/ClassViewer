@@ -48,7 +48,6 @@ public final class Options {
             init(System.getProperties());
         }
 
-        RecentFiles.init();
         Log.info("loading finished");
     }
 

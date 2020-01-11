@@ -1,6 +1,5 @@
 package org.glavo.viewer.gui;
 
-import javafx.scene.control.Tab;
 import org.glavo.viewer.gui.filetypes.FileType;
 
 import java.net.URL;
