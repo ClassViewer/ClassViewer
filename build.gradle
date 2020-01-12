@@ -53,19 +53,17 @@ javadoc.options.encoding = "UTF-8"
 
 mainClassName = 'org.glavo.viewer/org.glavo.viewer.Main'
 
-//jlink  --strip-debug --no-header-files --no-man-pages --module-path ClassViewer-3.6.jar --add-modules org.glavo.viewer --output ClassViewer --vm=server --launcher ClassViewer=org.glavo.viewer/org.glavo.viewer.gui.Viewer
+//jlink --strip-debug --no-header-files --no-man-pages --module-path ClassViewer-3.x.jar --add-modules org.glavo.viewer --output ClassViewer --strip-native-commands --vm=server
 jlink {
     moduleName = 'org.glavo.viewer'
     imageDir = file("$buildDir/ClassViewer")
     imageZip = file("$buildDir/ClassViewer-$version-${jforeign.Platform.PLATFORM}.zip")
     addOptions '--strip-debug',
             '--no-header-files',
-            '--no-man-pages'
-    if (jforeign.Platform.isWindows()) {
-        addOptions '--strip-native-commands'
-        project.tasks.getByName('jlink').doLast {
-            delete "$imageDir/bin/ClassViewer"
-            delete "$imageDir/bin/ClassViewer.bat"
-        }
+            '--no-man-pages',
+            '--strip-native-commands'
+    project.tasks.getByName('jlink').doLast {
+        delete "$imageDir/bin/ClassViewer"
+        delete "$imageDir/bin/ClassViewer.bat"
     }
 }
