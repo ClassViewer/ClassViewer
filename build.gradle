@@ -1,10 +1,6 @@
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
-        maven { url 'https://dl.bintray.com/jforeign/maven' }
-    }
-    dependencies {
-        classpath 'xyz.jforeign:jforeign-common:0.1.2'
     }
 }
 
@@ -24,22 +20,6 @@ repositories {
     mavenCentral()
 }
 
-String javafx(String moduleName) {
-    if (jforeign.Platform.isWindows()) {
-        return "org.openjfx:javafx-$moduleName:13:win"
-    } else if (jforeign.Platform.isMac()) {
-        return "org.openjfx:javafx-$moduleName:13:mac"
-    } else if (jforeign.Platform.isUnix()) {
-        return "org.openjfx:javafx-$moduleName:13:linux"
-    }
-}
-
-dependencies {
-    implementation javafx('base')
-    implementation javafx('graphics')
-    implementation javafx('controls')
-}
-
 jar {
     manifest {
         attributes 'Implementation-Version': '1.2',
@@ -48,12 +28,10 @@ jar {
 }
 
 compileJava.options.encoding = "UTF-8"
-compileTestJava.options.encoding = "UTF-8"
-javadoc.options.encoding = "UTF-8"
 
 mainClassName = 'org.glavo.viewer/org.glavo.viewer.Main'
 
-//jlink --strip-debug --no-header-files --no-man-pages --module-path ClassViewer-3.x.jar --add-modules org.glavo.viewer --output ClassViewer --strip-native-commands --vm=server
+//jlink --strip-debug --no-header-files --no-man-pages --module-path ClassViewer-4.x.jar --add-modules org.glavo.viewer --output ClassViewer --strip-native-commands --vm=server
 jlink {
     moduleName = 'org.glavo.viewer'
     imageDir = file("$buildDir/ClassViewer")
