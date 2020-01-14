@@ -1,8 +1,6 @@
 language: java
 os: linux
 dist: bionic
-jdk: openjdk11
-
 git:
   depth: false
 script:
