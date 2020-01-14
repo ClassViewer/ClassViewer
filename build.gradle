@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'org.glavo'
-version '3.7'
+version '3.8'
 
 modularity.mixedJavaRelease 8
 

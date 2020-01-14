@@ -239,8 +239,6 @@ public final class Viewer extends Application {
     }
 
     private Pane createDefaultText() {
-        VBox pane = new VBox();
-        pane.setAlignment(Pos.CENTER);
 
         Text openFileText = new Text(resource.getString("defaultText.openFile"));
         openFileText.setFill(Color.GRAY);
@@ -256,9 +254,10 @@ public final class Viewer extends Application {
                 openFileText, new Text(" "), openFileLink, new Text("\n"),
                 openFolderText, new Text(" "), openFolderLink
         );
-        text.setTextAlignment(TextAlignment.CENTER);
+        text.setTextAlignment(TextAlignment.LEFT);
 
-        pane.getChildren().add(text);
+        FlowPane pane = new FlowPane(text);
+        pane.setAlignment(Pos.CENTER);
         return pane;
     }
 }

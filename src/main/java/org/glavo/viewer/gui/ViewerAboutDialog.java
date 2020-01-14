@@ -10,7 +10,7 @@ import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.Log;
 
 public class ViewerAboutDialog extends BorderPane {
-    public static final String homeUrl = "https://github.com/Glavo/ClassViewer";
+    public static final String homeUrl = "https://viewer.glavo.org/";
 
     public static void show(Viewer viewer) {
         Stage stage = new Stage();
