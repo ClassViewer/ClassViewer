@@ -43,8 +43,7 @@ dependencies {
 jar {
     manifest {
         attributes 'Implementation-Version': '1.2',
-                'Main-Class': 'org.glavo.viewer.Main',
-                'Add-Opens': 'javafx.controls/javafx.scene.control.skin=ALL-UNNAMED'
+                'Main-Class': 'org.glavo.viewer.Main'
     }
 }
 
