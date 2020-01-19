@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'org.glavo'
-version '3.8'
+version '3.9'
 
 modularity.mixedJavaRelease 8
 
@@ -43,7 +43,8 @@ dependencies {
 jar {
     manifest {
         attributes 'Implementation-Version': '1.2',
-                'Main-Class': 'org.glavo.viewer.Main'
+                'Main-Class': 'org.glavo.viewer.Main',
+                'Add-Opens': 'javafx.controls/javafx.scene.control.skin=ALL-UNNAMED'
     }
 }
 

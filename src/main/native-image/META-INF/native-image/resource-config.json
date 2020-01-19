@@ -1,0 +1,3 @@
+{
+  "resources":[{"pattern":"META-INF/services/java.nio.file.spi.FileSystemProvider"}]
+}

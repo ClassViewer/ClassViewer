@@ -1,6 +1,9 @@
 package org.glavo.viewer.gui.filetypes.binary;
 
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SkinBase;
+import javafx.scene.control.Skinnable;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.FileComponent;
@@ -26,12 +29,19 @@ public class HexPane extends ScrollPane {
         HBox hbox = new HBox();
 
         hbox.getChildren().addAll(textArea1, textArea2, textArea3);
+        for (Node t : hbox.getChildren()) {
+            ((Skinnable) t).skinProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    for (Node child : ((SkinBase<?>) newValue).getChildren()) {
+                        if (child instanceof ScrollPane) {
+                            ((ScrollPane) child).setHbarPolicy(ScrollBarPolicy.NEVER);
+                        }
+                    }
+                }
+            });
+        }
 
         setContent(hbox);
-    }
-
-    public void textArea1OnSeled() {
-
     }
 
     public void select(FileComponent cc) {

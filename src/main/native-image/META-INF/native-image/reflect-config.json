@@ -1,0 +1,53 @@
+[
+{
+  "name":"javafx.scene.input.Clipboard"
+},
+{
+  "name":"com.sun.glass.ui.CommonDialogs"
+}
+,
+{
+  "name":"org.glavo.viewer.classfile.FieldInfo",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.MethodInfo",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.attribute.BootstrapMethodsAttribute$BootstrapMethodInfo",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.attribute.CodeAttribute$ExceptionTableEntry",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.attribute.InnerClassesAttribute$InnerClassInfo",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.attribute.LineNumberTableAttribute$LineNumberTableEntry",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.attribute.LocalVariableTableAttribute$LocalVariableTableEntry",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.attribute.LocalVariableTypeTableAttribute$LocalVariableTypeTableEntry",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.attribute.ModuleAttribute$Export",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.attribute.ModuleAttribute$Require",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"org.glavo.viewer.classfile.datatype.U2CpIndex",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+}
+]

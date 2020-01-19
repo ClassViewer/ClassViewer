@@ -1,9 +1,13 @@
 package org.glavo.viewer.util;
 
+import java.text.SimpleDateFormat;
+
 import static org.glavo.viewer.gui.Options.color;
 import static org.glavo.viewer.gui.Options.debug;
 
 public final class Log {
+    public static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
     public static void setting(String name, Object value) {
         if (color) {
             System.out.print("\u001b[35m\u001b[1m[Setting]\u001b[0m ");

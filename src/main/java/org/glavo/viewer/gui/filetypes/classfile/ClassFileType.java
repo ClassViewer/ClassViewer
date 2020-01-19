@@ -44,7 +44,7 @@ public final class ClassFileType extends FileType {
                 HexText text = new HexText(bytes);
                 Platform.runLater(() -> {
                     ParsedViewerPane pane = new ParsedViewerPane(viewer, classFile, text);
-                    ((ClassFileComponent)pane.getTree().getRoot()).setName(UrlUtils.getClassName(url));
+                    ((ClassFileComponent) pane.getTree().getRoot()).setName(UrlUtils.getClassName(url));
                     tab.setContent(pane);
                     tab.getUserData().showOrHideSearchBar = pane::showOrHideSearchBar;
                     RecentFiles.Instance.add(Instance, url);

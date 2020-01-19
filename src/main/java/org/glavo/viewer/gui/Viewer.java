@@ -94,11 +94,9 @@ public final class Viewer extends Application {
             }
             javafx.application.Platform.runLater(() -> openFiles(files));
         }
+        stage.setOnShown(event -> Log.info("show " + this + ": " + Log.format.format(System.currentTimeMillis())));
+        stage.setOnCloseRequest(event -> Log.info("close " + this));
         stage.show();
-        stage.setOnCloseRequest(event -> {
-            Log.info("close " + this);
-        });
-        Log.info("show " + this);
     }
 
     public void openFile() {
@@ -239,15 +237,18 @@ public final class Viewer extends Application {
     }
 
     private Pane createDefaultText() {
-
         Text openFileText = new Text(resource.getString("defaultText.openFile"));
+        openFileText.setFont(FontUtils.getUiFont());
         openFileText.setFill(Color.GRAY);
         Hyperlink openFileLink = new Hyperlink(topBar.getMenuBar().fileMenu.openFileItem.getAccelerator().getDisplayText());
+        openFileLink.setFont(FontUtils.getUiFont());
         openFileLink.setOnAction(event -> openFile());
 
         Text openFolderText = new Text(resource.getString("defaultText.openFolder"));
+        openFolderText.setFont(FontUtils.getUiFont());
         openFolderText.setFill(Color.GRAY);
         Hyperlink openFolderLink = new Hyperlink(topBar.getMenuBar().fileMenu.openFolderItem.getAccelerator().getDisplayText());
+        openFolderLink.setFont(FontUtils.getUiFont());
         openFolderLink.setOnAction(event -> openFolder());
 
         TextFlow text = new TextFlow(
