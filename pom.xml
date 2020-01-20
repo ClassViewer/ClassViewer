@@ -64,7 +64,7 @@
                     </bundlesList>
                     <reflectionList>
                         <list>org.glavo.viewer.gui.Viewer</list>
-                        <!--><list>com.sun.glass.ui.CommonDialogs</list><!-->
+                        <list>javafx.scene.input.Dragboard</list>
                     </reflectionList>
                     <jniList>
                         <list>com.sun.glass.ui.CommonDialogs</list>

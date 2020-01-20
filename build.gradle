@@ -53,7 +53,7 @@ javadoc.options.encoding = "UTF-8"
 
 mainClassName = 'org.glavo.viewer/org.glavo.viewer.Main'
 
-//jlink --strip-debug --no-header-files --no-man-pages --module-path ClassViewer-3.x.jar --add-modules org.glavo.viewer --output ClassViewer --strip-native-commands --vm=server
+//jlink --strip-debug --no-header-files --no-man-pages --module-path ClassViewer-3.x.jar --add-modules org.glavo.viewer --output ClassViewer --strip-native-commands --vm=client
 jlink {
     moduleName = 'org.glavo.viewer'
     imageDir = file("$buildDir/ClassViewer")
