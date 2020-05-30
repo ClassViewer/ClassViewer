@@ -41,7 +41,7 @@ Building ClassViewer v3 requires Java 11 or later (but Java 8 is sufficient at r
 
 ClassViewer is free and open source software, if you want to support its developers, you can make a donation:
 
-* Donation via 爱发电: [Glavo - 爱发电](https://afdian.net/@Glavo)
+* Donate via 爱发电: [Glavo - 爱发电](https://afdian.net/@Glavo)
 
 * Donate via Alipay:
 
