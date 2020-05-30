@@ -32,7 +32,21 @@ Building ClassViewer v3 requires Java 11 or later (but Java 8 is sufficient at r
 
 ## Screenshots
 
-![Screenshot](https://glavo.oss-cn-beijing.aliyuncs.com/image/Annotation%202020-01-12%20183836.png)
-![Screenshot](https://glavo.oss-cn-beijing.aliyuncs.com/image/Annotation%202020-01-12%20184117.png)
-![Screenshot](https://glavo.oss-cn-beijing.aliyuncs.com/image/Annotation%202020-01-12%20184233.png)
-![Screenshot](https://glavo.oss-cn-beijing.aliyuncs.com/image/Annotation%202020-01-12%20184259.png)
+![Screenshot](https://s2.ax1x.com/2020/02/04/1BC5jJ.png)
+![Screenshot](https://s2.ax1x.com/2020/02/04/1BCTBR.png)
+![Screenshot](https://s2.ax1x.com/2020/02/04/1BCou9.png)
+![Screenshot](https://s2.ax1x.com/2020/02/04/1BCh3F.png)
+
+## Support ClassViewer
+
+ClassViewer is free and open source software, if you want to support its developers, you can make a donation:
+
+* Donation via 爱发电: [Glavo - 爱发电](https://afdian.net/@Glavo)
+
+* Donate via Alipay:
+
+    ![Alipay](https://s2.ax1x.com/2020/02/04/1B9yFK.png)
+
+* Donate via Wechat:
+
+    ![Wechat](https://s2.ax1x.com/2020/02/04/1B9ro6.png)
