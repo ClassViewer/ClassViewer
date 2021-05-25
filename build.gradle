@@ -1,69 +1,26 @@
-buildscript {
-    repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url 'https://dl.bintray.com/jforeign/maven' }
-    }
-    dependencies {
-        classpath 'xyz.jforeign:jforeign-common:0.1.2'
-    }
-}
-
 plugins {
     id 'java'
-    id "org.javamodularity.moduleplugin" version "1.6.0"
-    id 'org.beryx.jlink' version '2.16.4'
+    id 'com.dua3.javafxgradle7plugin' version '0.0.9'
+    id "org.beryx.jlink" version "2.24.0"
 }
 
 group 'org.glavo'
 version '3.9'
-
-modularity.mixedJavaRelease 8
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public/' }
     mavenCentral()
 }
 
-String javafx(String moduleName) {
-    if (jforeign.Platform.isWindows()) {
-        return "org.openjfx:javafx-$moduleName:13:win"
-    } else if (jforeign.Platform.isMac()) {
-        return "org.openjfx:javafx-$moduleName:13:mac"
-    } else if (jforeign.Platform.isUnix()) {
-        return "org.openjfx:javafx-$moduleName:13:linux"
-    }
-}
-
-dependencies {
-    implementation javafx('base')
-    implementation javafx('graphics')
-    implementation javafx('controls')
-}
-
-jar {
-    manifest {
-        attributes 'Implementation-Version': '1.2',
-                'Main-Class': 'org.glavo.viewer.Main'
-    }
+javafx {
+    version = '13'
+    modules = ['javafx.controls']
 }
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 javadoc.options.encoding = "UTF-8"
 
-mainClassName = 'org.glavo.viewer/org.glavo.viewer.Main'
-
-//jlink --strip-debug --no-header-files --no-man-pages --module-path ClassViewer-3.x.jar --add-modules org.glavo.viewer --output ClassViewer --strip-native-commands --vm=client
-jlink {
-    moduleName = 'org.glavo.viewer'
-    imageDir = file("$buildDir/ClassViewer")
-    imageZip = file("$buildDir/ClassViewer-$version-${jforeign.Platform.PLATFORM}.zip")
-    addOptions '--strip-debug',
-            '--no-header-files',
-            '--no-man-pages',
-            '--strip-native-commands'
-    project.tasks.getByName('jlink').doLast {
-        delete "$imageDir/bin/ClassViewer"
-        delete "$imageDir/bin/ClassViewer.bat"
-    }
+application {
+    mainClassName = 'org.glavo.viewer.Main'
 }

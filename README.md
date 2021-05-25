@@ -18,15 +18,22 @@ ClassViewer v4 is under development, so stay tuned.
 
 ## Build
 
-Building ClassViewer v3 requires Java 11 or later (but Java 8 is sufficient at runtime). 
+### Run(Java 11+)
 
-```shell
-./gradlew jar
-```
-
-## Run
 ```shell
 ./gradlew run
+```
+
+### Jlink(Java 11+)
+
+```shell
+./gradlew jlink
+```
+
+### JPakcage(Java 15+)
+
+```shell
+./gradlew jpackage
 ```
 
 ## Screenshots

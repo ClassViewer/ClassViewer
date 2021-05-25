@@ -21,3 +21,4 @@ target/
 /.idea/*
 
 __***
+.DS_Store
