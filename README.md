@@ -13,7 +13,7 @@ ClassViewer v4 is under development,
 
 ## Features
 
-* Understands class files described by [JVMS13](https://docs.oracle.com/javase/specs/jvms/se13/html/index.html)
+* Understands class files described by [JVMS16](https://docs.oracle.com/javase/specs/jvms/se16/html/index.html)
 * Displays parsed class file as tree and hex text
 * The corresponding hex text is highlighted when you select a tree node
 
