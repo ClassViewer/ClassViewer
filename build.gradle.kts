@@ -12,6 +12,7 @@ version = "4.0-beta1".let {
 }
 
 val launcherClassName = "org.glavo.viewer.Launcher"
+val mainClassName = "org.glavo.viewer.Main"
 
 repositories {
     mavenCentral()
@@ -32,6 +33,7 @@ val java11 = sourceSets.register("java11") {
 
 tasks.compileJava {
     options.release.set(9)
+    options.javaModuleMainClass.set(mainClassName)
     options.encoding = "UTF-8"
 
     doLast {
@@ -49,11 +51,10 @@ tasks.compileJava {
 }
 
 tasks.getByName<JavaCompile>("compileJava11Java") {
-    dependsOn(tasks.compileJava)
-    classpath = sourceSets.main.get().output.classesDirs
-
-    options.release.set(11)
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
     options.encoding = "UTF-8"
+    options.compilerArgs.add("--add-exports=java.base/jdk.internal.loader=ALL-UNNAMED")
 }
 
 dependencies {
@@ -64,7 +65,10 @@ tasks.jar {
     manifest.attributes(
         "Implementation-Version" to "1.2",
         "Main-Class" to launcherClassName,
-        "Multi-Release" to "true"
+        "Multi-Release" to "true",
+        "Add-Exports" to listOf(
+            "java.base/jdk.internal.loader"
+        ).joinToString(" ")
     )
 
     into("META-INF/versions/11") {

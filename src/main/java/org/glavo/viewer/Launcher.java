@@ -5,7 +5,7 @@ import org.glavo.viewer.util.JavaFXPatcher;
 import javax.swing.*;
 
 public final class Launcher {
-    private static void checkJFX() {
+    private static void checkJFX() throws Exception {
         try {
             Class.forName("javafx.scene.control.Menu");
         } catch (ClassNotFoundException e) {
@@ -13,7 +13,7 @@ public final class Launcher {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         initLookAndFeel();
         checkJFX();
 
