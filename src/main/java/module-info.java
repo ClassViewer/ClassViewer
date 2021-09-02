@@ -1,4 +1,4 @@
 module org.glavo.viewer {
-    requires jdk.zipfs;
+    requires java.desktop;
     requires javafx.controls;
 }
