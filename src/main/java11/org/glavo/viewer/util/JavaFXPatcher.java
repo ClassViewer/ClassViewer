@@ -6,22 +6,141 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.io.InputStreamReader;
 import java.lang.module.Configuration;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.List;
 
 public final class JavaFXPatcher {
     private static final ResourceBundle resources = ResourceBundle.getBundle("viewer.patcher"/* , UTF8Control.Control */);
+
+    public static final String PLATFORM_CLASSIFIER = currentPlatformClassifier();
+
+    private static String currentPlatformClassifier() {
+        if (OS.getCurrent() == OS.LINUX) {
+            switch (Arch.getCurrent()) {
+                case X86_64:
+                    return "linux";
+                case ARM64:
+                    return "linux-aarch64";
+            }
+        } else if (OS.getCurrent() == OS.MACOS) {
+            switch (Arch.getCurrent()) {
+                case X86_64:
+                    return "mac";
+                case ARM64:
+                    return "mac-aarch64";
+            }
+        } else if (OS.getCurrent().isWindows()) {
+            switch (Arch.getCurrent()) {
+                case X86_64:
+                    return "win";
+                case X86:
+                    return "win-x86";
+            }
+        }
+        return null;
+    }
+
+    static final class DependencyDescriptor {
+        public static final List<DependencyDescriptor> ALL = loadDependencies();
+
+        public final String module;
+        public final String groupId;
+        public final String artifactId;
+        public final String version;
+        public final String classifier;
+
+        private DependencyDescriptor(String module, String groupId, String artifactId, String version, String classifier) {
+            this.module = module;
+            this.groupId = groupId;
+            this.artifactId = artifactId;
+            this.version = version;
+            this.classifier = classifier;
+        }
+
+        private static List<DependencyDescriptor> loadDependencies() {
+            if (PLATFORM_CLASSIFIER == null) {
+                return Collections.emptyList();
+            }
+
+            Properties properties = new Properties();
+            try (final InputStream input = JavaFXPatcher.class.getResourceAsStream("/viewer/openjfx.properties")) {
+                //noinspection ConstantConditions
+                properties.load(new InputStreamReader(input, StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                throw new AssertionError(e);
+            }
+
+            final String[] modules = properties.getProperty("modules").split(";");
+            final String version = properties.getProperty("version");
+
+            final DependencyDescriptor[] dependencies = new DependencyDescriptor[modules.length];
+
+            for (int i = 0; i < modules.length; i++) {
+                String module = modules[i];
+
+                dependencies[i] = new DependencyDescriptor(
+                        module,
+                        "org.openjfx",
+                        module.replace('.', '-'),
+                        version,
+                        PLATFORM_CLASSIFIER
+                );
+            }
+            //noinspection Java9CollectionFactory
+            return Collections.unmodifiableList(Arrays.asList(dependencies));
+        }
+
+        public String fileName() {
+            return artifactId + "-" + version + "-" + classifier + ".jar";
+        }
+    }
+
+    static final class Repository {
+        public static final List<Repository> REPOSITORIES;
+
+        public static final Repository MAVEN_CENTRAL =
+                new Repository(resources.getString("viewer.patcher.repositories.maven_central"), "https://repo1.maven.org/maven2");
+        public static final Repository ALIYUN_MIRROR =
+                new Repository(resources.getString("viewer.patcher.repositories.aliyun_mirror"), "https://maven.aliyun.com/repository/central");
+
+        public static final Repository DEFAULT;
+
+        static {
+            if (System.getProperty("user.country", "").equalsIgnoreCase("CN")) {
+                DEFAULT = Repository.ALIYUN_MIRROR;
+            } else {
+                DEFAULT = Repository.MAVEN_CENTRAL;
+            }
+            //noinspection Java9CollectionFactory
+            REPOSITORIES = Collections.unmodifiableList(Arrays.asList(MAVEN_CENTRAL, ALIYUN_MIRROR));
+        }
+
+        private final String name;
+        private final String url;
+
+        Repository(String name, String url) {
+            this.name = name;
+            this.url = url;
+        }
+
+        public String resolveDependencyURL(DependencyDescriptor descriptor) {
+            return String.format("%s/%s/%s/%s/%s",
+                    url,
+                    descriptor.groupId.replace('.', '/'),
+                    descriptor.artifactId, descriptor.version,
+                    descriptor.fileName());
+        }
+    }
 
     private static void missJavaFX() {
         JOptionPane.showMessageDialog(
@@ -34,41 +153,34 @@ public final class JavaFXPatcher {
         System.exit(1);
     }
 
-    private static <T> T showChooseSourceDialog(Object[][] sources, int defaultIndex) {
+    private static Repository showChooseRepositoryDialog() {
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        panel.add(new JLabel(resources.getString("viewer.patcher.text.1")));
-        panel.add(new JLabel(resources.getString("viewer.patcher.text.2")));
-
-        final ButtonGroup group = new ButtonGroup();
-
-        final JRadioButton[] buttons = new JRadioButton[sources.length];
-
-        for (int i = 0; i < sources.length; i++) {
-            Object[] source = sources[i];
-
-            final String key = (String) source[0];
-            final JRadioButton button = new JRadioButton(resources.getString(key));
-            buttons[i] = button;
-            if (i == defaultIndex) {
-                button.setSelected(true);
-            }
-            group.add(button);
-            panel.add(button);
+        for (String line : resources.getString("viewer.patcher.text").split("\n")) {
+            panel.add(new JLabel(line));
         }
 
-        int opt = JOptionPane.showConfirmDialog(
-                null, panel,
-                resources.getString("viewer.patcher.title"),
-                JOptionPane.YES_NO_OPTION
-        );
+        final ButtonGroup buttonGroup = new ButtonGroup();
 
-        if (opt == JOptionPane.YES_OPTION) {
-            for (int i = 0; i < buttons.length; i++) {
-                if (buttons[i].isSelected()) {
-                    @SuppressWarnings("unchecked") final T res = (T) sources[i][1];
-                    return res;
+        for (Repository repository : Repository.REPOSITORIES) {
+            final JRadioButton button = new JRadioButton(repository.name);
+            button.putClientProperty("repository", repository);
+            buttonGroup.add(button);
+            panel.add(button);
+            if (repository == Repository.DEFAULT) {
+                button.setSelected(true);
+            }
+        }
+
+        int res = JOptionPane.showConfirmDialog(null, panel, resources.getString("viewer.patcher.download.title"), JOptionPane.YES_NO_OPTION);
+
+        if (res == JOptionPane.YES_OPTION) {
+            final Enumeration<AbstractButton> buttons = buttonGroup.getElements();
+            while (buttons.hasMoreElements()) {
+                final AbstractButton button = buttons.nextElement();
+                if (button.isSelected()) {
+                    return (Repository) button.getClientProperty("repository");
                 }
             }
         } else {
@@ -78,87 +190,47 @@ public final class JavaFXPatcher {
     }
 
     public static void tryPatch() throws IOException {
-        final Arch arch = Arch.getCurrent();
-
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (arch) {
-            case X86_64:
-                patchX86_64();
-                break;
-            default:
-                missJavaFX();
-        }
-    }
-
-    private static void patchX86_64() throws IOException {
-        final OS os = OS.getCurrent();
-
-        final String classifier;
-        if (os == OS.WINDOWS) {
-            classifier = "win";
-        } else if (os == OS.MACOS) {
-            classifier = "mac";
-        } else if (os == OS.LINUX) {
-            classifier = "linux";
-        } else {
+        // Unsupported Platform
+        if (PLATFORM_CLASSIFIER == null) {
             missJavaFX();
-            throw new AssertionError();
-        }
-
-        final String[][] dependencies = {
-                {"javafx.base", "org.openjfx", "javafx-base", "16", null},
-                {"javafx.graphics", "org.openjfx", "javafx-graphics", "16", null},
-                {"javafx.controls", "org.openjfx", "javafx-controls", "16", null}
-        };
-        for (String[] dependency : dependencies) {
-            dependency[4] = String.format("%s-%s-%s.jar", dependency[2], dependency[3], classifier);
         }
 
         final Path openjfxDir;
         {
             final String home = System.getProperty("viewer.home");
             openjfxDir = home == null
-                    ? Paths.get(System.getProperty("user.home"), ".viewer", "openjfx", "x86_64")
-                    : Paths.get(home, "openjfx", "x86_64");
-
+                    ? Paths.get(System.getProperty("user.home"), ".viewer", "openjfx")
+                    : Paths.get(home, "openjfx");
             if (Files.notExists(openjfxDir)) {
                 Files.createDirectories(openjfxDir);
             }
         }
 
-        ArrayList<String[]> missingDependencies = new ArrayList<>();
-        for (String[] dependency : dependencies) {
-            if (Files.notExists(openjfxDir.resolve(dependency[4]))) {
+        ArrayList<DependencyDescriptor> missingDependencies = new ArrayList<>();
+        for (DependencyDescriptor dependency : DependencyDescriptor.ALL) {
+            if (Files.notExists(openjfxDir.resolve(dependency.fileName()))) {
                 missingDependencies.add(dependency);
             }
         }
 
         if (!missingDependencies.isEmpty()) {
-            final String[][] sources = {
-                    {"viewer.patcher.sources.maven_central", "https://repo1.maven.org/maven2/%s/%s/%s/%s"},
-                    {"viewer.patcher.sources.aliyun_mirror", "https://maven.aliyun.com/repository/central/%s/%s/%s/%s"}
-            };
-
-            final String sourceTemplate =
-                    showChooseSourceDialog(sources, "CN".equalsIgnoreCase(System.getProperty("user.country", "")) ? 1 : 0);
-
-            // fetch dependencies
+            final Repository repo = showChooseRepositoryDialog();
 
             final ProgressFrame frame = new ProgressFrame();
             frame.setVisible(true);
-
             int progress = 0;
-            for (String[] dependency : missingDependencies) {
+
+            for (DependencyDescriptor dependency : missingDependencies) {
                 int currentProgress = ++progress;
-                String url = String.format(sourceTemplate, dependency[1].replace('.', '/'), dependency[2], dependency[3], dependency[4]);
+                String url = repo.resolveDependencyURL(dependency);
 
                 SwingUtilities.invokeLater(() -> {
                     frame.setStatus(url);
                     frame.setProgress(currentProgress, missingDependencies.size());
                 });
 
-                try (InputStream is = new URL(url).openStream()) {
-                    Files.copy(is, openjfxDir.resolve(dependency[4]), StandardCopyOption.REPLACE_EXISTING);
+                try (InputStream input = new URL(url).openStream()) {
+                    Files.copy(input, openjfxDir.resolve(dependency.fileName()), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
 
@@ -167,9 +239,9 @@ public final class JavaFXPatcher {
 
         final ArrayList<String> modules = new ArrayList<>();
         final ArrayList<Path> jarPaths = new ArrayList<>();
-        for (String[] dependency : dependencies) {
-            modules.add(dependency[0]);
-            jarPaths.add(openjfxDir.resolve(dependency[4]));
+        for (DependencyDescriptor dependency : DependencyDescriptor.ALL) {
+            modules.add(dependency.module);
+            jarPaths.add(openjfxDir.resolve(dependency.fileName()));
         }
         patchRuntime(modules, jarPaths.toArray(new Path[0]));
     }
