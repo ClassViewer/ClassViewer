@@ -20,4 +20,6 @@ gradle-app.setting
 *.iml
 /.idea/*
 
+!/.idea/inspectionProfiles/Project_Default.xml
+
 __***
