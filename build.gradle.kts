@@ -8,33 +8,46 @@ plugins {
 
 group = "org.glavo"
 version = "4.0-beta1".let {
-    if (System.getProperty("viewer.release") == "true") it else "$it-SNAPSHOT"
+    if (System.getProperty("viewer.release") == "true" || System.getenv("JITPACK") == "true") {
+        it
+    } else {
+        "$it-SNAPSHOT"
+    }
 }
 
 val launcherClassName = "org.glavo.viewer.Launcher"
 val mainClassName = "org.glavo.viewer.Main"
 
 repositories {
-    mavenCentral()
+    maven(url = System.getenv("MAVEN_CENTRAL_MIRROR") ?: "https://repo1.maven.org/maven2/")
+}
+
+dependencies {
+    annotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:0.4.2")
+    annotationProcessor("net.java.dev.jna:jna-platform:5.9.0")
+}
+
+javafx {
+    version = "17.0.1"
+    modules = listOf("javafx.controls")
 }
 
 application {
     mainClass.set("org.glavo.viewer/org.glavo.viewer.Launcher")
 }
 
-javafx {
-    version = "16"
-    modules("javafx.controls")
+val java11 = sourceSets.create("java11") {
+    java.srcDirs("src/main/java11")
 }
 
-val java11 = sourceSets.register("java11") {
-    java.srcDirs("src/main/java11")
-}.get()
-
 tasks.compileJava {
+    sourceCompatibility = "17"
+
     options.release.set(9)
     options.javaModuleMainClass.set(mainClassName)
     options.encoding = "UTF-8"
+
+    options.compilerArgs.add("-Xplugin:jabel")
 
     doLast {
         val tree = fileTree(destinationDirectory)
