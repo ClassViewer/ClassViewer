@@ -2,32 +2,19 @@ package org.glavo.viewer;
 
 import org.glavo.viewer.util.JavaFXPatcher;
 
-import javax.swing.*;
-
 public final class Launcher {
-    private static void checkJFX() throws Exception {
-        try {
-            Class.forName("javafx.scene.control.Menu");
-        } catch (ClassNotFoundException e) {
-            JavaFXPatcher.tryPatch();
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        initLookAndFeel();
+    public static void main(String[] args) throws Throwable {
         checkJFX();
-
         Main.main(args);
     }
 
-    private static void initLookAndFeel() {
-        if (System.getProperty("swing.defaultlaf") == null) {
-            try {
-                UIManager.setLookAndFeel(
-                        UIManager.getSystemLookAndFeelClassName());
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+    private static void checkJFX() throws Throwable {
+        try {
+            Class.forName("javafx.application.Application");
+            return;
+        } catch (ClassNotFoundException ignored) {
         }
+        JavaFXPatcher.tryPatch();
     }
+
 }
