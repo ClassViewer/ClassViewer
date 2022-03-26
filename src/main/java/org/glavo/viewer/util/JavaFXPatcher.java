@@ -149,15 +149,7 @@ public final class JavaFXPatcher {
             }
         } catch (Throwable ignored) {
         }
-
-        JOptionPane.showMessageDialog(
-                null,
-                resources.getString("viewer.javafx.missing.text"),
-                resources.getString("viewer.javafx.missing.title"),
-                JOptionPane.ERROR_MESSAGE
-        );
-        System.err.println("Patch JavaFX Failed");
-        System.exit(1);
+        missJavaFX();
     }
 
     private static Consumer<ModuleReference> loadModuleHandle() {
@@ -179,7 +171,7 @@ public final class JavaFXPatcher {
             };
         } catch (Throwable ex) {
             ex.printStackTrace();
-            System.exit(1);
+            missJavaFX();
             return null;
         }
     }

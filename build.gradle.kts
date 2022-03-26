@@ -1,5 +1,4 @@
 import java.io.RandomAccessFile
-import java.util.*
 
 plugins {
     java
@@ -21,7 +20,7 @@ val viewerMain = "org.glavo.viewer.Main"
 
 repositories {
     maven(url = System.getenv("MAVEN_CENTRAL_MIRROR") ?: "https://repo1.maven.org/maven2/")
-    // maven(url = "https://jitpack.io")
+    maven(url = "https://jitpack.io")
     // mavenCentral()
 }
 
@@ -30,26 +29,23 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     implementation("com.fasterxml.jackson.core:jackson-core:2.13.2")
-
-    annotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:0.4.2")
-    annotationProcessor("net.java.dev.jna:jna-platform:5.10.0")
 }
 
 application {
     mainClass.set("org.glavo.viewer/$viewerMain")
 }
 
+apply {
+    from("javafx.gradle.kts")
+}
+
 tasks.compileJava {
-    sourceCompatibility = "17"
-    options.release.set(9)
+    sourceCompatibility = "9"
+    targetCompatibility = "9"
     options.javaModuleMainClass.set(viewerMain)
     options.encoding = "UTF-8"
 
-    options.compilerArgs.addAll(
-        listOf(
-            "-Xplugin:jabel"
-        )
-    )
+    modularity.inferModulePath.set(true)
 
     doLast {
         val tree = fileTree(destinationDirectory)
@@ -65,6 +61,13 @@ tasks.compileJava {
     }
 }
 
+tasks.processResources {
+    dependsOn(":generateOpenJFXDependencies")
+    into("org/glavo/viewer") {
+        from(project.buildDir.resolve("openjfx").resolve("openjfx-dependencies.json"))
+    }
+}
+
 tasks.jar {
     enabled = false
     manifest.attributes(
@@ -74,49 +77,4 @@ tasks.jar {
             "java.base/jdk.internal.loader"
         ).joinToString(" ")
     )
-}
-
-tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-
-}
-
-val jfxModules = listOf("base", "graphics", "controls")
-val jfxClassifier = listOf("linux", "linux-arm32-monocle", "linux-aarch64", "mac", "mac-aarch64", "win", "win-x86")
-val jfxVersion = "17.0.1"
-val jfxRepos = listOf("https://repo1.maven.org/maven2", "https://maven.aliyun.com/repository/central")
-
-var jfxInClasspath = false
-
-try {
-    Class.forName("javafx.application.Application", false, project.javaClass.classLoader)
-    jfxInClasspath = true
-} catch (ignored: Throwable) {
-}
-
-if (!jfxInClasspath) {
-    val osName = System.getProperty("os.name").toLowerCase(Locale.ROOT)
-    val os = when {
-        osName.startsWith("windows") -> "win"
-        osName.startsWith("mac") -> "mac"
-        osName.startsWith("linux") || osName == "gnu" -> "linux"
-        else -> null
-    }
-
-    val arch = when (System.getProperty("os.arch").toLowerCase(Locale.ROOT)) {
-        "x86_64", "x86-64", "amd64", "em64t" -> ""
-        "x86", "x86-32", "x86_32", "i386", "i486", "i586", "i686", "i18pc" -> "-x86"
-        "arm64", "aarch64" -> "-aarch64"
-        "arm", "arm32", "aarch32" -> "-arm32-monocle"
-        else -> null
-    }
-
-    val classifier = "$os$arch"
-
-    if (os != null && arch != null && jfxClassifier.contains(classifier)) {
-        dependencies {
-            jfxModules.forEach { module ->
-                compileOnly("org.openjfx:javafx-$module:$jfxVersion:$classifier")
-            }
-        }
-    }
 }
