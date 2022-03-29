@@ -20,19 +20,19 @@ val viewerMain = "org.glavo.viewer.Main"
 
 repositories {
     maven(url = System.getenv("MAVEN_CENTRAL_MIRROR") ?: "https://repo1.maven.org/maven2/")
-    maven(url = "https://jitpack.io")
-    // mavenCentral()
 }
 
 dependencies {
-    implementation("org.glavo:kala-platform:0.5.0")
+    implementation("org.glavo.kala:kala-platform:0.6.0")
 
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-    implementation("com.fasterxml.jackson.core:jackson-core:2.13.2")
+    implementation("org.glavo:jimage:1.0.0")
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2")
 }
 
 application {
-    mainClass.set("org.glavo.viewer/$viewerMain")
+    mainClass.set(viewerMain)
 }
 
 apply {
@@ -68,8 +68,13 @@ tasks.processResources {
     }
 }
 
+tasks.shadowJar {
+    minimize()
+    archiveClassifier.set("")
+}
+
 tasks.jar {
-    enabled = false
+    archiveClassifier.set("core")
     manifest.attributes(
         "Implementation-Version" to "1.2",
         "Main-Class" to viewerLauncher,

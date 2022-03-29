@@ -1,5 +1,7 @@
 package org.glavo.viewer.util;
 
+import org.glavo.viewer.CommandLineOptions;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +45,8 @@ public final class Logging {
         }
     };
 
+    private static volatile boolean started = false;
+
     static {
         LOGGER.setLevel(Level.ALL);
         LOGGER.setUseParentHandlers(false);
@@ -51,23 +55,30 @@ public final class Logging {
         consoleHandler.setLevel(Level.FINER);
         consoleHandler.setFormatter(logFormatter);
         LOGGER.addHandler(consoleHandler);
+    }
 
-        if (FileUtils.VIEWER_HOME != null) {
-            try {
-                Path logsDir = FileUtils.VIEWER_HOME.resolve("logs");
-                Files.createDirectories(logsDir);
-
-                Path logFile = logsDir.resolve(new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS").format(new Date()));
-
-                final FileHandler fileHandle = new FileHandler(logFile.toAbsolutePath().toString());
-                fileHandle.setLevel(Level.FINEST);
-                fileHandle.setFormatter(logFormatter);
-
-                LOGGER.addHandler(fileHandle);
-            } catch (Exception e) {
-                System.err.println("Init Logger FileHandler failed");
-                e.printStackTrace();
-            }
+    public static synchronized void start(Path home) {
+        if (started) {
+            throw new IllegalStateException();
         }
+        try {
+            Path logsDir = home.resolve("logs");
+            Files.createDirectories(logsDir);
+
+            Path logFile = logsDir.resolve(new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date()) + ".log");
+
+            final FileHandler fileHandle = new FileHandler(logFile.toAbsolutePath().toString());
+            fileHandle.setLevel(Level.FINEST);
+            fileHandle.setFormatter(logFormatter);
+            fileHandle.setEncoding("UTF-8");
+
+            LOGGER.addHandler(fileHandle);
+
+            LOGGER.config("ClassViewer home: " + home);
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Init Logger FileHandler failed", e);
+        }
+
+        started = true;
     }
 }
