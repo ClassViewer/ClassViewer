@@ -35,11 +35,11 @@ val jfxDependenciesFile = rootProject.buildDir.resolve("openjfx").resolve("openj
 val jfxPlatforms = listOf(
     Platform("windows-x86", "win-x86"),
     Platform("windows-x86_64", "win"),
-    Platform("osx-x86_64", "mac"),
-    Platform("osx-arm64", "mac-aarch64"),
+    Platform("macos-x86_64", "mac"),
+    Platform("macos-aarch64", "mac-aarch64"),
     Platform("linux-x86_64", "linux"),
-    Platform("linux-arm32", "linux-arm32-monocle"),
-    Platform("linux-arm64", "linux-aarch64"),
+    Platform("linux-arm", "linux-arm32-monocle"),
+    Platform("linux-aarch64", "linux-aarch64"),
 )
 
 val jfxInClasspath =

@@ -1,5 +1,16 @@
 import java.io.RandomAccessFile
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.glavo.kala:kala-platform:0.8.0")
+    }
+}
+
+
 plugins {
     java
     application
@@ -20,15 +31,16 @@ val viewerMain = "org.glavo.viewer.Main"
 
 repositories {
     maven(url = System.getenv("MAVEN_CENTRAL_MIRROR") ?: "https://repo1.maven.org/maven2/")
+    mavenCentral()
 }
 
 dependencies {
-    implementation("org.glavo.kala:kala-platform:0.6.0")
+    implementation("org.glavo.kala:kala-platform:0.8.0")
 
     implementation("org.glavo:jimage:1.0.0")
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
 }
 
 application {
@@ -44,8 +56,6 @@ tasks.compileJava {
     targetCompatibility = "9"
     options.javaModuleMainClass.set(viewerMain)
     options.encoding = "UTF-8"
-
-    modularity.inferModulePath.set(true)
 
     doLast {
         val tree = fileTree(destinationDirectory)
@@ -83,3 +93,5 @@ tasks.jar {
         ).joinToString(" ")
     )
 }
+
+kala.platform.Platform.CURRENT_PLATFORM

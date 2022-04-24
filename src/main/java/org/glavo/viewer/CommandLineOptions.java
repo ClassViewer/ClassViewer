@@ -1,6 +1,5 @@
 package org.glavo.viewer;
 
-import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 import org.glavo.viewer.util.Logging;
 

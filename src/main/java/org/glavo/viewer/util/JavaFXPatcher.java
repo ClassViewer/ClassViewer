@@ -1,13 +1,12 @@
 package org.glavo.viewer.util;
 
-import kala.platform.Architecture;
+import com.fasterxml.jackson.core.type.TypeReference;
 import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -228,8 +227,6 @@ public final class JavaFXPatcher {
     }
 
     private static final class DependencyDescriptor {
-        static final String PLATFORM_CLASSIFIER = currentPlatformClassifier();
-
         static final List<DependencyDescriptor> ALL = loadDependencies();
 
         public final String module;
@@ -246,65 +243,18 @@ public final class JavaFXPatcher {
             this.classifier = classifier;
         }
 
-        private static String currentPlatformClassifier() {
-            if (Platform.CURRENT_SYSTEM == OperatingSystem.LINUX) {
-                switch (Platform.CURRENT_ARCH) {
-                    case X86_64:
-                        return "linux";
-                    case ARM:
-                        return "linux-arm32-monocle";
-                    case AARCH64:
-                        return "linux-aarch64";
-                }
-            } else if (Platform.CURRENT_SYSTEM == OperatingSystem.MACOS) {
-                switch (Platform.CURRENT_ARCH) {
-                    case X86_64:
-                        return "mac";
-                    case AARCH64:
-                        return "mac-aarch64";
-                }
-            } else if (Platform.CURRENT_SYSTEM == OperatingSystem.WINDOWS) {
-                switch (Platform.CURRENT_ARCH) {
-                    case X86_64:
-                        return "win";
-                    case X86:
-                        return "win-x86";
-                }
-            }
-            return null;
-        }
-
         private static List<DependencyDescriptor> loadDependencies() {
             if (PLATFORM_CLASSIFIER == null) {
                 return Collections.emptyList();
             }
 
-            Properties properties = new Properties();
-            try (final InputStream input = JavaFXPatcher.class.getResourceAsStream("/viewer/openjfx.properties")) {
-                //noinspection ConstantConditions
-                properties.load(new InputStreamReader(input, StandardCharsets.UTF_8));
+            try (final InputStream input = JavaFXPatcher.class.getResourceAsStream("/org/glavo/viewer/openjfx-dependencies.json")) {
+                return JsonUtils.MAPPER.readValue(input, new TypeReference<Map<String, List<DependencyDescriptor>>>() {
+                }).get(Platform.CURRENT_PLATFORM.toString());
+
             } catch (Exception e) {
                 throw new AssertionError(e);
             }
-
-            final String[] modules = properties.getProperty("modules").split(";");
-            final String version = properties.getProperty("version");
-
-            final DependencyDescriptor[] dependencies = new DependencyDescriptor[modules.length];
-
-            for (int i = 0; i < modules.length; i++) {
-                String module = modules[i];
-
-                dependencies[i] = new DependencyDescriptor(
-                        module,
-                        "org.openjfx",
-                        module.replace('.', '-'),
-                        version,
-                        PLATFORM_CLASSIFIER
-                );
-            }
-            //noinspection Java9CollectionFactory
-            return Collections.unmodifiableList(Arrays.asList(dependencies));
         }
 
         public String fileName() {
