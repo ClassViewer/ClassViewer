@@ -1,7 +1,6 @@
 package org.glavo.viewer.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 
 import javax.swing.*;
@@ -14,7 +13,6 @@ import java.lang.module.Configuration;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,43 +26,18 @@ public final class JavaFXPatcher {
 
     private static final ResourceBundle resources = ResourceBundle.getBundle("viewer.patcher", UTF8Control.Control);
 
-    public static final String PLATFORM_CLASSIFIER = currentPlatformClassifier();
-
-    private static String currentPlatformClassifier() {
-        if (Platform.CURRENT_SYSTEM == OperatingSystem.LINUX) {
-            switch (Platform.CURRENT_ARCH) {
-                case X86_64:
-                    return "linux";
-                case AARCH64:
-                    return "linux-aarch64";
-            }
-        } else if (Platform.CURRENT_SYSTEM == OperatingSystem.MACOS) {
-            switch (Platform.CURRENT_ARCH) {
-                case X86_64:
-                    return "mac";
-                case AARCH64:
-                    return "mac-aarch64";
-            }
-        } else if (Platform.CURRENT_SYSTEM == OperatingSystem.WINDOWS) {
-            switch (Platform.CURRENT_ARCH) {
-                case X86_64:
-                    return "win";
-                case X86:
-                    return "win-x86";
-            }
-        }
-        return null;
-    }
-
     public static void tryPatch() throws Throwable {
         initLookAndFeel();
         checkJavaVersion();
 
         final Consumer<ModuleReference> loadModule = loadModuleHandle();
 
+        List<DependencyDescriptor> descriptors = DependencyDescriptor.loadDescriptors();
+
         // Unsupported Platform
-        if (PLATFORM_CLASSIFIER == null) {
+        if (descriptors == null) {
             missJavaFX();
+            return;
         }
 
         final Path openjfxDir;
@@ -227,7 +200,7 @@ public final class JavaFXPatcher {
     }
 
     private static final class DependencyDescriptor {
-        static final List<DependencyDescriptor> ALL = loadDependencies();
+        static final List<DependencyDescriptor> ALL = loadDescriptors();
 
         public final String module;
         public final String groupId;
@@ -243,15 +216,10 @@ public final class JavaFXPatcher {
             this.classifier = classifier;
         }
 
-        private static List<DependencyDescriptor> loadDependencies() {
-            if (PLATFORM_CLASSIFIER == null) {
-                return Collections.emptyList();
-            }
-
+        private static List<DependencyDescriptor> loadDescriptors() {
             try (final InputStream input = JavaFXPatcher.class.getResourceAsStream("/org/glavo/viewer/openjfx-dependencies.json")) {
                 return JsonUtils.MAPPER.readValue(input, new TypeReference<Map<String, List<DependencyDescriptor>>>() {
                 }).get(Platform.CURRENT_PLATFORM.toString());
-
             } catch (Exception e) {
                 throw new AssertionError(e);
             }
