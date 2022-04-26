@@ -3,6 +3,9 @@ package org.glavo.viewer;
 import javafx.application.Application;
 import org.glavo.viewer.util.JavaFXPatcher;
 
+/**
+ * The main class of shadowJar, used to complete JavaFX when running on a JRE without JavaFX.
+ */
 public final class Launcher {
     public static void main(String[] args) throws Throwable {
         Options.parse(args);

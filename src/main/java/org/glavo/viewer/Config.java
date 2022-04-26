@@ -1,6 +1,7 @@
 package org.glavo.viewer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -15,7 +16,6 @@ import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Objects;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -111,20 +111,12 @@ public final class Config {
         needToSaveOnExit(windowSizeProperty);
     }
 
-    private void needToSave(ObservableValue<?> value) {
-        value.addListener((o, oldValue, newValue) -> {
-            if (!Objects.equals(oldValue, newValue)) {
-                save();
-            }
-        });
+    private void needToSave(Observable value) {
+        value.addListener(o -> save());
     }
 
     private void needToSaveOnExit(ObservableValue<?> value) {
-        value.addListener((o, oldValue, newValue) -> {
-            if (!Objects.equals(oldValue, newValue)) {
-                needToSaveOnExit = true;
-            }
-        });
+        value.addListener(o -> needToSaveOnExit = true);
     }
 
     public void save() {

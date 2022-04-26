@@ -28,7 +28,7 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 @SuppressWarnings("Since15")
 public final class JavaFXPatcher {
 
-    private static final ResourceBundle resources = ResourceBundle.getBundle("viewer.patcher", UTF8Control.Control);
+    private static final ResourceBundle resources = ResourceBundle.getBundle("org.glavo.viewer.patcher", UTF8Control.Control);
 
     public static void tryPatch() throws Throwable {
         initLookAndFeel();
