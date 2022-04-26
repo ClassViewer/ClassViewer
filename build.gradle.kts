@@ -47,7 +47,17 @@ apply {
     from("javafx.gradle.kts")
 }
 
+sourceSets {
+    main {
+        java {
+            exclude("src/main/java/module-info.java")
+        }
+    }
+}
+
 tasks.compileJava {
+    this.options.allCompilerArgs
+
     sourceCompatibility = "9"
     targetCompatibility = "9"
     options.javaModuleMainClass.set(viewerMain)
@@ -75,7 +85,6 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
-    minimize()
     archiveClassifier.set(null as String?)
     manifest.attributes(
         "Implementation-Version" to "1.2",
@@ -84,6 +93,8 @@ tasks.shadowJar {
             "java.base/jdk.internal.loader"
         ).joinToString(" ")
     )
+    minimize()
+
 }
 
 tasks.jar {

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import kala.platform.Platform;
-import org.glavo.viewer.CommandLineOptions;
+import org.glavo.viewer.Options;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,7 +44,7 @@ public final class JavaFXPatcher {
             return;
         }
 
-        final Path openjfxDir = CommandLineOptions.getOptions().getHome().resolve("openjfx").resolve(Platform.CURRENT_PLATFORM.toString());
+        final Path openjfxDir = Options.getOptions().getHome().resolve("openjfx").resolve(Platform.CURRENT_PLATFORM.toString());
         Files.createDirectories(openjfxDir);
 
         ArrayList<DependencyDescriptor> missingDependencies = new ArrayList<>();

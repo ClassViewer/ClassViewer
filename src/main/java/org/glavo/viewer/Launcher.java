@@ -5,7 +5,7 @@ import org.glavo.viewer.util.JavaFXPatcher;
 
 public final class Launcher {
     public static void main(String[] args) throws Throwable {
-        CommandLineOptions.parse(args);
+        Options.parse(args);
         checkJFX();
         Application.launch(Main.class);
     }

@@ -1,6 +1,6 @@
 package org.glavo.viewer.util;
 
-import org.glavo.viewer.CommandLineOptions;
+import org.glavo.viewer.Options;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -79,7 +79,7 @@ public final class Logging {
 
         started = true;
 
-        LOGGER.config("ClassViewer Home: " + CommandLineOptions.getOptions().getHome());
+        LOGGER.config("ClassViewer Home: " + Options.getOptions().getHome());
         LOGGER.config("Platform: " + kala.platform.Platform.CURRENT_PLATFORM);
     }
 }

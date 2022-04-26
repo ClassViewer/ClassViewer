@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-public class CommandLineOptions {
-    private static volatile CommandLineOptions options;
+public class Options {
+    private static volatile Options options;
 
     public static synchronized void parse(String[] args) {
         if (options != null) {
@@ -59,18 +59,18 @@ public class CommandLineOptions {
             home = Platform.CURRENT_PLATFORM.getAppDataDirectory("Glavo").resolve("ClassViewer");
         }
 
-        options = new CommandLineOptions(home, files);
+        options = new Options(home, files);
         Logging.start(home);
     }
 
-    public static synchronized CommandLineOptions getOptions() {
+    public static synchronized Options getOptions() {
         return options;
     }
 
     private final Path home;
     private final List<String> files;
 
-    public CommandLineOptions(Path home, List<String> files) {
+    public Options(Path home, List<String> files) {
         this.home = home;
         this.files = files;
     }
