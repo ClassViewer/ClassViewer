@@ -1,7 +1,10 @@
 package org.glavo.viewer;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Main extends Application {
 
@@ -12,12 +15,10 @@ public final class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
     }
 
     @Override
     public void stop() throws Exception {
-
     }
 
     public static void main(String[] args) {

@@ -1,7 +1,10 @@
 package org.glavo.viewer.util;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import kala.platform.Platform;
+import org.glavo.viewer.CommandLineOptions;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,11 +18,12 @@ import java.lang.module.ModuleReference;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 @SuppressWarnings("Since15")
 public final class JavaFXPatcher {
@@ -40,20 +44,12 @@ public final class JavaFXPatcher {
             return;
         }
 
-        final Path openjfxDir;
-        {
-            final String home = System.getProperty("viewer.home");
-            openjfxDir = home == null
-                    ? Paths.get(System.getProperty("user.home"), ".viewer", "openjfx")
-                    : Paths.get(home, "openjfx");
-            if (Files.notExists(openjfxDir)) {
-                Files.createDirectories(openjfxDir);
-            }
-        }
+        final Path openjfxDir = CommandLineOptions.getOptions().getHome().resolve("openjfx").resolve(Platform.CURRENT_PLATFORM.toString());
+        Files.createDirectories(openjfxDir);
 
         ArrayList<DependencyDescriptor> missingDependencies = new ArrayList<>();
         for (DependencyDescriptor dependency : DependencyDescriptor.ALL) {
-            if (Files.notExists(openjfxDir.resolve(dependency.fileName()))) {
+            if (!MessageDigestUtils.checkFileSHA1(openjfxDir.resolve(dependency.fileName()), dependency.sha1)) {
                 missingDependencies.add(dependency);
             }
         }
@@ -109,7 +105,7 @@ public final class JavaFXPatcher {
                 resources.getString("viewer.javafx.missing.title"),
                 JOptionPane.ERROR_MESSAGE
         );
-        System.err.println("Patch JavaFX Failed");
+        LOGGER.severe("Patch JavaFX Failed");
         System.exit(1);
     }
 
@@ -207,13 +203,22 @@ public final class JavaFXPatcher {
         public final String artifactId;
         public final String version;
         public final String classifier;
+        public final String sha1;
 
-        private DependencyDescriptor(String module, String groupId, String artifactId, String version, String classifier) {
+        @JsonCreator
+        public DependencyDescriptor(
+                @JsonProperty("module") String module,
+                @JsonProperty("groupId") String groupId,
+                @JsonProperty("artifactId") String artifactId,
+                @JsonProperty("version") String version,
+                @JsonProperty("classifier") String classifier,
+                @JsonProperty("sha1") String sha1) {
             this.module = module;
             this.groupId = groupId;
             this.artifactId = artifactId;
             this.version = version;
             this.classifier = classifier;
+            this.sha1 = sha1;
         }
 
         private static List<DependencyDescriptor> loadDescriptors() {

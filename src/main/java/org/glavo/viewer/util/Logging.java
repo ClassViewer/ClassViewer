@@ -73,12 +73,13 @@ public final class Logging {
             fileHandle.setEncoding("UTF-8");
 
             LOGGER.addHandler(fileHandle);
-
-            LOGGER.config("ClassViewer home: " + home);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Init Logger FileHandler failed", e);
         }
 
         started = true;
+
+        LOGGER.config("ClassViewer Home: " + CommandLineOptions.getOptions().getHome());
+        LOGGER.config("Platform: " + kala.platform.Platform.CURRENT_PLATFORM);
     }
 }

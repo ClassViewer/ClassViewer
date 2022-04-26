@@ -13,7 +13,6 @@ buildscript {
 
 plugins {
     java
-    application
     id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
@@ -35,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.glavo.kala:kala-platform:0.8.0")
+    implementation("org.glavo.kala:kala-platform:0.9.0")
 
     implementation("org.glavo:jimage:1.0.0")
 
@@ -43,9 +42,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
 }
 
-application {
-    mainClass.set(viewerMain)
-}
 
 apply {
     from("javafx.gradle.kts")
@@ -80,11 +76,7 @@ tasks.processResources {
 
 tasks.shadowJar {
     minimize()
-    archiveClassifier.set("")
-}
-
-tasks.jar {
-    archiveClassifier.set("core")
+    archiveClassifier.set(null as String?)
     manifest.attributes(
         "Implementation-Version" to "1.2",
         "Main-Class" to viewerLauncher,
@@ -94,4 +86,15 @@ tasks.jar {
     )
 }
 
-kala.platform.Platform.CURRENT_PLATFORM
+tasks.jar {
+    archiveClassifier.set("core")
+}
+
+tasks.create<JavaExec>("run") {
+    dependsOn(tasks.shadowJar)
+
+    group = "application"
+
+    classpath = files(tasks.shadowJar.get().archiveFile)
+    workingDir = rootProject.rootDir
+}

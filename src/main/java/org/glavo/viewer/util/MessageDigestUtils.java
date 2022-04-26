@@ -38,6 +38,10 @@ public class MessageDigestUtils {
     }
 
     public static boolean checkFileSHA1(Path file, String hash) throws IOException {
+        if (Files.notExists(file)) {
+            return false;
+        }
+
         Cache cache = Cache.getCache();
 
         try (InputStream input = Files.newInputStream(file)) {
