@@ -1,5 +1,8 @@
 package org.glavo.viewer.util;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public final class WindowDimension {
@@ -11,21 +14,25 @@ public final class WindowDimension {
         this(false, width, height);
     }
 
-    public WindowDimension(boolean maximized, double width, double height) {
+    @JsonCreator
+    public WindowDimension(
+            @JsonProperty("maximized") boolean maximized,
+            @JsonProperty("width") double width,
+            @JsonProperty("height") double height) {
         this.maximized = maximized;
         this.width = width;
         this.height = height;
     }
 
-    public boolean maximized() {
+    public boolean isMaximized() {
         return maximized;
     }
 
-    public double width() {
+    public double getWidth() {
         return width;
     }
 
-    public double height() {
+    public double getHeight() {
         return height;
     }
 
@@ -48,7 +55,7 @@ public final class WindowDimension {
 
     @Override
     public String toString() {
-        return "WindowDimension[" + "maximized=" + maximized + ", " + "width=" + width + ", " + "height=" + height + ']';
+        return "WindowDimension[" + "isMaximized=" + maximized + ", " + "getWidth=" + width + ", " + "getHeight=" + height + ']';
     }
 
 }

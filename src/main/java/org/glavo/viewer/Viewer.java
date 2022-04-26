@@ -1,15 +1,20 @@
 package org.glavo.viewer;
 
 import javafx.application.Application;
+import javafx.beans.binding.ObjectBinding;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.ui.ViewerPane;
+import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.WindowDimension;
 
 public final class Viewer extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage stage) throws Exception {
 
         // region init config
         Config config = Config.getConfig();
@@ -32,6 +37,39 @@ public final class Viewer extends Application {
         }
         // endregion
 
+        ViewerPane root = new ViewerPane();
+        Scene scene = new Scene(root, config.getWindowSize().getWidth(), config.getWindowSize().getHeight());
+        if (config.getWindowSize().isMaximized()) {
+            stage.setMaximized(true);
+        }
 
+        stage.getIcons().setAll(Images.logo32, Images.logo16);
+
+        ObjectBinding<WindowDimension> binding = new ObjectBinding<>() {
+            {
+                super.bind(stage.maximizedProperty(), stage.widthProperty(), stage.heightProperty());
+            }
+
+            @Override
+            protected WindowDimension computeValue() {
+                return stage.isMaximized()
+                        ? new WindowDimension(true, config.getWindowSize().getWidth(), config.getWindowSize().getHeight())
+                        : new WindowDimension(false, stage.getWidth(), stage.getHeight());
+            }
+        };
+
+        binding.addListener(((observable, oldValue, newValue) -> config.setWindowSize(newValue)));
+
+        stage.setTitle("ClassViewer");
+        stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        if (Config.getConfig().isNeedToSaveOnExit()) {
+            Config.getConfig().save();
+        }
+
+        FileUtils.ioThread.shutdown();
     }
 }

@@ -100,8 +100,8 @@ public final class JavaFXPatcher {
     private static void missJavaFX() {
         JOptionPane.showMessageDialog(
                 null,
-                I18N.getString("viewer.javafx.missing.text"),
-                I18N.getString("viewer.javafx.missing.title"),
+                I18N.getString("patcher.javafx.missing.text"),
+                I18N.getString("patcher.javafx.missing.title"),
                 JOptionPane.ERROR_MESSAGE
         );
         LOGGER.severe("Patch JavaFX Failed");
@@ -147,7 +147,7 @@ public final class JavaFXPatcher {
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        for (String line : I18N.getString("viewer.patcher.text").split("\n")) {
+        for (String line : I18N.getString("patcher.text").split("\n")) {
             panel.add(new JLabel(line));
         }
 
@@ -163,7 +163,7 @@ public final class JavaFXPatcher {
             }
         }
 
-        int res = JOptionPane.showConfirmDialog(null, panel, I18N.getString("viewer.patcher.download.title"), JOptionPane.YES_NO_OPTION);
+        int res = JOptionPane.showConfirmDialog(null, panel, I18N.getString("patcher.download.title"), JOptionPane.YES_NO_OPTION);
 
         if (res == JOptionPane.YES_OPTION) {
             final Enumeration<AbstractButton> buttons = buttonGroup.getElements();
@@ -238,9 +238,9 @@ public final class JavaFXPatcher {
         public static final List<Repository> REPOSITORIES;
 
         public static final Repository MAVEN_CENTRAL =
-                new Repository(I18N.getString("viewer.patcher.repositories.maven_central"), "https://repo1.maven.org/maven2");
+                new Repository(I18N.getString("patcher.repositories.maven_central"), "https://repo1.maven.org/maven2");
         public static final Repository ALIYUN_MIRROR =
-                new Repository(I18N.getString("viewer.patcher.repositories.aliyun_mirror"), "https://maven.aliyun.com/repository/central");
+                new Repository(I18N.getString("patcher.repositories.aliyun_mirror"), "https://maven.aliyun.com/repository/central");
 
         public static final Repository DEFAULT;
 
@@ -282,7 +282,7 @@ public final class JavaFXPatcher {
             JPanel panel = new JPanel();
 
             setResizable(false);
-            setTitle(I18N.getString("viewer.patcher.download.title"));
+            setTitle(I18N.getString("patcher.download.title"));
             setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             setBounds(100, 100, 600, 150);
             setContentPane(panel);
@@ -310,7 +310,7 @@ public final class JavaFXPatcher {
             gbc_progressBar.gridy = 1;
             panel.add(progressBar, gbc_progressBar);
 
-            JButton btnCancel = new JButton(I18N.getString("viewer.patcher.download.cancel.text"));
+            JButton btnCancel = new JButton(I18N.getString("patcher.download.cancel.text"));
             btnCancel.addActionListener(e -> System.exit(-1));
 
             GridBagConstraints gbc_btnCancel = new GridBagConstraints();
