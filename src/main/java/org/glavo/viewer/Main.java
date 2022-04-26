@@ -12,7 +12,7 @@ public final class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // region init config
-        Config.load(Options.getOptions().getHome().resolve("config.json"));
+        Config.load();
         Config config = Config.getConfig();
 
         if (config.getWindowSize() == null) {
@@ -32,8 +32,6 @@ public final class Main extends Application {
             config.setWindowSize(new WindowDimension(defaultWidth, defaultHeight));
         }
         // endregion
-
-
 
 
     }

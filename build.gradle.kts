@@ -30,7 +30,6 @@ val viewerMain = "org.glavo.viewer.Main"
 
 repositories {
     maven(url = System.getenv("MAVEN_CENTRAL_MIRROR") ?: "https://repo1.maven.org/maven2/")
-    mavenCentral()
 }
 
 dependencies {
@@ -56,8 +55,6 @@ sourceSets {
 }
 
 tasks.compileJava {
-    this.options.allCompilerArgs
-
     sourceCompatibility = "9"
     targetCompatibility = "9"
     options.javaModuleMainClass.set(viewerMain)

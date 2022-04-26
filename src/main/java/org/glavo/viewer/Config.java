@@ -10,8 +10,11 @@ import org.glavo.viewer.util.WindowDimension;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -19,6 +22,7 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Config {
     private Path path = null;
+    private FileLock lock;
 
     private boolean needToSaveOnExit = false;
     private final ObjectProperty<WindowDimension> windowSizeProperty = new SimpleObjectProperty<>();
@@ -32,8 +36,8 @@ public final class Config {
         init(path);
     }
 
-    public static void load(Path path) {
-        config = loadFrom(path);
+    public static void load() {
+        config = loadFrom(Options.getOptions().getHome().resolve("config.json"));
     }
 
     public static Config getConfig() {
@@ -59,9 +63,52 @@ public final class Config {
     }
 
     private void init(Path path) {
-        if (path != null) {
-            needToSaveOnExit(windowSizeProperty);
+        this.path = path;
+        if (path == null) {
+            return;
         }
+
+        Path lockFile = path.resolveSibling(path.getFileName() + ".lock");
+
+        FileChannel channel = null;
+        FileLock lock = null;
+        try {
+            channel = FileChannel.open(lockFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+
+            int retry = 0;
+
+            while (true) {
+                lock = channel.tryLock();
+
+                if (lock != null) {
+                    break;
+                }
+
+                if (retry++ > 5) {
+                    LOGGER.info("Failed to acquire file lock on configuration file, open it in read-only mode");
+                    break;
+                }
+
+                //noinspection BusyWait
+                Thread.sleep(10);
+            }
+        } catch (Throwable ex) {
+            LOGGER.log(Level.WARNING, "Failed when trying to lock the configuration file", ex);
+            if (channel != null) {
+                try {
+                    channel.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        if (lock == null) {
+            return;
+        }
+
+        this.lock = lock;
+
+        needToSaveOnExit(windowSizeProperty);
     }
 
     private void needToSave(ObservableValue<?> value) {
@@ -82,14 +129,16 @@ public final class Config {
 
     public void save() {
         if (path != null) {
-            try {
-                FileUtils.save(path, writer -> {
-                    JsonUtils.MAPPER.writeValue(writer, Config.this);
-                    LOGGER.info("Save config");
-                });
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Failed to save config", ex);
-            }
+            FileUtils.ioThread.submit(() -> {
+                try {
+                    FileUtils.save(path, writer -> {
+                        JsonUtils.MAPPER.writeValue(writer, Config.this);
+                        LOGGER.info("Save config");
+                    });
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Failed to save config", ex);
+                }
+            });
         }
     }
 
