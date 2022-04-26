@@ -25,7 +25,6 @@ version = "4.0-beta1".let {
     }
 }
 
-val viewerLauncher = "org.glavo.viewer.Launcher"
 val viewerMain = "org.glavo.viewer.Main"
 
 repositories {
@@ -85,7 +84,7 @@ tasks.shadowJar {
     archiveClassifier.set(null as String?)
     manifest.attributes(
         "Implementation-Version" to "1.2",
-        "Main-Class" to viewerLauncher,
+        "Main-Class" to viewerMain,
         "Add-Exports" to listOf(
             "java.base/jdk.internal.loader"
         ).joinToString(" ")
