@@ -1,5 +1,6 @@
 package org.glavo.viewer;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -25,6 +26,8 @@ public final class Config {
     private FileLock lock;
 
     private boolean needToSaveOnExit = false;
+    private boolean hasUnknownProperties = false;
+
     private final ObjectProperty<WindowDimension> windowSizeProperty = new SimpleObjectProperty<>();
 
     private static Config config;
@@ -54,6 +57,9 @@ public final class Config {
 
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             Config res = JsonUtils.MAPPER.readValue(reader, Config.class);
+            if (res.hasUnknownProperties) {
+                LOGGER.warning("Open configuration file in read-only mode due to unknown keys");
+            }
             res.init(path);
             return res;
         } catch (Throwable ex) {
@@ -64,7 +70,7 @@ public final class Config {
 
     private void init(Path path) {
         this.path = path;
-        if (path == null) {
+        if (path == null || this.hasUnknownProperties) {
             return;
         }
 
@@ -117,6 +123,12 @@ public final class Config {
 
     private void needToSaveOnExit(ObservableValue<?> value) {
         value.addListener(o -> needToSaveOnExit = true);
+    }
+
+    @JsonAnySetter
+    public void ignored(String key, Object value) {
+        LOGGER.warning("Unknown key '" + key + "' in the configuration file");
+        hasUnknownProperties = true;
     }
 
     public void save() {
