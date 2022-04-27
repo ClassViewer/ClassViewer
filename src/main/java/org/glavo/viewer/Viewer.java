@@ -1,7 +1,9 @@
 package org.glavo.viewer;
 
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
@@ -15,6 +17,8 @@ import org.glavo.viewer.util.WindowDimension;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Viewer extends Application {
 
@@ -72,6 +76,7 @@ public final class Viewer extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
+        // Part of the configuration needs to be initialized during the start process
         // region init config
         Config config = Config.getConfig();
 
@@ -101,22 +106,15 @@ public final class Viewer extends Application {
 
         scene.getStylesheets().setAll(Stylesheet.getStylesheets());
 
+        stage.setScene(scene);
         stage.getIcons().setAll(Images.logo32, Images.logo16);
 
-        ObjectBinding<WindowDimension> binding = new ObjectBinding<>() {
-            {
-                super.bind(stage.maximizedProperty(), stage.widthProperty(), stage.heightProperty());
-            }
+        stage.setOnCloseRequest(e -> {
+            config.setWindowSize(stage.isMaximized()
+                    ? new WindowDimension(true, config.getWindowSize().getWidth(), config.getWindowSize().getHeight())
+                    : new WindowDimension(false, stage.getWidth(), stage.getHeight()));
 
-            @Override
-            protected WindowDimension computeValue() {
-                return stage.isMaximized()
-                        ? new WindowDimension(true, config.getWindowSize().getWidth(), config.getWindowSize().getHeight())
-                        : new WindowDimension(false, stage.getWidth(), stage.getHeight());
-            }
-        };
-
-        binding.addListener(((observable, oldValue, newValue) -> config.setWindowSize(newValue)));
+        });
 
         stage.setTitle("ClassViewer");
         stage.show();
