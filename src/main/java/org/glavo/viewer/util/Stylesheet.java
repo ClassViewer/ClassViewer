@@ -5,7 +5,6 @@ import org.glavo.viewer.Config;
 import org.glavo.viewer.Viewer;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -15,9 +14,6 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Stylesheet {
     private static final String STYLE_TEMPLATE = "/org/glavo/viewer/resources/style.css.template";
-
-    private static URL url;
-
 
     public static String[] getStylesheets() {
         Config config = Config.getConfig();

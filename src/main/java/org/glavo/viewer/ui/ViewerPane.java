@@ -2,6 +2,9 @@ package org.glavo.viewer.ui;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -13,10 +16,13 @@ import org.glavo.viewer.resources.I18N;
 
 public final class ViewerPane extends BorderPane {
     private final Pane defaultText;
+    private final MenuBar menuBar;
 
     public ViewerPane() {
+        this.menuBar = createMenuBar();
         this.defaultText = createDefaultText();
 
+        this.setTop(menuBar);
         this.setCenter(defaultText);
     }
 
@@ -40,5 +46,38 @@ public final class ViewerPane extends BorderPane {
         FlowPane pane = new FlowPane(text);
         pane.setAlignment(Pos.CENTER);
         return pane;
+    }
+
+    private MenuBar createMenuBar() {
+        MenuBar menuBar = new MenuBar();
+
+        Menu fileMenu = new Menu(I18N.getString("menu.file"));
+        {
+            fileMenu.setMnemonicParsing(true);
+
+            MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
+            openFileItem.setMnemonicParsing(true);
+
+            MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
+            openFolderItem.setMnemonicParsing(true);
+
+            Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
+            openRecentMenu.setMnemonicParsing(true);
+
+            fileMenu.getItems().setAll(openFileItem);
+        }
+
+
+        Menu helpMenu = new Menu(I18N.getString("menu.help"));
+        {
+            helpMenu.setMnemonicParsing(true);
+
+            MenuItem aboutItem = new MenuItem(I18N.getString("menu.help.items.about"));
+
+            helpMenu.getItems().setAll(aboutItem);
+        }
+
+        menuBar.getMenus().setAll(fileMenu, helpMenu);
+        return menuBar;
     }
 }
