@@ -99,7 +99,9 @@ public final class Viewer extends Application {
         // endregion
 
         ViewerPane root = new ViewerPane();
-        Scene scene = new Scene(root, config.getWindowSize().getWidth(), config.getWindowSize().getHeight());
+        Scene scene = new Scene(root);
+        stage.setWidth(config.getWindowSize().getWidth());
+        stage.setHeight(config.getWindowSize().getHeight());
         if (config.getWindowSize().isMaximized()) {
             stage.setMaximized(true);
         }
