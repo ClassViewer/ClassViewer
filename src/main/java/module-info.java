@@ -6,6 +6,7 @@ module org.glavo.viewer {
 
     requires org.glavo.jimage;
     requires kala.platform;
+    requires kala.template;
 
     requires com.fasterxml.jackson.databind;
 }

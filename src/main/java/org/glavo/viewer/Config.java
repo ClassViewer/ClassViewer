@@ -2,9 +2,9 @@ package org.glavo.viewer;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.Observable;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.JsonUtils;
@@ -29,6 +29,10 @@ public final class Config {
     private boolean hasUnknownProperties = false;
 
     private final ObjectProperty<WindowDimension> windowSizeProperty = new SimpleObjectProperty<>();
+    private final StringProperty uiFontFamilyProperty = new SimpleStringProperty();
+    private final DoubleProperty uiFontSizeProperty = new SimpleDoubleProperty(-1);
+    private final StringProperty textFontFamilyProperty = new SimpleStringProperty();
+    private final DoubleProperty textFontSizeProperty = new SimpleDoubleProperty(-1);
 
     private static Config config;
 
@@ -115,6 +119,10 @@ public final class Config {
         this.lock = lock;
 
         needToSaveOnExit(windowSizeProperty);
+        needToSave(uiFontFamilyProperty);
+        needToSave(uiFontSizeProperty);
+        needToSave(textFontFamilyProperty);
+        needToSave(textFontSizeProperty);
     }
 
     private void needToSave(Observable value) {
@@ -161,5 +169,55 @@ public final class Config {
 
     public void setWindowSize(WindowDimension windowSizeProperty) {
         this.windowSizeProperty.set(windowSizeProperty);
+    }
+
+    public StringProperty uiFontFamilyProperty() {
+        return uiFontFamilyProperty;
+    }
+
+    @JsonProperty("uiFontFamily")
+    public String getUIFontFamily() {
+        return uiFontFamilyProperty.get();
+    }
+
+    public void setUIFontFamily(String uiFontProperty) {
+        this.uiFontFamilyProperty.set(uiFontProperty);
+    }
+
+    public DoubleProperty uiFontSizeProperty() {
+        return uiFontSizeProperty;
+    }
+
+    @JsonProperty("uiFontSize")
+    public double getUIFontSize() {
+        return uiFontSizeProperty.get();
+    }
+
+    public void setUIFontSize(double uiFontSizeProperty) {
+        this.uiFontSizeProperty.set(uiFontSizeProperty);
+    }
+
+    public StringProperty textFontFamilyProperty() {
+        return textFontFamilyProperty;
+    }
+
+    public String getTextFontFamily() {
+        return textFontFamilyProperty.get();
+    }
+
+    public void setTextFontFamily(String textFontProperty) {
+        this.textFontFamilyProperty.set(textFontProperty);
+    }
+
+    public DoubleProperty textFontSizeProperty() {
+        return textFontSizeProperty;
+    }
+
+    public double getTextFontSize() {
+        return textFontSizeProperty.get();
+    }
+
+    public void setTextFontSize(double textFontSizeProperty) {
+        this.textFontSizeProperty.set(textFontSizeProperty);
     }
 }

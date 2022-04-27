@@ -4,14 +4,70 @@ import javafx.application.Application;
 import javafx.beans.binding.ObjectBinding;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.ViewerPane;
 import org.glavo.viewer.util.FileUtils;
+import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public final class Viewer extends Application {
+
+    @Override
+    public void init() throws Exception {
+        Config config = Config.getConfig();
+        Set<String> fonts = null;
+        if (config.getUIFontFamily() == null) {
+            fonts = new HashSet<>(Font.getFamilies());
+
+            String[] defaultUIFontFamilies = {
+                    "PingFang SC",
+                    "Microsoft YaHei UI",
+                    "Ubuntu",
+                    "Segoe UI"
+            };
+
+            for (String font : defaultUIFontFamilies) {
+                if (fonts.contains(font)) {
+                    config.setUIFontFamily(font);
+                    break;
+                }
+            }
+        }
+
+        if (config.getUIFontSize() <= 0) {
+            config.setUIFontSize(14);
+        }
+
+        if (config.getTextFontFamily() == null) {
+            if (fonts == null) {
+                fonts = new HashSet<>(Font.getFamilies());
+            }
+
+            String[] defaultTextFontFamilies = {
+                    "Consolas",
+                    "Source Code Pro",
+                    "Fira Code",
+                    "DejaVu Sans Mono"
+            };
+
+            for (String font : defaultTextFontFamilies) {
+                if (fonts.contains(font)) {
+                    config.setTextFontFamily(font);
+                    break;
+                }
+            }
+        }
+
+        if (config.getTextFontSize() <= 0) {
+            config.setTextFontSize(16);
+        }
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -42,6 +98,8 @@ public final class Viewer extends Application {
         if (config.getWindowSize().isMaximized()) {
             stage.setMaximized(true);
         }
+
+        scene.getStylesheets().setAll(Stylesheet.getStylesheets());
 
         stage.getIcons().setAll(Images.logo32, Images.logo16);
 

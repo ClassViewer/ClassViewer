@@ -1,0 +1,9 @@
+.root {
+    -fx-font-family: ${ui-font-family};
+    -fx-font-size: ${ui-font-size};
+}
+
+.mono-font {
+    -fx-font-family: ${text-font-family};
+    -fx-font-size: ${text-font-size};
+}
