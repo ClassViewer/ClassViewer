@@ -6,12 +6,23 @@ import org.glavo.viewer.resources.Images;
 import java.util.Locale;
 
 public enum FileType {
-    JAVA_CLASS,
+    FOLDER(Images.loadImage("folder.png")),
     ARCHIVE,
+    JAVA_CLASS,
+    MANIFEST,
+    PROPERTIES,
     TEXT,
-    UNKNOWN;
+    UNKNOWN(Images.loadImage("file.png"));
 
-    private final Image image = Images.loadImage("fileTypes/file-" + this.name().toLowerCase(Locale.ROOT).replace('_', '-') + ".png");
+    private final Image image;
+
+    FileType() {
+        this.image = Images.loadImage("fileTypes/file-" + name().toLowerCase(Locale.ROOT).replace('_', '-') + ".png");
+    }
+
+    FileType(Image image) {
+        this.image = image;
+    }
 
     public Image getImage() {
         return image;
