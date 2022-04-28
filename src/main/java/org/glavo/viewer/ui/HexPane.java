@@ -1,10 +1,10 @@
 package org.glavo.viewer.ui;
 
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SkinBase;
-import javafx.scene.control.Skinnable;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.util.HexText;
 
@@ -78,9 +78,9 @@ public class HexPane extends ScrollPane {
         textArea2.setPrefRowCount(rowCount);
         textArea3.setPrefRowCount(rowCount);
 
-        // textArea1.setContextMenu(new AsciiPaneMenu(textArea1));
-        // textArea2.setContextMenu(new HexPaneMenu(textArea2));
-        // textArea3.setContextMenu(new TextPaneMenu(textArea3));
+        registerAsciiPaneMenu(textArea1);
+        registerHexPaneMenu(textArea2);
+        registerTextPaneMenu(textArea3);
 
         textArea1.setEditable(false);
         textArea2.setEditable(false);
@@ -102,4 +102,20 @@ public class HexPane extends ScrollPane {
 
         return (17 * rowIndex) + (colIndex);
     }
+
+    private void registerAsciiPaneMenu(TextArea area) {
+        ContextMenu menu = new ContextMenu();
+        area.setContextMenu(menu);
+    }
+
+    private void registerHexPaneMenu(TextArea area) {
+        ContextMenu menu = new ContextMenu();
+        area.setContextMenu(menu);
+    }
+
+    private void registerTextPaneMenu(TextArea area) {
+        ContextMenu menu = new ContextMenu();
+        area.setContextMenu(menu);
+    }
+
 }
