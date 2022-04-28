@@ -48,6 +48,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
+
+    implementation("org.fxmisc.richtext:richtextfx:0.10.8")
 }
 
 

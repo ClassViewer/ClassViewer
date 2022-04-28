@@ -3,7 +3,7 @@
     -fx-font-size: ${ui-font-size};
 }
 
-.mono-font {
+.text-area {
     -fx-font-family: ${text-font-family};
     -fx-font-size: ${text-font-size};
 }
