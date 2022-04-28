@@ -15,6 +15,7 @@ import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
+import javax.swing.text.View;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,8 +23,16 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Viewer extends Application {
 
+    private static Viewer viewer;
+
+    public static Viewer getViewer() {
+        return viewer;
+    }
+
     @Override
     public void init() throws Exception {
+        viewer = this;
+
         Config config = Config.getConfig();
         Set<String> fonts = null;
         if (config.getUIFontFamily() == null) {
@@ -129,5 +138,7 @@ public final class Viewer extends Application {
         }
 
         FileUtils.ioThread.shutdown();
+
+        viewer = null;
     }
 }

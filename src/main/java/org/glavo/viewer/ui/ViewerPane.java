@@ -5,6 +5,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -13,6 +14,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import org.glavo.viewer.resources.I18N;
+import org.glavo.viewer.resources.Images;
 
 public final class ViewerPane extends BorderPane {
     private final Pane defaultText;
@@ -57,6 +59,7 @@ public final class ViewerPane extends BorderPane {
 
             MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
             openFileItem.setMnemonicParsing(true);
+            openFileItem.setGraphic(new ImageView(Images.menuOpen));
 
             MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
             openFolderItem.setMnemonicParsing(true);
@@ -64,7 +67,7 @@ public final class ViewerPane extends BorderPane {
             Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
             openRecentMenu.setMnemonicParsing(true);
 
-            fileMenu.getItems().setAll(openFileItem);
+            fileMenu.getItems().setAll(openFileItem, openFolderItem, openRecentMenu);
         }
 
 

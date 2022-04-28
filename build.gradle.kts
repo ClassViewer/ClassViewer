@@ -1,4 +1,11 @@
+import org.apache.batik.transcoder.TranscoderInput
+import org.apache.batik.transcoder.TranscoderOutput
+import org.apache.batik.transcoder.image.PNGTranscoder
+import java.io.FileOutputStream
+import java.io.OutputStream
 import java.io.RandomAccessFile
+import java.nio.file.Files
+
 
 buildscript {
     repositories {
@@ -7,6 +14,8 @@ buildscript {
 
     dependencies {
         classpath("org.glavo.kala:kala-platform:0.8.0")
+        classpath("org.apache.xmlgraphics:batik-transcoder:1.14")
+        classpath("org.apache.xmlgraphics:batik-codec:1.14")
     }
 }
 
@@ -48,8 +57,8 @@ apply {
 
 sourceSets {
     main {
-        java {
-            exclude("src/main/java/module-info.java")
+        resources {
+            exclude("**/*.svg")
         }
     }
 }
@@ -74,11 +83,51 @@ tasks.compileJava {
     }
 }
 
-tasks.processResources {
-    dependsOn(":generateOpenJFXDependencies")
-    into("org/glavo/viewer") {
-        from(project.buildDir.resolve("openjfx").resolve("openjfx-dependencies.json"))
+val processSVG by tasks.creating {
+    val resourcesPath = file("src/main/resources").toPath()
+    val outputPath = buildDir.resolve("resources/images").toPath()
+
+    val inputPaths = fileTree("src/main/resources") { include("**/*.svg") }.files.map { it.toPath() }
+    val outputPaths = inputPaths.flatMap {
+        val dir = outputPath.resolve(resourcesPath.relativize(it.parent))
+        val fileNameBase = it.fileName.toString().substring(0, it.fileName.toString().length - 4)
+
+        listOf(dir.resolve("$fileNameBase.png"), dir.resolve("$fileNameBase@2x.png"))
     }
+
+    inputs.files(inputPaths)
+    outputs.files(outputPaths)
+
+    doLast {
+        for (path in inputPaths) {
+            val od = outputPath.resolve(resourcesPath.relativize(path.parent))
+            Files.createDirectories(od)
+
+            val fileNameBase = path.fileName.toString().substring(0, path.fileName.toString().length - 4)
+
+            val transcoder = PNGTranscoder()
+
+            val input = TranscoderInput(path.toUri().toString())
+            Files.newOutputStream(od.resolve("$fileNameBase.png")).use { out ->
+                transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, 16f)
+                transcoder.transcode(input, TranscoderOutput(out))
+            }
+
+            Files.newOutputStream(od.resolve("$fileNameBase@2x.png")).use { out ->
+                transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, 32f)
+                transcoder.transcode(input, TranscoderOutput(out))
+            }
+        }
+    }
+}
+
+tasks.processResources {
+    dependsOn(":generateOpenJFXDependencies", ":processSVG")
+    into("org/glavo/viewer") {
+        from(project.buildDir.resolve("resources/openjfx/openjfx-dependencies.json"))
+    }
+
+    from(buildDir.resolve("resources/images"))
 }
 
 tasks.shadowJar {
