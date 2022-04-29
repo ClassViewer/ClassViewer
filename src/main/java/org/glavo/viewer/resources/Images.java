@@ -11,5 +11,8 @@ public class Images {
     public static final Image logo16 = loadImage("viewer_16x16.png");
     public static final Image logo32 = loadImage("viewer_32x32.png");
 
+    public static final Image file = loadImage("file.png");
+    public static final Image folder = loadImage("folder.png");
+
     public static final Image menuOpen = loadImage("menu-open.png");
 }

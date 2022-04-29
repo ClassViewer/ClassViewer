@@ -1,6 +1,7 @@
-package org.glavo.viewer.file;
+package org.glavo.viewer.file.types;
 
 import javafx.scene.image.Image;
+import org.glavo.viewer.file.FileType;
 
 public class TextFileType extends FileType {
 
