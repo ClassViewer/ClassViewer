@@ -10,17 +10,6 @@ import java.util.*;
 
 
 public abstract class FileType {
-    /*
-    FOLDER(true, Images.loadImage("folder.png")),
-    ARCHIVE(true),
-    JIMAGE(true, ARCHIVE.image),
-    JAVA_CLASS,
-    MANIFEST,
-    PROPERTIES,
-    TEXT,
-    UNKNOWN(Images.loadImage("file.png"));
-     */
-
     private final String name;
     private final Image image;
 

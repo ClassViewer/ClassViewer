@@ -1,11 +1,7 @@
 import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
-import java.io.FileOutputStream
-import java.io.OutputStream
-import java.io.RandomAccessFile
 import java.nio.file.Files
-
 
 buildscript {
     repositories {
@@ -19,10 +15,10 @@ buildscript {
     }
 }
 
-
 plugins {
     java
     id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("org.glavo.compile-module-info-plugin") version "2.0"
 }
 
 group = "org.glavo"
@@ -48,8 +44,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
-
-    implementation("org.fxmisc.richtext:richtextfx:0.10.8")
 }
 
 
@@ -66,26 +60,16 @@ sourceSets {
 }
 
 tasks.compileJava {
-    sourceCompatibility = "9"
-    targetCompatibility = "9"
-    options.javaModuleMainClass.set(viewerMain)
+    sourceCompatibility = "8"
+    targetCompatibility = "8"
     options.encoding = "UTF-8"
-
-    doLast {
-        val tree = fileTree(destinationDirectory)
-        tree.include("**/*.class")
-        tree.exclude("module-info.class")
-        tree.forEach {
-            RandomAccessFile(it, "rw").use { rf ->
-                rf.seek(7)   // major version
-                rf.write(52)   // java 8
-                rf.close()
-            }
-        }
-    }
 }
 
-val processSVG by tasks.creating {
+tasks.named<org.glavo.mic.tasks.CompileModuleInfo>("compileModuleInfo") {
+    moduleMainClass = viewerMain
+}
+
+val processSVG: Task by tasks.creating {
     val resourcesPath = file("src/main/resources").toPath()
     val outputPath = buildDir.resolve("resources/images").toPath()
 
