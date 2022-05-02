@@ -12,4 +12,6 @@ public abstract class ContainerFileType extends FileType {
     protected ContainerFileType(String name, Image image) {
         super(name, image);
     }
+
+
 }

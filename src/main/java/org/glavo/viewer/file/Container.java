@@ -2,10 +2,16 @@ package org.glavo.viewer.file;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface Container extends Closeable {
+public abstract class Container implements Closeable {
 
-    FilePath getPath();
+    public abstract FilePath getPath();
 
-    void close() throws IOException;
+    public abstract void close() throws IOException;
+
+    private final Map<FilePath, Container> containerMap = new HashMap<>();
+
+
 }

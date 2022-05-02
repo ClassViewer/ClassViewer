@@ -8,7 +8,6 @@ import org.glavo.viewer.resources.Images;
 
 import java.util.*;
 
-
 public abstract class FileType {
     private final String name;
     private final Image image;
@@ -34,6 +33,8 @@ public abstract class FileType {
     public Image getImage() {
         return image;
     }
+
+    public abstract boolean check(FilePath path);
 
     @Override
     public int hashCode() {
@@ -61,6 +62,20 @@ public abstract class FileType {
         return Hole.types;
     }
 
+    public static FileType detectFileType(FilePath path) {
+        if (path.isDirectory()) {
+            return Hole.FOLDER_TYPE;
+        }
+
+        for (FileType type : Hole.extTypes) {
+            if (type.check(path)) {
+                return type;
+            }
+        }
+
+        return Hole.BINARY_FILE_TYPE;
+    }
+
     @JsonCreator
     public static FileType ofName(String name) {
         for (FileType type : getTypes()) {
@@ -73,18 +88,28 @@ public abstract class FileType {
     }
 
     private static final class Hole {
-        @SuppressWarnings("Java9CollectionFactory")
-        private static final List<FileType> types = Collections.unmodifiableList(Arrays.asList(
-                new FolderType(),
+        static final BinaryFileType BINARY_FILE_TYPE = new BinaryFileType();
+        static final FolderType FOLDER_TYPE = new FolderType();
+        static final TextFileType TEXT_FILE_TYPE = new TextFileType();
 
-                new BinaryFileType(),
+
+        @SuppressWarnings("Java9CollectionFactory")
+        static final List<FileType> extTypes = Collections.unmodifiableList(Arrays.asList(
                 new JImageFileType(),
                 new ArchiveFileType(),
-
-                new TextFileType(),
                 new ManifestFileType(),
                 new PropertiesFileType()
         ));
-    }
 
+        static final List<FileType> types;
+
+        static {
+            ArrayList<FileType> list = new ArrayList<>(extTypes);
+            list.add(BINARY_FILE_TYPE);
+            list.add(FOLDER_TYPE);
+            list.add(TEXT_FILE_TYPE);
+
+            types = Collections.unmodifiableList(list);
+        }
+    }
 }

@@ -1,34 +1,35 @@
 package org.glavo.viewer.file;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.glavo.viewer.util.JsonUtils;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
-@JsonIncludeProperties({"parent", "path", "type"})
+@JsonIncludeProperties({"parent", "path", "isDirectory"})
+@JsonPropertyOrder({"parent", "path", "isDirectory"})
 public class FilePath {
     private final String path;
-    private final FileType type;
+    private final boolean isDirectory;
 
     private final FilePath parent;
-
     private String fileName;
 
-    public FilePath(String path, FileType type) {
-        this(path, type, null);
+    private Path javaPath;
+
+    public FilePath(String path) {
+        this(path, false, null);
     }
 
     @JsonCreator
     public FilePath(
             @JsonProperty("path") String path,
-            @JsonProperty("type") FileType type,
+            @JsonProperty("isDirectory") boolean isDirectory,
             @JsonProperty("parent") FilePath parent) {
         this.path = path;
-        this.type = type;
+        this.isDirectory = isDirectory;
         this.parent = parent;
     }
 
@@ -36,13 +37,17 @@ public class FilePath {
         return path;
     }
 
-    public FileType getType() {
-        return type;
+    public boolean isDirectory() {
+        return isDirectory;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public FilePath getParent() {
         return parent;
+    }
+
+    public boolean isDefaultFileSystemPath() {
+        return path == null;
     }
 
     public String getFileName() {
@@ -52,6 +57,17 @@ public class FilePath {
         }
 
         return fileName;
+    }
+
+    public Path getJavaPath() {
+        if (javaPath == null) {
+            if (parent != null) {
+                throw new AssertionError();
+            }
+
+            javaPath = Paths.get(path);
+        }
+        return javaPath;
     }
 
     @Override

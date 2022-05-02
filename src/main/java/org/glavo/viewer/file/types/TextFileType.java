@@ -1,6 +1,7 @@
 package org.glavo.viewer.file.types;
 
 import javafx.scene.image.Image;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileType;
 
 public class TextFileType extends FileType {
@@ -15,5 +16,10 @@ public class TextFileType extends FileType {
 
     protected TextFileType(String name, Image image) {
         super(name, image);
+    }
+
+    @Override
+    public boolean check(FilePath path) {
+        return false;
     }
 }
