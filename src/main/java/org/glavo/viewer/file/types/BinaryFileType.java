@@ -20,6 +20,6 @@ public class BinaryFileType extends FileType {
 
     @Override
     public boolean check(FilePath path) {
-        return true;
+        throw new UnsupportedOperationException();
     }
 }

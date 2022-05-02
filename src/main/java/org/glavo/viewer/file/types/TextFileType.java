@@ -20,6 +20,6 @@ public class TextFileType extends FileType {
 
     @Override
     public boolean check(FilePath path) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 }

@@ -12,6 +12,7 @@ public class ArchiveFileType extends ContainerFileType {
         String fileName = path.getFileName();
         return fileName.endsWith(".zip")
                 || fileName.endsWith(".jar")
-                || fileName.endsWith(".jmod");
+                || fileName.endsWith(".jmod")
+                || fileName.equals("ct.sym");
     }
 }
