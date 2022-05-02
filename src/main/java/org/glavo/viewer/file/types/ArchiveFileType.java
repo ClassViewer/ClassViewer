@@ -1,6 +1,9 @@
 package org.glavo.viewer.file.types;
 
+import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FilePath;
+
+import java.io.IOException;
 
 public class ArchiveFileType extends ContainerFileType {
     public ArchiveFileType() {
@@ -14,5 +17,10 @@ public class ArchiveFileType extends ContainerFileType {
                 || fileName.endsWith(".jar")
                 || fileName.endsWith(".jmod")
                 || fileName.equals("ct.sym");
+    }
+
+    @Override
+    public Container open(FilePath path) throws IOException {
+        throw new UnsupportedOperationException(); // TODO
     }
 }

@@ -17,8 +17,6 @@ public abstract class ContainerFileType extends FileType {
         super(name, image);
     }
 
-    public Container open(FilePath path) throws IOException {
-        return null; // TODO
-    }
+    public abstract Container open(FilePath path) throws IOException;
 
 }

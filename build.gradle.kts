@@ -40,6 +40,11 @@ dependencies {
     implementation("org.glavo.kala:kala-platform:0.9.0")
     implementation("org.glavo.kala:kala-template:0.1.0")
 
+    val kalaCompressVersion = "1.21.0.1-beta3"
+    implementation("org.glavo.kala:kala-compress-archivers-zip:$kalaCompressVersion")
+    implementation("org.glavo.kala:kala-compress-compressors-deflate64:$kalaCompressVersion")
+    implementation("org.glavo.kala:kala-compress-compressors-bzip2:$kalaCompressVersion")
+
     implementation("org.glavo:jimage:1.0.0")
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind

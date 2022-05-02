@@ -3,17 +3,31 @@ package org.glavo.viewer.file;
 import org.glavo.viewer.util.ReferenceCounter;
 
 import java.io.Closeable;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public abstract class Container extends ReferenceCounter implements Closeable {
 
-    private final Map<FilePath, Container> containerMap = new HashMap<>();
+    private final Map<FilePath, Container> containerMap = new ConcurrentHashMap<>();
 
     public abstract FilePath getPath();
 
     public boolean isReadonly() {
         return true;
     }
+
+    @Override
+    protected final void cleanUp() {
+        try {
+            containerMap.remove(getPath()).close();
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to close " + getPath(), e);
+        }
+    }
+
 
 }
