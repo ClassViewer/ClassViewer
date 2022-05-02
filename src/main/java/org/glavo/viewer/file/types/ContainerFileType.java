@@ -1,7 +1,11 @@
 package org.glavo.viewer.file.types;
 
 import javafx.scene.image.Image;
+import org.glavo.viewer.file.Container;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileType;
+
+import java.io.IOException;
 
 public abstract class ContainerFileType extends FileType {
 
@@ -13,5 +17,8 @@ public abstract class ContainerFileType extends FileType {
         super(name, image);
     }
 
+    public Container open(FilePath path) throws IOException {
+        return null; // TODO
+    }
 
 }
