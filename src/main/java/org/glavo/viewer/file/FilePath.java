@@ -16,9 +16,6 @@ public class FilePath implements Comparable<FilePath> {
     private final boolean isDirectory;
 
     private final FilePath parent;
-    private String fileName;
-
-    private Path javaPath;
 
     public FilePath(String path) {
         this(path, false, null);
@@ -53,23 +50,7 @@ public class FilePath implements Comparable<FilePath> {
     }
 
     public String getFileName() {
-        if (fileName == null) {
-            int idx = path.lastIndexOf('/');
-            fileName = idx < 0 ? path : path.substring(idx + 1);
-        }
-
-        return fileName;
-    }
-
-    public Path getJavaPath() {
-        if (javaPath == null) {
-            if (parent != null) {
-                throw new AssertionError();
-            }
-
-            javaPath = Paths.get(path);
-        }
-        return javaPath;
+        return pathElements[pathElements.length - 1];
     }
 
     @Override
@@ -124,12 +105,15 @@ public class FilePath implements Comparable<FilePath> {
         return Objects.equals(this.parent, that.parent) && this.path.equals(that.path);
     }
 
-    private void toString(StringBuilder builder) {
+    private StringBuilder toString(StringBuilder builder) {
         if (parent != null) {
             parent.toString(builder);
-            builder.append('!');
+            if (!parent.isDirectory()) {
+                builder.append('!');
+            }
         }
         builder.append(path);
+        return builder;
     }
 
     @Override
@@ -138,8 +122,6 @@ public class FilePath implements Comparable<FilePath> {
             return path;
         }
 
-        StringBuilder builder = new StringBuilder();
-        toString(builder);
-        return builder.toString();
+        return toString(new StringBuilder()).toString();
     }
 }

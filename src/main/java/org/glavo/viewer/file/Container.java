@@ -1,5 +1,6 @@
 package org.glavo.viewer.file;
 
+import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ReferenceCounter;
 
 import java.io.Closeable;
@@ -12,10 +13,9 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public abstract class Container extends ReferenceCounter implements Closeable {
 
-    private final Map<FilePath, Container> containerMap = new ConcurrentHashMap<>();
+    private static final Map<FilePath, Container> containerMap = new ConcurrentHashMap<>();
 
     private final FilePath path;
-
 
     protected Container(FilePath path) {
         this.path = path;
