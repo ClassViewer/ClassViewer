@@ -5,6 +5,7 @@ import org.glavo.viewer.util.ReferenceCounter;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -24,6 +25,8 @@ public abstract class Container extends ReferenceCounter implements Closeable {
         return path;
     }
 
+    public abstract NavigableSet<VirtualFile> files();
+
     public boolean isReadonly() {
         return true;
     }
@@ -36,7 +39,5 @@ public abstract class Container extends ReferenceCounter implements Closeable {
             LOGGER.log(Level.WARNING, "Failed to close " + getPath(), e);
         }
     }
-
-
 
 }
