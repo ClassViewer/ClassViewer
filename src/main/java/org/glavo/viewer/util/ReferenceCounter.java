@@ -11,9 +11,9 @@ public abstract class ReferenceCounter {
 
     public void decrement() {
         if (counter.decrementAndGet() == 0) {
-            cleanUp();
+            onRelease();
         }
     }
 
-    protected abstract void cleanUp();
+    protected abstract void onRelease();
 }

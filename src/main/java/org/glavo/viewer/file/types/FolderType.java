@@ -5,7 +5,6 @@ import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.resources.Images;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public final class FolderType extends ContainerFileType {
     public FolderType() {

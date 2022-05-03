@@ -5,7 +5,7 @@ import org.glavo.viewer.util.ReferenceCounter;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
-import java.util.NavigableSet;
+import java.util.NavigableMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -16,28 +16,50 @@ public abstract class Container extends ReferenceCounter implements Closeable {
     private static final Map<FilePath, Container> containerMap = new ConcurrentHashMap<>();
 
     private final FilePath path;
+    private final Container parent;
 
-    protected Container(FilePath path) {
+    protected Container(Container parent, FilePath path) {
         this.path = path;
+        this.parent = parent;
     }
 
     public FilePath getPath() {
         return path;
     }
 
-    public abstract NavigableSet<VirtualFile> files();
+    public Container getParent() {
+        return parent;
+    }
+
+    public abstract NavigableMap<FilePath, VirtualFile> resolveFiles();
 
     public boolean isReadonly() {
         return true;
     }
 
+    public VirtualFile findFile(FilePath path) {
+        return resolveFiles().get(path);
+    }
+
     @Override
-    protected final void cleanUp() {
+    protected final void onRelease() {
+        LOGGER.info("Release container " + this);
+        Container container = containerMap.remove(getPath());
+        if (container != this) {
+            throw new AssertionError("this is" + this + ", but container=" + container);
+        }
+
         try {
-            containerMap.remove(getPath()).close();
+            this.close();
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Failed to close " + getPath(), e);
+            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+        } finally {
+            parent.decrement();
         }
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s[parent=%s, path=%s]", this.getClass().getSimpleName(), getParent(), getPath());
+    }
 }

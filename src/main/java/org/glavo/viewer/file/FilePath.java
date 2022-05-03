@@ -3,9 +3,7 @@ package org.glavo.viewer.file;
 import com.fasterxml.jackson.annotation.*;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
+import java.util.*;
 
 @JsonIncludeProperties({"parent", "path", "isDirectory"})
 @JsonPropertyOrder({"parent", "path", "isDirectory"})
@@ -51,6 +49,26 @@ public class FilePath implements Comparable<FilePath> {
 
     public String getFileName() {
         return pathElements[pathElements.length - 1];
+    }
+
+    private FilePath normalized;
+
+    public FilePath normalize() {
+        if (normalized == null) {
+            if (parent == null) {
+                normalized = this;
+            } else {
+                FilePath p = parent.normalize();
+                if (p.isDirectory()) {
+                    normalized = new FilePath(p.getPath() + File.separatorChar + this.getPath(), this.isDirectory(), p.getParent());
+                } else if (p == parent) {
+                    normalized = this;
+                } else {
+                    normalized = new FilePath(this.getPath(), this.isDirectory(), parent);
+                }
+            }
+        }
+        return normalized;
     }
 
     @Override
