@@ -14,7 +14,16 @@ public abstract class Container extends ReferenceCounter implements Closeable {
 
     private final Map<FilePath, Container> containerMap = new ConcurrentHashMap<>();
 
-    public abstract FilePath getPath();
+    private final FilePath path;
+
+
+    protected Container(FilePath path) {
+        this.path = path;
+    }
+
+    public FilePath getPath() {
+        return path;
+    }
 
     public boolean isReadonly() {
         return true;
@@ -28,6 +37,5 @@ public abstract class Container extends ReferenceCounter implements Closeable {
             LOGGER.log(Level.WARNING, "Failed to close " + getPath(), e);
         }
     }
-
 
 }
