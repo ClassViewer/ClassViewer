@@ -1,6 +1,5 @@
 package org.glavo.viewer.file;
 
-import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ReferenceCounter;
 
 import java.io.Closeable;
@@ -37,5 +36,7 @@ public abstract class Container extends ReferenceCounter implements Closeable {
             LOGGER.log(Level.WARNING, "Failed to close " + getPath(), e);
         }
     }
+
+
 
 }
