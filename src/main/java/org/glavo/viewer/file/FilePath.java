@@ -24,10 +24,11 @@ public class FilePath implements Comparable<FilePath> {
             @JsonProperty("path") String path,
             @JsonProperty("isDirectory") boolean isDirectory,
             @JsonProperty("parent") FilePath parent) {
-        this.path = path;
+        this.path = path.replace('\\', '/');
         this.isDirectory = isDirectory;
         this.parent = parent;
-        this.pathElements = path.split(File.separatorChar == '\\' ? "\\\\" : File.separator);
+        this.pathElements = path.split("[/\\\\]");
+
     }
 
     public String getPath() {
@@ -60,7 +61,7 @@ public class FilePath implements Comparable<FilePath> {
             } else {
                 FilePath p = parent.normalize();
                 if (p.isDirectory()) {
-                    normalized = new FilePath(p.getPath() + File.separatorChar + this.getPath(), this.isDirectory(), p.getParent());
+                    normalized = new FilePath(p.getPath() + '/' + this.getPath(), this.isDirectory(), p.getParent());
                 } else if (p == parent) {
                     normalized = this;
                 } else {
