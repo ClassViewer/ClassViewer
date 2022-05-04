@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
 
-public abstract class VirtualFile {
+public abstract class FileHandle {
 
     public abstract boolean exists();
 

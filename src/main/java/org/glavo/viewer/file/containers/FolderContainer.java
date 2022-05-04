@@ -2,22 +2,22 @@ package org.glavo.viewer.file.containers;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.VirtualFile;
+import org.glavo.viewer.file.FileHandle;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.NavigableMap;
+import java.util.NavigableSet;
 import java.util.TreeMap;
 
 public class FolderContainer extends Container {
-    private NavigableMap<FilePath, VirtualFile> files;
+    private NavigableSet<FilePath> files;
 
     public FolderContainer(Container parent, FilePath path) {
         super(parent, path);
     }
 
     @Override
-    public NavigableMap<FilePath, VirtualFile> resolveFiles() {
+    public NavigableSet<FilePath> resolveFiles() {
         if (files != null) {
             return files;
         }
@@ -27,7 +27,7 @@ public class FolderContainer extends Container {
                 return files;
             }
 
-            Map<FilePath, VirtualFile> map = new TreeMap<>();
+            Map<FilePath, FileHandle> map = new TreeMap<>();
 
 
             // TODO

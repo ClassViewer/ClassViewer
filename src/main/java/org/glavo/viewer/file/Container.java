@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -31,14 +32,10 @@ public abstract class Container extends ReferenceCounter implements Closeable {
         return parent;
     }
 
-    public abstract NavigableMap<FilePath, VirtualFile> resolveFiles();
+    public abstract NavigableSet<FilePath> resolveFiles();
 
     public boolean isReadonly() {
         return true;
-    }
-
-    public VirtualFile findFile(FilePath path) {
-        return resolveFiles().get(path);
     }
 
     @Override
