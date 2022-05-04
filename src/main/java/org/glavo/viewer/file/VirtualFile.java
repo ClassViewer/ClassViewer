@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.SeekableByteChannel;
 
 public abstract class VirtualFile {
 
@@ -11,7 +13,13 @@ public abstract class VirtualFile {
 
     public abstract boolean isReadonly();
 
-    public abstract InputStream openInputStream() throws IOException;
+    public abstract SeekableByteChannel openChannel() throws IOException;
+
+    public abstract SeekableByteChannel openWritableChannel() throws IOException;
+
+    public InputStream openInputStream() throws IOException {
+        return Channels.newInputStream(openChannel());
+    }
 
     public byte[] readAllBytes() throws IOException {
         try (InputStream in = openInputStream()) {
@@ -26,7 +34,9 @@ public abstract class VirtualFile {
         }
     }
 
-    public abstract OutputStream openOutputStream() throws IOException;
+    public OutputStream openOutputStream() throws IOException {
+        return Channels.newOutputStream(openWritableChannel());
+    }
 
     public void write(byte[] bytes) throws IOException {
         try (OutputStream out = openOutputStream()) {

@@ -27,8 +27,7 @@ public class FilePath implements Comparable<FilePath> {
         this.path = path.replace('\\', '/');
         this.isDirectory = isDirectory;
         this.parent = parent;
-        this.pathElements = path.split("[/\\\\]");
-
+        this.pathElements = this.path.split("/");
     }
 
     public String getPath() {
