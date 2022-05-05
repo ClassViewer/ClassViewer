@@ -7,7 +7,9 @@ import org.glavo.viewer.resources.Images;
 import java.io.IOException;
 
 public final class FolderType extends ContainerFileType {
-    public FolderType() {
+    public static final FolderType TYPE = new FolderType();
+
+    private FolderType() {
         super("folder", Images.folder);
     }
 

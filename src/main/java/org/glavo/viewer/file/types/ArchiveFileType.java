@@ -5,8 +5,10 @@ import org.glavo.viewer.file.FilePath;
 
 import java.io.IOException;
 
-public class ArchiveFileType extends ContainerFileType {
-    public ArchiveFileType() {
+public final class ArchiveFileType extends ContainerFileType {
+    public static final ArchiveFileType TYPE = new ArchiveFileType();
+
+    private ArchiveFileType() {
         super("archive");
     }
 

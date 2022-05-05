@@ -5,8 +5,9 @@ import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileType;
 
 public class TextFileType extends FileType {
+    public static final TextFileType TYPE = new TextFileType();
 
-    public TextFileType() {
+    protected TextFileType() {
         super("text");
     }
 
@@ -20,6 +21,6 @@ public class TextFileType extends FileType {
 
     @Override
     public boolean check(FilePath path) {
-        throw new UnsupportedOperationException();
+        return path.getFileName().endsWith(".txt");
     }
 }

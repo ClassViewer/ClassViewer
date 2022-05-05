@@ -7,7 +7,9 @@ import org.glavo.viewer.resources.Images;
 import java.io.IOException;
 
 public class JImageFileType extends ContainerFileType {
-    public JImageFileType() {
+    public static final JImageFileType TYPE = new JImageFileType();
+
+    private JImageFileType() {
         super("jimage", Images.loadImage("fileTypes/file-archive.png"));
     }
 

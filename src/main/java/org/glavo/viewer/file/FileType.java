@@ -64,7 +64,7 @@ public abstract class FileType {
 
     public static FileType detectFileType(FilePath path) {
         if (path.isDirectory()) {
-            return Hole.FOLDER_TYPE;
+            return FolderType.TYPE;
         }
 
         for (FileType type : Hole.extTypes) {
@@ -73,7 +73,7 @@ public abstract class FileType {
             }
         }
 
-        return Hole.BINARY_FILE_TYPE;
+        return BinaryFileType.TYPE;
     }
 
     @JsonCreator
@@ -88,28 +88,23 @@ public abstract class FileType {
     }
 
     private static final class Hole {
-        static final BinaryFileType BINARY_FILE_TYPE = new BinaryFileType();
-        static final FolderType FOLDER_TYPE = new FolderType();
-        static final TextFileType TEXT_FILE_TYPE = new TextFileType();
-
-
         static final List<FileType> extTypes = Collections.unmodifiableList(Arrays.asList(
-                new JImageFileType(),
-                new ArchiveFileType(),
+                JImageFileType.TYPE,
+                ArchiveFileType.TYPE,
 
-                new ManifestFileType(),
-                new PropertiesFileType(),
+                ManifestFileType.TYPE,
+                PropertiesFileType.TYPE,
 
-                new JavaClassFileType()
+                JavaClassFileType.TYPE
         ));
 
         static final List<FileType> types;
 
         static {
             ArrayList<FileType> list = new ArrayList<>(extTypes);
-            list.add(BINARY_FILE_TYPE);
-            list.add(FOLDER_TYPE);
-            list.add(TEXT_FILE_TYPE);
+            list.add(BinaryFileType.TYPE);
+            list.add(FolderType.TYPE);
+            list.add(TextFileType.TYPE);
 
             types = Collections.unmodifiableList(list);
         }

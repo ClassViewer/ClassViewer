@@ -6,6 +6,8 @@ import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.resources.Images;
 
 public class BinaryFileType extends FileType {
+    public static final BinaryFileType TYPE = new BinaryFileType();
+
     public BinaryFileType() {
         super("binary", Images.file);
     }
