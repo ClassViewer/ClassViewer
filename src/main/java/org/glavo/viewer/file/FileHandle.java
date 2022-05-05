@@ -7,7 +7,24 @@ import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
 
-public abstract class FileHandle {
+public abstract class FileHandle implements AutoCloseable {
+
+    private final Container container;
+    private final FilePath path;
+
+    protected FileHandle(Container container, FilePath path) {
+        this.container = container;
+        this.path = path;
+        container.increment();
+    }
+
+    public FilePath getPath() {
+        return path;
+    }
+
+    public Container getContainer() {
+        return container;
+    }
 
     public abstract boolean exists();
 
@@ -42,5 +59,10 @@ public abstract class FileHandle {
         try (OutputStream out = openOutputStream()) {
             out.write(bytes);
         }
+    }
+
+    @Override
+    public void close() {
+        container.decrement();
     }
 }

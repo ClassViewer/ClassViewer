@@ -73,15 +73,18 @@ public class FilePath implements Comparable<FilePath> {
 
     @Override
     public int compareTo(FilePath other) {
-        if (this.equals(other)) {
+        FilePath normalized = this.normalize();
+        other = other.normalize();
+
+        if (normalized.equals(other)) {
             return 0;
         }
 
-        if (this.parent != null) {
+        if (normalized.parent != null) {
             if (other.getParent() == null) {
                 return 1;
             } else {
-                int res = this.parent.compareTo(other);
+                int res = normalized.parent.compareTo(other);
                 if (res != 0) {
                     return res;
                 }
@@ -90,18 +93,18 @@ public class FilePath implements Comparable<FilePath> {
             return -1;
         }
 
-        final int thisLength = this.pathElements.length;
+        final int normalizedLength = normalized.pathElements.length;
         final int otherLength = other.pathElements.length;
 
-        int length = Math.min(thisLength, otherLength);
+        int length = Math.min(normalizedLength, otherLength);
         for (int i = 0; i < length; i++) {
-            int v = this.pathElements[i].compareTo(other.pathElements[i]);
+            int v = normalized.pathElements[i].compareTo(other.pathElements[i]);
             if (v != 0) {
                 return v;
             }
         }
 
-        return thisLength - otherLength;
+        return normalizedLength - otherLength;
     }
 
     @Override

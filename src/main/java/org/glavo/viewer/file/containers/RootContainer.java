@@ -10,13 +10,13 @@ public class RootContainer extends Container {
     public static final RootContainer CONTAINER = new RootContainer();
 
     private RootContainer() {
-        super(null, null);
+        super(null);
         this.increment(); // should not be closed
     }
 
     @Override
     public NavigableSet<FilePath> resolveFiles() {
-        throw new UnsupportedOperationException("RootContainer does not support indexing all resolveFiles");
+        throw new UnsupportedOperationException("RootContainer does not support indexing all files");
     }
 
     @Override

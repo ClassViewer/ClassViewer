@@ -93,7 +93,6 @@ public abstract class FileType {
         static final TextFileType TEXT_FILE_TYPE = new TextFileType();
 
 
-        @SuppressWarnings("Java9CollectionFactory")
         static final List<FileType> extTypes = Collections.unmodifiableList(Arrays.asList(
                 new JImageFileType(),
                 new ArchiveFileType(),
