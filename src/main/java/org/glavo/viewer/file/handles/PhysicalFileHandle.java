@@ -26,7 +26,7 @@ public class PhysicalFileHandle extends FileHandle {
 
     @Override
     public boolean isReadonly() {
-        return exists() && Files.isReadable(file);
+        return exists() && !Files.isWritable(file);
     }
 
     @Override

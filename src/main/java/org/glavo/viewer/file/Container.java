@@ -48,7 +48,9 @@ public abstract class Container extends ReferenceCounter implements Closeable {
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Failed to close " + this, e);
         } finally {
-            handle.close();
+            if (handle != null) {
+                handle.close();
+            }
         }
     }
 
