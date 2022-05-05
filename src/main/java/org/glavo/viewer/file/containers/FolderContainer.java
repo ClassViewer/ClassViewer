@@ -1,6 +1,7 @@
 package org.glavo.viewer.file.containers;
 
 import org.glavo.viewer.file.Container;
+import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 
 import java.io.IOException;
@@ -15,17 +16,10 @@ import java.util.TreeSet;
 public class FolderContainer extends Container {
     private NavigableSet<FilePath> files;
     private final Path folder;
-    private final FilePath path;
 
-    public FolderContainer(FilePath path, Path folder) {
-        super(null);
+    public FolderContainer(FileHandle handle, Path folder) {
+        super(handle);
         this.folder = folder;
-        this.path = path;
-    }
-
-    @Override
-    public FilePath getPath() {
-        return path;
     }
 
     @Override
