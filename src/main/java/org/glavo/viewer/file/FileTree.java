@@ -1,7 +1,5 @@
-package org.glavo.viewer.file.tree;
+package org.glavo.viewer.file;
 
-import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.file.types.FolderType;
 
 import java.util.ArrayList;
@@ -43,51 +41,24 @@ public abstract class FileTree {
         }
     }
 
-    public static final class FolderNode extends FileTree {
+    public static class FolderNode extends FileTree {
 
-        private String text;
-        private int depth = 1;
+        private final String name;
 
-        public FolderNode(FilePath path) {
-            super(FolderType.TYPE, path);
-        }
-
-        public int getDepth() {
-            return depth;
-        }
-
-        public void setDepth(int depth) {
-            if (depth <= 0) {
-                throw new IllegalArgumentException("illegal depth: " + depth);
-            }
-            if (depth > getPath().getPathElements().length) {
-                throw new IllegalArgumentException(String.format("depth(%s) large than path length(%s)", depth, getPath().getPathElements().length));
-            }
-
-            this.depth = depth;
-            this.text = null;
+        public FolderNode(String name) {
+            super(FolderType.TYPE, null);
+            this.name = name;
         }
 
         @Override
         public String getText() {
-            if (text == null) {
-                if (depth == 1) {
-                    text = getPath().getFileName();
-                } else {
-                    String[] elements = getPath().getPathElements();
-                    int beginIdx = elements.length - depth;
+            return name;
+        }
+    }
 
-                    StringBuilder builder = new StringBuilder();
-                    builder.append(elements[beginIdx++]);
-
-                    while (beginIdx < elements.length) {
-                        builder.append('/').append(elements[beginIdx++]);
-                    }
-
-                    text = builder.toString();
-                }
-            }
-            return text;
+    public static final class MergedFolderNode extends FolderNode {
+        public MergedFolderNode(String name) {
+            super(name);
         }
     }
 
