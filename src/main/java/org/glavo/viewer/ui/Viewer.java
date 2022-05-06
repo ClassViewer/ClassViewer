@@ -16,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.resources.I18N;
@@ -23,10 +25,15 @@ import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
+import java.io.File;
+
 public final class Viewer {
     private static final ObservableList<Viewer> viewers = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
     private final Stage stage;
+
+    private static FileChooser fileChooser;
+    private static DirectoryChooser directoryChooser;
 
     private final Pane defaultText;
     private final MenuBar menuBar;
@@ -134,5 +141,23 @@ public final class Viewer {
 
     public void show() {
         getStage().show();
+    }
+
+    public File showFileChooser() {
+        if (fileChooser == null) {
+            fileChooser = new FileChooser();
+            fileChooser.setTitle("Open file");
+        }
+
+        return fileChooser.showOpenDialog(getStage());
+    }
+
+    public File showDirectoryChooser() {
+        if (directoryChooser == null) {
+            directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Open folder");
+        }
+
+        return directoryChooser.showDialog(getStage());
     }
 }
