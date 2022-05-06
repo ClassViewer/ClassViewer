@@ -1,13 +1,18 @@
 package org.glavo.viewer.file;
 
+import org.glavo.viewer.util.ReferenceCounter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
+import java.util.logging.Level;
 
-public abstract class FileHandle implements AutoCloseable {
+import static org.glavo.viewer.util.Logging.LOGGER;
+
+public abstract class FileHandle extends ReferenceCounter {
 
     private final Container container;
     private final FilePath path;
@@ -15,7 +20,7 @@ public abstract class FileHandle implements AutoCloseable {
     protected FileHandle(Container container, FilePath path) {
         this.container = container;
         this.path = path;
-        container.increment();
+        this.increment();
     }
 
     public FilePath getPath() {
@@ -61,8 +66,24 @@ public abstract class FileHandle implements AutoCloseable {
         }
     }
 
+    protected void close() throws Exception {
+    }
+
     @Override
-    public void close() {
-        container.decrement();
+    protected final void onRelease() {
+        LOGGER.info("Release handle " + this);
+
+        try {
+            this.close();
+        } catch (Throwable e) {
+            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+        } finally {
+            container.decrement();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[path=%s, container=%s]", this.getClass().getSimpleName(), this.getPath(), this.getContainer());
     }
 }

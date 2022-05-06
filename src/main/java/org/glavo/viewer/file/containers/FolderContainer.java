@@ -3,12 +3,10 @@ package org.glavo.viewer.file.containers;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.handles.PhysicalFileHandle;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.NavigableSet;
 import java.util.TreeSet;
@@ -48,7 +46,7 @@ public class FolderContainer extends Container {
     }
 
     @Override
-    public void close() throws IOException {
-
+    protected FileHandle openFileImpl(FilePath path) throws IOException {
+        return new PhysicalFileHandle(path, Paths.get(path.normalize().getPath()));
     }
 }

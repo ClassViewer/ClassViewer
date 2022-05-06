@@ -22,7 +22,7 @@ public final class ArchiveFileType extends ContainerFileType {
     }
 
     @Override
-    public Container open(FilePath path) throws IOException {
+    public Container openContainer(FilePath path) throws IOException {
         throw new UnsupportedOperationException(); // TODO
     }
 }

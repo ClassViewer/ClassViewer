@@ -14,7 +14,7 @@ import java.nio.file.StandardOpenOption;
 public class PhysicalFileHandle extends FileHandle {
     private final Path file;
 
-    protected PhysicalFileHandle(FilePath path, Path file) {
+    public PhysicalFileHandle(FilePath path, Path file) {
         super(RootContainer.CONTAINER, path);
         this.file = file;
     }
