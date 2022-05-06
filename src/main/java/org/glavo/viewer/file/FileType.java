@@ -73,7 +73,8 @@ public abstract class FileType {
             }
         }
 
-        return BinaryFileType.TYPE;
+        return TextFileType.TYPE.check(path) ? TextFileType.TYPE : BinaryFileType.TYPE;
+
     }
 
     @JsonCreator

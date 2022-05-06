@@ -8,7 +8,7 @@ import org.glavo.viewer.file.FileTree;
 
 public class FileTreeView extends TreeView<FileTree> {
     public FileTreeView(FileTree tree) {
-        this.setCellFactory(view -> new TreeCell<>() {
+        this.setCellFactory(view -> new TreeCell<FileTree>() {
             @Override
             protected void updateItem(FileTree item, boolean empty) {
                 super.updateItem(item, empty);

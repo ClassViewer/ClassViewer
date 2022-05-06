@@ -2,7 +2,7 @@ package org.glavo.viewer.util;
 
 import kala.template.TemplateEngine;
 import org.glavo.viewer.Config;
-import org.glavo.viewer.Viewer;
+import org.glavo.viewer.Main;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +30,7 @@ public final class Stylesheet {
             table.put("text-font-size", config.getTextFontSize());
 
             //noinspection ConstantConditions
-            try (Reader input = new InputStreamReader(Viewer.class.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8);
+            try (Reader input = new InputStreamReader(Main.class.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8);
                  Writer output = Files.newBufferedWriter(cssFile.toPath())) {
                 TemplateEngine.getDefault()
                         .process(input, output, table);

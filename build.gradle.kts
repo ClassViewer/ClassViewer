@@ -30,7 +30,7 @@ version = "4.0-beta1".let {
     }
 }
 
-val viewerMain = "org.glavo.viewer.Main"
+val viewerMain = "org.glavo.viewer.Launcher"
 
 repositories {
     maven(url = System.getenv("MAVEN_CENTRAL_MIRROR") ?: "https://repo1.maven.org/maven2/")
