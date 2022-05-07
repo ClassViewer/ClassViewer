@@ -64,7 +64,11 @@ public class FilePath implements Comparable<FilePath> {
     }
 
     public static FilePath ofJavaPath(Path p) {
-        return new FilePath(p.normalize().toAbsolutePath().toString());
+        return ofJavaPath(p, false);
+    }
+
+    public static FilePath ofJavaPath(Path p, boolean isDirectory) {
+        return new FilePath(p.normalize().toAbsolutePath().toString(), isDirectory, null);
     }
 
     public String getPath() {

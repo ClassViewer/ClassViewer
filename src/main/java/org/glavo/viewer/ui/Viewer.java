@@ -21,11 +21,13 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
+import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileTree;
 import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.file.types.FolderType;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
@@ -33,6 +35,9 @@ import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
+import java.util.logging.Level;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Viewer {
     private static final ObservableList<Viewer> viewers = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
@@ -142,6 +147,7 @@ public final class Viewer {
 
             MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
             openFolderItem.setMnemonicParsing(true);
+            openFolderItem.setOnAction(event -> openFolder());
 
             Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
             openRecentMenu.setMnemonicParsing(true);
@@ -191,14 +197,47 @@ public final class Viewer {
             FilePath path = FilePath.ofJavaPath(res.toPath());
             FileType type = FileType.detectFileType(path);
 
-            if (type instanceof ContainerFileType) {
+            try {
+                if (type instanceof ContainerFileType) {
+                    Container container = ((ContainerFileType) type).openContainer(path);
 
-            } else if (type instanceof TextFileType) {
-                throw new UnsupportedOperationException(); // TODO
-            } else if (type instanceof BinaryFileType) {
-                throw new UnsupportedOperationException(); // TODO
-            } else {
-                throw new AssertionError();
+                    FileTree.RootNode root = new FileTree.RootNode(type, path);
+                    FileTree.buildFileTree(container, root);
+
+                    FileTab tab = new FileTab(type, path);
+                    tab.setContent(new FileTreeView(root));
+                    tabPane.getTabs().add(tab);
+
+                } else if (type instanceof TextFileType) {
+                    throw new UnsupportedOperationException(); // TODO
+                } else if (type instanceof BinaryFileType) {
+                    throw new UnsupportedOperationException(); // TODO
+                } else {
+                    throw new AssertionError();
+                }
+            } catch (Throwable e) {
+                LOGGER.log(Level.WARNING, "Failed to open file " + path, e);
+            }
+        }
+    }
+
+    private void openFolder() {
+        File res = showDirectoryChooser();
+        if (res != null) {
+            FilePath path = FilePath.ofJavaPath(res.toPath(), true);
+
+            try {
+                Container container = FolderType.TYPE.openContainer(path);
+
+                FileTree.RootNode root = new FileTree.RootNode(FolderType.TYPE, path);
+                FileTree.buildFileTree(container, root);
+
+                FileTab tab = new FileTab(FolderType.TYPE, path);
+                tab.setContent(new FileTreeView(root));
+                tabPane.getTabs().add(tab);
+
+            } catch (Throwable e) {
+                LOGGER.log(Level.WARNING, "Failed to open folder " + path, e);
             }
         }
     }
