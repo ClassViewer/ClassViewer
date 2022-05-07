@@ -1,13 +1,14 @@
 package org.glavo.viewer.ui;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -20,6 +21,12 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
+import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.FileTree;
+import org.glavo.viewer.file.FileType;
+import org.glavo.viewer.file.types.BinaryFileType;
+import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.Stylesheet;
@@ -32,24 +39,39 @@ public final class Viewer {
 
     private final Stage stage;
 
+    private final StringProperty titleMessage = new SimpleStringProperty();
+
     private static FileChooser fileChooser;
     private static DirectoryChooser directoryChooser;
 
+    private final BorderPane root;
+
     private final Pane defaultText;
     private final MenuBar menuBar;
+    private final TabPane tabPane;
 
     public Viewer(Stage stage, boolean isPrimary) {
         this.stage = stage;
 
         Config config = Config.getConfig();
 
-        BorderPane root = new BorderPane();
-
+        this.root = new BorderPane();
+        this.tabPane = new TabPane();
         this.menuBar = createMenuBar();
         this.defaultText = createDefaultText();
 
         root.setTop(menuBar);
         root.setCenter(defaultText);
+
+        tabPane.getTabs().addListener((InvalidationListener) o ->
+                root.setCenter(tabPane.getTabs().isEmpty() ? defaultText : tabPane));
+        tabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
+            if (newValue instanceof FileTab) {
+                titleMessage.set(((FileTab) newValue).getPath().toString());
+            } else {
+                titleMessage.set(null);
+            }
+        });
 
 
         Scene scene = new Scene(root);
@@ -63,8 +85,9 @@ public final class Viewer {
 
         stage.setScene(scene);
         stage.getIcons().setAll(Images.logo32, Images.logo16);
-
-        stage.setTitle("ClassViewer");
+        titleMessage.addListener((o, oldValue, newValue) -> {
+            stage.setTitle(newValue == null ? "ClassViewer" : "ClassViewer - " + newValue);
+        });
         stage.show();
 
         viewers.add(this);
@@ -115,6 +138,7 @@ public final class Viewer {
             MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
             openFileItem.setMnemonicParsing(true);
             openFileItem.setGraphic(new ImageView(Images.menuOpen));
+            openFileItem.setOnAction(event -> openFile());
 
             MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
             openFolderItem.setMnemonicParsing(true);
@@ -159,5 +183,23 @@ public final class Viewer {
         }
 
         return directoryChooser.showDialog(getStage());
+    }
+
+    private void openFile() {
+        File res = showFileChooser();
+        if (res != null) {
+            FilePath path = FilePath.ofJavaPath(res.toPath());
+            FileType type = FileType.detectFileType(path);
+
+            if (type instanceof ContainerFileType) {
+
+            } else if (type instanceof TextFileType) {
+                throw new UnsupportedOperationException(); // TODO
+            } else if (type instanceof BinaryFileType) {
+                throw new UnsupportedOperationException(); // TODO
+            } else {
+                throw new AssertionError();
+            }
+        }
     }
 }

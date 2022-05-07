@@ -40,8 +40,8 @@ public final class Stylesheet {
             return new String[]{cssFile.toURI().toString()};
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Failed to initialize stylesheet", e);
+            return StringUtils.EMPTY_ARRAY;
         }
 
-        return new String[0];
     }
 }

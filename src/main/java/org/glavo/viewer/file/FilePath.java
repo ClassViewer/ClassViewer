@@ -5,6 +5,7 @@ import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 
 @JsonIncludeProperties({"parent", "path", "isDirectory"})
@@ -60,6 +61,10 @@ public class FilePath implements Comparable<FilePath> {
 
         builder.append(String.join("/", pathElements));
         this.path = builder.toString();
+    }
+
+    public static FilePath ofJavaPath(Path p) {
+        return new FilePath(p.normalize().toAbsolutePath().toString());
     }
 
     public String getPath() {
