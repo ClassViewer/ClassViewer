@@ -5,6 +5,7 @@ import kala.compress.archivers.zip.ZipArchiveReader;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -27,10 +28,9 @@ public class ArchiveContainer extends Container {
         while (it.hasNext()) {
             ZipArchiveEntry entry = it.next();
             if (!entry.isDirectory() && !entry.isUnixSymlink()) {
-                res.add(new FilePath(entry.getName().split("/"), getPath()));
+                res.add(new FilePath(StringUtils.spiltPath(entry.getName()), getPath()));
             }
         }
-
         return res;
     }
 
