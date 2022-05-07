@@ -1,6 +1,8 @@
 package org.glavo.viewer.file;
 
 import com.fasterxml.jackson.annotation.*;
+import kala.platform.OperatingSystem;
+import kala.platform.Platform;
 
 import java.io.File;
 import java.util.*;
@@ -19,6 +21,10 @@ public class FilePath implements Comparable<FilePath> {
         this(path, false, null);
     }
 
+    public FilePath(String path, FilePath parent) {
+        this(path, false, parent);
+    }
+
     @JsonCreator
     public FilePath(
             @JsonProperty("path") String path,
@@ -28,6 +34,32 @@ public class FilePath implements Comparable<FilePath> {
         this.isDirectory = isDirectory;
         this.parent = parent;
         this.pathElements = this.path.split("/");
+    }
+
+    public FilePath(String[] pathElements) {
+        this(pathElements, false, null);
+    }
+
+    public FilePath(String[] pathElements, FilePath parent) {
+        this(pathElements, false, parent);
+    }
+
+    public FilePath(String[] pathElements, boolean isDirectory, FilePath parent) {
+        this.isDirectory = isDirectory;
+        this.parent = parent;
+        this.pathElements = pathElements;
+
+        StringBuilder builder = new StringBuilder();
+        if (parent == null) {
+            if (Platform.CURRENT_SYSTEM != OperatingSystem.WINDOWS) {
+                builder.append('/');
+            }
+        } else if (!parent.getParent().isDirectory()) {
+            builder.append('/');
+        }
+
+        builder.append(String.join("/", pathElements));
+        this.path = builder.toString();
     }
 
     public String getPath() {
