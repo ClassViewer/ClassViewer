@@ -86,6 +86,7 @@ public abstract class FileTree implements Comparable<FileTree> {
             } else if (last == n) {
                 node.getChildren().clear();
                 node.getChildren().addAll(last.getChildren());
+                addAllFolderNode(queue, last.getChildren());
             } else {
                 node.getChildren().clear();
                 node.getChildren().add(last);
