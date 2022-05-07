@@ -2,10 +2,7 @@ package org.glavo.viewer.file;
 
 import org.glavo.viewer.file.types.FolderType;
 
-import java.util.List;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public abstract class FileTree implements Comparable<FileTree> {
     private final FileType type;
@@ -66,7 +63,45 @@ public abstract class FileTree implements Comparable<FileTree> {
         }
 
         // merge folder nodes
-        // TODO
+        Queue<FileTree> queue = new ArrayDeque<>();
+        addAllFolderNode(queue, root.getChildren());
+
+        while (!queue.isEmpty()) {
+            FolderNode node = (FolderNode) queue.remove();
+
+            FileTree n = node;
+            FileTree last = null;
+            while (n.getChildren().size() == 1) {
+                last = n.getChildren().iterator().next();
+                if (!(last instanceof FolderNode)) {
+                    break;
+                }
+                node.appendName(((FolderNode) last).getTopName());
+
+                n = last;
+            }
+
+            if (last == null) {
+                addAllFolderNode(queue, node.getChildren());
+            } else if (last == n) {
+                node.getChildren().clear();
+                node.getChildren().addAll(last.getChildren());
+            } else {
+                node.getChildren().clear();
+                node.getChildren().add(last);
+            }
+        }
+
+    }
+
+    private static void addAllFolderNode(Queue<FileTree> queue, Set<FileTree> children) {
+        for (FileTree child : children) {
+            if (!(child instanceof FolderNode)) {
+                break;
+            }
+
+            queue.add(child);
+        }
     }
 
     @Override
@@ -100,37 +135,42 @@ public abstract class FileTree implements Comparable<FileTree> {
 
     public static class FolderNode extends FileTree {
 
-        protected final String name;
+        protected final String topName;
+        private List<String> extNames;
+        private String text;
 
-        public FolderNode(String name) {
+        public FolderNode(String topName) {
             super(FolderType.TYPE, null);
-            this.name = name;
+            this.topName = topName;
         }
 
         public String getTopName() {
-            return name;
+            return topName;
+        }
+
+        public void appendName(String name) {
+            if (extNames == null) {
+                extNames = new ArrayList<>();
+            }
+            extNames.add(name);
+            text = null;
         }
 
         @Override
         public String getText() {
-            return name;
-        }
-    }
-
-    public static final class MergedFolderNode extends FolderNode {
-        private String topName;
-
-        public MergedFolderNode(String name) {
-            super(name);
-        }
-
-        @Override
-        public String getTopName() {
-            if (topName == null) {
-                int idx = name.indexOf('/');
-                topName = idx < 0 ? name : name.substring(0, idx);
+            if (text == null) {
+                if (extNames == null) {
+                    text = topName;
+                } else {
+                    StringBuilder builder = new StringBuilder();
+                    builder.append(topName);
+                    for (String extName : extNames) {
+                        builder.append('/').append(extName);
+                    }
+                    text = builder.toString();
+                }
             }
-            return super.getTopName();
+            return text;
         }
     }
 
