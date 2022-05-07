@@ -1,5 +1,6 @@
 package org.glavo.viewer.file;
 
+import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ReferenceCounter;
 
 import java.io.IOException;
@@ -23,6 +24,29 @@ public abstract class Container extends ReferenceCounter {
         this.increment();
     }
 
+    public static Container openContainer(FilePath path) throws Throwable {
+        FileType type = FileType.detectFileType(path);
+        if (!(type instanceof ContainerFileType)) {
+            throw new AssertionError();
+        }
+
+        return openContainer((ContainerFileType) type, path);
+    }
+
+    public static Container openContainer(ContainerFileType type, FilePath path) throws Throwable {
+        synchronized (containerMap) {
+            Container c = containerMap.get(path);
+
+            if (c != null) {
+                c.increment();
+                return c;
+            }
+
+            return null; // TODO
+
+        }
+    }
+
     public FilePath getPath() {
         return handle.getPath();
     }
@@ -32,13 +56,10 @@ public abstract class Container extends ReferenceCounter {
     }
 
     public FileHandle openFile(FilePath path) throws IOException {
-        FilePath normalized = path.normalize();
-
-        //noinspection AssertWithSideEffects
-        assert (getPath() == null && normalized.getParent() == null) || (getPath().normalize().equals(normalized));
+        assert (getPath() == null && path.getParent() == null) || (getPath().equals(path));
 
         synchronized (handles) {
-            FileHandle h = handles.get(normalized);
+            FileHandle h = handles.get(path);
             if (h != null) {
                 h.increment();
                 return h;
@@ -46,7 +67,7 @@ public abstract class Container extends ReferenceCounter {
 
             h = openFileImpl(path);
             if (h != null) {
-                handles.put(normalized, h);
+                handles.put(path, h);
             }
             return h;
         }
@@ -70,9 +91,9 @@ public abstract class Container extends ReferenceCounter {
         LOGGER.info("Release container " + this);
 
         synchronized (containerMap) {
-            Container container = containerMap.remove(getPath().normalize());
+            Container container = containerMap.remove(getPath());
             if (container != this) {
-                throw new AssertionError("this is " + this + ", but container is" + container);
+                throw new AssertionError("this is " + this + ", but container is " + container);
             }
         }
 

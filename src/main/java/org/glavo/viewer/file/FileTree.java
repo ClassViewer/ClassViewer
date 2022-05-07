@@ -36,9 +36,7 @@ public abstract class FileTree implements Comparable<FileTree> {
 
         // build tree
         for (FilePath file : files) {
-            assert file.getParent() == root.getPath();
-
-            String[] elements = file.getPathElements();
+            String[] elements = root.getPath().relativize(file);
 
             FileTree node = root;
 

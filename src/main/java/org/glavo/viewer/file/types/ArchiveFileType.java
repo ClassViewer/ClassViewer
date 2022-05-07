@@ -1,6 +1,7 @@
 package org.glavo.viewer.file.types;
 
 import org.glavo.viewer.file.Container;
+import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public final class ArchiveFileType extends ContainerFileType {
     }
 
     @Override
-    public Container openContainer(FilePath path) throws IOException {
+    public Container openContainerImpl(FileHandle handle) throws IOException {
         throw new UnsupportedOperationException(); // TODO
     }
 }

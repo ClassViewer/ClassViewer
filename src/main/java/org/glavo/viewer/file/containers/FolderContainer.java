@@ -36,7 +36,7 @@ public class FolderContainer extends Container {
             Files.walkFileTree(folder, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    fs.add(new FilePath(file.toString(), false, getPath()));
+                    fs.add(FilePath.ofJavaPath(file));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -47,6 +47,6 @@ public class FolderContainer extends Container {
 
     @Override
     protected FileHandle openFileImpl(FilePath path) throws IOException {
-        return new PhysicalFileHandle(path, Paths.get(path.normalize().getPath()));
+        return new PhysicalFileHandle(path, Paths.get(path.getPath()));
     }
 }

@@ -1,7 +1,6 @@
 package org.glavo.viewer.ui;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -25,6 +24,9 @@ import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileTree;
 import org.glavo.viewer.file.FileType;
+import org.glavo.viewer.file.containers.RootContainer;
+import org.glavo.viewer.file.handles.FolderHandle;
+import org.glavo.viewer.file.handles.PhysicalFileHandle;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.FolderType;
@@ -192,14 +194,14 @@ public final class Viewer {
     }
 
     private void openFile() {
-        File res = showFileChooser();
-        if (res != null) {
-            FilePath path = FilePath.ofJavaPath(res.toPath());
+        File file = showFileChooser();
+        if (file != null) {
+            FilePath path = FilePath.ofJavaPath(file.toPath());
             FileType type = FileType.detectFileType(path);
 
             try {
                 if (type instanceof ContainerFileType) {
-                    Container container = ((ContainerFileType) type).openContainer(path);
+                    Container container = ((ContainerFileType) type).openContainerImpl(new PhysicalFileHandle(path, file.toPath()));
 
                     FileTree.RootNode root = new FileTree.RootNode(type, path);
                     FileTree.buildFileTree(container, root);
@@ -222,22 +224,29 @@ public final class Viewer {
     }
 
     private void openFolder() {
-        File res = showDirectoryChooser();
-        if (res != null) {
-            FilePath path = FilePath.ofJavaPath(res.toPath(), true);
+        File file = showDirectoryChooser();
+        if (file != null) {
+            FilePath path = FilePath.ofJavaPath(file.toPath(), true);
 
+            Container container = null;
             try {
-                Container container = FolderType.TYPE.openContainer(path);
+                container = FolderType.TYPE.openContainerImpl(new FolderHandle(RootContainer.CONTAINER, path));
 
                 FileTree.RootNode root = new FileTree.RootNode(FolderType.TYPE, path);
                 FileTree.buildFileTree(container, root);
 
                 FileTab tab = new FileTab(FolderType.TYPE, path);
                 tab.setContent(new FileTreeView(root));
+
+                Container finalContainer = container;
+                tab.setOnClosed(event -> finalContainer.decrement());
                 tabPane.getTabs().add(tab);
 
             } catch (Throwable e) {
                 LOGGER.log(Level.WARNING, "Failed to open folder " + path, e);
+                if (container != null) {
+                    container.decrement();
+                }
             }
         }
     }

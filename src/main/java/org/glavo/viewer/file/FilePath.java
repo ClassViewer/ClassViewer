@@ -1,8 +1,10 @@
 package org.glavo.viewer.file;
 
 import com.fasterxml.jackson.annotation.*;
+import javafx.beans.property.StringProperty;
 import kala.platform.OperatingSystem;
 import kala.platform.Platform;
+import org.glavo.viewer.util.ArrayUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -84,6 +86,15 @@ public class FilePath implements Comparable<FilePath> {
         return parent;
     }
 
+    public FilePath getParentContainerPath() {
+        FilePath p;
+        do {
+            p = getParent();
+        } while (p != null && p.isDirectory());
+
+        return p;
+    }
+
     public boolean isDefaultFileSystemPath() {
         return parent == null;
     }
@@ -96,6 +107,24 @@ public class FilePath implements Comparable<FilePath> {
         return pathElements;
     }
 
+    public String[] relativize(FilePath other) {
+        if (this.equals(other.getParent())) {
+            return other.getPathElements();
+        } else if (Objects.equals(this.getParent(), other.getParent())) {
+            if (!this.isDirectory()) {
+                throw new UnsupportedOperationException(this + " is not folder path");
+            }
+            if (!ArrayUtils.isPrefix(other.getPathElements(), this.getPathElements())) {
+                throw new UnsupportedOperationException(this + " is not prefix of " + other);
+            }
+
+            return Arrays.copyOfRange(other.getPathElements(), this.getPathElements().length, other.getPathElements().length);
+        } else {
+            throw new UnsupportedOperationException(String.format("this=%s, other=%s", this, other));
+        }
+    }
+
+    /*
     private FilePath normalized;
 
     public FilePath normalize() {
@@ -116,34 +145,33 @@ public class FilePath implements Comparable<FilePath> {
         return normalized;
     }
 
+     */
+
     @Override
     public int compareTo(FilePath other) {
-        FilePath normalized = this.normalize();
-        other = other.normalize();
-
-        if (normalized.equals(other)) {
+        if (this.equals(other)) {
             return 0;
         }
 
-        if (normalized.parent != null) {
+        if (this.parent != null) {
             if (other.getParent() == null) {
                 return 1;
             } else {
-                int res = normalized.parent.compareTo(other);
+                int res = this.getParent().compareTo(other);
                 if (res != 0) {
                     return res;
                 }
             }
-        } else if (other.parent != null) {
+        } else if (other.getParent() != null) {
             return -1;
         }
 
-        final int normalizedLength = normalized.pathElements.length;
-        final int otherLength = other.pathElements.length;
+        final int normalizedLength = this.getPathElements().length;
+        final int otherLength = other.getPathElements().length;
 
         int length = Math.min(normalizedLength, otherLength);
         for (int i = 0; i < length; i++) {
-            int v = normalized.pathElements[i].compareTo(other.pathElements[i]);
+            int v = this.getPathElements()[i].compareTo(other.getPathElements()[i]);
             if (v != 0) {
                 return v;
             }
