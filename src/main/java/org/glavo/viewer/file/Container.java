@@ -1,5 +1,7 @@
 package org.glavo.viewer.file;
 
+import org.glavo.viewer.file.containers.RootContainer;
+import org.glavo.viewer.file.handles.PhysicalFileHandle;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ReferenceCounter;
 
@@ -24,16 +26,7 @@ public abstract class Container extends ReferenceCounter {
         this.increment();
     }
 
-    public static Container openContainer(FilePath path) throws Throwable {
-        FileType type = FileType.detectFileType(path);
-        if (!(type instanceof ContainerFileType)) {
-            throw new AssertionError();
-        }
-
-        return openContainer((ContainerFileType) type, path);
-    }
-
-    public static Container openContainer(ContainerFileType type, FilePath path) throws Throwable {
+    public static Container getContainer(FilePath path) throws Throwable {
         synchronized (containerMap) {
             Container c = containerMap.get(path);
 
@@ -42,8 +35,45 @@ public abstract class Container extends ReferenceCounter {
                 return c;
             }
 
-            return null; // TODO
+            FileType type = FileType.detectFileType(path);
+            if (!(type instanceof ContainerFileType)) {
+                throw new UnsupportedOperationException("file " + path + " is not a container");
+            }
 
+            ContainerFileType ct = (ContainerFileType) type;
+
+
+            Container container;
+            if (path.getParent() == null) {
+                PhysicalFileHandle handle = new PhysicalFileHandle(path);
+                try {
+                    container = ct.openContainerImpl(handle);
+                } catch (Throwable ex) {
+                    handle.decrement();
+                    throw ex;
+                }
+            } else {
+                Container parent = getContainer(path.getParent());
+
+                FileHandle handle;
+                try {
+                    handle = parent.openFile(path);
+                } catch (Throwable ex) {
+                    throw ex;
+                } finally {
+                    parent.decrement();
+                }
+
+                try {
+                    container = ct.openContainerImpl(handle);
+                } catch (Throwable ex) {
+                    handle.decrement();
+                    throw ex;
+                }
+            }
+
+            containerMap.put(path, container);
+            return container;
         }
     }
 
@@ -56,7 +86,7 @@ public abstract class Container extends ReferenceCounter {
     }
 
     public FileHandle openFile(FilePath path) throws IOException {
-        assert (getPath() == null && path.getParent() == null) || (getPath().equals(path));
+        assert getPath() == null && path.getParent() == null || getPath().equals(path);
 
         synchronized (handles) {
             FileHandle h = handles.get(path);
@@ -73,9 +103,7 @@ public abstract class Container extends ReferenceCounter {
         }
     }
 
-    protected FileHandle openFileImpl(FilePath path) throws IOException {
-        return null; // TODO
-    }
+    protected abstract FileHandle openFileImpl(FilePath path) throws IOException;
 
     public abstract NavigableSet<FilePath> resolveFiles() throws Exception;
 

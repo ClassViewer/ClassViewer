@@ -9,14 +9,21 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public class PhysicalFileHandle extends FileHandle {
     private final Path file;
 
+    public PhysicalFileHandle(FilePath path) {
+        this(path, Paths.get(path.getPath()));
+    }
+
     public PhysicalFileHandle(FilePath path, Path file) {
         super(RootContainer.CONTAINER, path);
         this.file = file;
+
+        assert path.getParent() == null;
     }
 
     @Override

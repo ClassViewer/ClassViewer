@@ -17,5 +17,5 @@ public abstract class ContainerFileType extends FileType {
         super(name, image);
     }
 
-    public abstract Container openContainerImpl(FileHandle path) throws IOException;
+    public abstract Container openContainerImpl(FileHandle handle) throws IOException;
 }
