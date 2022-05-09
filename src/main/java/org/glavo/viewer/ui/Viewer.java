@@ -22,10 +22,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.file.*;
-import org.glavo.viewer.file.types.BinaryFileType;
-import org.glavo.viewer.file.types.ContainerFileType;
-import org.glavo.viewer.file.types.FolderType;
-import org.glavo.viewer.file.types.TextFileType;
+import org.glavo.viewer.file.types.*;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.MappedList;
@@ -237,6 +234,8 @@ public final class Viewer {
             } else if (type instanceof TextFileType) {
                 throw new UnsupportedOperationException(); // TODO
             } else if (type instanceof BinaryFileType) {
+                throw new UnsupportedOperationException(); // TODO
+            } else if (type instanceof CustomFileType) {
                 throw new UnsupportedOperationException(); // TODO
             } else {
                 throw new AssertionError();

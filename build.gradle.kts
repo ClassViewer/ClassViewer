@@ -131,7 +131,6 @@ tasks.shadowJar {
         ).joinToString(" ")
     )
     minimize()
-
 }
 
 tasks.jar {
