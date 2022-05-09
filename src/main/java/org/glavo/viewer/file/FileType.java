@@ -96,6 +96,9 @@ public abstract class FileType {
                 ManifestFileType.TYPE,
                 PropertiesFileType.TYPE,
                 XMLFileType.TYPE,
+                YAMLFileType.TYPE,
+                CSSFileType.TYPE,
+                HTMLFileType.TYPE,
 
                 JavaClassFileType.TYPE
         ));
