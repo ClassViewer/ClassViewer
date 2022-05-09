@@ -4,6 +4,11 @@ import javafx.scene.image.Image;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileType;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
 public class TextFileType extends FileType {
     public static final TextFileType TYPE = new TextFileType();
 
@@ -21,6 +26,67 @@ public class TextFileType extends FileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getFileName().endsWith(".txt");
+        switch (path.getFileNameExtension()) {
+            case "txt":
+            case "md":
+
+            case "asm":
+            case "c":
+            case "cc":
+            case "cpp":
+            case "cxx":
+            case "cs":
+            case "clj":
+            case "f":
+            case "for":
+            case "f90":
+            case "f95":
+            case "fs":
+            case "go":
+            case "gradle":
+            case "groovy":
+            case "h":
+            case "hpp":
+            case "hs":
+            case "java":
+            case "js":
+            case "jl":
+            case "kt":
+            case "kts":
+            case "m":
+            case "mm":
+            case "ml":
+            case "mli":
+            case "py":
+            case "pl":
+            case "ruby":
+            case "rs":
+            case "swift":
+            case "vala":
+            case "vapi":
+            case "zig":
+
+
+            case "sh":
+            case "bat":
+            case "ps1":
+
+            case "csv":
+            case "inf":
+            case "toml":
+            case "log":
+                return true;
+        }
+
+        switch (path.getFileName()) {
+            case ".bashrc":
+            case ".zshrc":
+            case ".gitignore":
+            case "gradlew":
+            case "LICENSE":
+                return true;
+        }
+
+        return false;
     }
 }

@@ -103,6 +103,17 @@ public class FilePath implements Comparable<FilePath> {
         return pathElements[pathElements.length - 1];
     }
 
+    private String extension;
+    public String getFileNameExtension() {
+        if (extension == null) {
+            String fn = getFileName();
+            int idx = fn.lastIndexOf('.');
+            extension = idx <= 0 ? "" : fn.substring(idx + 1).toLowerCase(Locale.ROOT);
+        }
+
+        return extension;
+    }
+
     public String[] getPathElements() {
         return pathElements;
     }

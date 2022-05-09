@@ -12,6 +12,6 @@ public class CSSFileType extends TextFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getFileName().endsWith(".css");
+        return path.getFileNameExtension().equals("css");
     }
 }

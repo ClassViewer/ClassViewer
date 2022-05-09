@@ -12,6 +12,6 @@ public class YAMLFileType extends TextFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getFileName().endsWith(".yaml") || path.getFileName().endsWith(".yml");
+        return path.getFileNameExtension().equals("yaml") || path.getFileNameExtension().equals("yml");
     }
 }

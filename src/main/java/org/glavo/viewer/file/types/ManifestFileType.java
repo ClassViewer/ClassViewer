@@ -11,6 +11,6 @@ public class ManifestFileType extends TextFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getFileName().endsWith(".mf") || path.getFileName().endsWith(".MF");
+        return path.getFileNameExtension().equals("mf");
     }
 }

@@ -12,6 +12,6 @@ public class XMLFileType extends TextFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getFileName().endsWith(".xml");
+        return path.getFileNameExtension().equals("xml") || path.getFileNameExtension().equals("pom");
     }
 }

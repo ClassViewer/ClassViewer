@@ -12,6 +12,6 @@ public class HTMLFileType extends TextFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getFileName().endsWith(".html");
+        return path.getFileNameExtension().equals("html");
     }
 }

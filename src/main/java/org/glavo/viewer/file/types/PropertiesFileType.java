@@ -12,6 +12,6 @@ public class PropertiesFileType extends TextFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getFileName().endsWith(".properties");
+        return path.getFileNameExtension().equals("properties");
     }
 }

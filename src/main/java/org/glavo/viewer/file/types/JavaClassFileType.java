@@ -11,6 +11,6 @@ public class JavaClassFileType extends BinaryFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getFileName().endsWith(".class") || path.getFileName().endsWith(".sig");
+        return path.getFileNameExtension().equals("class") || path.getFileNameExtension().equals("sig");
     }
 }
