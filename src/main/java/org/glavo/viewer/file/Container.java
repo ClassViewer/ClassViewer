@@ -1,29 +1,29 @@
 package org.glavo.viewer.file;
 
-import org.glavo.viewer.file.containers.RootContainer;
 import org.glavo.viewer.file.handles.PhysicalFileHandle;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ReferenceCounter;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public abstract class Container extends ReferenceCounter {
+public abstract class Container {
 
     private static final Map<FilePath, Container> containerMap = new HashMap<>();
 
     private final FileHandle handle;
 
-    private final Map<FilePath, FileHandle> handles = new HashMap<>();
+    final Map<FilePath, FileHandle> fileHandles = new HashMap<>();
+    final HashSet<ContainerHandle> containerHandles = new HashSet<>();
 
     protected Container(FileHandle handle) {
         this.handle = handle;
-        this.increment();
     }
 
     public static Container getContainer(FilePath path) throws Throwable {
@@ -31,7 +31,6 @@ public abstract class Container extends ReferenceCounter {
             Container c = containerMap.get(path);
 
             if (c != null) {
-                c.increment();
                 return c;
             }
 
@@ -42,32 +41,24 @@ public abstract class Container extends ReferenceCounter {
 
             ContainerFileType ct = (ContainerFileType) type;
 
-
             Container container;
             if (path.getParent() == null) {
                 PhysicalFileHandle handle = new PhysicalFileHandle(path);
                 try {
                     container = ct.openContainerImpl(handle);
                 } catch (Throwable ex) {
-                    handle.decrement();
+                    handle.close();
                     throw ex;
                 }
             } else {
                 Container parent = getContainer(path.getParent());
 
-                FileHandle handle;
-                try {
-                    handle = parent.openFile(path);
-                } catch (Throwable ex) {
-                    throw ex;
-                } finally {
-                    parent.decrement();
-                }
+                FileHandle handle = parent.openFile(path);
 
                 try {
                     container = ct.openContainerImpl(handle);
                 } catch (Throwable ex) {
-                    handle.decrement();
+                    handle.close();
                     throw ex;
                 }
             }
@@ -88,16 +79,15 @@ public abstract class Container extends ReferenceCounter {
     public FileHandle openFile(FilePath path) throws IOException {
         assert getPath() == null && path.getParent() == null || getPath().equals(path);
 
-        synchronized (handles) {
-            FileHandle h = handles.get(path);
+        synchronized (this) {
+            FileHandle h = fileHandles.get(path);
             if (h != null) {
-                h.increment();
-                return h;
+                return h.use();
             }
 
             h = openFileImpl(path);
             if (h != null) {
-                handles.put(path, h);
+                fileHandles.put(path, h);
             }
             return h;
         }
@@ -111,27 +101,28 @@ public abstract class Container extends ReferenceCounter {
         return true;
     }
 
-    protected void close() throws Exception {
+    protected void closeImpl() throws Exception {
     }
 
-    @Override
-    protected final void onRelease() {
-        LOGGER.info("Release container " + this);
+    public synchronized void checkStatus() {
+        if (fileHandles.isEmpty() && containerHandles.isEmpty()) {
+            LOGGER.info("Release container " + this);
 
-        synchronized (containerMap) {
-            Container container = containerMap.remove(getPath());
-            if (container != this) {
-                throw new AssertionError("this is " + this + ", but container is " + container);
-            }
-        }
+            synchronized (containerMap) {
+                Container container = containerMap.remove(getPath());
+                if (container != this) {
+                    throw new AssertionError(String.format("expected=%s, actual=%s", this, container));
+                }
 
-        try {
-            this.close();
-        } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
-        } finally {
-            if (handle != null) {
-                handle.decrement();
+                try {
+                    this.closeImpl();
+                } catch (Throwable e) {
+                    LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+                } finally {
+                    if (handle != null) {
+                        handle.close();
+                    }
+                }
             }
         }
     }

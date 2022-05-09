@@ -1,26 +1,30 @@
 package org.glavo.viewer.file;
 
-import org.glavo.viewer.util.ReferenceCounter;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public abstract class FileHandle extends ReferenceCounter {
+public abstract class FileHandle implements Closeable {
 
     private final Container container;
     private final FilePath path;
 
+    private final AtomicInteger counter = new AtomicInteger();
+
     protected FileHandle(Container container, FilePath path) {
         this.container = container;
         this.path = path;
-        this.increment();
+
+        use();
+    }
+
+    public FileHandle use() {
+        counter.getAndIncrement();
+        return this;
     }
 
     public FilePath getPath() {
@@ -37,7 +41,9 @@ public abstract class FileHandle extends ReferenceCounter {
 
     public abstract SeekableByteChannel openChannel() throws IOException;
 
-    public abstract SeekableByteChannel openWritableChannel() throws IOException;
+    public SeekableByteChannel openWritableChannel() throws IOException {
+        throw new UnsupportedOperationException();
+    }
 
     public InputStream openInputStream() throws IOException {
         return Channels.newInputStream(openChannel());
@@ -66,19 +72,25 @@ public abstract class FileHandle extends ReferenceCounter {
         }
     }
 
-    protected void close() throws Exception {
+    protected void closeImpl() throws Exception {
     }
 
-    @Override
-    protected final void onRelease() {
-        LOGGER.info("Release handle " + this);
+    public final void close() {
+        if (counter.decrementAndGet() == 0) {
+            LOGGER.info("Release handle " + this);
 
-        try {
-            this.close();
-        } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
-        } finally {
-            container.decrement();
+            synchronized (container) {
+                FileHandle h;
+                if ((h = container.fileHandles.remove(getPath())) != this) {
+                    throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
+                }
+
+                try {
+                    this.closeImpl();
+                } catch (Throwable e) {
+                    LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+                }
+            }
         }
     }
 

@@ -30,7 +30,7 @@ public class RootContainer extends Container {
     }
 
     @Override
-    public void close() {
+    public void closeImpl() {
         throw new UnsupportedOperationException("RootContainer should not be closed");
     }
 }

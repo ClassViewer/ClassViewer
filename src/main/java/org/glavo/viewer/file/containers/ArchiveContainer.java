@@ -21,6 +21,11 @@ public class ArchiveContainer extends Container {
     }
 
     @Override
+    protected FileHandle openFileImpl(FilePath path) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public NavigableSet<FilePath> resolveFiles() throws Exception {
         TreeSet<FilePath> res = new TreeSet<>();
 
@@ -35,7 +40,7 @@ public class ArchiveContainer extends Container {
     }
 
     @Override
-    public void close() throws IOException {
+    public void closeImpl() throws IOException {
         reader.close();
     }
 }
