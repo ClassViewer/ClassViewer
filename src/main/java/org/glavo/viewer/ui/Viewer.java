@@ -30,6 +30,7 @@ import org.glavo.viewer.file.types.FolderType;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.util.SilentlyCloseable;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
@@ -193,41 +194,31 @@ public final class Viewer {
     private void openFile() {
         File file = showFileChooser();
         if (file != null) {
-            FilePath path = FilePath.ofJavaPath(file.toPath());
-            FileType type = FileType.detectFileType(path);
-
-            try {
-                if (type instanceof ContainerFileType) {
-                    Container container = Container.getContainer(path);
-
-                    FileTree.RootNode root = new FileTree.RootNode(type, path);
-                    FileTree.buildFileTree(container, root);
-
-                    FileTab tab = new FileTab(type, path);
-                    tab.setContent(new FileTreeView(root));
-                    tabPane.getTabs().add(tab);
-
-                } else if (type instanceof TextFileType) {
-                    throw new UnsupportedOperationException(); // TODO
-                } else if (type instanceof BinaryFileType) {
-                    throw new UnsupportedOperationException(); // TODO
-                } else {
-                    throw new AssertionError();
-                }
-            } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to open file " + path, e);
-            }
+            open(FilePath.ofJavaPath(file.toPath()));
         }
     }
 
     private void openFolder() {
         File file = showDirectoryChooser();
         if (file != null) {
-            FilePath path = FilePath.ofJavaPath(file.toPath(), true);
+            open(FilePath.ofJavaPath(file.toPath(), true));
+        }
+    }
 
-            ContainerHandle handle = null;
-            try {
-                handle = new ContainerHandle(Container.getContainer(path));
+    public void open(FilePath path) {
+        if (path.isDirectory()) {
+            LOGGER.info("Open folder " + path);
+        } else {
+            LOGGER.info("Open file " + path);
+        }
+
+        FileType type = FileType.detectFileType(path);
+
+        SilentlyCloseable resource = null;
+        try {
+            if (type instanceof ContainerFileType) {
+                ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
+                resource = handle;
 
                 FileTree.RootNode root = new FileTree.RootNode(FolderType.TYPE, path);
                 FileTree.buildFileTree(handle.getContainer(), root);
@@ -235,16 +226,21 @@ public final class Viewer {
                 FileTab tab = new FileTab(FolderType.TYPE, path);
                 tab.setContent(new FileTreeView(root));
 
-                ContainerHandle finalHandle = handle;
-                tab.setOnClosed(event -> finalHandle.close());
+                tab.setOnClosed(event -> handle.close());
                 tabPane.getTabs().add(tab);
-
-            } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to open folder " + path, e);
-                if (handle != null) {
-                    handle.close();
-                }
+            } else if (type instanceof TextFileType) {
+                throw new UnsupportedOperationException(); // TODO
+            } else if (type instanceof BinaryFileType) {
+                throw new UnsupportedOperationException(); // TODO
+            } else {
+                throw new AssertionError();
+            }
+        } catch (Throwable e) {
+            LOGGER.log(Level.WARNING, "Failed to open file " + path, e);
+            if (resource != null) {
+                resource.close();
             }
         }
+
     }
 }

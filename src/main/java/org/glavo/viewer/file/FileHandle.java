@@ -1,5 +1,7 @@
 package org.glavo.viewer.file;
 
+import org.glavo.viewer.util.SilentlyCloseable;
+
 import java.io.*;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
@@ -8,7 +10,7 @@ import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public abstract class FileHandle implements Closeable {
+public abstract class FileHandle implements SilentlyCloseable {
 
     private final Container container;
     private final FilePath path;

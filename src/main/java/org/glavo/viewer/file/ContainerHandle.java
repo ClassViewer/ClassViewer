@@ -1,8 +1,10 @@
 package org.glavo.viewer.file;
 
+import org.glavo.viewer.util.SilentlyCloseable;
+
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public class ContainerHandle implements AutoCloseable {
+public class ContainerHandle implements SilentlyCloseable {
     private final Container container;
 
     public ContainerHandle(Container container) {
