@@ -198,7 +198,7 @@ public final class Viewer {
 
             try {
                 if (type instanceof ContainerFileType) {
-                    Container container = ((ContainerFileType) type).openContainerImpl(new PhysicalFileHandle(path, file.toPath()));
+                    Container container = Container.getContainer(path);
 
                     FileTree.RootNode root = new FileTree.RootNode(type, path);
                     FileTree.buildFileTree(container, root);
@@ -227,7 +227,7 @@ public final class Viewer {
 
             ContainerHandle handle = null;
             try {
-                handle = new ContainerHandle(FolderType.TYPE.openContainerImpl(new FolderHandle(RootContainer.CONTAINER, path)));
+                handle = new ContainerHandle(Container.getContainer(path));
 
                 FileTree.RootNode root = new FileTree.RootNode(FolderType.TYPE, path);
                 FileTree.buildFileTree(handle.getContainer(), root);

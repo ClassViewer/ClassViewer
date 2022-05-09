@@ -1,5 +1,6 @@
 package org.glavo.viewer.file;
 
+import org.glavo.viewer.file.containers.RootContainer;
 import org.glavo.viewer.file.handles.PhysicalFileHandle;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ReferenceCounter;
@@ -44,7 +45,7 @@ public abstract class Container {
             Container container;
 
             FileHandle handle = path.getParent() == null
-                    ? new PhysicalFileHandle(path)
+                    ? RootContainer.CONTAINER.openFile(path)
                     : getContainer(path.getParent()).openFile(path);
 
             try {
@@ -95,7 +96,7 @@ public abstract class Container {
     protected void closeImpl() throws Exception {
     }
 
-    public synchronized void checkStatus() {
+    synchronized void checkStatus() {
         if (fileHandles.isEmpty() && containerHandles.isEmpty()) {
             LOGGER.info("Release container " + this);
 

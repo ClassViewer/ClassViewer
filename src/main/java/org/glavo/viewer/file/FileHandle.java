@@ -82,6 +82,7 @@ public abstract class FileHandle implements Closeable {
             synchronized (container) {
                 FileHandle h;
                 if ((h = container.fileHandles.remove(getPath())) != this) {
+                    System.out.println(">>> " + container.fileHandles);
                     throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
                 }
 
