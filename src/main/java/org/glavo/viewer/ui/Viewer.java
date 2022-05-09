@@ -115,12 +115,12 @@ public final class Viewer {
         Text openFileText = new Text(I18N.getString("defaultText.openFile"));
         openFileText.setFill(Color.GRAY);
         Hyperlink openFileLink = new Hyperlink("Ctrl+O"); // new Hyperlink(topBar.getMenuBar().fileMenu.openFileItem.getAccelerator().getDisplayText());
-        // openFileLink.setOnAction(event -> openFile());
+        openFileLink.setOnAction(event -> openFile());
 
         Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
         openFolderText.setFill(Color.GRAY);
         Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O"); // new Hyperlink(topBar.getMenuBar().fileMenu.openFolderItem.getAccelerator().getDisplayText());
-        // openFolderLink.setOnAction(event -> openFolder());
+        openFolderLink.setOnAction(event -> openFolder());
 
         TextFlow text = new TextFlow(
                 openFileText, new Text(" "), openFileLink, new Text("\n"),
@@ -182,7 +182,7 @@ public final class Viewer {
     public File showFileChooser() {
         if (fileChooser == null) {
             fileChooser = new FileChooser();
-            fileChooser.setTitle("Open file");
+            fileChooser.setTitle(I18N.getString("choose.file"));
         }
 
         return fileChooser.showOpenDialog(getStage());
@@ -191,7 +191,7 @@ public final class Viewer {
     public File showDirectoryChooser() {
         if (directoryChooser == null) {
             directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle("Open folder");
+            directoryChooser.setTitle(I18N.getString("choose.folder"));
         }
 
         return directoryChooser.showDialog(getStage());
