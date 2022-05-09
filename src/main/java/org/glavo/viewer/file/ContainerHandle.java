@@ -17,7 +17,7 @@ public class ContainerHandle implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         LOGGER.info("Release handle " + this);
         synchronized (container) {
             if (!container.containerHandles.remove(this)) {

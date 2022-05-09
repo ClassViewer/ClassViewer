@@ -27,7 +27,7 @@ public abstract class Container {
     }
 
     public static Container getContainer(FilePath path) throws Throwable {
-        synchronized (containerMap) {
+        synchronized (Container.class) {
             Container c = containerMap.get(path);
 
             if (c != null) {
@@ -42,25 +42,16 @@ public abstract class Container {
             ContainerFileType ct = (ContainerFileType) type;
 
             Container container;
-            if (path.getParent() == null) {
-                PhysicalFileHandle handle = new PhysicalFileHandle(path);
-                try {
-                    container = ct.openContainerImpl(handle);
-                } catch (Throwable ex) {
-                    handle.close();
-                    throw ex;
-                }
-            } else {
-                Container parent = getContainer(path.getParent());
 
-                FileHandle handle = parent.openFile(path);
+            FileHandle handle = path.getParent() == null
+                    ? new PhysicalFileHandle(path)
+                    : getContainer(path.getParent()).openFile(path);
 
-                try {
-                    container = ct.openContainerImpl(handle);
-                } catch (Throwable ex) {
-                    handle.close();
-                    throw ex;
-                }
+            try {
+                container = ct.openContainerImpl(handle);
+            } catch (Throwable ex) {
+                handle.close();
+                throw ex;
             }
 
             containerMap.put(path, container);
@@ -108,7 +99,7 @@ public abstract class Container {
         if (fileHandles.isEmpty() && containerHandles.isEmpty()) {
             LOGGER.info("Release container " + this);
 
-            synchronized (containerMap) {
+            synchronized (Container.class) {
                 Container container = containerMap.remove(getPath());
                 if (container != this) {
                     throw new AssertionError(String.format("expected=%s, actual=%s", this, container));

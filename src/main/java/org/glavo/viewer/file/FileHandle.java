@@ -90,6 +90,8 @@ public abstract class FileHandle implements Closeable {
                 } catch (Throwable e) {
                     LOGGER.log(Level.WARNING, "Failed to close " + this, e);
                 }
+
+                container.checkStatus();
             }
         }
     }

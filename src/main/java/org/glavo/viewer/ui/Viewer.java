@@ -20,10 +20,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
-import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.FileTree;
-import org.glavo.viewer.file.FileType;
+import org.glavo.viewer.file.*;
 import org.glavo.viewer.file.containers.RootContainer;
 import org.glavo.viewer.file.handles.FolderHandle;
 import org.glavo.viewer.file.handles.PhysicalFileHandle;
@@ -228,24 +225,24 @@ public final class Viewer {
         if (file != null) {
             FilePath path = FilePath.ofJavaPath(file.toPath(), true);
 
-            Container container = null;
+            ContainerHandle handle = null;
             try {
-                container = FolderType.TYPE.openContainerImpl(new FolderHandle(RootContainer.CONTAINER, path));
+                handle = new ContainerHandle(FolderType.TYPE.openContainerImpl(new FolderHandle(RootContainer.CONTAINER, path)));
 
                 FileTree.RootNode root = new FileTree.RootNode(FolderType.TYPE, path);
-                FileTree.buildFileTree(container, root);
+                FileTree.buildFileTree(handle.getContainer(), root);
 
                 FileTab tab = new FileTab(FolderType.TYPE, path);
                 tab.setContent(new FileTreeView(root));
 
-                Container finalContainer = container;
-                tab.setOnClosed(event -> finalContainer.decrement());
+                ContainerHandle finalHandle = handle;
+                tab.setOnClosed(event -> finalHandle.close());
                 tabPane.getTabs().add(tab);
 
             } catch (Throwable e) {
                 LOGGER.log(Level.WARNING, "Failed to open folder " + path, e);
-                if (container != null) {
-                    container.decrement();
+                if (handle != null) {
+                    handle.close();
                 }
             }
         }

@@ -1,6 +1,7 @@
 package org.glavo.viewer.file.containers;
 
 import org.glavo.viewer.file.Container;
+import org.glavo.viewer.file.ContainerHandle;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.handles.PhysicalFileHandle;
@@ -14,7 +15,9 @@ public class RootContainer extends Container {
 
     private RootContainer() {
         super(null);
-        this.increment(); // should not be closed
+
+        //noinspection resource
+        new ContainerHandle(this); // should not be closed
     }
 
     @Override
