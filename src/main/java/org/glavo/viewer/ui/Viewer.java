@@ -73,6 +73,11 @@ public final class Viewer {
                 titleMessage.set(null);
             }
         });
+        try {
+            //noinspection Since15
+            tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
+        } catch (Throwable ignored) {
+        }
 
 
         Scene scene = new Scene(root);
