@@ -1,6 +1,7 @@
 package org.glavo.viewer.ui;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -90,9 +91,10 @@ public final class Viewer {
 
         stage.setScene(scene);
         stage.getIcons().setAll(Images.logo32, Images.logo16);
-        titleMessage.addListener((o, oldValue, newValue) -> {
-            stage.setTitle(newValue == null ? "ClassViewer" : "ClassViewer - " + newValue);
-        });
+        stage.titleProperty().bind(Bindings.createStringBinding(() -> {
+            String message = titleMessage.get();
+            return message == null ? "ClassViewer" : "ClassViewer - " + message;
+        }, titleMessage));
         stage.show();
 
         viewers.add(this);
