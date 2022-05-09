@@ -100,6 +100,8 @@ public abstract class FileType {
                 CSSFileType.TYPE,
                 HTMLFileType.TYPE,
 
+                JavaSourceFileType.TYPE,
+
                 JavaClassFileType.TYPE
         ));
 
