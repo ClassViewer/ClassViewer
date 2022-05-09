@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.JsonUtils;
 import org.glavo.viewer.util.WindowDimension;
@@ -17,11 +19,16 @@ import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Config {
+    public static final int RECENT_FILES_LIMIT = 20;
+
     private Path path = null;
     private FileLock lock;
 
@@ -33,6 +40,8 @@ public final class Config {
     private final DoubleProperty uiFontSizeProperty = new SimpleDoubleProperty(-1);
     private final StringProperty textFontFamilyProperty = new SimpleStringProperty();
     private final DoubleProperty textFontSizeProperty = new SimpleDoubleProperty(-1);
+
+    private final ObservableList<FilePath> recentFiles = FXCollections.observableList(new ArrayList<>());
 
     private static Config config;
 
@@ -118,6 +127,7 @@ public final class Config {
 
         this.lock = lock;
 
+        needToSaveOnExit(recentFiles);
         needToSaveOnExit(windowSizeProperty);
         needToSave(uiFontFamilyProperty);
         needToSave(uiFontSizeProperty);
@@ -129,7 +139,7 @@ public final class Config {
         value.addListener(o -> save());
     }
 
-    private void needToSaveOnExit(ObservableValue<?> value) {
+    private void needToSaveOnExit(Observable value) {
         value.addListener(o -> needToSaveOnExit = true);
     }
 
@@ -219,5 +229,25 @@ public final class Config {
 
     public void setTextFontSize(double textFontSizeProperty) {
         this.textFontSizeProperty.set(textFontSizeProperty);
+    }
+
+    public ObservableList<FilePath> getRecentFiles() {
+        return recentFiles;
+    }
+
+    public void setRecentFiles(List<FilePath> paths) {
+        getRecentFiles().setAll(paths);
+    }
+
+    public void addRecentFile(FilePath path) {
+        ObservableList<FilePath> files = getRecentFiles();
+        synchronized (files) {
+            files.remove(path);
+            if (files.size() == RECENT_FILES_LIMIT) {
+                files.remove(0);
+            }
+
+            files.add(path);
+        }
     }
 }

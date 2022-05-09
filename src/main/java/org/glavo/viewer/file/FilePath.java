@@ -1,10 +1,12 @@
 package org.glavo.viewer.file;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.beans.property.StringProperty;
 import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 import org.glavo.viewer.util.ArrayUtils;
+import org.glavo.viewer.util.JsonUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -77,6 +79,7 @@ public class FilePath implements Comparable<FilePath> {
         return path;
     }
 
+    @JsonProperty("isDirectory")
     public boolean isDirectory() {
         return isDirectory;
     }

@@ -22,15 +22,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.file.*;
-import org.glavo.viewer.file.containers.RootContainer;
-import org.glavo.viewer.file.handles.FolderHandle;
-import org.glavo.viewer.file.handles.PhysicalFileHandle;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.FolderType;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.util.MappedList;
 import org.glavo.viewer.util.SilentlyCloseable;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
@@ -153,6 +151,12 @@ public final class Viewer {
 
             Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
             openRecentMenu.setMnemonicParsing(true);
+            Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
+                    path -> {
+                        MenuItem item = new MenuItem(path.toString(), new ImageView(FileType.detectFileType(path).getImage()));
+                        item.setOnAction(event -> open(path));
+                        return item;
+                    }));
 
             fileMenu.getItems().setAll(openFileItem, openFolderItem, openRecentMenu);
         }
@@ -237,6 +241,8 @@ public final class Viewer {
             } else {
                 throw new AssertionError();
             }
+
+            Config.getConfig().addRecentFile(path);
         } catch (Throwable e) {
             LOGGER.log(Level.WARNING, "Failed to open file " + path, e);
             if (resource != null) {
