@@ -145,17 +145,22 @@ public final class Viewer {
         SilentlyCloseable resource = null;
         try {
             if (type instanceof ContainerFileType) {
+                //noinspection resource
                 ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
                 resource = handle;
 
                 FileTree.RootNode root = new FileTree.RootNode(FolderType.TYPE, path);
                 FileTree.buildFileTree(handle.getContainer(), root);
 
+                /*
                 FileTab tab = new FileTab(FolderType.TYPE, path);
                 tab.setContent(new FileTreeView(root));
-
                 tab.setOnClosed(event -> handle.close());
                 pane.getFilesTabPane().getTabs().add(tab);
+                 */
+
+                pane.getFileTreeView().getRoot().getChildren().add(FileTreeView.fromTree(root));
+
             } else if (type instanceof TextFileType) {
                 throw new UnsupportedOperationException(); // TODO
             } else if (type instanceof BinaryFileType) {

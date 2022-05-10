@@ -140,15 +140,17 @@ public class ViewerPane extends BorderPane {
         sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         sideBar.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
 
-        Tab treeTab = new Tab("File Tree", new ImageView(Images.folder));
+        Tab treeTab = new Tab(I18N.getString("sideBar.fileList"));
+        treeTab.setGraphic(new ImageView(Images.folder));
         treeTab.setContent(fileTreeView);
 
-        Tab infoTab = new Tab("File Info");
+        Tab infoTab = new Tab(I18N.getString("sideBar.fileInfo"));
+        infoTab.setGraphic(new ImageView(Images.fileStructure));
         filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
             if (newValue instanceof FileTab) {
                 infoTab.contentProperty().bind(Bindings.createObjectBinding(() -> {
                     Node bar = ((FileTab) newValue).getSideBar();
-                    return bar == null ? new Label("Empty") : bar;
+                    return bar == null ? new Label("Empty") : bar; // TODO
                 }, ((FileTab) newValue).sideBarProperty()));
             } else {
                 infoTab.contentProperty().unbind();
@@ -181,5 +183,9 @@ public class ViewerPane extends BorderPane {
 
     public TabPane getFilesTabPane() {
         return filesTabPane;
+    }
+
+    public FileTreeView getFileTreeView() {
+        return fileTreeView;
     }
 }

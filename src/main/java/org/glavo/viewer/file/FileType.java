@@ -99,10 +99,11 @@ public abstract class FileType {
                 YAMLFileType.TYPE,
                 CSSFileType.TYPE,
                 HTMLFileType.TYPE,
-
                 JavaSourceFileType.TYPE,
 
-                JavaClassFileType.TYPE
+                JavaClassFileType.TYPE,
+
+                ImageFileType.TYPE
         ));
 
         static final List<FileType> types;
