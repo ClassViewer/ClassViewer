@@ -1,5 +1,7 @@
 package org.glavo.viewer.ui;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -20,9 +22,9 @@ import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.MappedList;
 
 public class ViewerPane extends BorderPane {
-    private final Viewer viewer;
+    private static final double DEFAULT_DIVIDER_POSITION = 0.25;
 
-    private final Pane defaultText;
+    private final Viewer viewer;
 
     private final MenuBar menuBar;
 
@@ -35,25 +37,48 @@ public class ViewerPane extends BorderPane {
     public ViewerPane(Viewer viewer) {
         this.viewer = viewer;
 
-        this.defaultText = createDefaultText();
         this.menuBar = createMenuBar();
 
-        this.mainPane = new SplitPane();
         this.filesTabPane = createFilesTabPane();
         this.sideBar = createSideBar();
+        this.mainPane = new SplitPane(sideBar, filesTabPane);
+        {
+            double dp = Config.getConfig().getDividerPosition();
+            if (dp <= 0 || dp >= 1) {
+                dp = 0.25;
+            }
+            SplitPane.Divider divider = mainPane.getDividers().get(0);
+            divider.setPosition(dp);
 
-        this.setCenter(defaultText);
+            if (viewer.isPrimary()) {
+                Config.getConfig().dividerPositionProperty().bind(divider.positionProperty());
+            }
+        }
+
+        this.setTop(menuBar);
+        this.setCenter(createDefaultText());
+        InvalidationListener l = new InvalidationListener() {
+            @Override
+            public void invalidated(Observable o) {
+                ViewerPane.this.setCenter(mainPane);
+                filesTabPane.getTabs().removeListener(this);
+                fileTreeView.getRoot().getChildren().removeListener(this);
+            }
+        };
+        filesTabPane.getTabs().addListener(l);
+        fileTreeView.getRoot().getChildren().addListener(l);
+
     }
 
     private Pane createDefaultText() {
         Text openFileText = new Text(I18N.getString("defaultText.openFile"));
         openFileText.setFill(Color.GRAY);
-        Hyperlink openFileLink = new Hyperlink("Ctrl+O"); // new Hyperlink(topBar.getMenuBar().fileMenu.openFileItem.getAccelerator().getDisplayText());
+        Hyperlink openFileLink = new Hyperlink("Ctrl+O");
         openFileLink.setOnAction(event -> viewer.openFile());
 
         Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
         openFolderText.setFill(Color.GRAY);
-        Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O"); // new Hyperlink(topBar.getMenuBar().fileMenu.openFolderItem.getAccelerator().getDisplayText());
+        Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O");
         openFolderLink.setOnAction(event -> viewer.openFolder());
 
         TextFlow text = new TextFlow(
@@ -113,6 +138,7 @@ public class ViewerPane extends BorderPane {
         TabPane sideBar = new TabPane();
         sideBar.setSide(Side.LEFT);
         sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        sideBar.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
 
         Tab treeTab = new Tab("File Tree", new ImageView(Images.folder));
         treeTab.setContent(fileTreeView);
@@ -136,7 +162,6 @@ public class ViewerPane extends BorderPane {
 
     private TabPane createFilesTabPane() {
         TabPane tabPane = new TabPane();
-        // tabPane.getTabs().addListener((InvalidationListener) o -> root.setCenter(tabPane.getTabs().isEmpty() ? defaultText : tabPane));
         tabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
             if (newValue instanceof FileTab) {
                 viewer.setTitleMessage(((FileTab) newValue).getPath().toString());
