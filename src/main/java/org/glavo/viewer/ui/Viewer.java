@@ -1,6 +1,5 @@
 package org.glavo.viewer.ui;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -8,19 +7,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
-import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -29,7 +17,6 @@ import org.glavo.viewer.file.*;
 import org.glavo.viewer.file.types.*;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
-import org.glavo.viewer.util.MappedList;
 import org.glavo.viewer.util.SilentlyCloseable;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
@@ -43,53 +30,25 @@ public final class Viewer {
     private static final ObservableList<Viewer> viewers = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 
     private final Stage stage;
+    private final boolean isPrimary;
 
     private final StringProperty titleMessage = new SimpleStringProperty();
 
     private static FileChooser fileChooser;
     private static DirectoryChooser directoryChooser;
 
-    private final TabPane tabPane;
-    private final TabPane sideBar;
+    private final ViewerPane pane;
 
-    private final FileTreeView fileTreeView = new FileTreeView();
     private final ObjectProperty<Node> fileSideBar = new SimpleObjectProperty<>();
 
     public Viewer(Stage stage, boolean isPrimary) {
         this.stage = stage;
+        this.isPrimary = isPrimary;
 
         Config config = Config.getConfig();
+        this.pane = new ViewerPane(this);
 
-        BorderPane root = new BorderPane();
-
-        Pane defaultText = createDefaultText();
-        root.setTop(createMenuBar());
-        root.setCenter(defaultText);
-
-        this.tabPane = new TabPane();
-        // tabPane.getTabs().addListener((InvalidationListener) o -> root.setCenter(tabPane.getTabs().isEmpty() ? defaultText : tabPane));
-        tabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
-            if (newValue instanceof FileTab) {
-                titleMessage.set(((FileTab) newValue).getPath().toString());
-                fileSideBar.bind(((FileTab) newValue).sideBarProperty());
-            } else {
-                titleMessage.set(null);
-                fileSideBar.unbind();
-                fileSideBar.set(null);
-            }
-        });
-        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-        try {
-            //noinspection Since15
-            tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
-        } catch (Throwable ignored) {
-        }
-
-        this.sideBar = createSideBar();
-
-        SplitPane centerPane = new SplitPane();
-
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(pane);
         stage.setWidth(config.getWindowSize().getWidth());
         stage.setHeight(config.getWindowSize().getHeight());
         if (config.getWindowSize().isMaximized()) {
@@ -122,83 +81,20 @@ public final class Viewer {
         return stage;
     }
 
-    private Pane createDefaultText() {
-        Text openFileText = new Text(I18N.getString("defaultText.openFile"));
-        openFileText.setFill(Color.GRAY);
-        Hyperlink openFileLink = new Hyperlink("Ctrl+O"); // new Hyperlink(topBar.getMenuBar().fileMenu.openFileItem.getAccelerator().getDisplayText());
-        openFileLink.setOnAction(event -> openFile());
-
-        Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
-        openFolderText.setFill(Color.GRAY);
-        Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O"); // new Hyperlink(topBar.getMenuBar().fileMenu.openFolderItem.getAccelerator().getDisplayText());
-        openFolderLink.setOnAction(event -> openFolder());
-
-        TextFlow text = new TextFlow(
-                openFileText, new Text(" "), openFileLink, new Text("\n"),
-                openFolderText, new Text(" "), openFolderLink
-        );
-        text.setTextAlignment(TextAlignment.LEFT);
-
-        FlowPane pane = new FlowPane(text);
-        pane.setAlignment(Pos.CENTER);
-        return pane;
+    public boolean isPrimary() {
+        return isPrimary;
     }
 
-    private MenuBar createMenuBar() {
-        MenuBar menuBar = new MenuBar();
-
-        Menu fileMenu = new Menu(I18N.getString("menu.file"));
-        {
-            fileMenu.setMnemonicParsing(true);
-
-            MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
-            openFileItem.setMnemonicParsing(true);
-            openFileItem.setGraphic(new ImageView(Images.menuOpen));
-            openFileItem.setOnAction(event -> openFile());
-
-            MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
-            openFolderItem.setMnemonicParsing(true);
-            openFolderItem.setOnAction(event -> openFolder());
-
-            Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
-            openRecentMenu.setMnemonicParsing(true);
-            Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
-                    path -> {
-                        MenuItem item = new MenuItem(path.toString(), new ImageView(FileType.detectFileType(path).getImage()));
-                        item.setOnAction(event -> open(path));
-                        return item;
-                    }));
-
-            fileMenu.getItems().setAll(openFileItem, openFolderItem, openRecentMenu);
-        }
-
-
-        Menu helpMenu = new Menu(I18N.getString("menu.help"));
-        {
-            helpMenu.setMnemonicParsing(true);
-
-            MenuItem aboutItem = new MenuItem(I18N.getString("menu.help.items.about"));
-
-            helpMenu.getItems().setAll(aboutItem);
-        }
-
-        menuBar.getMenus().setAll(fileMenu, helpMenu);
-        return menuBar;
+    public String getTitleMessage() {
+        return titleMessage.get();
     }
 
-    private TabPane createSideBar() {
-        TabPane sideBar = new TabPane();
-        sideBar.setSide(Side.LEFT);
-        sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+    public StringProperty titleMessageProperty() {
+        return titleMessage;
+    }
 
-        Tab treeTab = new Tab("File Tree", new ImageView(Images.folder));
-        treeTab.setContent(fileTreeView);
-
-        Tab infoTab = new Tab("File Info");
-        infoTab.contentProperty().bind(fileSideBar);
-
-        sideBar.getTabs().setAll(treeTab, infoTab);
-        return sideBar;
+    public void setTitleMessage(String titleMessage) {
+        this.titleMessage.set(titleMessage);
     }
 
     public void show() {
@@ -223,14 +119,14 @@ public final class Viewer {
         return directoryChooser.showDialog(getStage());
     }
 
-    private void openFile() {
+    public void openFile() {
         File file = showFileChooser();
         if (file != null) {
             open(FilePath.ofJavaPath(file.toPath()));
         }
     }
 
-    private void openFolder() {
+    public void openFolder() {
         File file = showDirectoryChooser();
         if (file != null) {
             open(FilePath.ofJavaPath(file.toPath(), true));
@@ -259,7 +155,7 @@ public final class Viewer {
                 tab.setContent(new FileTreeView(root));
 
                 tab.setOnClosed(event -> handle.close());
-                tabPane.getTabs().add(tab);
+                pane.getFilesTabPane().getTabs().add(tab);
             } else if (type instanceof TextFileType) {
                 throw new UnsupportedOperationException(); // TODO
             } else if (type instanceof BinaryFileType) {
