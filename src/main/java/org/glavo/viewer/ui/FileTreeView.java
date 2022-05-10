@@ -21,10 +21,20 @@ public class FileTreeView extends TreeView<FileTree> {
                 }
             }
         });
-        this.setRoot(fromTree(tree));
+
+        if (tree == null) {
+            this.setRoot(new TreeItem<>());
+            this.setShowRoot(false);
+        } else {
+            this.setRoot(fromTree(tree));
+        }
     }
 
-    private static TreeItem<FileTree> fromTree(FileTree node) {
+    public FileTreeView() {
+        this(null);
+    }
+
+    public static TreeItem<FileTree> fromTree(FileTree node) {
         TreeItem<FileTree> item = new TreeItem<>(node);
         for (FileTree child : node.getChildren()) {
             item.getChildren().add(fromTree(child));

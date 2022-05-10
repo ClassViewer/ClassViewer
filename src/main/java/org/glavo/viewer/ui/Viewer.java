@@ -2,11 +2,15 @@ package org.glavo.viewer.ui;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -45,40 +49,45 @@ public final class Viewer {
     private static FileChooser fileChooser;
     private static DirectoryChooser directoryChooser;
 
-    private final BorderPane root;
-
-    private final Pane defaultText;
-    private final MenuBar menuBar;
     private final TabPane tabPane;
+    private final TabPane sideBar;
+
+    private final FileTreeView fileTreeView = new FileTreeView();
+    private final ObjectProperty<Node> fileSideBar = new SimpleObjectProperty<>();
 
     public Viewer(Stage stage, boolean isPrimary) {
         this.stage = stage;
 
         Config config = Config.getConfig();
 
-        this.root = new BorderPane();
-        this.tabPane = new TabPane();
-        this.menuBar = createMenuBar();
-        this.defaultText = createDefaultText();
+        BorderPane root = new BorderPane();
 
-        root.setTop(menuBar);
+        Pane defaultText = createDefaultText();
+        root.setTop(createMenuBar());
         root.setCenter(defaultText);
 
-        tabPane.getTabs().addListener((InvalidationListener) o ->
-                root.setCenter(tabPane.getTabs().isEmpty() ? defaultText : tabPane));
+        this.tabPane = new TabPane();
+        // tabPane.getTabs().addListener((InvalidationListener) o -> root.setCenter(tabPane.getTabs().isEmpty() ? defaultText : tabPane));
         tabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
             if (newValue instanceof FileTab) {
                 titleMessage.set(((FileTab) newValue).getPath().toString());
+                fileSideBar.bind(((FileTab) newValue).sideBarProperty());
             } else {
                 titleMessage.set(null);
+                fileSideBar.unbind();
+                fileSideBar.set(null);
             }
         });
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         try {
             //noinspection Since15
             tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
         } catch (Throwable ignored) {
         }
 
+        this.sideBar = createSideBar();
+
+        SplitPane centerPane = new SplitPane();
 
         Scene scene = new Scene(root);
         stage.setWidth(config.getWindowSize().getWidth());
@@ -175,6 +184,21 @@ public final class Viewer {
 
         menuBar.getMenus().setAll(fileMenu, helpMenu);
         return menuBar;
+    }
+
+    private TabPane createSideBar() {
+        TabPane sideBar = new TabPane();
+        sideBar.setSide(Side.LEFT);
+        sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+
+        Tab treeTab = new Tab("File Tree", new ImageView(Images.folder));
+        treeTab.setContent(fileTreeView);
+
+        Tab infoTab = new Tab("File Info");
+        infoTab.contentProperty().bind(fileSideBar);
+
+        sideBar.getTabs().setAll(treeTab, infoTab);
+        return sideBar;
     }
 
     public void show() {

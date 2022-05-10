@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -35,11 +34,12 @@ public final class Config {
     private boolean needToSaveOnExit = false;
     private boolean hasUnknownProperties = false;
 
-    private final ObjectProperty<WindowDimension> windowSizeProperty = new SimpleObjectProperty<>();
-    private final StringProperty uiFontFamilyProperty = new SimpleStringProperty();
-    private final DoubleProperty uiFontSizeProperty = new SimpleDoubleProperty(-1);
-    private final StringProperty textFontFamilyProperty = new SimpleStringProperty();
-    private final DoubleProperty textFontSizeProperty = new SimpleDoubleProperty(-1);
+    private final ObjectProperty<WindowDimension> windowSize = new SimpleObjectProperty<>();
+    private final DoubleProperty dividerPosition = new SimpleDoubleProperty(-1.0);
+    private final StringProperty uiFontFamily = new SimpleStringProperty();
+    private final DoubleProperty uiFontSize = new SimpleDoubleProperty(-1);
+    private final StringProperty textFontFamily = new SimpleStringProperty();
+    private final DoubleProperty textFontSize = new SimpleDoubleProperty(-1);
 
     private final ObservableList<FilePath> recentFiles = FXCollections.observableList(new ArrayList<>());
 
@@ -128,11 +128,12 @@ public final class Config {
         this.lock = lock;
 
         needToSaveOnExit(recentFiles);
-        needToSaveOnExit(windowSizeProperty);
-        needToSave(uiFontFamilyProperty);
-        needToSave(uiFontSizeProperty);
-        needToSave(textFontFamilyProperty);
-        needToSave(textFontSizeProperty);
+        needToSaveOnExit(windowSize);
+        needToSaveOnExit(dividerPosition);
+        needToSave(uiFontFamily);
+        needToSave(uiFontSize);
+        needToSave(textFontFamily);
+        needToSave(textFontSize);
     }
 
     private void needToSave(Observable value) {
@@ -170,65 +171,77 @@ public final class Config {
     }
 
     public ObjectProperty<WindowDimension> windowSizeProperty() {
-        return windowSizeProperty;
+        return windowSize;
     }
 
     public WindowDimension getWindowSize() {
-        return windowSizeProperty.get();
+        return windowSize.get();
     }
 
     public void setWindowSize(WindowDimension windowSizeProperty) {
-        this.windowSizeProperty.set(windowSizeProperty);
+        this.windowSize.set(windowSizeProperty);
+    }
+
+    public DoubleProperty dividerPositionProperty() {
+        return dividerPosition;
+    }
+
+    public double getDividerPosition() {
+        return dividerPosition.get();
+    }
+
+    public void setDividerPosition(double dividerPosition) {
+        this.dividerPosition.set(dividerPosition);
     }
 
     public StringProperty uiFontFamilyProperty() {
-        return uiFontFamilyProperty;
+        return uiFontFamily;
     }
 
     @JsonProperty("uiFontFamily")
     public String getUIFontFamily() {
-        return uiFontFamilyProperty.get();
+        return uiFontFamily.get();
     }
 
     public void setUIFontFamily(String uiFontProperty) {
-        this.uiFontFamilyProperty.set(uiFontProperty);
+        this.uiFontFamily.set(uiFontProperty);
     }
 
     public DoubleProperty uiFontSizeProperty() {
-        return uiFontSizeProperty;
+        return uiFontSize;
     }
 
     @JsonProperty("uiFontSize")
     public double getUIFontSize() {
-        return uiFontSizeProperty.get();
+        return uiFontSize.get();
     }
 
     public void setUIFontSize(double uiFontSizeProperty) {
-        this.uiFontSizeProperty.set(uiFontSizeProperty);
+        this.uiFontSize.set(uiFontSizeProperty);
     }
 
     public StringProperty textFontFamilyProperty() {
-        return textFontFamilyProperty;
+        return textFontFamily;
     }
 
     public String getTextFontFamily() {
-        return textFontFamilyProperty.get();
+        return textFontFamily.get();
     }
 
     public void setTextFontFamily(String textFontProperty) {
-        this.textFontFamilyProperty.set(textFontProperty);
+        this.textFontFamily.set(textFontProperty);
     }
 
     public DoubleProperty textFontSizeProperty() {
-        return textFontSizeProperty;
+        return textFontSize;
     }
 
     public double getTextFontSize() {
-        return textFontSizeProperty.get();
+        return textFontSize.get();
     }
 
     public void setTextFontSize(double textFontSizeProperty) {
-        this.textFontSizeProperty.set(textFontSizeProperty);
+        this.textFontSize.set(textFontSizeProperty);
     }
 
     public ObservableList<FilePath> getRecentFiles() {
