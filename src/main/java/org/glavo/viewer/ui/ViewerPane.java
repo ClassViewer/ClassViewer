@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -146,11 +147,13 @@ public class ViewerPane extends BorderPane {
 
         Tab infoTab = new Tab(I18N.getString("sideBar.fileInfo"));
         infoTab.setGraphic(new ImageView(Images.fileStructure));
+        StackPane emptyLabel = new StackPane(new Label(I18N.getString("sideBar.fileInfo.empty")));
+        infoTab.setContent(emptyLabel);
         filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
             if (newValue instanceof FileTab) {
                 infoTab.contentProperty().bind(Bindings.createObjectBinding(() -> {
                     Node bar = ((FileTab) newValue).getSideBar();
-                    return bar == null ? new Label("Empty") : bar; // TODO
+                    return bar == null ? emptyLabel : bar;
                 }, ((FileTab) newValue).sideBarProperty()));
             } else {
                 infoTab.contentProperty().unbind();
