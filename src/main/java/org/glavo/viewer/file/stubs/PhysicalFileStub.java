@@ -1,6 +1,6 @@
 package org.glavo.viewer.file.stubs;
 
-import org.glavo.viewer.file.FileStubs;
+import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.containers.RootContainer;
 
@@ -12,14 +12,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-public class PhysicalFileStubs extends FileStubs {
+public class PhysicalFileStub extends FileStub {
     private final Path file;
 
-    public PhysicalFileStubs(FilePath path) {
+    public PhysicalFileStub(FilePath path) {
         this(path, Paths.get(path.getPath()));
     }
 
-    public PhysicalFileStubs(FilePath path, Path file) {
+    public PhysicalFileStub(FilePath path, Path file) {
         super(RootContainer.CONTAINER, path);
         this.file = file;
 

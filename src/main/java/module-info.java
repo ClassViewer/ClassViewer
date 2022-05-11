@@ -8,6 +8,7 @@ module org.glavo.viewer {
     requires kala.platform;
     requires kala.template;
     requires kala.compress.archivers.zip;
+    requires kala.common;
 
     requires com.fasterxml.jackson.databind;
 }

@@ -2,6 +2,7 @@ package org.glavo.viewer.file;
 
 import org.glavo.viewer.file.containers.RootContainer;
 import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.util.ForceCloseable;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -13,16 +14,16 @@ import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public abstract class Container {
+public abstract class Container implements ForceCloseable {
 
     private static final Map<FilePath, Container> containerMap = new HashMap<>();
 
-    private final FileStubs handle;
+    private final FileHandle handle;
 
-    final Map<FilePath, FileStubs> fileStubs = new HashMap<>();
+    final Map<FilePath, FileStub> fileStubs = new HashMap<>();
     final HashSet<ContainerHandle> containerHandles = new HashSet<>();
 
-    protected Container(FileStubs handle) {
+    protected Container(FileHandle handle) {
         this.handle = handle;
     }
 
@@ -43,9 +44,9 @@ public abstract class Container {
 
             Container container;
 
-            FileStubs handle = path.getParent() == null
-                    ? RootContainer.CONTAINER.openFile(path)
-                    : getContainer(path.getParent()).openFile(path);
+            FileHandle handle = new FileHandle(path.getParent() == null
+                    ? RootContainer.CONTAINER.getStub(path)
+                    : getContainer(path.getParent()).getStub(path));
 
             try {
                 container = ct.openContainerImpl(handle);
@@ -63,16 +64,16 @@ public abstract class Container {
         return handle.getPath();
     }
 
-    public FileStubs getFileHandle() {
+    public FileHandle getFileHandle() {
         return handle;
     }
 
-    public synchronized FileStubs openFile(FilePath path) throws IOException {
+    public synchronized FileStub getStub(FilePath path) throws IOException {
         assert getPath() == null && path.getParent() == null || getPath().equals(path);
 
-        FileStubs h = fileStubs.get(path);
+        FileStub h = fileStubs.get(path);
         if (h != null) {
-            return h.use();
+            return h;
         }
 
         h = openFileImpl(path);
@@ -82,7 +83,7 @@ public abstract class Container {
         return h;
     }
 
-    protected abstract FileStubs openFileImpl(FilePath path) throws IOException, NoSuchFileException;
+    protected abstract FileStub openFileImpl(FilePath path) throws IOException, NoSuchFileException;
 
     public abstract NavigableSet<FilePath> resolveFiles() throws Exception;
 
@@ -95,22 +96,26 @@ public abstract class Container {
 
     synchronized void checkStatus() {
         if (fileStubs.isEmpty() && containerHandles.isEmpty()) {
-            LOGGER.info("Release container " + this);
+            forceClose();
+        }
+    }
 
-            synchronized (Container.class) {
-                Container container = containerMap.remove(getPath());
-                if (container != this) {
-                    throw new AssertionError(String.format("expected=%s, actual=%s", this, container));
-                }
+    public synchronized void forceClose() {
+        LOGGER.info("Release container " + this);
 
-                try {
-                    this.closeImpl();
-                } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to close " + this, e);
-                } finally {
-                    if (handle != null) {
-                        handle.close();
-                    }
+        synchronized (Container.class) {
+            Container container = containerMap.remove(getPath());
+            if (container != this) {
+                throw new AssertionError(String.format("expected=%s, actual=%s", this, container));
+            }
+
+            try {
+                this.closeImpl();
+            } catch (Throwable e) {
+                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+            } finally {
+                if (handle != null) {
+                    handle.close();
                 }
             }
         }

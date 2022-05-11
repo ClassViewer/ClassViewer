@@ -2,9 +2,9 @@ package org.glavo.viewer.file.containers;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.ContainerHandle;
-import org.glavo.viewer.file.FileStubs;
+import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.stubs.PhysicalFileStubs;
+import org.glavo.viewer.file.stubs.PhysicalFileStub;
 
 import java.io.IOException;
 import java.util.NavigableSet;
@@ -25,10 +25,10 @@ public class RootContainer extends Container {
     }
 
     @Override
-    protected FileStubs openFileImpl(FilePath path) throws IOException {
+    protected FileStub openFileImpl(FilePath path) throws IOException {
         assert path.getParent() == null;
 
-        return new PhysicalFileStubs(path);
+        return new PhysicalFileStub(path);
     }
 
     @Override

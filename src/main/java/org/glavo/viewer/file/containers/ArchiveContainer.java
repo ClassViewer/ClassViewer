@@ -3,9 +3,10 @@ package org.glavo.viewer.file.containers;
 import kala.compress.archivers.zip.ZipArchiveEntry;
 import kala.compress.archivers.zip.ZipArchiveReader;
 import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileStubs;
+import org.glavo.viewer.file.FileHandle;
+import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.stubs.ArchiveFileStubs;
+import org.glavo.viewer.file.stubs.ArchiveFileStub;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -17,7 +18,7 @@ public class ArchiveContainer extends Container {
     private final TreeMap<FilePath, ZipArchiveEntry> map = new TreeMap<>();
 
 
-    public ArchiveContainer(FileStubs handle, ZipArchiveReader reader) {
+    public ArchiveContainer(FileHandle handle, ZipArchiveReader reader) {
         super(handle);
         this.reader = reader;
 
@@ -29,13 +30,13 @@ public class ArchiveContainer extends Container {
     }
 
     @Override
-    protected synchronized FileStubs openFileImpl(FilePath path) throws IOException {
+    protected synchronized FileStub openFileImpl(FilePath path) throws IOException {
         ZipArchiveEntry entry = map.get(path);
         if (entry == null) {
             throw new NoSuchFileException(path.toString());
         }
 
-        return new ArchiveFileStubs(this, path, entry);
+        return new ArchiveFileStub(this, path, entry);
     }
 
     @Override

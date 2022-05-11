@@ -40,6 +40,7 @@ repositories {
 dependencies {
     implementation("org.glavo.kala:kala-platform:0.9.0")
     implementation("org.glavo.kala:kala-template:0.1.0")
+    implementation("org.glavo.kala:kala-common:0.38.0")
 
     val kalaCompressVersion = "1.21.0.1-beta3"
     implementation("org.glavo.kala:kala-compress-archivers-zip:$kalaCompressVersion")

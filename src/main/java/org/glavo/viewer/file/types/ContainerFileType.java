@@ -2,7 +2,8 @@ package org.glavo.viewer.file.types;
 
 import javafx.scene.image.Image;
 import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileStubs;
+import org.glavo.viewer.file.FileHandle;
+import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FileType;
 
 public abstract class ContainerFileType extends FileType {
@@ -15,5 +16,5 @@ public abstract class ContainerFileType extends FileType {
         super(name, image);
     }
 
-    public abstract Container openContainerImpl(FileStubs handle) throws Throwable;
+    public abstract Container openContainerImpl(FileHandle handle) throws Throwable;
 }

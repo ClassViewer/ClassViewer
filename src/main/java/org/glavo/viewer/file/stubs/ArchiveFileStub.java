@@ -4,7 +4,7 @@ import kala.compress.archivers.zip.ZipArchiveEntry;
 import kala.compress.archivers.zip.ZipArchiveReader;
 import kala.compress.utils.IOUtils;
 import kala.compress.utils.SeekableInMemoryByteChannel;
-import org.glavo.viewer.file.FileStubs;
+import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.containers.ArchiveContainer;
 import org.glavo.viewer.util.FileUtils;
@@ -14,10 +14,10 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.SeekableByteChannel;
 
-public class ArchiveFileStubs extends FileStubs {
+public class ArchiveFileStub extends FileStub {
     private final ZipArchiveEntry entry;
 
-    public ArchiveFileStubs(ArchiveContainer container, FilePath path, ZipArchiveEntry entry) {
+    public ArchiveFileStub(ArchiveContainer container, FilePath path, ZipArchiveEntry entry) {
         super(container, path);
         this.entry = entry;
     }

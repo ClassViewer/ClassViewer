@@ -2,7 +2,8 @@ package org.glavo.viewer.file.types;
 
 import kala.compress.archivers.zip.ZipArchiveReader;
 import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileStubs;
+import org.glavo.viewer.file.FileHandle;
+import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.containers.ArchiveContainer;
 import org.glavo.viewer.util.ZipUtils;
@@ -30,7 +31,7 @@ public final class ArchiveFileType extends ContainerFileType {
     }
 
     @Override
-    public Container openContainerImpl(FileStubs handle) throws Throwable {
+    public Container openContainerImpl(FileHandle handle) throws Throwable {
         SeekableByteChannel channel = null;
         try {
             channel = handle.openChannel();

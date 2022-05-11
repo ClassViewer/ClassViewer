@@ -1,32 +1,26 @@
 package org.glavo.viewer.file;
 
-import org.glavo.viewer.util.SilentlyCloseable;
+import org.glavo.viewer.util.ForceCloseable;
 
 import java.io.*;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public abstract class FileStubs implements SilentlyCloseable {
+public abstract class FileStub implements ForceCloseable {
 
     private final Container container;
     private final FilePath path;
 
-    private final AtomicInteger counter = new AtomicInteger();
+    final Set<FileHandle> handles = new HashSet<>();
 
-    protected FileStubs(Container container, FilePath path) {
+    protected FileStub(Container container, FilePath path) {
         this.container = container;
         this.path = path;
-
-        use();
-    }
-
-    public FileStubs use() {
-        counter.getAndIncrement();
-        return this;
     }
 
     public FilePath getPath() {
@@ -77,26 +71,43 @@ public abstract class FileStubs implements SilentlyCloseable {
     protected void closeImpl() throws Exception {
     }
 
-    public final void close() {
-        if (counter.decrementAndGet() == 0) {
-            LOGGER.info("Release handle " + this);
+    public synchronized final void checkStatus() {
+        if (handles.isEmpty()) {
+            forceClose();
+        }
+    }
 
-            synchronized (container) {
-                FileStubs h;
-                if ((h = container.fileStubs.remove(getPath())) != this) {
-                    System.out.println(">>> " + container.fileStubs);
-                    throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
-                }
+    @Override
+    public final synchronized void forceClose() {
+        LOGGER.info("Release stub " + this);
 
+        for (FileHandle handle : handles) {
+            synchronized (handle) {
+                LOGGER.info("Close handle " + handle);
                 try {
-                    this.closeImpl();
+                    handle.closeImpl();
                 } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+                    LOGGER.log(Level.WARNING, "Failed to close " + handle, e);
                 }
-
-                container.checkStatus();
             }
         }
+        handles.clear();
+
+        synchronized (container) {
+            FileStub h;
+            if ((h = container.fileStubs.remove(getPath())) != this) {
+                throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
+            }
+
+            try {
+                this.closeImpl();
+            } catch (Throwable e) {
+                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+            }
+
+            container.checkStatus();
+        }
+
     }
 
     @Override
