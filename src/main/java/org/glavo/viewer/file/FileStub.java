@@ -77,8 +77,7 @@ public abstract class FileStub implements ForceCloseable {
         }
     }
 
-    @Override
-    public final synchronized void forceClose() {
+    final synchronized void forceCloseImpl() {
         LOGGER.info("Release stub " + this);
 
         for (FileHandle handle : handles) {
@@ -93,21 +92,24 @@ public abstract class FileStub implements ForceCloseable {
         }
         handles.clear();
 
-        synchronized (container) {
+        try {
+            this.closeImpl();
+        } catch (Throwable e) {
+            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+        }
+
+        container.checkStatus();
+    }
+
+    @Override
+    public final synchronized void forceClose() {
+        synchronized (getContainer()) {
             FileStub h;
             if ((h = container.fileStubs.remove(getPath())) != this) {
                 throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
             }
-
-            try {
-                this.closeImpl();
-            } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
-            }
-
-            container.checkStatus();
+            forceCloseImpl();
         }
-
     }
 
     @Override

@@ -40,7 +40,4 @@ public class ContainerHandle implements SilentlyCloseable {
             container.checkStatus();
         }
     }
-
-    protected void forceCloseImpl() {
-    }
 }

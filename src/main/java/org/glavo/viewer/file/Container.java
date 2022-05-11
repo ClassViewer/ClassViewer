@@ -101,24 +101,40 @@ public abstract class Container implements ForceCloseable {
     }
 
     public synchronized void forceClose() {
-        LOGGER.info("Release container " + this);
+        LOGGER.info("Close container " + this);
 
         synchronized (Container.class) {
             Container container = containerMap.remove(getPath());
             if (container != this) {
                 throw new AssertionError(String.format("expected=%s, actual=%s", this, container));
             }
+        }
 
+        for (FileStub stub : this.fileStubs.values()) {
+            stub.forceCloseImpl();
+        }
+        this.fileStubs.clear();
+
+        for (ContainerHandle handle : this.containerHandles) {
+            LOGGER.info("Force release handle " + this);
             try {
-                this.closeImpl();
+                handle.closeImpl();
             } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
-            } finally {
-                if (handle != null) {
-                    handle.close();
-                }
+                LOGGER.log(Level.WARNING, "Failed to close " + this);
             }
         }
+        this.containerHandles.clear();
+
+        try {
+            this.closeImpl();
+        } catch (Throwable e) {
+            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+        } finally {
+            if (handle != null) {
+                handle.close();
+            }
+        }
+
     }
 
     @Override

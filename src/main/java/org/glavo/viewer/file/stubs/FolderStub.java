@@ -24,11 +24,11 @@ public final class FolderStub extends FileStub {
 
     @Override
     public SeekableByteChannel openChannel() throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("FolderStub");
     }
 
     @Override
     public SeekableByteChannel openWritableChannel() throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("FolderStub");
     }
 }
