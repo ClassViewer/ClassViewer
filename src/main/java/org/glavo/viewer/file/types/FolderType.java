@@ -1,10 +1,10 @@
 package org.glavo.viewer.file.types;
 
 import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileHandle;
+import org.glavo.viewer.file.FileStubs;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.containers.FolderContainer;
-import org.glavo.viewer.file.handles.FolderHandle;
+import org.glavo.viewer.file.stubs.FolderStubs;
 import org.glavo.viewer.resources.Images;
 
 import java.io.IOException;
@@ -24,8 +24,8 @@ public final class FolderType extends ContainerFileType {
     }
 
     @Override
-    public Container openContainerImpl(FileHandle handle) throws IOException {
-        assert handle instanceof FolderHandle;
+    public Container openContainerImpl(FileStubs handle) throws IOException {
+        assert handle instanceof FolderStubs;
         assert handle.getPath().isDirectory();
         assert handle.getPath().getParent() == null;
 

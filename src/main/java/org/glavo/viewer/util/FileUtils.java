@@ -11,6 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class FileUtils {
+    public static final long SMALL_FILE_LIMIT = 10 * 1024 * 1024; // 10 MiB
+
+
     public static final Path VIEWER_HOME = getViewerHome();
 
     public static final ExecutorService ioThread = Executors.newSingleThreadExecutor();

@@ -10,21 +10,21 @@ import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public abstract class FileHandle implements SilentlyCloseable {
+public abstract class FileStubs implements SilentlyCloseable {
 
     private final Container container;
     private final FilePath path;
 
     private final AtomicInteger counter = new AtomicInteger();
 
-    protected FileHandle(Container container, FilePath path) {
+    protected FileStubs(Container container, FilePath path) {
         this.container = container;
         this.path = path;
 
         use();
     }
 
-    public FileHandle use() {
+    public FileStubs use() {
         counter.getAndIncrement();
         return this;
     }
@@ -82,9 +82,9 @@ public abstract class FileHandle implements SilentlyCloseable {
             LOGGER.info("Release handle " + this);
 
             synchronized (container) {
-                FileHandle h;
-                if ((h = container.fileHandles.remove(getPath())) != this) {
-                    System.out.println(">>> " + container.fileHandles);
+                FileStubs h;
+                if ((h = container.fileStubs.remove(getPath())) != this) {
+                    System.out.println(">>> " + container.fileStubs);
                     throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
                 }
 

@@ -1,10 +1,15 @@
 package org.glavo.viewer.file.types;
 
+import kala.compress.archivers.zip.ZipArchiveReader;
 import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileHandle;
+import org.glavo.viewer.file.FileStubs;
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.containers.ArchiveContainer;
+import org.glavo.viewer.util.ZipUtils;
 
-import java.io.IOException;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public final class ArchiveFileType extends ContainerFileType {
     public static final ArchiveFileType TYPE = new ArchiveFileType();
@@ -25,7 +30,21 @@ public final class ArchiveFileType extends ContainerFileType {
     }
 
     @Override
-    public Container openContainerImpl(FileHandle handle) throws IOException {
-        throw new UnsupportedOperationException(); // TODO
+    public Container openContainerImpl(FileStubs handle) throws Throwable {
+        SeekableByteChannel channel = null;
+        try {
+            channel = handle.openChannel();
+            ZipArchiveReader reader = new ZipArchiveReader(channel);
+            Charset charset = ZipUtils.testEncoding(reader);
+            if (charset != StandardCharsets.UTF_8 && charset != null) {
+                reader = new ZipArchiveReader(channel, charset);
+            }
+            return new ArchiveContainer(handle, reader);
+        } catch (Throwable e) {
+            if (channel != null) {
+                channel.close();
+            }
+            throw e;
+        }
     }
 }

@@ -1,11 +1,10 @@
 package org.glavo.viewer.file;
 
 import org.glavo.viewer.file.containers.RootContainer;
-import org.glavo.viewer.file.handles.PhysicalFileHandle;
 import org.glavo.viewer.file.types.ContainerFileType;
-import org.glavo.viewer.util.ReferenceCounter;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,12 +17,12 @@ public abstract class Container {
 
     private static final Map<FilePath, Container> containerMap = new HashMap<>();
 
-    private final FileHandle handle;
+    private final FileStubs handle;
 
-    final Map<FilePath, FileHandle> fileHandles = new HashMap<>();
+    final Map<FilePath, FileStubs> fileStubs = new HashMap<>();
     final HashSet<ContainerHandle> containerHandles = new HashSet<>();
 
-    protected Container(FileHandle handle) {
+    protected Container(FileStubs handle) {
         this.handle = handle;
     }
 
@@ -44,7 +43,7 @@ public abstract class Container {
 
             Container container;
 
-            FileHandle handle = path.getParent() == null
+            FileStubs handle = path.getParent() == null
                     ? RootContainer.CONTAINER.openFile(path)
                     : getContainer(path.getParent()).openFile(path);
 
@@ -64,28 +63,26 @@ public abstract class Container {
         return handle.getPath();
     }
 
-    public FileHandle getFileHandle() {
+    public FileStubs getFileHandle() {
         return handle;
     }
 
-    public FileHandle openFile(FilePath path) throws IOException {
+    public synchronized FileStubs openFile(FilePath path) throws IOException {
         assert getPath() == null && path.getParent() == null || getPath().equals(path);
 
-        synchronized (this) {
-            FileHandle h = fileHandles.get(path);
-            if (h != null) {
-                return h.use();
-            }
-
-            h = openFileImpl(path);
-            if (h != null) {
-                fileHandles.put(path, h);
-            }
-            return h;
+        FileStubs h = fileStubs.get(path);
+        if (h != null) {
+            return h.use();
         }
+
+        h = openFileImpl(path);
+        if (h != null) {
+            fileStubs.put(path, h);
+        }
+        return h;
     }
 
-    protected abstract FileHandle openFileImpl(FilePath path) throws IOException;
+    protected abstract FileStubs openFileImpl(FilePath path) throws IOException, NoSuchFileException;
 
     public abstract NavigableSet<FilePath> resolveFiles() throws Exception;
 
@@ -97,7 +94,7 @@ public abstract class Container {
     }
 
     synchronized void checkStatus() {
-        if (fileHandles.isEmpty() && containerHandles.isEmpty()) {
+        if (fileStubs.isEmpty() && containerHandles.isEmpty()) {
             LOGGER.info("Release container " + this);
 
             synchronized (Container.class) {

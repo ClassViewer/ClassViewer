@@ -18,7 +18,7 @@ public class ZipUtils {
         Set<Charset> charsets = new LinkedHashSet<>();
         charsets.add(StandardCharsets.UTF_8);
 
-        if (!Charsets.nativeCharset().name().startsWith("GB")) {
+        if (!Charsets.nativeCharset().name().equals("GBK")) { // GBK is a subset of GB18030, skip it
             charsets.add(Charsets.nativeCharset());
         }
 

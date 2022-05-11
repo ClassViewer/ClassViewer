@@ -1,7 +1,7 @@
 package org.glavo.viewer.file.types;
 
 import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileHandle;
+import org.glavo.viewer.file.FileStubs;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.resources.Images;
 
@@ -20,7 +20,7 @@ public class JImageFileType extends ContainerFileType {
     }
 
     @Override
-    public Container openContainerImpl(FileHandle handle) throws IOException {
+    public Container openContainerImpl(FileStubs handle) throws IOException {
         throw new UnsupportedOperationException(); // TODO
     }
 }

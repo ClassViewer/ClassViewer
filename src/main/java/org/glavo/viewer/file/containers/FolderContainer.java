@@ -1,9 +1,9 @@
 package org.glavo.viewer.file.containers;
 
 import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileHandle;
+import org.glavo.viewer.file.FileStubs;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.handles.PhysicalFileHandle;
+import org.glavo.viewer.file.stubs.PhysicalFileStubs;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -15,7 +15,7 @@ public class FolderContainer extends Container {
     private NavigableSet<FilePath> files;
     private final Path folder;
 
-    public FolderContainer(FileHandle handle, Path folder) {
+    public FolderContainer(FileStubs handle, Path folder) {
         super(handle);
         this.folder = folder;
     }
@@ -46,7 +46,7 @@ public class FolderContainer extends Container {
     }
 
     @Override
-    protected FileHandle openFileImpl(FilePath path) throws IOException {
-        return new PhysicalFileHandle(path, Paths.get(path.getPath()));
+    protected FileStubs openFileImpl(FilePath path) throws IOException {
+        return new PhysicalFileStubs(path, Paths.get(path.getPath()));
     }
 }
