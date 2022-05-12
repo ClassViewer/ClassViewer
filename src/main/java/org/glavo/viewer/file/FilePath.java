@@ -59,7 +59,7 @@ public class FilePath implements Comparable<FilePath> {
             if (Platform.CURRENT_SYSTEM != OperatingSystem.WINDOWS) {
                 builder.append('/');
             }
-        } else if (!parent.getParent().isDirectory()) {
+        } else {
             builder.append('/');
         }
 

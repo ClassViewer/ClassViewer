@@ -152,13 +152,6 @@ public final class Viewer {
                 FileTree.RootNode root = new FileTree.RootNode(FolderType.TYPE, path);
                 FileTree.buildFileTree(handle.getContainer(), root);
 
-                /*
-                FileTab tab = new FileTab(FolderType.TYPE, path);
-                tab.setContent(new FileTreeView(root));
-                tab.setOnClosed(event -> handle.close());
-                pane.getFilesTabPane().getTabs().add(tab);
-                 */
-
                 pane.getFileTreeView().getRoot().getChildren().add(FileTreeView.fromTree(root));
 
             } else if (type instanceof TextFileType) {
