@@ -104,8 +104,11 @@ public class FileTreeView extends TreeView<FileTree> {
                 } catch (Throwable e) {
                     LOGGER.log(Level.WARNING, "Failed to open container", e);
                 }
-            }
 
+                if (super.getChildren().isEmpty()) {
+                    isLeaf = true;
+                }
+            }
 
             return super.getChildren();
         }
