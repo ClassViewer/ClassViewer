@@ -1,6 +1,7 @@
 package org.glavo.viewer.file;
 
 import kala.function.CheckedRunnable;
+import org.glavo.viewer.util.ForceCloseable;
 import org.glavo.viewer.util.SilentlyCloseable;
 
 import java.io.IOException;
@@ -11,10 +12,10 @@ import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public class FileHandle implements SilentlyCloseable {
+public class FileHandle implements SilentlyCloseable, ForceCloseable {
 
     private final FileStub stub;
-    private CheckedRunnable<?> onClose;
+    private CheckedRunnable<?> onForceClose;
 
     protected FileHandle(FileStub stub) {
         this.stub = stub;
@@ -23,8 +24,8 @@ public class FileHandle implements SilentlyCloseable {
         }
     }
 
-    public synchronized void setOnClose(CheckedRunnable<?> onClose) {
-        this.onClose = onClose;
+    public synchronized void setOnForceClose(CheckedRunnable<?> onForceClose) {
+        this.onForceClose = onForceClose;
     }
 
     public FileStub getStub() {
@@ -72,16 +73,16 @@ public class FileHandle implements SilentlyCloseable {
     }
 
     protected synchronized void closeImpl() throws Throwable {
-        if (onClose != null) {
-            onClose.runChecked();
+        if (closed) {
+            return;
         }
-    }
+        closed = true;
 
-    @Override
-    public final void close() {
-        LOGGER.info("Close handle " + this);
+        LOGGER.info("Force close handle " + this);
         try {
-            closeImpl();
+            if (onForceClose != null) {
+                onForceClose.runChecked();
+            }
         } catch (Throwable e) {
             LOGGER.log(Level.WARNING, "Failed to close " + this, e);
         }
@@ -90,6 +91,44 @@ public class FileHandle implements SilentlyCloseable {
             stub.handles.remove(this);
             stub.checkStatus();
         }
+    }
+
+    private boolean closed = false;
+
+    private synchronized void close(boolean force) {
+        if (closed) {
+            return;
+        }
+        closed = true;
+
+        synchronized (stub) {
+            if (!stub.handles.remove(this)) {
+                throw new AssertionError("handle=" + this);
+            }
+            if (force) {
+                LOGGER.info("Force close handle " + this);
+                try {
+                    if (onForceClose != null) {
+                        onForceClose.runChecked();
+                    }
+                } catch (Throwable e) {
+                    LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+                }
+            } else {
+                LOGGER.info("Close handle " + this);
+            }
+            stub.checkStatus();
+        }
+    }
+
+    @Override
+    public final synchronized void close() {
+        close(false);
+    }
+
+    @Override
+    public void forceClose() {
+        close(true);
     }
 
     @Override

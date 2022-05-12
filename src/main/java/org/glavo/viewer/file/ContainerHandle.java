@@ -1,13 +1,16 @@
 package org.glavo.viewer.file;
 
+import kala.function.CheckedRunnable;
+import org.glavo.viewer.util.ForceCloseable;
 import org.glavo.viewer.util.SilentlyCloseable;
 
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public class ContainerHandle implements SilentlyCloseable {
+public class ContainerHandle implements SilentlyCloseable, ForceCloseable {
     private final Container container;
+    private CheckedRunnable<?> onForceClose;
 
     public ContainerHandle(Container container) {
         this.container = container;
@@ -20,24 +23,41 @@ public class ContainerHandle implements SilentlyCloseable {
         return container;
     }
 
-    public void closeImpl() throws Throwable {
+    public synchronized void setOnForceClose(CheckedRunnable<?> onForceClose) {
+        this.onForceClose = onForceClose;
     }
 
-    @Override
-    public synchronized void close() {
-        LOGGER.info("Release handle " + this);
+    private synchronized void close(boolean force) {
         synchronized (container) {
             if (!container.containerHandles.remove(this)) {
-                throw new AssertionError();
+                throw new AssertionError("handle=" + this);
             }
 
-            try {
-                closeImpl();
-            } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to close " + this);
+            if (force) {
+                LOGGER.info("Force close handle " + this);
+
+                if (onForceClose != null) {
+                    try {
+                        onForceClose.runChecked();
+                    } catch (Throwable e) {
+                        LOGGER.log(Level.WARNING, "Failed to close " + this);
+                    }
+                }
+            } else {
+                LOGGER.info("Close handle " + this);
             }
 
             container.checkStatus();
         }
+    }
+
+    @Override
+    public synchronized void close() {
+        close(false);
+    }
+
+    @Override
+    public void forceClose() {
+        close(true);
     }
 }

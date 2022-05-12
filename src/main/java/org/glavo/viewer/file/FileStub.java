@@ -5,6 +5,7 @@ import org.glavo.viewer.util.ForceCloseable;
 import java.io.*;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -77,38 +78,37 @@ public abstract class FileStub implements ForceCloseable {
         }
     }
 
-    final synchronized void forceCloseImpl() {
-        LOGGER.info("Release stub " + this);
-
-        for (FileHandle handle : handles) {
-            synchronized (handle) {
-                LOGGER.info("Close handle " + handle);
-                try {
-                    handle.closeImpl();
-                } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to close " + handle, e);
-                }
-            }
-        }
-        handles.clear();
-
-        try {
-            this.closeImpl();
-        } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
-        }
-
-        container.checkStatus();
-    }
+    private boolean closed = false;
 
     @Override
     public final synchronized void forceClose() {
+        if (closed) {
+            return;
+        }
+
+        closed = true;
+
         synchronized (getContainer()) {
             FileStub h;
-            if ((h = container.fileStubs.remove(getPath())) != this) {
+            if ((h = getContainer().fileStubs.remove(getPath())) != this) {
                 throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
             }
-            forceCloseImpl();
+            LOGGER.info("Release stub " + this);
+
+            for (FileHandle handle : new ArrayList<>(handles)) {
+                handle.forceClose();
+            }
+            if (!handles.isEmpty()) {
+                throw new AssertionError("handles=" + handles);
+            }
+
+            try {
+                this.closeImpl();
+            } catch (Throwable e) {
+                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+            }
+
+            container.checkStatus();
         }
     }
 

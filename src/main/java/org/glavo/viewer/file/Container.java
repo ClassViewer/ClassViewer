@@ -6,10 +6,7 @@ import org.glavo.viewer.util.ForceCloseable;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.NavigableSet;
+import java.util.*;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -100,7 +97,15 @@ public abstract class Container implements ForceCloseable {
         }
     }
 
+    private boolean closed = false;
+
     public synchronized void forceClose() {
+        if (closed) {
+            return;
+        }
+
+        closed = true;
+
         LOGGER.info("Close container " + this);
 
         synchronized (Container.class) {
@@ -110,20 +115,19 @@ public abstract class Container implements ForceCloseable {
             }
         }
 
-        for (FileStub stub : this.fileStubs.values()) {
-            stub.forceCloseImpl();
+        for (FileStub stub : new ArrayList<>(this.fileStubs.values())) {
+            stub.forceClose();
         }
-        this.fileStubs.clear();
+        if (!fileStubs.isEmpty()) {
+            throw new AssertionError("fileStubs=" + fileStubs);
+        }
 
-        for (ContainerHandle handle : this.containerHandles) {
-            LOGGER.info("Force release handle " + this);
-            try {
-                handle.closeImpl();
-            } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to close " + this);
-            }
+        for (ContainerHandle handle : new ArrayList<>(this.containerHandles)) {
+            handle.forceClose();
         }
-        this.containerHandles.clear();
+        if (!this.containerHandles.isEmpty()) {
+            throw new AssertionError("containerHandles=" + containerHandles);
+        }
 
         try {
             this.closeImpl();
