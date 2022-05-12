@@ -103,7 +103,6 @@ public abstract class Container implements ForceCloseable {
         if (closed) {
             return;
         }
-
         closed = true;
 
         LOGGER.info("Close container " + this);

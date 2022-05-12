@@ -41,4 +41,10 @@ public class FileTreeView extends TreeView<FileTree> {
         }
         return item;
     }
+
+    public static void updateSubTree(TreeItem<FileTree> tree) {
+        for (FileTree child : tree.getValue().getChildren()) {
+            tree.getChildren().add(fromTree(child));
+        }
+    }
 }
