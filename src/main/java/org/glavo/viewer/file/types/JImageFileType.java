@@ -16,7 +16,7 @@ public class JImageFileType extends ContainerFileType {
     public static final JImageFileType TYPE = new JImageFileType();
 
     private JImageFileType() {
-        super("jimage", ArchiveFileType.TYPE.getImage());
+        super("jimage");
     }
 
     @Override

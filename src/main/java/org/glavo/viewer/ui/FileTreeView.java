@@ -7,11 +7,11 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileTree;
-import org.glavo.viewer.file.FileType;
+import org.glavo.viewer.file.*;
+import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.FolderType;
+import org.glavo.viewer.util.HexText;
 
 import java.util.logging.Level;
 
@@ -33,9 +33,12 @@ public class FileTreeView extends TreeView<FileTree> {
         }
     }
 
-    public FileTreeView() {
+    private final Viewer viewer;
+
+    public FileTreeView(Viewer viewer) {
+        this.viewer = viewer;
         this.setCellFactory(view -> new Cell());
-        //this.setOnMouseClicked(this::onMouseClicked);
+        this.setOnMouseClicked(this::onMouseClicked);
 
         this.setRoot(new TreeItem<>());
         this.setShowRoot(false);
@@ -48,7 +51,24 @@ public class FileTreeView extends TreeView<FileTree> {
 
             FileTree node = item.getValue();
             FileType type = node.getType();
+            FilePath path = node.getPath();
 
+            if (!(type instanceof BinaryFileType)) return;
+
+            Container container = Container.getContainerOrNull(path.getParent());
+            if (container == null) return;
+
+            try {
+                try (FileHandle handle = new FileHandle(container.getStub(path))) {
+                    FileTab tab = new FileTab(type, path);
+                    tab.setContent(new HexPane(new HexText(handle.readAllBytes())));
+
+                    viewer.getPane().getFilesTabPane().getTabs().add(tab);
+                }
+
+            } catch (Throwable e) {
+                LOGGER.log(Level.WARNING, "", e); // TODO
+            }
         }
     }
 
@@ -103,6 +123,7 @@ public class FileTreeView extends TreeView<FileTree> {
                     updateSubTree(this);
                 } catch (Throwable e) {
                     LOGGER.log(Level.WARNING, "Failed to open container", e);
+
                 }
 
                 if (super.getChildren().isEmpty()) {

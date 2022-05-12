@@ -17,7 +17,7 @@ public class FileHandle implements SilentlyCloseable, ForceCloseable {
     private final FileStub stub;
     private CheckedRunnable<?> onForceClose;
 
-    protected FileHandle(FileStub stub) {
+    public FileHandle(FileStub stub) {
         this.stub = stub;
         synchronized (stub) {
             stub.handles.add(this);

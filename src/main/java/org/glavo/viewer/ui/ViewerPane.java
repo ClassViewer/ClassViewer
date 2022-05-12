@@ -33,15 +33,17 @@ public class ViewerPane extends BorderPane {
     private final TabPane filesTabPane;
     private final TabPane sideBar;
 
-    private final FileTreeView fileTreeView = new FileTreeView();
+    private final FileTreeView fileTreeView;
 
     public ViewerPane(Viewer viewer) {
         this.viewer = viewer;
+        this.fileTreeView = new FileTreeView(viewer);
 
         this.menuBar = createMenuBar();
 
         this.filesTabPane = createFilesTabPane();
         this.sideBar = createSideBar();
+
         this.mainPane = new SplitPane(sideBar, filesTabPane);
         {
             double dp = Config.getConfig().getDividerPosition();

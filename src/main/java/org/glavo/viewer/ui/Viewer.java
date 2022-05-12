@@ -81,6 +81,10 @@ public final class Viewer {
         return stage;
     }
 
+    public ViewerPane getPane() {
+        return pane;
+    }
+
     public boolean isPrimary() {
         return isPrimary;
     }

@@ -25,6 +25,9 @@ public abstract class Container implements ForceCloseable {
     }
 
     public static Container getContainer(FilePath path) throws Throwable {
+        if (path == null) {
+            return RootContainer.CONTAINER;
+        }
         synchronized (Container.class) {
             Container c = containerMap.get(path);
 
@@ -54,6 +57,15 @@ public abstract class Container implements ForceCloseable {
 
             containerMap.put(path, container);
             return container;
+        }
+    }
+
+    public static Container getContainerOrNull(FilePath path) {
+        try {
+            return Container.getContainer(path);
+        } catch (Throwable e) {
+            LOGGER.log(Level.WARNING, "Failed to open container", e);
+            return null;
         }
     }
 

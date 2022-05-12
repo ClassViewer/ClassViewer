@@ -5,9 +5,12 @@ import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileStub;
+import org.glavo.viewer.file.stubs.JImageFileStub;
 import org.glavo.viewer.util.StringUtils;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
+import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
@@ -49,7 +52,19 @@ public class JImageContainer extends Container {
 
     @Override
     protected synchronized FileStub openFileImpl(FilePath path) throws IOException {
-        throw new UnsupportedOperationException(); // TODO
+        ImageReader.Node node = null;// = map.get(path);
+        for (Map.Entry<FilePath, ImageReader.Node> e : map.entrySet()) { // TODO: ???
+            FilePath p = e.getKey();
+            if (p.toString().equals(path.toString())) {
+                node = e.getValue();
+            }
+        }
+
+        if (node == null) {
+            throw new NoSuchFileException(path.toString());
+        }
+
+        return new JImageFileStub(this, path, reader, node);
     }
 
     @Override
