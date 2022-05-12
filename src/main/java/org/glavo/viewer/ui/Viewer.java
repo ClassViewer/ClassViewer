@@ -153,7 +153,7 @@ public final class Viewer {
                 ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
                 resource = handle;
 
-                FileTree.RootNode root = new FileTree.RootNode(FolderType.TYPE, path);
+                FileTree.RootNode root = new FileTree.RootNode(type, path);
                 FileTree.buildFileTree(handle.getContainer(), root);
 
                 pane.getFileTreeView().getRoot().getChildren().add(FileTreeView.fromTree(root));
