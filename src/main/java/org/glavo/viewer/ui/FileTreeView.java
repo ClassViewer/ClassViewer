@@ -20,7 +20,6 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 public class FileTreeView extends TreeView<String> {
     public static TreeItem<String> fromTree(FileTree node) {
         TreeItem<String> item = new FileTreeItem(node);
-
         for (FileTree child : node.getChildren()) {
             item.getChildren().add(fromTree(child));
         }
@@ -82,7 +81,7 @@ public class FileTreeView extends TreeView<String> {
             if (isLeaf == null) {
                 FileType type = getFileTree().getType();
                 if (type instanceof FolderType) {
-                    isLeaf = getChildren().isEmpty();
+                    return getChildren().isEmpty();
                 } else {
                     isLeaf = !(type instanceof ContainerFileType);
                 }

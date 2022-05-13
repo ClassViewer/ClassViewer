@@ -1,10 +1,23 @@
 package org.glavo.viewer.file.types;
 
+import javafx.concurrent.Task;
+import javafx.scene.Node;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
+import jdk.jpackage.internal.IOUtils;
+import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.ui.FileTab;
+import org.glavo.viewer.util.TaskUtils;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
@@ -92,7 +105,29 @@ public class TextFileType extends CustomFileType {
     }
 
     @Override
-    public FileTab openTab(FilePath path) {
-        return super.openTab(path);
+    public FileTab openTab(FileStub stub) {
+        FileTab res = new FileTab(this, stub.getPath());
+        res.setContent(new StackPane(new ProgressIndicator()));
+
+        Task<Node> task = new Task<Node>() {
+            @Override
+            protected Node call() throws Exception {
+                return new TextArea(new String(stub.readAllBytes()));
+            }
+
+            @Override
+            protected void succeeded() {
+                res.setContent(this.getValue());
+            }
+
+            @Override
+            protected void failed() {
+                throw new UnsupportedOperationException(); // TODO
+            }
+        };
+
+        TaskUtils.submit(task);
+
+        return res;
     }
 }

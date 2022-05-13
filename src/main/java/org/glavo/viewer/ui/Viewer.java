@@ -176,6 +176,7 @@ public final class Viewer {
         SilentlyCloseable resource = null;
         try {
             if (type instanceof ContainerFileType) {
+                // TODO
                 //noinspection resource
                 ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
                 resource = handle;
@@ -184,11 +185,20 @@ public final class Viewer {
                 FileTree.buildFileTree(handle.getContainer(), root);
 
                 pane.getFileTreeView().getRoot().getChildren().add(FileTreeView.fromTree(root));
-
             } else if (type instanceof CustomFileType) {
-                throw new UnsupportedOperationException(); // TODO
+                FileStub stub = null;
+                try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
+                    stub = containerHandle.getContainer().getStub(path);
+
+                    FileTab tab = ((CustomFileType) type).openTab(stub);
+                    getPane().getFilesTabPane().getTabs().add(tab);
+                    if (tab.getSideBar() != null) getPane().selectFileInfoTab();
+
+                } finally {
+                    if (stub != null) stub.checkStatus();
+                }
             } else {
-                throw new AssertionError();
+                throw new AssertionError("Unhandled type: " + type);
             }
 
             Config.getConfig().addRecentFile(path);

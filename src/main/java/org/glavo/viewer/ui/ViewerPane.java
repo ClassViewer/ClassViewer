@@ -193,4 +193,8 @@ public class ViewerPane extends BorderPane {
     public FileTreeView getFileTreeView() {
         return fileTreeView;
     }
+
+    public void selectFileInfoTab() {
+        sideBar.getSelectionModel().select(1);
+    }
 }

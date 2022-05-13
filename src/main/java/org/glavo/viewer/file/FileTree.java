@@ -28,6 +28,11 @@ public abstract class FileTree implements Comparable<FileTree> {
         return children;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s[type=%s, text=%s, children=%s]", this.getClass().getSimpleName(), getType(), getText(), getChildren());
+    }
+
     public static void buildFileTree(Container container, FileTree root) throws Exception {
         NavigableSet<FilePath> files = container.resolveFiles();
 
