@@ -2,8 +2,6 @@ package org.glavo.viewer.file.types;
 
 import javafx.scene.image.Image;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.ui.FileTab;
 
@@ -16,7 +14,7 @@ public abstract class CustomFileType extends FileType {
         super(name, image);
     }
 
-    public FileTab openTab(FileStub stub) {
+    public FileTab openTab(FileHandle stub) {
         throw new UnsupportedOperationException("CustomFileType::openTab");
     }
 }

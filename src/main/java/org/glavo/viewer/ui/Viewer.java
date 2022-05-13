@@ -220,7 +220,8 @@ public final class Viewer {
                 try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
                     stub = containerHandle.getContainer().getStub(path);
 
-                    FileTab tab = ((CustomFileType) type).openTab(stub);
+                    FileHandle handle = new FileHandle(stub); // TODO
+                    FileTab tab = ((CustomFileType) type).openTab(handle);
                     getPane().getFilesTabPane().getTabs().add(tab);
                     if (tab.getSideBar() != null) getPane().selectFileInfoTab();
 

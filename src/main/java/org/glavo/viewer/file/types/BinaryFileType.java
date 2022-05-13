@@ -3,12 +3,10 @@ package org.glavo.viewer.file.types;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.FileStub;
-import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.ui.HexPane;
@@ -36,7 +34,7 @@ public class BinaryFileType extends CustomFileType {
     }
 
     @Override
-    public FileTab openTab(FileStub stub) {
+    public FileTab openTab(FileHandle stub) {
         FileTab res = new FileTab(this, stub.getPath());
         res.setContent(new StackPane(new ProgressIndicator()));
 
@@ -53,7 +51,7 @@ public class BinaryFileType extends CustomFileType {
 
             @Override
             protected void failed() {
-                throw new UnsupportedOperationException(); // TODO
+                throw new UnsupportedOperationException(getException()); // TODO
             }
         };
 

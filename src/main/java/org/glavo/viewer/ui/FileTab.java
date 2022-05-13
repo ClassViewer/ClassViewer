@@ -14,6 +14,7 @@ public class FileTab extends Tab {
     private final FilePath path;
 
     private final ObjectProperty<Node> sideBar = new SimpleObjectProperty<>();
+    private final ObjectProperty<Node> statusBar = new SimpleObjectProperty<>();
 
     public FileTab(FileType type, FilePath path) {
         this.type = type;
@@ -42,5 +43,17 @@ public class FileTab extends Tab {
 
     public void setSideBar(Node sideBar) {
         this.sideBar.set(sideBar);
+    }
+
+    public ObjectProperty<Node> statusBarProperty() {
+        return statusBar;
+    }
+
+    public Node getStatusBar() {
+        return statusBar.get();
+    }
+
+    public void setStatusBar(Node statusBar) {
+        this.statusBar.set(statusBar);
     }
 }

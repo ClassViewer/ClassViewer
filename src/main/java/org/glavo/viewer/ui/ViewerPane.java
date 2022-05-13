@@ -8,10 +8,7 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -57,6 +54,20 @@ public class ViewerPane extends BorderPane {
                 Config.getConfig().dividerPositionProperty().bind(divider.positionProperty());
             }
         }
+
+        HBox emptyStatusBar = new HBox();
+        filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
+            if (newValue instanceof FileTab) {
+                bottomProperty().bind(Bindings.createObjectBinding(() -> {
+                    Node bar = ((FileTab) newValue).getStatusBar();
+                    return bar == null ? emptyStatusBar : bar;
+                }, ((FileTab) newValue).sideBarProperty()));
+            } else {
+                bottomProperty().unbind();
+                setBottom(null);
+            }
+        });
+
 
         this.setTop(menuBar);
         this.setCenter(createDefaultText());
