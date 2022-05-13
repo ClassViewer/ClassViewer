@@ -3,6 +3,7 @@ package org.glavo.viewer.file.types;
 import javafx.scene.image.Image;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileType;
+import org.glavo.viewer.ui.FileTab;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -88,5 +89,10 @@ public class TextFileType extends CustomFileType {
         }
 
         return false;
+    }
+
+    @Override
+    public FileTab openTab(FilePath path) {
+        return super.openTab(path);
     }
 }

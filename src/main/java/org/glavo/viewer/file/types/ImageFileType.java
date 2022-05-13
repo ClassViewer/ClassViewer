@@ -19,6 +19,7 @@ public class ImageFileType extends CustomFileType {
             case "jpg":
             case "jpeg":
             case "webp":
+            case "ico":
                 return true;
         }
 

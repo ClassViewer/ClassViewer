@@ -99,6 +99,7 @@ public abstract class FileType {
                 YAMLFileType.TYPE,
                 CSSFileType.TYPE,
                 HTMLFileType.TYPE,
+                JsonFileType.TYPE,
                 JavaSourceFileType.TYPE,
 
                 JavaClassFileType.TYPE,
