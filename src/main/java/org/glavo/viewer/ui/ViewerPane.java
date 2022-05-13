@@ -74,9 +74,12 @@ public class ViewerPane extends BorderPane {
         InvalidationListener l = new InvalidationListener() {
             @Override
             public void invalidated(Observable o) {
-                ViewerPane.this.setCenter(mainPane);
                 filesTabPane.getTabs().removeListener(this);
                 fileTreeView.getRoot().getChildren().removeListener(this);
+                ViewerPane.this.setCenter(mainPane);
+                if (fileTreeView.getRoot().getChildren().isEmpty()) {
+                    selectFileInfoTab();
+                }
             }
         };
         filesTabPane.getTabs().addListener(l);
@@ -207,5 +210,14 @@ public class ViewerPane extends BorderPane {
 
     public void selectFileInfoTab() {
         sideBar.getSelectionModel().select(1);
+    }
+
+    public void addFileTab(FileTab tab) {
+        getFilesTabPane().getTabs().add(tab);
+        getFilesTabPane().getSelectionModel().select(tab);
+
+        if (tab.getSideBar() != null) {
+            selectFileInfoTab();
+        }
     }
 }

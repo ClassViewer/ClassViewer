@@ -4,6 +4,7 @@ import javafx.concurrent.Task;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.ui.FileTab;
@@ -38,7 +39,7 @@ public class ImageFileType extends CustomFileType {
     @Override
     public FileTab openTab(FileHandle handle) {
         FileTab res = new FileTab(this, handle.getPath());
-        res.setContent(new ProgressIndicator());
+        res.setContent(new StackPane(new ProgressIndicator()));
 
         Task<ImageView> task = new Task<ImageView>() {
             @Override

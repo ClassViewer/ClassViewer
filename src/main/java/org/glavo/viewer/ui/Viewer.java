@@ -222,8 +222,7 @@ public final class Viewer {
 
                     FileHandle handle = new FileHandle(stub); // TODO
                     FileTab tab = ((CustomFileType) type).openTab(handle);
-                    getPane().getFilesTabPane().getTabs().add(tab);
-                    if (tab.getSideBar() != null) getPane().selectFileInfoTab();
+                    getPane().addFileTab(tab);
 
                 } finally {
                     if (stub != null) stub.checkStatus();

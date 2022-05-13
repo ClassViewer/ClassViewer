@@ -54,6 +54,8 @@ dependencies {
 
     implementation("org.fxmisc.richtext:richtextfx:0.10.8")
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
+
+    implementation("org.apache.commons:commons-imaging:1.0-alpha2")
 }
 
 
