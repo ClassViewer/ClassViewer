@@ -1,11 +1,9 @@
 package org.glavo.viewer.util;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.text.Font;
 import kala.template.TemplateEngine;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.Main;
-import org.glavo.viewer.resources.Resources;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

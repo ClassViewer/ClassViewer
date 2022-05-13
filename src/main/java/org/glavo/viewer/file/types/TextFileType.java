@@ -6,6 +6,8 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.ui.FileTab;
@@ -92,6 +94,10 @@ public class TextFileType extends CustomFileType {
         return false;
     }
 
+    protected void applyHighlighter(CodeArea area) {
+
+    }
+
     @Override
     public FileTab openTab(FileStub stub) {
         FileTab res = new FileTab(this, stub.getPath());
@@ -100,7 +106,18 @@ public class TextFileType extends CustomFileType {
         Task<Node> task = new Task<Node>() {
             @Override
             protected Node call() throws Exception {
-                TextArea area = new TextArea(new String(stub.readAllBytes()));
+                CodeArea area = new CodeArea();
+                area.getStylesheets().clear();
+                area.setParagraphGraphicFactory(LineNumberFactory.get(area));
+                area.setEditable(false);
+
+                applyHighlighter(area);
+
+                area.replaceText(new String(stub.readAllBytes()));
+                area.scrollToPixel(0, 0);
+
+
+
                 //area.getStyleClass().add("mono");
                 return area;
             }
@@ -112,7 +129,7 @@ public class TextFileType extends CustomFileType {
 
             @Override
             protected void failed() {
-                throw new UnsupportedOperationException(); // TODO
+                throw new UnsupportedOperationException(getException()); // TODO
             }
         };
 

@@ -126,14 +126,21 @@ tasks.processResources {
     from(buildDir.resolve("resources/images"))
 }
 
+val addOpens = listOf(
+    "java.base/jdk.internal.loader",
+    "javafx.graphics/javafx.scene.text",
+    "javafx.graphics/com.sun.javafx.text",
+    "javafx.graphics/com.sun.javafx.scene.text",
+    "javafx.graphics/com.sun.javafx.geom",
+)
+
+
 tasks.shadowJar {
     archiveClassifier.set(null as String?)
     manifest.attributes(
         "Implementation-Version" to "1.2",
         "Main-Class" to viewerMain,
-        "Add-Exports" to listOf(
-            "java.base/jdk.internal.loader"
-        ).joinToString(" ")
+        "Add-Opens" to addOpens.joinToString(" ")
     )
     minimize()
 }
