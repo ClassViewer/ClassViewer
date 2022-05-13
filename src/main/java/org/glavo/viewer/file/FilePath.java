@@ -7,6 +7,7 @@ import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 import org.glavo.viewer.util.ArrayUtils;
 import org.glavo.viewer.util.JsonUtils;
+import org.glavo.viewer.util.StringUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -38,7 +39,7 @@ public class FilePath implements Comparable<FilePath> {
         this.path = path.replace('\\', '/');
         this.isDirectory = isDirectory;
         this.parent = parent;
-        this.pathElements = this.path.split("/");
+        this.pathElements = StringUtils.spiltPath(this.path);
     }
 
     public FilePath(String[] pathElements) {
@@ -107,6 +108,7 @@ public class FilePath implements Comparable<FilePath> {
     }
 
     private String extension;
+
     public String getFileNameExtension() {
         if (extension == null) {
             String fn = getFileName();
@@ -162,36 +164,42 @@ public class FilePath implements Comparable<FilePath> {
      */
 
     @Override
-    public int compareTo(FilePath other) {
-        if (this.equals(other)) {
-            return 0;
-        }
-
-        if (this.parent != null) {
-            if (other.getParent() == null) {
-                return 1;
-            } else {
-                int res = this.getParent().compareTo(other);
-                if (res != 0) {
-                    return res;
-                }
-            }
-        } else if (other.getParent() != null) {
+    public int compareTo(FilePath that) {
+        if (this.parent == null && that.parent != null) {
             return -1;
         }
+        if (this.parent != null && that.parent == null) {
+            return 1;
+        }
 
-        final int normalizedLength = this.getPathElements().length;
-        final int otherLength = other.getPathElements().length;
+        if (this.parent != null/* || that.parent != null*/) {
+            int c = this.parent.compareTo(that.parent);
+            if (c != 0) return c;
+        }
 
-        int length = Math.min(normalizedLength, otherLength);
+        final int thisLength = this.getPathElements().length;
+        final int otherLength = that.getPathElements().length;
+
+        int length = Math.min(thisLength, otherLength);
         for (int i = 0; i < length; i++) {
-            int v = this.getPathElements()[i].compareTo(other.getPathElements()[i]);
+            int v = this.getPathElements()[i].compareTo(that.getPathElements()[i]);
             if (v != 0) {
+                if (this.equals(that)) {
+                    System.out.println(this.getPathElements()[i]);
+                    System.out.println(that.getPathElements()[i]);
+
+
+                    System.out.println(this.toDebugString());
+                    System.out.println(that.toDebugString());
+
+                    System.out.println(that.getPathElements()[0]);
+                    System.out.println(that.getPathElements()[0].length());
+                }
                 return v;
             }
         }
 
-        return normalizedLength - otherLength;
+        return Integer.signum(thisLength - otherLength);
     }
 
     @Override
@@ -236,5 +244,10 @@ public class FilePath implements Comparable<FilePath> {
         }
 
         return str;
+    }
+
+    public String toDebugString() {
+        return String.format("FilePath[isDirectory=%s, path=%s, pathElements=%s, parent=%s]",
+                isDirectory, path, Arrays.toString(pathElements), parent == null ? null : parent.toDebugString());
     }
 }

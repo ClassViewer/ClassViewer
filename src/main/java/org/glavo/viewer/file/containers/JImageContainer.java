@@ -52,13 +52,7 @@ public class JImageContainer extends Container {
 
     @Override
     protected synchronized FileStub openFileImpl(FilePath path) throws IOException {
-        ImageReader.Node node = null;// = map.get(path);
-        for (Map.Entry<FilePath, ImageReader.Node> e : map.entrySet()) { // TODO: ???
-            FilePath p = e.getKey();
-            if (p.toString().equals(path.toString())) {
-                node = e.getValue();
-            }
-        }
+        ImageReader.Node node = map.get(path);
 
         if (node == null) {
             throw new NoSuchFileException(path.toString());

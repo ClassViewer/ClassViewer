@@ -18,7 +18,6 @@ import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.TaskUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
