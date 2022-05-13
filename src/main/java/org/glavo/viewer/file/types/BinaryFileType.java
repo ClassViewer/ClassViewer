@@ -34,14 +34,14 @@ public class BinaryFileType extends CustomFileType {
     }
 
     @Override
-    public FileTab openTab(FileHandle stub) {
-        FileTab res = new FileTab(this, stub.getPath());
+    public FileTab openTab(FileHandle handle) {
+        FileTab res = new FileTab(this, handle.getPath());
         res.setContent(new StackPane(new ProgressIndicator()));
 
         Task<Node> task = new Task<Node>() {
             @Override
             protected Node call() throws Exception {
-                return new HexPane(new HexText(stub.readAllBytes()));
+                return new HexPane(new HexText(handle.readAllBytes()));
             }
 
             @Override

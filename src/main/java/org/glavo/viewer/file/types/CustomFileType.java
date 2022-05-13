@@ -14,7 +14,7 @@ public abstract class CustomFileType extends FileType {
         super(name, image);
     }
 
-    public FileTab openTab(FileHandle stub) {
+    public FileTab openTab(FileHandle handle) {
         throw new UnsupportedOperationException("CustomFileType::openTab");
     }
 }
