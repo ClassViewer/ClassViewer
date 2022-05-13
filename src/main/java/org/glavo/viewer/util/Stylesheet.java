@@ -1,8 +1,11 @@
 package org.glavo.viewer.util;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.scene.text.Font;
 import kala.template.TemplateEngine;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.Main;
+import org.glavo.viewer.resources.Resources;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +16,8 @@ import java.util.logging.Level;
 import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Stylesheet {
-    private static final String STYLE_TEMPLATE = "/org/glavo/viewer/resources/style.css.template";
+    private static final String STYLE_TEMPLATE = "/org/glavo/viewer/resources/style.css";
+    private static final double DEFAULT_FONT_SIZE = 16;
 
     public static String[] getStylesheets() {
         Config config = Config.getConfig();
@@ -23,11 +27,47 @@ public final class Stylesheet {
             cssFile.deleteOnExit();
 
             HashMap<String, Object> table = new HashMap<>();
+            String uiFontFamily;
+            double uiFontSize;
 
-            table.put("ui-font-family", Optional.ofNullable(config.getUIFontFamily()).orElse("Dialog"));
-            table.put("ui-font-size", config.getUIFontSize());
-            table.put("text-font-family", Optional.ofNullable(config.getTextFontFamily()).orElse("Monospaced"));
-            table.put("text-font-size", config.getTextFontSize());
+            String textFontFamily;
+            double textFontSize;
+
+            if ((uiFontFamily = config.getUIFontFamily()) == null) uiFontFamily = Font.getDefault().getFamily();
+            if ((uiFontSize = config.getUIFontSize()) <= 0) uiFontSize = Font.getDefault().getSize();
+
+            if ((textFontFamily = config.getTextFontFamily()) == null) {
+                List<String> families = Font.getFamilies();
+
+                String[] defaultTextFontFamilies = {
+                        "Consolas",
+                        "Source Code Pro",
+                        "Fira Code",
+                        "Ubuntu Mono",
+                        "JetBrains Mono",
+                        "DejaVu Sans Mono"
+                };
+
+                for (String family : defaultTextFontFamilies) {
+                    if (families.contains(family)) {
+                        textFontFamily = family;
+                        break;
+                    }
+                }
+
+                if (textFontFamily == null) textFontFamily = "Monospaced";
+            }
+            if ((textFontSize = config.getTextFontSize()) <= 0) textFontSize = Double.max(16, uiFontSize);
+
+            LOGGER.config("UI Font Family: " + uiFontFamily);
+            LOGGER.config("UI Font Size: " + uiFontSize);
+            LOGGER.config("Text Font Family: " + textFontFamily);
+            LOGGER.config("Text Font Size: " + textFontSize);
+
+            table.put("ui-font-family", uiFontFamily);
+            table.put("ui-font-size", uiFontSize);
+            table.put("text-font-family", textFontFamily);
+            table.put("text-font-size", textFontSize);
 
             //noinspection ConstantConditions
             try (Reader input = new InputStreamReader(Main.class.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8);

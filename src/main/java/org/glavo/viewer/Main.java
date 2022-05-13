@@ -24,54 +24,6 @@ public final class Main extends Application {
     @Override
     public void init() throws Exception {
         app = this;
-
-        Config config = Config.getConfig();
-        Set<String> fonts = null;
-        if (config.getUIFontFamily() == null) {
-            fonts = new HashSet<>(Font.getFamilies());
-
-            String[] defaultUIFontFamilies = {
-                    "PingFang SC",
-                    "Microsoft YaHei UI",
-                    "Ubuntu",
-                    "Segoe UI"
-            };
-
-            for (String font : defaultUIFontFamilies) {
-                if (fonts.contains(font)) {
-                    config.setUIFontFamily(font);
-                    break;
-                }
-            }
-        }
-
-        if (config.getUIFontSize() <= 0) {
-            config.setUIFontSize(14);
-        }
-
-        if (config.getTextFontFamily() == null) {
-            if (fonts == null) {
-                fonts = new HashSet<>(Font.getFamilies());
-            }
-
-            String[] defaultTextFontFamilies = {
-                    "Consolas",
-                    "Source Code Pro",
-                    "Fira Code",
-                    "DejaVu Sans Mono"
-            };
-
-            for (String font : defaultTextFontFamilies) {
-                if (fonts.contains(font)) {
-                    config.setTextFontFamily(font);
-                    break;
-                }
-            }
-        }
-
-        if (config.getTextFontSize() <= 0) {
-            config.setTextFontSize(16);
-        }
     }
 
     @Override

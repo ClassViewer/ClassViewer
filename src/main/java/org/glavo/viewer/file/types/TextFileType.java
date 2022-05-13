@@ -6,22 +6,10 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import jdk.jpackage.internal.IOUtils;
-import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileStub;
-import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.TaskUtils;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
 
 public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
@@ -112,7 +100,9 @@ public class TextFileType extends CustomFileType {
         Task<Node> task = new Task<Node>() {
             @Override
             protected Node call() throws Exception {
-                return new TextArea(new String(stub.readAllBytes()));
+                TextArea area = new TextArea(new String(stub.readAllBytes()));
+                //area.getStyleClass().add("mono");
+                return area;
             }
 
             @Override
