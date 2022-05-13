@@ -1,6 +1,7 @@
 package org.glavo.viewer.ui;
 
 import javafx.collections.ObservableList;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
@@ -11,6 +12,7 @@ import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.CustomFileType;
 import org.glavo.viewer.file.types.FolderType;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.HexText;
 
 import java.util.logging.Level;
@@ -60,7 +62,7 @@ public class FileTreeView extends TreeView<String> {
         }
     }
 
-    private static final class FileTreeItem extends TreeItem<String> {
+    public static final class FileTreeItem extends TreeItem<String> {
         private final FileTree fileTree;
 
         public FileTreeItem(FileTree fileTree) {
@@ -113,6 +115,30 @@ public class FileTreeView extends TreeView<String> {
             }
 
             return super.getChildren();
+        }
+    }
+
+    public static final class LoadingItem extends TreeItem<String> {
+        public LoadingItem() {
+            ProgressIndicator indicator = new ProgressIndicator();
+            indicator.setPrefSize(16, 16);
+            this.setGraphic(indicator);
+        }
+
+        public LoadingItem(String value) {
+            this();
+            this.setValue(value);
+        }
+    }
+
+    public static final class FailedItem extends TreeItem<String> {
+        public FailedItem() {
+            this.setGraphic(new ImageView(Images.failed));
+        }
+
+        public FailedItem(String value) {
+            this();
+            this.setValue(value);
         }
     }
 }

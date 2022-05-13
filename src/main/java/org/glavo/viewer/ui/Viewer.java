@@ -7,8 +7,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
@@ -21,6 +23,7 @@ import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.SilentlyCloseable;
 import org.glavo.viewer.util.Stylesheet;
+import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
@@ -184,7 +187,34 @@ public final class Viewer {
                 FileTree.RootNode root = new FileTree.RootNode(type, path);
                 FileTree.buildFileTree(handle.getContainer(), root);
 
-                pane.getFileTreeView().getRoot().getChildren().add(FileTreeView.fromTree(root));
+                ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
+
+                FileTreeView.LoadingItem loadingItem = new FileTreeView.LoadingItem(root.getText());
+                treeItems.add(loadingItem);
+
+                TaskUtils.submit(new Task<TreeItem<String>>() {
+                    @Override
+                    protected TreeItem<String> call() throws Exception {
+                        return FileTreeView.fromTree(root);
+                    }
+
+                    @Override
+                    protected void succeeded() {
+                        int idx = treeItems.indexOf(loadingItem);
+                        if (idx < 0) throw new AssertionError();
+
+                        treeItems.set(idx, getValue());
+                    }
+
+                    @Override
+                    protected void failed() {
+                        int idx = treeItems.indexOf(loadingItem);
+                        if (idx < 0) throw new AssertionError();
+
+                        treeItems.set(idx, new FileTreeView.FailedItem(root.getText()));
+                    }
+                });
+
             } else if (type instanceof CustomFileType) {
                 FileStub stub = null;
                 try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
