@@ -185,10 +185,6 @@ public final class Viewer {
 
                 pane.getFileTreeView().getRoot().getChildren().add(FileTreeView.fromTree(root));
 
-            } else if (type instanceof TextFileType) {
-                throw new UnsupportedOperationException(); // TODO
-            } else if (type instanceof BinaryFileType) {
-                throw new UnsupportedOperationException(); // TODO
             } else if (type instanceof CustomFileType) {
                 throw new UnsupportedOperationException(); // TODO
             } else {

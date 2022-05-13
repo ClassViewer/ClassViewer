@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-public class TextFileType extends FileType {
+public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
 
     protected TextFileType() {

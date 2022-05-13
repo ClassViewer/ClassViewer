@@ -5,7 +5,7 @@ import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.resources.Images;
 
-public class BinaryFileType extends FileType {
+public class BinaryFileType extends CustomFileType {
     public static final BinaryFileType TYPE = new BinaryFileType();
 
     public BinaryFileType() {

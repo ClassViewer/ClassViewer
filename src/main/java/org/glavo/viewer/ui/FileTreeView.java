@@ -9,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 import org.glavo.viewer.file.*;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.file.types.CustomFileType;
 import org.glavo.viewer.file.types.FolderType;
 import org.glavo.viewer.util.HexText;
 
@@ -53,25 +54,10 @@ public class FileTreeView extends TreeView<String> {
             FileTreeItem item = ((FileTreeItem) it);
 
             FileTree node = ((FileTreeItem) it).getFileTree();
-            FileType type = node.getType();
-            FilePath path = node.getPath();
 
-            if (!(type instanceof BinaryFileType)) return;
+            if (!(node.getType() instanceof CustomFileType)) return;
 
-            Container container = Container.getContainerOrNull(path.getParent());
-            if (container == null) return;
-
-            try {
-                try (FileHandle handle = new FileHandle(container.getStub(path))) {
-                    FileTab tab = new FileTab(type, path);
-                    tab.setContent(new HexPane(new HexText(handle.readAllBytes())));
-
-                    viewer.getPane().getFilesTabPane().getTabs().add(tab);
-                }
-
-            } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "", e); // TODO
-            }
+            viewer.open(node.getPath());
         }
     }
 
@@ -101,7 +87,6 @@ public class FileTreeView extends TreeView<String> {
                     isLeaf = !(type instanceof ContainerFileType);
                 }
             }
-
             return isLeaf;
         }
 
