@@ -184,8 +184,8 @@ public final class Viewer {
                 ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
                 resource = handle;
 
+
                 FileTree.RootNode root = new FileTree.RootNode(type, path);
-                FileTree.buildFileTree(handle.getContainer(), root);
 
                 ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
 
@@ -195,6 +195,7 @@ public final class Viewer {
                 TaskUtils.submit(new Task<TreeItem<String>>() {
                     @Override
                     protected TreeItem<String> call() throws Exception {
+                        FileTree.buildFileTree(handle.getContainer(), root);
                         return FileTreeView.fromTree(root);
                     }
 
