@@ -3,9 +3,9 @@ package org.glavo.viewer.file.types;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.glavo.viewer.file.FilePath;
@@ -109,17 +109,13 @@ public class TextFileType extends CustomFileType {
                 CodeArea area = new CodeArea();
                 area.getStylesheets().clear();
                 area.setParagraphGraphicFactory(LineNumberFactory.get(area));
-                area.setEditable(false);
-
+                //area.setEditable(false);
                 applyHighlighter(area);
 
                 area.replaceText(new String(stub.readAllBytes()));
                 area.scrollToPixel(0, 0);
 
-
-
-                //area.getStyleClass().add("mono");
-                return area;
+                return new VirtualizedScrollPane<>(area);
             }
 
             @Override
