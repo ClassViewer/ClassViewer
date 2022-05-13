@@ -7,7 +7,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
-import kala.tuple.Tuple2;
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.Imaging;
@@ -40,6 +39,7 @@ public class ImageFileType extends CustomFileType {
             case "jpeg":
             case "webp":
             case "ico":
+            case "cur":
                 return true;
         }
 
