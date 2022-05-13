@@ -9,6 +9,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
@@ -17,6 +18,7 @@ import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.TaskUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -57,15 +59,24 @@ public class ImageFileType extends CustomFileType {
 
             @Override
             protected ImageView call() throws Exception {
-                byte[] bytes = handle.readAllBytes();
+                byte[] bytes;
+                try {
+                    bytes = handle.readAllBytes();
+                } finally {
+                    handle.close();
+                }
 
                 try {
                     infoTable = new ImageInfoTable(Imaging.getImageInfo(bytes));
                 } catch (Throwable e) {
                     LOGGER.log(Level.WARNING, "Failed to read image information", e);
                 }
+                Image image = new Image(new ByteArrayInputStream(bytes));
+                if (image.isError()) {
+                    throw new ImageReadException("Failed to read image");
+                }
 
-                return new ImageView(new Image(new ByteArrayInputStream(bytes)));
+                return new ImageView(image);
             }
 
             @Override
@@ -78,8 +89,13 @@ public class ImageFileType extends CustomFileType {
 
             @Override
             protected void failed() {
-                handle.close();
-                throw new UnsupportedOperationException(getException()); // TODO
+                LOGGER.log(Level.WARNING, "Failed to read image", getException());
+                if (getException() instanceof ImageReadException) {
+                    res.setContent(new StackPane(new Label(I18N.getString("image.unsupported"))));
+                } else {
+                    res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
+                }
+                res.setSideBar(null);
             }
         };
 

@@ -129,6 +129,7 @@ public class TextFileType extends CustomFileType {
                 d.dataEnd();
 
                 charset = Charsets.toCharset(d.getDetectedCharset(), StandardCharsets.UTF_8);
+                if (charset == StandardCharsets.US_ASCII) charset = StandardCharsets.UTF_8;
 
                 CodeArea area = new CodeArea();
                 area.getStylesheets().clear();
