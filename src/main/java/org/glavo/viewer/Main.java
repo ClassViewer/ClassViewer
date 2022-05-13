@@ -7,6 +7,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.util.FileUtils;
+import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.util.HashSet;
@@ -110,6 +111,7 @@ public final class Main extends Application {
         }
 
         FileUtils.ioThread.shutdown();
+        TaskUtils.taskPool.shutdown();
 
         app = null;
     }
