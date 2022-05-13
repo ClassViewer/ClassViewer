@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -41,7 +42,7 @@ public final class Config {
     private final StringProperty textFontFamily = new SimpleStringProperty();
     private final DoubleProperty textFontSize = new SimpleDoubleProperty(-1);
 
-    private final ObservableList<FilePath> recentFiles = FXCollections.observableList(new ArrayList<>());
+    private final ObservableList<FilePath> recentFiles = FXCollections.observableList(new LinkedList<>());
 
     private static Config config;
 
@@ -257,10 +258,10 @@ public final class Config {
         synchronized (files) {
             files.remove(path);
             if (files.size() == RECENT_FILES_LIMIT) {
-                files.remove(0);
+                files.remove(files.size() - 1);
             }
 
-            files.add(path);
+            files.add(0, path);
         }
     }
 }

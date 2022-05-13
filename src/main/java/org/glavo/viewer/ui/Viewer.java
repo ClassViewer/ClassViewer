@@ -9,6 +9,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -22,6 +24,7 @@ import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -56,6 +59,30 @@ public final class Viewer {
         }
 
         scene.getStylesheets().setAll(Stylesheet.getStylesheets());
+
+        scene.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            } else {
+                event.consume();
+            }
+        });
+        // Dropping over surface
+        scene.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasFiles()) {
+                success = true;
+                for (File file : db.getFiles()) {
+                    if (file.exists()) {
+                        open(FilePath.ofJavaPath(file.toPath(), file.isDirectory()));
+                    }
+                }
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
 
         stage.setScene(scene);
         stage.getIcons().setAll(Images.logo32, Images.logo16);
