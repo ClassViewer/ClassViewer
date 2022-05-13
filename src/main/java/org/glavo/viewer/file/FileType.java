@@ -92,6 +92,7 @@ public abstract class FileType {
         static final List<FileType> extTypes = Collections.unmodifiableList(Arrays.asList(
                 JImageFileType.TYPE,
                 ArchiveFileType.TYPE,
+                TarFileType.TYPE,
 
                 ManifestFileType.TYPE,
                 PropertiesFileType.TYPE,
