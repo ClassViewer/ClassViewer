@@ -1,7 +1,6 @@
 package org.glavo.viewer.ui;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
@@ -17,9 +16,9 @@ import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public class FileTreeView extends TreeView<FileTree> {
-    public static TreeItem<FileTree> fromTree(FileTree node) {
-        TreeItem<FileTree> item = new Node(node);
+public class FileTreeView extends TreeView<String> {
+    public static TreeItem<String> fromTree(FileTree node) {
+        TreeItem<String> item = new FileTreeItem(node);
 
         for (FileTree child : node.getChildren()) {
             item.getChildren().add(fromTree(child));
@@ -27,17 +26,19 @@ public class FileTreeView extends TreeView<FileTree> {
         return item;
     }
 
-    public static void updateSubTree(TreeItem<FileTree> tree) {
-        for (FileTree child : tree.getValue().getChildren()) {
-            tree.getChildren().add(fromTree(child));
+    public static void updateSubTree(TreeItem<String> tree) {
+        if (tree instanceof FileTreeItem) {
+            for (FileTree child : ((FileTreeItem) tree).getFileTree().getChildren()) {
+                tree.getChildren().add(fromTree(child));
+            }
         }
+
     }
 
     private final Viewer viewer;
 
     public FileTreeView(Viewer viewer) {
         this.viewer = viewer;
-        this.setCellFactory(view -> new Cell());
         this.setOnMouseClicked(this::onMouseClicked);
 
         this.setRoot(new TreeItem<>());
@@ -46,10 +47,12 @@ public class FileTreeView extends TreeView<FileTree> {
 
     private void onMouseClicked(MouseEvent event) {
         if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
-            TreeItem<FileTree> item = getSelectionModel().getSelectedItem();
-            if (item == null) return;
+            TreeItem<String> it = getSelectionModel().getSelectedItem();
+            if (!(it instanceof FileTreeItem)) return;
 
-            FileTree node = item.getValue();
+            FileTreeItem item = ((FileTreeItem) it);
+
+            FileTree node = ((FileTreeItem) it).getFileTree();
             FileType type = node.getType();
             FilePath path = node.getPath();
 
@@ -72,26 +75,18 @@ public class FileTreeView extends TreeView<FileTree> {
         }
     }
 
-    private static final class Cell extends TreeCell<FileTree> {
-        @Override
-        protected void updateItem(FileTree item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty || item == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                setText(item.getText());
-                setGraphic(new ImageView(item.getType().getImage()));
-            }
-        }
-    }
+    private static final class FileTreeItem extends TreeItem<String> {
+        private final FileTree fileTree;
 
-    private static final class Node extends TreeItem<FileTree> {
-        public Node() {
+        public FileTreeItem(FileTree fileTree) {
+            this.fileTree = fileTree;
+
+            this.setGraphic(new ImageView(fileTree.getType().getImage()));
+            this.setValue(fileTree.getText());
         }
 
-        public Node(FileTree value) {
-            super(value);
+        public FileTree getFileTree() {
+            return fileTree;
         }
 
         private Boolean isLeaf;
@@ -99,7 +94,7 @@ public class FileTreeView extends TreeView<FileTree> {
         @Override
         public boolean isLeaf() {
             if (isLeaf == null) {
-                FileType type = getValue().getType();
+                FileType type = getFileTree().getType();
                 if (type instanceof FolderType) {
                     isLeaf = getChildren().isEmpty();
                 } else {
@@ -110,24 +105,26 @@ public class FileTreeView extends TreeView<FileTree> {
             return isLeaf;
         }
 
-        private boolean needToInit = !(getValue().getType() instanceof FolderType);
+        private boolean needToInit = true;
 
         @Override
-        public ObservableList<TreeItem<FileTree>> getChildren() {
-            if (needToInit && !isLeaf()) {
+        public ObservableList<TreeItem<String>> getChildren() {
+            if (needToInit) {
                 needToInit = false;
-                FileTree node = this.getValue();
-                try {
-                    Container container = Container.getContainer(node.getPath());
-                    FileTree.buildFileTree(container, node);
-                    updateSubTree(this);
-                } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to open container", e);
+                if (!(getFileTree() instanceof FileTree.FolderNode) && !isLeaf()) {
+                    FileTree node = this.getFileTree();
+                    try {
+                        Container container = Container.getContainer(node.getPath());
+                        FileTree.buildFileTree(container, node);
+                        updateSubTree(this);
+                    } catch (Throwable e) {
+                        LOGGER.log(Level.WARNING, "Failed to open container", e);
 
-                }
+                    }
 
-                if (super.getChildren().isEmpty()) {
-                    isLeaf = true;
+                    if (super.getChildren().isEmpty()) {
+                        isLeaf = true;
+                    }
                 }
             }
 
