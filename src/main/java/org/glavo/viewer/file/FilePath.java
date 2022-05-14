@@ -183,20 +183,7 @@ public class FilePath implements Comparable<FilePath> {
         int length = Math.min(thisLength, otherLength);
         for (int i = 0; i < length; i++) {
             int v = this.getPathElements()[i].compareTo(that.getPathElements()[i]);
-            if (v != 0) {
-                if (this.equals(that)) {
-                    System.out.println(this.getPathElements()[i]);
-                    System.out.println(that.getPathElements()[i]);
-
-
-                    System.out.println(this.toDebugString());
-                    System.out.println(that.toDebugString());
-
-                    System.out.println(that.getPathElements()[0]);
-                    System.out.println(that.getPathElements()[0].length());
-                }
-                return v;
-            }
+            if (v != 0) return v;
         }
 
         return Integer.signum(thisLength - otherLength);

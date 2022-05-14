@@ -20,6 +20,15 @@ import java.util.logging.Level;
 import static org.glavo.viewer.util.Logging.LOGGER;
 
 public class FileTreeView extends TreeView<String> {
+    public static TreeItem<String> fromTree(FileTree node, ContainerHandle handle) {
+        FileTreeItem item = new FileTreeItem(node);
+        item.setContainerHandle(handle);
+        for (FileTree child : node.getChildren()) {
+            item.getChildren().add(fromTree(child));
+        }
+        return item;
+    }
+
     public static TreeItem<String> fromTree(FileTree node) {
         TreeItem<String> item = new FileTreeItem(node);
         for (FileTree child : node.getChildren()) {
@@ -30,6 +39,7 @@ public class FileTreeView extends TreeView<String> {
 
     public static void updateSubTree(TreeItem<String> tree) {
         if (tree instanceof FileTreeItem) {
+            tree.getChildren().clear();
             for (FileTree child : ((FileTreeItem) tree).getFileTree().getChildren()) {
                 tree.getChildren().add(fromTree(child));
             }
@@ -64,6 +74,7 @@ public class FileTreeView extends TreeView<String> {
 
     public static final class FileTreeItem extends TreeItem<String> {
         private final FileTree fileTree;
+        private ContainerHandle containerHandle;
 
         public FileTreeItem(FileTree fileTree) {
             this.fileTree = fileTree;
@@ -97,15 +108,15 @@ public class FileTreeView extends TreeView<String> {
         public ObservableList<TreeItem<String>> getChildren() {
             if (needToInit) {
                 needToInit = false;
-                if (!(getFileTree() instanceof FileTree.FolderNode) && !isLeaf()) {
+                if (containerHandle == null && !(getFileTree() instanceof FileTree.FolderNode) && !isLeaf()) {
                     FileTree node = this.getFileTree();
                     try {
                         Container container = Container.getContainer(node.getPath());
+                        containerHandle = new ContainerHandle(container);
                         FileTree.buildFileTree(container, node);
                         updateSubTree(this);
                     } catch (Throwable e) {
                         LOGGER.log(Level.WARNING, "Failed to open container", e);
-
                     }
 
                     if (super.getChildren().isEmpty()) {
@@ -115,6 +126,14 @@ public class FileTreeView extends TreeView<String> {
             }
 
             return super.getChildren();
+        }
+
+        public ContainerHandle getContainerHandle() {
+            return containerHandle;
+        }
+
+        public void setContainerHandle(ContainerHandle containerHandle) {
+            this.containerHandle = containerHandle;
         }
     }
 

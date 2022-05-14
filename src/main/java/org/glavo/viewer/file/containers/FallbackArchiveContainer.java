@@ -1,12 +1,9 @@
 package org.glavo.viewer.file.containers;
 
-import kala.compress.archivers.zip.ZipArchiveEntry;
-import kala.compress.archivers.zip.ZipArchiveReader;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.FileStub;
-import org.glavo.viewer.file.stubs.ArchiveFileStub;
 import org.glavo.viewer.file.stubs.FallbackArchiveFileStub;
 import org.glavo.viewer.util.StringUtils;
 

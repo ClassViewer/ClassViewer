@@ -184,24 +184,23 @@ public final class Viewer {
                 ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
                 resource = handle;
 
-                FileTree.RootNode root = new FileTree.RootNode(type, path);
-
                 ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
 
-                FileTreeView.LoadingItem loadingItem = new FileTreeView.LoadingItem(root.getText());
+                FileTreeView.LoadingItem loadingItem = new FileTreeView.LoadingItem(path.toString());
                 treeItems.add(loadingItem);
 
                 TaskUtils.submit(new Task<TreeItem<String>>() {
                     @Override
                     protected TreeItem<String> call() throws Exception {
+                        FileTree.RootNode root = new FileTree.RootNode(type, path);
                         FileTree.buildFileTree(handle.getContainer(), root);
-                        return FileTreeView.fromTree(root);
+                        return FileTreeView.fromTree(root, handle);
                     }
 
                     @Override
                     protected void succeeded() {
                         int idx = treeItems.indexOf(loadingItem);
-                        if (idx < 0) throw new AssertionError();
+                        assert idx >= 0;
 
                         treeItems.set(idx, getValue());
                     }
@@ -209,9 +208,9 @@ public final class Viewer {
                     @Override
                     protected void failed() {
                         int idx = treeItems.indexOf(loadingItem);
-                        if (idx < 0) throw new AssertionError();
+                        assert idx >= 0;
 
-                        treeItems.set(idx, new FileTreeView.FailedItem(root.getText()));
+                        treeItems.set(idx, new FileTreeView.FailedItem(path.toString()));
                         handle.close();
                     }
                 });
