@@ -17,6 +17,7 @@ buildscript {
 
 plugins {
     java
+    antlr
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("org.glavo.compile-module-info-plugin") version "2.0"
 }
@@ -56,6 +57,15 @@ dependencies {
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
 
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
+
+    val antlrVersion = "4.10.1"
+    implementation("org.antlr:antlr4-runtime:$antlrVersion")
+
+    antlr("org.antlr:antlr4:$antlrVersion")
+}
+
+configurations[JavaPlugin.API_CONFIGURATION_NAME].let { apiConfiguration ->
+    apiConfiguration.setExtendsFrom(apiConfiguration.extendsFrom.filter { it.name != "antlr" })
 }
 
 
@@ -144,7 +154,7 @@ tasks.shadowJar {
         "Main-Class" to viewerMain,
         "Add-Opens" to addOpens.joinToString(" ")
     )
-    minimize()
+    //minimize()
 }
 
 tasks.jar {

@@ -8,12 +8,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.glavo.viewer.file.*;
-import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.CustomFileType;
 import org.glavo.viewer.file.types.FolderType;
 import org.glavo.viewer.resources.Images;
-import org.glavo.viewer.util.HexText;
 
 import java.util.logging.Level;
 
