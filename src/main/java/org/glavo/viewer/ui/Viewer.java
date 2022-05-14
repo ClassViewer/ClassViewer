@@ -184,7 +184,6 @@ public final class Viewer {
                 ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
                 resource = handle;
 
-
                 FileTree.RootNode root = new FileTree.RootNode(type, path);
 
                 ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
@@ -213,6 +212,7 @@ public final class Viewer {
                         if (idx < 0) throw new AssertionError();
 
                         treeItems.set(idx, new FileTreeView.FailedItem(root.getText()));
+                        handle.close();
                     }
                 });
 

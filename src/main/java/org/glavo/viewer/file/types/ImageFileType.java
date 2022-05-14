@@ -94,7 +94,7 @@ public class ImageFileType extends CustomFileType {
                 } else {
                     res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
                 }
-                res.setSideBar(null);
+                res.setSideBar(infoTable);
             }
         };
 

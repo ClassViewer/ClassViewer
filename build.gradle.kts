@@ -56,6 +56,8 @@ dependencies {
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
 
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
+
+    implementation("net.lingala.zip4j:zip4j:2.10.0")
 }
 
 

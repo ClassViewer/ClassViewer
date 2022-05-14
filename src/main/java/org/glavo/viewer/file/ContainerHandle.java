@@ -27,7 +27,12 @@ public class ContainerHandle implements SilentlyCloseable, ForceCloseable {
         this.onForceClose = onForceClose;
     }
 
+    private boolean closed = false;
+
     private synchronized void close(boolean force) {
+        if (closed) return;
+        closed = true;
+
         synchronized (container) {
             if (!container.containerHandles.remove(this)) {
                 throw new AssertionError("handle=" + this);
