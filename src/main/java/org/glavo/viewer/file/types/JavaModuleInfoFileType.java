@@ -33,6 +33,8 @@ public class JavaModuleInfoFileType extends TextFileType {
                 return Stylesheet.CODE_COMMENT_CLASSES;
             case JavaModuleInfoLexer.TERMINATOR:
                 return Stylesheet.CODE_TERMINATOR_CLASSES;
+            case JavaModuleInfoLexer.DELIMITER:
+                return Stylesheet.CODE_DELIMITER_CLASSES;
             case JavaModuleInfoLexer.BRACKETS:
                 return Stylesheet.CODE_BRACKETS_CLASSES;
             default:

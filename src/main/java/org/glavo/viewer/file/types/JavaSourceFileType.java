@@ -36,6 +36,8 @@ public class JavaSourceFileType extends TextFileType {
                 return Stylesheet.CODE_OPERATOR_CLASSES;
             case JavaLexer.TERMINATOR:
                 return Stylesheet.CODE_TERMINATOR_CLASSES;
+            case JavaLexer.DELIMITER:
+                return Stylesheet.CODE_DELIMITER_CLASSES;
             case JavaLexer.NUMBER:
                 return Stylesheet.CODE_NUMBER_CLASSES;
             case JavaLexer.BRACKETS:

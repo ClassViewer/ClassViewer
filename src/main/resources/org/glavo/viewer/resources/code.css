@@ -1,5 +1,5 @@
 .code-keyword {
-    -fx-fill: #000080;
+    -fx-fill: #a46000;
     -fx-font-weight: bold;
 }
 .code-terminator {
@@ -19,8 +19,8 @@
     -fx-fill: #008000;
 }
 .code-comment {
-    -fx-fill: #808080;
+    -fx-fill: grey;
 }
 .code-number {
-    -fx-fill: #0000ff;
+    -fx-fill: red;
 }

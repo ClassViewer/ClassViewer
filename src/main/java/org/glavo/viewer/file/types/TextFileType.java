@@ -128,7 +128,7 @@ public class TextFileType extends CustomFileType {
             area.getStylesheets().add(Stylesheet.getCodeStylesheet());
             area.setStyleSpans(0, computeHighlighting(area.getText()));
             area.multiPlainChanges()
-                    .successionEnds(Duration.ofMillis(250))
+                    .successionEnds(Duration.ofMillis(100))
                     .retainLatestUntilLater(TaskUtils.highlightPool)
                     .supplyTask(() -> TaskUtils.submitHighlightTask(() -> computeHighlighting(area.getText())))
                     .awaitLatest(area.multiPlainChanges())

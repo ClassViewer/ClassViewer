@@ -86,6 +86,7 @@ public final class Stylesheet {
 
     public static final List<String> CODE_KEYWORD_CLASSES = Collections.singletonList("code-keyword");
     public static final List<String> CODE_TERMINATOR_CLASSES = Collections.singletonList("code-terminator");
+    public static final List<String> CODE_DELIMITER_CLASSES = Collections.singletonList("code-delimiter");
     public static final List<String> CODE_BRACKETS_CLASSES = Collections.singletonList("code-brackets");
     public static final List<String> CODE_OPERATOR_CLASSES = Collections.singletonList("code-operator");
     public static final List<String> CODE_STRING_CLASSES = Collections.singletonList("code-string");
