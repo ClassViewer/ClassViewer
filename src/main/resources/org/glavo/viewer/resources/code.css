@@ -1,0 +1,26 @@
+.code-keyword {
+    -fx-fill: #000080;
+    -fx-font-weight: bold;
+}
+.code-terminator {
+    -fx-font-weight: bold;
+}
+.code-delimiter {
+    -fx-font-weight: bold;
+}
+.code-brackets {
+    -fx-fill: #b000b0;
+    -fx-font-weight: bold;
+}
+.code-operator {
+    -fx-font-weight: bold;
+}
+.code-string {
+    -fx-fill: #008000;
+}
+.code-comment {
+    -fx-fill: #808080;
+}
+.code-number {
+    -fx-fill: #0000ff;
+}

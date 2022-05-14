@@ -4,6 +4,7 @@ import javafx.scene.text.Font;
 import kala.template.TemplateEngine;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.Main;
+import org.glavo.viewer.resources.Resources;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -81,5 +82,17 @@ public final class Stylesheet {
             return StringUtils.EMPTY_ARRAY;
         }
 
+    }
+
+    public static final List<String> CODE_KEYWORD_CLASSES = Collections.singletonList("code-keyword");
+    public static final List<String> CODE_TERMINATOR_CLASSES = Collections.singletonList("code-terminator");
+    public static final List<String> CODE_BRACKETS_CLASSES = Collections.singletonList("code-brackets");
+    public static final List<String> CODE_OPERATOR_CLASSES = Collections.singletonList("code-operator");
+    public static final List<String> CODE_STRING_CLASSES = Collections.singletonList("code-string");
+    public static final List<String> CODE_COMMENT_CLASSES = Collections.singletonList("code-comment");
+    public static final List<String> CODE_NUMBER_CLASSES = Collections.singletonList("code-number");
+
+    public static String getCodeStylesheet() {
+        return Resources.class.getResource("code.css").toExternalForm();
     }
 }

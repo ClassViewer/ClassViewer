@@ -102,6 +102,7 @@ public abstract class FileType {
                 HTMLFileType.TYPE,
                 JsonFileType.TYPE,
                 JavaSourceFileType.TYPE,
+                JavaModuleInfoFileType.TYPE,
 
                 JavaClassFileType.TYPE,
 

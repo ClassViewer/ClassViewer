@@ -64,6 +64,7 @@ public final class Main extends Application {
 
         FileUtils.ioThread.shutdown();
         TaskUtils.taskPool.shutdown();
+        TaskUtils.highlightPool.shutdown();
 
         app = null;
     }

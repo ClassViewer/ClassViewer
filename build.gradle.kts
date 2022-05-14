@@ -169,3 +169,7 @@ tasks.create<JavaExec>("run") {
     classpath = files(tasks.shadowJar.get().archiveFile)
     workingDir = rootProject.rootDir
 }
+
+tasks.generateGrammarSource {
+
+}

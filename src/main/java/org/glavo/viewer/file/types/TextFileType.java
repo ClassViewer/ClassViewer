@@ -9,20 +9,37 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import kala.compress.utils.Charsets;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.ui.FileTab;
+import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.TaskUtils;
 import org.mozilla.universalchardet.UniversalDetector;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.logging.Level;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
+
+    protected Function<CharStream, ? extends Lexer> lexerFactory;
 
     protected TextFileType() {
         super("text");
@@ -102,9 +119,51 @@ public class TextFileType extends CustomFileType {
         return false;
     }
 
-    protected void applyHighlighter(CodeArea area) {
-
+    protected Collection<String> getStyleClass(Token token) {
+        throw new UnsupportedOperationException();
     }
+
+    protected void applyHighlighter(CodeArea area) {
+        if (lexerFactory != null) {
+            area.getStylesheets().add(Stylesheet.getCodeStylesheet());
+            area.setStyleSpans(0, computeHighlighting(area.getText()));
+            area.multiPlainChanges()
+                    .successionEnds(Duration.ofMillis(250))
+                    .retainLatestUntilLater(TaskUtils.highlightPool)
+                    .supplyTask(() -> TaskUtils.submitHighlightTask(() -> computeHighlighting(area.getText())))
+                    .awaitLatest(area.multiPlainChanges())
+                    .filterMap(t -> {
+                        if (t.isSuccess()) {
+                            return Optional.of(t.get());
+                        } else {
+                            LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
+                            return Optional.empty();
+                        }
+                    })
+                    .subscribe(h -> area.setStyleSpans(0, h));
+        }
+    }
+
+    private StyleSpans<Collection<String>> computeHighlighting(String text) {
+        Lexer lexer = lexerFactory.apply(CharStreams.fromString(text));
+        lexer.removeErrorListeners();
+
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        int lastKwEnd = 0;
+
+        Token token;
+        while ((token = lexer.nextToken()).getType() != Token.EOF) {
+            int begin = token.getStartIndex();
+            int end = token.getStopIndex() + 1;
+
+            spansBuilder.add(Collections.emptyList(), begin - lastKwEnd);
+            spansBuilder.add(getStyleClass(token), end - begin);
+            lastKwEnd = end;
+        }
+        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        return spansBuilder.create();
+    }
+
 
     private static final ThreadLocal<UniversalDetector> detector = ThreadLocal.withInitial(UniversalDetector::new);
 
@@ -119,6 +178,7 @@ public class TextFileType extends CustomFileType {
 
         Task<Node> task = new Task<Node>() {
             Charset charset;
+
             @Override
             protected Node call() throws Exception {
                 byte[] bytes = handle.readAllBytes();
@@ -135,9 +195,9 @@ public class TextFileType extends CustomFileType {
                 area.getStylesheets().clear();
                 area.setParagraphGraphicFactory(LineNumberFactory.get(area));
                 //area.setEditable(false);
-                applyHighlighter(area);
-
                 area.replaceText(new String(bytes, charset));
+
+                applyHighlighter(area);
                 area.scrollToPixel(0, 0);
 
                 return new VirtualizedScrollPane<>(area);
