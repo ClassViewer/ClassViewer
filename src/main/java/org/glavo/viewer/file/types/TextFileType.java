@@ -21,6 +21,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.highlighter.Highlighter;
+import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.TaskUtils;
@@ -129,7 +130,7 @@ public class TextFileType extends CustomFileType {
             area.getStylesheets().add(Stylesheet.getCodeStylesheet());
             area.setStyleSpans(0, getHighlighter().computeHighlighting(area.getText()));
             area.multiPlainChanges()
-                    .successionEnds(Duration.ofMillis(100))
+                    .successionEnds(Duration.ofMillis(50))
                     .retainLatestUntilLater(TaskUtils.highlightPool)
                     .supplyTask(() -> TaskUtils.submitHighlightTask(() -> getHighlighter().computeHighlighting(area.getText())))
                     .awaitLatest(area.multiPlainChanges())
@@ -192,8 +193,9 @@ public class TextFileType extends CustomFileType {
 
             @Override
             protected void failed() {
+                LOGGER.log(Level.WARNING, "Failed to open file", getException());
+                res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
                 handle.close();
-                throw new UnsupportedOperationException(getException()); // TODO
             }
         };
 
