@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -171,11 +172,11 @@ public class TextFileType extends CustomFileType {
         statusBar.setAlignment(Pos.CENTER_RIGHT);
         res.setStatusBar(statusBar);
 
-        Task<Node> task = new Task<Node>() {
+        Task<CodeArea> task = new Task<CodeArea>() {
             Charset charset;
 
             @Override
-            protected Node call() throws Exception {
+            protected CodeArea call() throws Exception {
                 byte[] bytes = handle.readAllBytes();
 
                 charset = detectFileEncoding(bytes);
@@ -185,16 +186,15 @@ public class TextFileType extends CustomFileType {
                 area.setParagraphGraphicFactory(LineNumberFactory.get(area));
                 //area.setEditable(false);
                 area.replaceText(new String(bytes, charset));
-
                 applyHighlighter(area);
                 area.scrollToPixel(0, 0);
 
-                return new VirtualizedScrollPane<>(area);
+                return area;
             }
 
             @Override
             protected void succeeded() {
-                res.setContent(this.getValue());
+                res.setContent(new VirtualizedScrollPane<>(this.getValue()));
                 statusBar.getChildren().add(new Label(charset.toString()));
                 handle.close();
             }

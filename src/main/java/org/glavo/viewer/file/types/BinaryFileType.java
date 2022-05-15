@@ -2,16 +2,22 @@ package org.glavo.viewer.file.types;
 
 import javafx.concurrent.Task;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.FileTab;
+import org.glavo.viewer.ui.ClassicHexPane;
 import org.glavo.viewer.ui.HexPane;
-import org.glavo.viewer.util.HexText;
 import org.glavo.viewer.util.TaskUtils;
+
+import java.util.logging.Level;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public class BinaryFileType extends CustomFileType {
     public static final BinaryFileType TYPE = new BinaryFileType();
@@ -38,20 +44,23 @@ public class BinaryFileType extends CustomFileType {
         FileTab res = new FileTab(this, handle.getPath());
         res.setContent(new StackPane(new ProgressIndicator()));
 
-        Task<Node> task = new Task<Node>() {
+        Task<HexPane> task = new Task<HexPane>() {
             @Override
-            protected Node call() throws Exception {
-                return new HexPane(handle.readAllBytes());
+            protected HexPane call() throws Exception {
+                return new ClassicHexPane(handle.readAllBytes());
             }
 
             @Override
             protected void succeeded() {
-                res.setContent(this.getValue());
+                res.setContent(this.getValue().getNode());
+                handle.close();
             }
 
             @Override
             protected void failed() {
-                throw new UnsupportedOperationException(getException()); // TODO
+                LOGGER.log(Level.WARNING, "Failed to open file", getException());
+                res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
+                handle.close();
             }
         };
 
