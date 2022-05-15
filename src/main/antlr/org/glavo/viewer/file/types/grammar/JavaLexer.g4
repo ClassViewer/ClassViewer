@@ -92,6 +92,8 @@ KEY_WORD
     | 'volatile'
     | 'while';
 
+VAR: 'var';
+
 NUMBER
     : ('0' | [1-9] (Digits? | '_'+ Digits)) [lL]?
     | '0' [xX] [0-9a-fA-F] ([0-9a-fA-F_]* [0-9a-fA-F])? [lL]?

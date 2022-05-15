@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.Token;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,14 @@ public abstract class LookAheadAntlrLexerHighlighter extends Highlighter {
         Lexer lexer = lexerFactory.apply(CharStreams.fromString(text));
         lexer.removeErrorListeners();
 
-        List<? extends Token> tokens = lexer.getAllTokens();
+        List<Token> tokens = new ArrayList<>();
+        Token t;
+        while ((t = lexer.nextToken()).getType() != Token.EOF) {
+            if (t.getChannel() == Token.DEFAULT_CHANNEL) {
+                tokens.add(t);
+            }
+        }
+
         IntFunction<Token> lookahead = idx -> idx < 0 || idx >= tokens.size() ? null : tokens.get(idx);
 
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
