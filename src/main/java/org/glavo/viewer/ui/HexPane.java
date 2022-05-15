@@ -15,8 +15,8 @@ public class HexPane extends ScrollPane {
     private final TextArea textArea2;
     private final TextArea textArea3;
 
-    public HexPane(HexText hex) {
-        this.hex = hex;
+    public HexPane(byte[] array) {
+        this.hex = new HexText(array);
         textArea1 = new TextArea(hex.rowHeaderText);
         textArea2 = new TextArea(hex.bytesText);
         textArea3 = new TextArea(hex.asciiString);

@@ -41,7 +41,7 @@ public class BinaryFileType extends CustomFileType {
         Task<Node> task = new Task<Node>() {
             @Override
             protected Node call() throws Exception {
-                return new HexPane(new HexText(handle.readAllBytes()));
+                return new HexPane(handle.readAllBytes());
             }
 
             @Override
