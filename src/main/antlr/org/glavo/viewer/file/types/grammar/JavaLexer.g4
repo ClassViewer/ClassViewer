@@ -30,7 +30,7 @@
 lexer grammar JavaLexer;
 
 @header {
-package org.glavo.viewer.file.types.lexer;
+package org.glavo.viewer.file.types.grammar;
 }
 
 KEY_WORD

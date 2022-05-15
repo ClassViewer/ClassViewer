@@ -2,25 +2,36 @@
     -fx-fill: #a46000;
     -fx-font-weight: bold;
 }
+
 .code-terminator {
     -fx-font-weight: bold;
 }
+
 .code-delimiter {
     -fx-font-weight: bold;
 }
+
 .code-brackets {
     -fx-fill: #b000b0;
     -fx-font-weight: bold;
 }
+
 .code-operator {
     -fx-font-weight: bold;
 }
+
 .code-string {
     -fx-fill: #008000;
 }
+
 .code-comment {
     -fx-fill: grey;
 }
+
 .code-number {
     -fx-fill: red;
+}
+
+.code-property-key {
+    -fx-fill: #002697;
 }

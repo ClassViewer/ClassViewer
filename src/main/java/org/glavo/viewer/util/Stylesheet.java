@@ -92,6 +92,7 @@ public final class Stylesheet {
     public static final List<String> CODE_STRING_CLASSES = Collections.singletonList("code-string");
     public static final List<String> CODE_COMMENT_CLASSES = Collections.singletonList("code-comment");
     public static final List<String> CODE_NUMBER_CLASSES = Collections.singletonList("code-number");
+    public static final List<String> CODE_PROPERTY_KEY = Collections.singletonList("code-property-key");
 
     public static String getCodeStylesheet() {
         return Resources.class.getResource("code.css").toExternalForm();

@@ -20,6 +20,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.highlighter.Highlighter;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.TaskUtils;
@@ -39,7 +40,7 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
 
-    protected Function<CharStream, ? extends Lexer> lexerFactory;
+    protected Highlighter highlighter;
 
     protected TextFileType() {
         super("text");
@@ -51,6 +52,10 @@ public class TextFileType extends CustomFileType {
 
     protected TextFileType(String name, Image image) {
         super(name, image);
+    }
+
+    public Highlighter getHighlighter() {
+        return highlighter;
     }
 
     @Override
@@ -119,18 +124,14 @@ public class TextFileType extends CustomFileType {
         return false;
     }
 
-    protected Collection<String> getStyleClass(Token token) {
-        throw new UnsupportedOperationException();
-    }
-
     protected void applyHighlighter(CodeArea area) {
-        if (lexerFactory != null) {
+        if (highlighter != null) {
             area.getStylesheets().add(Stylesheet.getCodeStylesheet());
-            area.setStyleSpans(0, computeHighlighting(area.getText()));
+            area.setStyleSpans(0, getHighlighter().computeHighlighting(area.getText()));
             area.multiPlainChanges()
                     .successionEnds(Duration.ofMillis(100))
                     .retainLatestUntilLater(TaskUtils.highlightPool)
-                    .supplyTask(() -> TaskUtils.submitHighlightTask(() -> computeHighlighting(area.getText())))
+                    .supplyTask(() -> TaskUtils.submitHighlightTask(() -> getHighlighter().computeHighlighting(area.getText())))
                     .awaitLatest(area.multiPlainChanges())
                     .filterMap(t -> {
                         if (t.isSuccess()) {
@@ -143,27 +144,6 @@ public class TextFileType extends CustomFileType {
                     .subscribe(h -> area.setStyleSpans(0, h));
         }
     }
-
-    private StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Lexer lexer = lexerFactory.apply(CharStreams.fromString(text));
-        lexer.removeErrorListeners();
-
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        int lastKwEnd = 0;
-
-        Token token;
-        while ((token = lexer.nextToken()).getType() != Token.EOF) {
-            int begin = token.getStartIndex();
-            int end = token.getStopIndex() + 1;
-
-            spansBuilder.add(Collections.emptyList(), begin - lastKwEnd);
-            spansBuilder.add(getStyleClass(token), end - begin);
-            lastKwEnd = end;
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
-    }
-
 
     private static final ThreadLocal<UniversalDetector> detector = ThreadLocal.withInitial(UniversalDetector::new);
 
