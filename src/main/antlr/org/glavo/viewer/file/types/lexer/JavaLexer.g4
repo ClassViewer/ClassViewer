@@ -158,7 +158,6 @@ OPERATOR
     | '>>='
     | '>>>='
     | '->'
-    | '::'
     | '@'
     | '...';
 
@@ -172,7 +171,7 @@ ANNOTATION: '@' ID;
 
 IDENTIFIER: ID;
 
-DELIMITER: ',' | '.';
+DELIMITER: ',' | '.' | '::';
 
 IGNORED: [ \t\r\n\u000C]+ -> channel(HIDDEN);
 

@@ -101,6 +101,7 @@ public abstract class FileType {
                 CSSFileType.TYPE,
                 HTMLFileType.TYPE,
                 JsonFileType.TYPE,
+                AyaSourceFileType.TYPE,
                 JavaSourceFileType.TYPE,
                 JavaModuleInfoFileType.TYPE,
 
