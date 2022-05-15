@@ -14,7 +14,7 @@ public class AyaSourceFileType extends TextFileType {
     public static final AyaSourceFileType TYPE = new AyaSourceFileType();
 
     private AyaSourceFileType() {
-        super("aya", TextFileType.TYPE.getImage());
+        super("aya");
         this.forceUTF8 = true;
         this.highlighter = new AntlrLexerHighlighter(AyaLexer::new) {
             @Override
