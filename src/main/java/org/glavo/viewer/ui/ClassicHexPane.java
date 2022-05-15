@@ -18,7 +18,6 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
         textArea2 = new TextArea(hex.bytesText);
         textArea3 = new TextArea(hex.asciiString);
 
-        //textArea1.select
         initTextArea();
 
         HBox hbox = new HBox();

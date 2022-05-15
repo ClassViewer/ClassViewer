@@ -13,6 +13,7 @@ import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.ui.ClassicHexPane;
 import org.glavo.viewer.ui.HexPane;
+import org.glavo.viewer.ui.ModernHexPane;
 import org.glavo.viewer.util.TaskUtils;
 
 import java.util.logging.Level;
@@ -47,7 +48,7 @@ public class BinaryFileType extends CustomFileType {
         Task<HexPane> task = new Task<HexPane>() {
             @Override
             protected HexPane call() throws Exception {
-                return new ClassicHexPane(handle.readAllBytes());
+                return new ModernHexPane(handle.readAllBytes());
             }
 
             @Override
