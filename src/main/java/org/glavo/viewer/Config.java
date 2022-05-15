@@ -2,6 +2,7 @@ package org.glavo.viewer;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
@@ -36,11 +37,11 @@ public final class Config {
     private boolean hasUnknownProperties = false;
 
     private final ObjectProperty<WindowDimension> windowSize = new SimpleObjectProperty<>();
-    private final DoubleProperty dividerPosition = new SimpleDoubleProperty(-1.0);
+    private final DoubleProperty dividerPosition = new SimpleDoubleProperty();
     private final StringProperty uiFontFamily = new SimpleStringProperty();
-    private final DoubleProperty uiFontSize = new SimpleDoubleProperty(-1);
+    private final DoubleProperty uiFontSize = new SimpleDoubleProperty();
     private final StringProperty textFontFamily = new SimpleStringProperty();
-    private final DoubleProperty textFontSize = new SimpleDoubleProperty(-1);
+    private final DoubleProperty textFontSize = new SimpleDoubleProperty();
 
     private final ObservableList<FilePath> recentFiles = FXCollections.observableList(new LinkedList<>());
 
@@ -200,6 +201,7 @@ public final class Config {
     }
 
     @JsonProperty("uiFontFamily")
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public String getUIFontFamily() {
         return uiFontFamily.get();
     }
@@ -213,6 +215,7 @@ public final class Config {
     }
 
     @JsonProperty("uiFontSize")
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public double getUIFontSize() {
         return uiFontSize.get();
     }
@@ -225,6 +228,7 @@ public final class Config {
         return textFontFamily;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public String getTextFontFamily() {
         return textFontFamily.get();
     }
@@ -237,6 +241,7 @@ public final class Config {
         return textFontSize;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public double getTextFontSize() {
         return textFontSize.get();
     }
