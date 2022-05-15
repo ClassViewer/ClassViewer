@@ -7,3 +7,8 @@
     -fx-font-family: ${text-font-family};
     -fx-font-size: ${text-font-size};
 }
+
+.tab-pane {
+    -fx-open-tab-animation: NONE;
+    -fx-close-tab-animation: NONE;
+}

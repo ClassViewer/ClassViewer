@@ -42,6 +42,7 @@ public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
 
     protected Highlighter highlighter;
+    protected boolean forceUTF8 = false;
 
     protected TextFileType() {
         super("text");
@@ -125,6 +126,19 @@ public class TextFileType extends CustomFileType {
         return false;
     }
 
+    protected Charset detectFileEncoding(byte[] bytes) {
+        if (forceUTF8) {
+            return StandardCharsets.UTF_8;
+        }
+        UniversalDetector d = detector.get();
+        d.reset();
+        d.handleData(bytes, 0, Integer.min(8192, bytes.length));
+        d.dataEnd();
+
+        Charset charset = Charsets.toCharset(d.getDetectedCharset(), StandardCharsets.UTF_8);
+        return charset == StandardCharsets.US_ASCII ? StandardCharsets.UTF_8 : charset;
+    }
+
     protected void applyHighlighter(CodeArea area) {
         if (highlighter != null) {
             area.getStylesheets().add(Stylesheet.getCodeStylesheet());
@@ -164,13 +178,7 @@ public class TextFileType extends CustomFileType {
             protected Node call() throws Exception {
                 byte[] bytes = handle.readAllBytes();
 
-                UniversalDetector d = detector.get();
-                d.reset();
-                d.handleData(bytes, 0, Integer.min(8192, bytes.length));
-                d.dataEnd();
-
-                charset = Charsets.toCharset(d.getDetectedCharset(), StandardCharsets.UTF_8);
-                if (charset == StandardCharsets.US_ASCII) charset = StandardCharsets.UTF_8;
+                charset = detectFileEncoding(bytes);
 
                 CodeArea area = new CodeArea();
                 area.getStylesheets().clear();
