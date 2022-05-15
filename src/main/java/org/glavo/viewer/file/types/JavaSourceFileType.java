@@ -2,14 +2,12 @@ package org.glavo.viewer.file.types;
 
 import org.antlr.v4.runtime.Token;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.highlighter.AntlrLexerHighlighter;
-import org.glavo.viewer.file.highlighter.LookAheadAntlrLexerHighlighter;
+import org.glavo.viewer.file.highlighter.LookNextAntlrLexerHighlighter;
 import org.glavo.viewer.file.types.grammar.JavaLexer;
 import org.glavo.viewer.util.Stylesheet;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.IntFunction;
 
 public class JavaSourceFileType extends TextFileType {
 
@@ -17,12 +15,11 @@ public class JavaSourceFileType extends TextFileType {
 
     private JavaSourceFileType() {
         super("java");
-        this.highlighter = new LookAheadAntlrLexerHighlighter(JavaLexer::new) {
+        this.highlighter = new LookNextAntlrLexerHighlighter(JavaLexer::new) {
             @Override
-            protected Collection<String> getStyleClass(Token token, int tokenIndex, IntFunction<Token> lookahead) {
+            protected Collection<String> getStyleClass(Token token, Token nextToken) {
                 switch (token.getType()) {
                     case JavaLexer.VAR:
-                        Token nextToken = lookahead.apply(tokenIndex + 1);
                         if (nextToken == null || nextToken.getType() != JavaLexer.IDENTIFIER) {
                             return Collections.emptyList();
                         }
