@@ -18,6 +18,7 @@ import org.glavo.viewer.file.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.DaemonThreadFactory;
+import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.TaskUtils;
 import org.mozilla.universalchardet.UniversalDetector;
@@ -41,7 +42,7 @@ public class TextFileType extends CustomFileType {
 
     protected Highlighter highlighter;
     protected boolean forceUTF8 = false;
-    protected int realtimeHighlightThreshold = 32 * 1024 * 1024; // 32 MiB
+    protected int realtimeHighlightThreshold = (int) FileUtils.SMALL_FILE_LIMIT;
 
     protected TextFileType() {
         super("text");
@@ -145,7 +146,7 @@ public class TextFileType extends CustomFileType {
             EventStream<List<PlainTextChange>> multiPlainChanges = area.multiPlainChanges();
 
             // Real-time highlighting for small files;
-            // If the file is too large, highlight it without modification within three seconds,
+            // If the file is too large, highlight it without modification within a second,
             // and use a separate thread pool to prevent the highlighting thread from blocking.
             if (area.getText().length() <= realtimeHighlightThreshold) {
                 multiPlainChanges
@@ -164,7 +165,7 @@ public class TextFileType extends CustomFileType {
             } else {
                 ExecutorService pool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("Highlight[" + tab.getPath() + "]"));
                 multiPlainChanges
-                        .successionEnds(Duration.ofSeconds(3))
+                        .successionEnds(Duration.ofSeconds(1))
                         .retainLatestUntilLater(pool)
                         .supplyTask(() -> TaskUtils.submit(pool, () -> getHighlighter().computeHighlighting(area.getText())))
                         .awaitLatest(multiPlainChanges)
