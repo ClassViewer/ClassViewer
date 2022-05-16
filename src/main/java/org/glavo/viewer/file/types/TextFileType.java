@@ -1,40 +1,35 @@
 package org.glavo.viewer.file.types;
 
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import kala.compress.utils.Charsets;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Token;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.fxmisc.richtext.model.PlainTextChange;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
+import org.glavo.viewer.util.DaemonThreadFactory;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.TaskUtils;
 import org.mozilla.universalchardet.UniversalDetector;
+import org.reactfx.EventStream;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -42,8 +37,11 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
 
+    public static final ExecutorService highlightPool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("highlight-common"));
+
     protected Highlighter highlighter;
     protected boolean forceUTF8 = false;
+    protected int realtimeHighlightThreshold = 32 * 1024 * 1024; // 32 MiB
 
     protected TextFileType() {
         super("text");
@@ -140,23 +138,48 @@ public class TextFileType extends CustomFileType {
         return charset == StandardCharsets.US_ASCII ? StandardCharsets.UTF_8 : charset;
     }
 
-    protected void applyHighlighter(CodeArea area) {
+    protected void applyHighlighter(FileTab tab, CodeArea area) {
         if (highlighter != null) {
             area.getStylesheets().add(Stylesheet.getCodeStylesheet());
             area.setStyleSpans(0, getHighlighter().computeHighlighting(area.getText()));
-            area.multiPlainChanges()
-                    .retainLatestUntilLater(TaskUtils.highlightPool)
-                    .supplyTask(() -> TaskUtils.submitHighlightTask(() -> getHighlighter().computeHighlighting(area.getText())))
-                    .awaitLatest(area.multiPlainChanges())
-                    .filterMap(t -> {
-                        if (t.isSuccess()) {
-                            return Optional.of(t.get());
-                        } else {
-                            LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
-                            return Optional.empty();
-                        }
-                    })
-                    .subscribe(h -> area.setStyleSpans(0, h));
+            EventStream<List<PlainTextChange>> multiPlainChanges = area.multiPlainChanges();
+
+            // Real-time highlighting for small files;
+            // If the file is too large, highlight it without modification within three seconds,
+            // and use a separate thread pool to prevent the highlighting thread from blocking.
+            if (area.getText().length() <= realtimeHighlightThreshold) {
+                multiPlainChanges
+                        .retainLatestUntilLater(highlightPool)
+                        .supplyTask(() -> TaskUtils.submit(highlightPool, () -> getHighlighter().computeHighlighting(area.getText())))
+                        .awaitLatest(multiPlainChanges)
+                        .filterMap(t -> {
+                            if (t.isSuccess()) {
+                                return Optional.of(t.get());
+                            } else {
+                                LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
+                                return Optional.empty();
+                            }
+                        })
+                        .subscribe(h -> area.setStyleSpans(0, h));
+            } else {
+                ExecutorService pool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("Highlight[" + tab.getPath() + "]"));
+                multiPlainChanges
+                        .successionEnds(Duration.ofSeconds(3))
+                        .retainLatestUntilLater(pool)
+                        .supplyTask(() -> TaskUtils.submit(pool, () -> getHighlighter().computeHighlighting(area.getText())))
+                        .awaitLatest(multiPlainChanges)
+                        .filterMap(t -> {
+                            if (t.isSuccess()) {
+                                return Optional.of(t.get());
+                            } else {
+                                LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
+                                return Optional.empty();
+                            }
+                        })
+                        .subscribe(h -> area.setStyleSpans(0, h));
+
+                tab.setOnClosed(event -> pool.shutdown());
+            }
         }
     }
 
@@ -185,7 +208,7 @@ public class TextFileType extends CustomFileType {
                 area.setParagraphGraphicFactory(LineNumberFactory.get(area));
                 //area.setEditable(false);
                 area.replaceText(new String(bytes, charset));
-                applyHighlighter(area);
+                applyHighlighter(res, area);
                 area.scrollToPixel(0, 0);
 
                 return area;
