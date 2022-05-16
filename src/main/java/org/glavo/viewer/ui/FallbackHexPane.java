@@ -1,9 +1,10 @@
 package org.glavo.viewer.ui;
 
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
 import org.glavo.viewer.util.HexText;
 
 public class FallbackHexPane extends StackPane implements HexPane {
@@ -13,10 +14,17 @@ public class FallbackHexPane extends StackPane implements HexPane {
         area = new CodeArea();
 
         area.getStylesheets().clear();
-        area.setParagraphGraphicFactory(LineNumberFactory.get(area, i -> "%08X"));
+        area.setParagraphGraphicFactory(idx -> {
+            String text = String.format("%08X ", idx);
+            Label label = new Label(text);
+            label.getStyleClass().add("mono");
+            label.setTextFill(Color.GREY);
+            return label;
+        });
         area.setEditable(false);
         String text = new HexText(array).bytesText;
-        area.replaceText(text);area.scrollToPixel(0, 0);
+        area.replaceText(text);
+        area.scrollToPixel(0, 0);
         VirtualizedScrollPane<CodeArea> scrollPane = new VirtualizedScrollPane<>(area);
         this.getChildren().add(scrollPane);
     }
