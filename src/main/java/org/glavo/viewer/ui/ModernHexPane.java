@@ -1,6 +1,5 @@
 package org.glavo.viewer.ui;
 
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
@@ -13,6 +12,10 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.glavo.viewer.util.HexText;
 
+
+/*
+ * WIP
+ */
 public class ModernHexPane extends StackPane implements HexPane {
     private final CodeArea bytesArea;
     private final CodeArea asciiArea;

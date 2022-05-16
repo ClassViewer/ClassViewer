@@ -53,7 +53,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
 
-    implementation("org.fxmisc.richtext:richtextfx:0.10.9")
+    implementation("org.fxmisc.richtext:richtextfx:0.10.8")
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
 
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
@@ -82,8 +82,8 @@ sourceSets {
 }
 
 tasks.compileJava {
-    sourceCompatibility = "9"
-    targetCompatibility = "9"
+    sourceCompatibility = "8"
+    targetCompatibility = "8"
     options.encoding = "UTF-8"
 }
 
