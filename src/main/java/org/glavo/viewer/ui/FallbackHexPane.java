@@ -23,13 +23,7 @@ public class FallbackHexPane extends StackPane implements HexPane {
 
     @Override
     public void select(int offset, int length) {
-        area.selectRange(calcBytesTextPosition(offset), calcBytesTextPosition(offset + length) - 1);
+        area.selectRange(HexText.calcBytesTextPosition(offset), HexText.calcBytesTextPosition(offset + length) - 1);
     }
 
-    private static int calcBytesTextPosition(int byteOffset) {
-        int rowIndex = byteOffset / HexText.BYTES_PER_ROW;
-        int colIndex = byteOffset % HexText.BYTES_PER_ROW;
-
-        return (49 * rowIndex) + (colIndex * 3);
-    }
 }

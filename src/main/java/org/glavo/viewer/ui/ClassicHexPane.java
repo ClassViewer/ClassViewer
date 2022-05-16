@@ -43,11 +43,11 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
         int rowIndex = offset / HexText.BYTES_PER_ROW;
         int rows = textArea3.getText().length() / (HexText.BYTES_PER_ROW + 1);
 
-        textArea2.positionCaret(calcBytesTextPosition(offset));
-        textArea2.selectPositionCaret(calcBytesTextPosition(offset + length) - 1);
+        textArea2.positionCaret(HexText.calcBytesTextPosition(offset));
+        textArea2.selectPositionCaret(HexText.calcBytesTextPosition(offset + length) - 1);
 
-        textArea3.positionCaret(calcAsciiTextPosition(offset));
-        textArea3.selectPositionCaret(calcAsciiTextPosition(offset + length));
+        textArea3.positionCaret(HexText.calcAsciiTextPosition(offset));
+        textArea3.selectPositionCaret(HexText.calcAsciiTextPosition(offset + length));
 
         double height = getHeight();
         double textHeight = textArea2.getHeight();
@@ -84,20 +84,6 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
         textArea3.setEditable(false);
 
         textArea1.setStyle("-fx-text-fill: grey;");
-    }
-
-    private int calcBytesTextPosition(int byteOffset) {
-        int rowIndex = byteOffset / HexText.BYTES_PER_ROW;
-        int colIndex = byteOffset % HexText.BYTES_PER_ROW;
-
-        return (49 * rowIndex) + (colIndex * 3);
-    }
-
-    private int calcAsciiTextPosition(int byteOffset) {
-        int rowIndex = byteOffset / HexText.BYTES_PER_ROW;
-        int colIndex = byteOffset % HexText.BYTES_PER_ROW;
-
-        return (17 * rowIndex) + (colIndex);
     }
 
     private void registerAsciiPaneMenu(TextArea area) {

@@ -61,6 +61,20 @@ public class HexText {
         asciiString = formatAsciiText(bytes);
     }
 
+    public static int calcBytesTextPosition(int byteOffset) {
+        int rowIndex = byteOffset / BYTES_PER_ROW;
+        int colIndex = byteOffset % BYTES_PER_ROW;
+
+        return (49 * rowIndex) + (colIndex * 3);
+    }
+
+    public static int calcAsciiTextPosition(int byteOffset) {
+        int rowIndex = byteOffset / BYTES_PER_ROW;
+        int colIndex = byteOffset % BYTES_PER_ROW;
+
+        return (17 * rowIndex) + (colIndex);
+    }
+
     private String formatRowHeader(int length) {
         StringBuilder sb = new StringBuilder((length / BYTES_PER_ROW + 1) * 9);
 
