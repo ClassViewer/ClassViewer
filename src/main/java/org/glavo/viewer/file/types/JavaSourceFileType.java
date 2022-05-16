@@ -20,7 +20,7 @@ public class JavaSourceFileType extends TextFileType {
             protected Collection<String> getStyleClass(Token token, Token nextToken) {
                 switch (token.getType()) {
                     case JavaLexer.VAR:
-                        if (nextToken == null || nextToken.getType() != JavaLexer.IDENTIFIER) {
+                        if (nextToken == null || !(nextToken.getType() == JavaLexer.IDENTIFIER || nextToken.getType() == JavaLexer.VAR)) {
                             return Collections.emptyList();
                         }
                     case JavaLexer.KEY_WORD:

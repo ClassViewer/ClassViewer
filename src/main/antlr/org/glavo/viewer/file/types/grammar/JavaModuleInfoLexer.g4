@@ -15,6 +15,7 @@ KEYWORD
     | 'provides'
     | 'with'
     | 'transitive'
+    | 'static'
     ;
 
 BRACKETS

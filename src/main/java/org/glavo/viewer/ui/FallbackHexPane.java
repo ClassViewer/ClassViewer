@@ -15,7 +15,7 @@ public class FallbackHexPane extends StackPane implements HexPane {
 
         area.getStylesheets().clear();
         area.setParagraphGraphicFactory(idx -> {
-            String text = String.format("%08X ", idx);
+            String text = String.format(" %08X ", idx);
             Label label = new Label(text);
             label.getStyleClass().add("mono");
             label.setTextFill(Color.GREY);
