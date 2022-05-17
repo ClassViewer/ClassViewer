@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -38,11 +39,13 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
 
-    public static final ExecutorService highlightPool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("highlight-common"));
+    public static final ExecutorService highlightPool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("highlighter-common"));
+    private static final AtomicInteger count = new AtomicInteger();
 
     protected Highlighter highlighter;
     protected boolean forceUTF8 = false;
-    protected int realtimeHighlightThreshold = (int) FileUtils.SMALL_FILE_LIMIT;
+    protected long realtimeHighlightThreshold = 1024 * 1024; // 1 MiB
+    protected long sharedThreadPoolThreshold = FileUtils.SMALL_FILE_LIMIT;
 
     protected TextFileType() {
         super("text");
@@ -143,44 +146,42 @@ public class TextFileType extends CustomFileType {
         if (highlighter != null) {
             area.getStylesheets().add(Stylesheet.getCodeStylesheet());
             area.setStyleSpans(0, getHighlighter().computeHighlighting(area.getText()));
+
+            int textLength = area.getText().length();
             EventStream<List<PlainTextChange>> multiPlainChanges = area.multiPlainChanges();
 
-            // Real-time highlighting for small files;
-            // If the file is too large, highlight it without modification within a second,
-            // and use a separate thread pool to prevent the highlighting thread from blocking.
-            if (area.getText().length() <= realtimeHighlightThreshold) {
-                multiPlainChanges
-                        .retainLatestUntilLater(highlightPool)
-                        .supplyTask(() -> TaskUtils.submit(highlightPool, () -> getHighlighter().computeHighlighting(area.getText())))
-                        .awaitLatest(multiPlainChanges)
-                        .filterMap(t -> {
-                            if (t.isSuccess()) {
-                                return Optional.of(t.get());
-                            } else {
-                                LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
-                                return Optional.empty();
-                            }
-                        })
-                        .subscribe(h -> area.setStyleSpans(0, h));
+            ExecutorService pool;
+            if (textLength <= realtimeHighlightThreshold) {
+                pool = TextFileType.highlightPool;
             } else {
-                ExecutorService pool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("Highlight[" + tab.getPath() + "]"));
-                multiPlainChanges
-                        .successionEnds(Duration.ofSeconds(1))
-                        .retainLatestUntilLater(pool)
-                        .supplyTask(() -> TaskUtils.submit(pool, () -> getHighlighter().computeHighlighting(area.getText())))
-                        .awaitLatest(multiPlainChanges)
-                        .filterMap(t -> {
-                            if (t.isSuccess()) {
-                                return Optional.of(t.get());
-                            } else {
-                                LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
-                                return Optional.empty();
-                            }
-                        })
-                        .subscribe(h -> area.setStyleSpans(0, h));
+                pool = Executors.newSingleThreadExecutor(r -> {
+                    Thread t = new Thread(r, "highlighter-" + count.getAndIncrement());
+                    t.setDaemon(true);
+                    LOGGER.info(String.format("Start thread %s to highlight file %s", t.getName(), tab.getPath()));
+                    return t;
+                });
 
                 tab.setOnClosed(event -> pool.shutdown());
             }
+
+            EventStream<List<PlainTextChange>> stream = multiPlainChanges;
+            if (textLength >= realtimeHighlightThreshold) {
+                stream = stream.successionEnds(Duration.ofMillis(250));
+            }
+
+            stream
+                    .retainLatestUntilLater(pool)
+                    .supplyTask(() -> TaskUtils.submit(pool, () -> getHighlighter().computeHighlighting(area.getText())))
+                    .awaitLatest(multiPlainChanges)
+                    .filterMap(t -> {
+                        if (t.isSuccess()) {
+                            return Optional.of(t.get());
+                        } else {
+                            LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
+                            return Optional.empty();
+                        }
+                    })
+                    .subscribe(h -> area.setStyleSpans(0, h));
         }
     }
 
