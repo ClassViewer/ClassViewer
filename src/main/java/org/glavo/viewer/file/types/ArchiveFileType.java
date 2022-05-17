@@ -49,7 +49,7 @@ public final class ArchiveFileType extends ContainerFileType {
             }
 
             // try fallback
-            if (handle.getPath().getParent() == null
+            if (handle.getPath().isLocalFile()
                     && !reader.getEntriesIterator().hasNext()
                     && channel.size() > 22) {
                 ZipFile zf = null;

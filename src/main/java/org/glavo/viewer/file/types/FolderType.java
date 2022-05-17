@@ -28,7 +28,7 @@ public final class FolderType extends ContainerFileType {
     public Container openContainerImpl(FileHandle handle) throws IOException {
         assert handle.getStub() instanceof FolderStub;
         assert handle.getPath().isDirectory();
-        assert handle.getPath().getParent() == null;
+        assert handle.getPath().getParent().isLocalFile();
 
 
         Path p = Paths.get(handle.getPath().toString());

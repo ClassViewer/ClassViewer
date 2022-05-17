@@ -90,6 +90,10 @@ public class FilePath implements Comparable<FilePath> {
         return parent;
     }
 
+    public boolean isLocalFile() {
+        return getParent() == null;
+    }
+
     public FilePath getParentContainerPath() {
         FilePath p;
         do {

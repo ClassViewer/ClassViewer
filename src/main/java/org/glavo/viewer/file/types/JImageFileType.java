@@ -21,12 +21,12 @@ public class JImageFileType extends ContainerFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getParent() == null && path.getFileName().equals("modules");
+        return path.getParent().isLocalFile() && path.getFileName().equals("modules");
     }
 
     @Override
     public Container openContainerImpl(FileHandle handle) throws IOException {
-        assert handle.getPath().getParent() == null;
+        assert handle.getPath().isLocalFile();
 
         return new JImageContainer(handle, ImageReader.open(Paths.get(handle.getPath().getPath())));
     }

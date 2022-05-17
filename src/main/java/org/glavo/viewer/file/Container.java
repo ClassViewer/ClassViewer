@@ -44,9 +44,7 @@ public abstract class Container implements ForceCloseable {
 
             Container container;
 
-            FileHandle handle = new FileHandle(path.getParent() == null
-                    ? RootContainer.CONTAINER.getStub(path)
-                    : getContainer(path.getParent()).getStub(path));
+            FileHandle handle = new FileHandle(getContainer(path.getParent()).getStub(path));
 
             try {
                 container = ct.openContainerImpl(handle);

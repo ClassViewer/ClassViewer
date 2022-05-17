@@ -26,7 +26,7 @@ public class RootContainer extends Container {
 
     @Override
     protected FileStub openFileImpl(FilePath path) throws IOException {
-        assert path.getParent() == null;
+        assert path.isLocalFile();
 
         return new PhysicalFileStub(path);
     }

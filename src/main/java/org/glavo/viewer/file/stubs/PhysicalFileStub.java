@@ -23,7 +23,7 @@ public class PhysicalFileStub extends FileStub {
         super(RootContainer.CONTAINER, path);
         this.file = file;
 
-        assert path.getParent() == null;
+        assert path.getParent().isLocalFile();
     }
 
     @Override
