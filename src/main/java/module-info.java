@@ -11,4 +11,14 @@ module org.glavo.viewer {
     requires kala.common;
 
     requires com.fasterxml.jackson.databind;
+    requires com.github.albfernandez.juniversalchardet;
+    requires org.antlr.antlr4.runtime;
+
+    requires org.fxmisc.richtext;
+    requires reactfx;
+    requires flowless;
+
+    requires flexmark;
+    requires flexmark.util.ast;
+    requires flexmark.util.sequence;
 }

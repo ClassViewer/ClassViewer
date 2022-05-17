@@ -104,6 +104,7 @@ public abstract class FileType {
                 AyaSourceFileType.TYPE,
                 JavaSourceFileType.TYPE,
                 JavaModuleInfoFileType.TYPE,
+                MarkdownFileType.TYPE,
 
                 JavaClassFileType.TYPE,
 

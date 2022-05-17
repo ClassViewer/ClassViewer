@@ -16,6 +16,7 @@ import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
+import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.DaemonThreadFactory;
 import org.glavo.viewer.util.FileUtils;
@@ -38,6 +39,8 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
+
+    public static String codeStylesheet = Resources.class.getResource("stylesheet/code.css").toExternalForm();
 
     public static final ExecutorService highlightPool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("highlighter-common"));
     private static final AtomicInteger count = new AtomicInteger();
@@ -144,7 +147,7 @@ public class TextFileType extends CustomFileType {
 
     protected void applyHighlighter(FileTab tab, CodeArea area) {
         if (highlighter != null) {
-            area.getStylesheets().add(Stylesheet.getCodeStylesheet());
+            area.getStylesheets().add(codeStylesheet);
             area.setStyleSpans(0, getHighlighter().computeHighlighting(area.getText()));
 
             int textLength = area.getText().length();

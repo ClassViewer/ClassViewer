@@ -51,12 +51,13 @@ dependencies {
     implementation("org.glavo:jimage:1.0.0")
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 
     implementation("org.fxmisc.richtext:richtextfx:0.10.8")
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
-
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
+
+    implementation("com.vladsch.flexmark:flexmark:0.64.0")
 
     val antlrVersion = "4.10.1"
     implementation("org.antlr:antlr4-runtime:$antlrVersion")

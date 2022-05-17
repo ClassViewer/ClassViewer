@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class Stylesheet {
-    private static final String STYLE_TEMPLATE = "/org/glavo/viewer/resources/style.css";
+    private static final String STYLE_TEMPLATE = "stylesheet/style.css";
     private static final double DEFAULT_FONT_SIZE = 16;
 
     public static String[] getStylesheets() {
@@ -69,7 +69,7 @@ public final class Stylesheet {
             table.put("text-font-size", textFontSize);
 
             //noinspection ConstantConditions
-            try (Reader input = new InputStreamReader(Main.class.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8);
+            try (Reader input = new InputStreamReader(Resources.class.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8);
                  Writer output = Files.newBufferedWriter(cssFile.toPath())) {
                 TemplateEngine.getDefault()
                         .process(input, output, table);
@@ -93,8 +93,4 @@ public final class Stylesheet {
     public static final List<String> CODE_COMMENT_CLASSES = Collections.singletonList("code-comment");
     public static final List<String> CODE_NUMBER_CLASSES = Collections.singletonList("code-number");
     public static final List<String> CODE_PROPERTY_KEY = Collections.singletonList("code-property-key");
-
-    public static String getCodeStylesheet() {
-        return Resources.class.getResource("code.css").toExternalForm();
-    }
 }

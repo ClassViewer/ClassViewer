@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-public abstract class LookAheadAntlrLexerHighlighter extends Highlighter {
+public abstract class LookAheadAntlrLexerHighlighter implements Highlighter {
     private final Function<CharStream, ? extends Lexer> lexerFactory;
 
     protected LookAheadAntlrLexerHighlighter(Function<CharStream, ? extends Lexer> lexerFactory) {

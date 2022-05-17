@@ -1,0 +1,60 @@
+.h1 {
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+    -fx-fill: #871094;
+}
+
+.h2 {
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
+    -fx-fill: #871094;
+}
+
+.h3 {
+    -fx-font-size: 1.17em;
+    -fx-font-weight: bold;
+    -fx-fill: #871094;
+}
+
+.h4 {
+    -fx-font-weight: bold;
+    -fx-fill: #871094;
+}
+
+.h5 {
+    -fx-font-size: .83em;
+    -fx-font-weight: bold;
+    -fx-fill: #871094;
+}
+
+.h6 {
+    -fx-font-size: .67em;
+    -fx-font-weight: bold;
+    -fx-fill: #871094;
+}
+
+.auto-link {
+    -fx-fill: #006dcc;
+    -fx-underline: true;
+}
+
+.link-text {
+    -fx-fill: #0000ff;
+}
+
+.link-url {
+    -fx-fill: #00627A;
+    -fx-underline: true;
+}
+
+.delimited-marker {
+    -fx-fill: #0033b3;
+}
+
+.bold {
+    -fx-font-weight: bold;
+}
+
+.italic {
+    -fx-font-style: italic;
+}

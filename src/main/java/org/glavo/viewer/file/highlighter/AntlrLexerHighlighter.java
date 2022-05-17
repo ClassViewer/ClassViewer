@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
 
-public abstract class AntlrLexerHighlighter extends Highlighter {
+public abstract class AntlrLexerHighlighter implements Highlighter {
     private final Function<CharStream, ? extends Lexer> lexerFactory;
 
     protected AntlrLexerHighlighter(Function<CharStream, ? extends Lexer> lexerFactory) {
