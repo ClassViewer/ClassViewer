@@ -156,6 +156,7 @@ public class ViewerPane extends BorderPane {
         sideBar.setSide(Side.LEFT);
         sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         sideBar.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
+        SplitPane.setResizableWithParent(sideBar, false);
 
         Tab treeTab = new Tab(I18N.getString("sideBar.fileList"));
         treeTab.setGraphic(new ImageView(Images.folder));
