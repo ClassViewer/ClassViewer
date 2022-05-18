@@ -4,93 +4,77 @@ import kala.function.CheckedRunnable;
 import org.glavo.viewer.util.ForceCloseable;
 import org.glavo.viewer.util.SilentlyCloseable;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public class FileHandle implements SilentlyCloseable, ForceCloseable {
+public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
 
-    private final FileStub stub;
+    private final Container container;
+    private final FilePath path;
     private CheckedRunnable<?> onForceClose;
 
-    public FileHandle(FileStub stub) {
-        this.stub = stub;
-        synchronized (stub) {
-            stub.handles.add(this);
-        }
+    protected FileHandle(Container container, FilePath path) {
+        this.container = container;
+        this.path = path;
     }
 
     public synchronized void setOnForceClose(CheckedRunnable<?> onForceClose) {
         this.onForceClose = onForceClose;
     }
 
-    public FileStub getStub() {
-        return stub;
-    }
-
     public FilePath getPath() {
-        return getStub().getPath();
+        return path;
     }
 
     public Container getContainer() {
-        return stub.getContainer();
+        return container;
     }
 
-    public boolean exists() {
-        return stub.exists();
-    }
+    public abstract boolean exists();
 
-    public boolean isReadonly() {
-        return stub.isReadonly();
-    }
+    public abstract boolean isReadonly();
 
-    public SeekableByteChannel openChannel() throws IOException {
-        return stub.openChannel();
-    }
+    public abstract SeekableByteChannel openChannel() throws IOException;
 
     public SeekableByteChannel openWritableChannel() throws IOException {
-        return stub.openWritableChannel();
+        throw new UnsupportedOperationException();
     }
 
     public InputStream openInputStream() throws IOException {
-        return stub.openInputStream();
+        return Channels.newInputStream(openChannel());
     }
 
     public byte[] readAllBytes() throws IOException {
-        return stub.readAllBytes();
+        try (InputStream in = openInputStream()) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int n;
+            while ((n = in.read(buffer)) > 0) {
+                out.write(buffer, 0, n);
+            }
+
+            return out.toByteArray();
+        }
     }
 
     public OutputStream openOutputStream() throws IOException {
-        return stub.openOutputStream();
+        return Channels.newOutputStream(openWritableChannel());
     }
 
     public void write(byte[] bytes) throws IOException {
-        stub.write(bytes);
+        try (OutputStream out = openOutputStream()) {
+            out.write(bytes);
+        }
     }
 
-    protected synchronized void closeImpl() throws Throwable {
-        if (closed) {
-            return;
-        }
-        closed = true;
-
-        LOGGER.info("Force close handle " + this);
-        try {
-            if (onForceClose != null) {
-                onForceClose.runChecked();
-            }
-        } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
-        }
-
-        synchronized (stub) {
-            stub.handles.remove(this);
-            stub.checkStatus();
-        }
+    protected void closeImpl() throws Exception {
     }
 
     private boolean closed = false;
@@ -101,23 +85,28 @@ public class FileHandle implements SilentlyCloseable, ForceCloseable {
         }
         closed = true;
 
-        synchronized (stub) {
-            if (!stub.handles.remove(this)) {
-                throw new AssertionError("handle=" + this);
-            }
-            if (force) {
-                LOGGER.info("Force close handle " + this);
+        synchronized (getContainer()) {
+            LOGGER.info("Close handle " + this);
+
+            if (force && onForceClose != null) {
                 try {
-                    if (onForceClose != null) {
-                        onForceClose.runChecked();
-                    }
+                    onForceClose.runChecked();
                 } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+                    LOGGER.log(Level.WARNING, "Failed to force close " + this, e);
                 }
-            } else {
-                LOGGER.info("Close handle " + this);
             }
-            stub.checkStatus();
+
+            try {
+                this.closeImpl();
+            } catch (Throwable e) {
+                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+            }
+
+            FileHandle h;
+            if ((h = getContainer().handles.remove(getPath())) != this) {
+                throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
+            }
+            container.checkStatus();
         }
     }
 
@@ -133,6 +122,6 @@ public class FileHandle implements SilentlyCloseable, ForceCloseable {
 
     @Override
     public String toString() {
-        return String.format("%s[stub=%s]", this.getClass().getSimpleName(), getStub());
+        return String.format("%s[path=%s, container=%s]", this.getClass().getSimpleName(), this.getPath(), this.getContainer());
     }
 }

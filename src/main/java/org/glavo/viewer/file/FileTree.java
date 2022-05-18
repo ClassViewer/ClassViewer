@@ -1,6 +1,6 @@
 package org.glavo.viewer.file;
 
-import org.glavo.viewer.file.types.FolderType;
+import org.glavo.viewer.file.types.folder.FolderType;
 
 import java.util.*;
 

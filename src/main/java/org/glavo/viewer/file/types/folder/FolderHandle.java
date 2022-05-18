@@ -1,14 +1,14 @@
-package org.glavo.viewer.file.stubs;
+package org.glavo.viewer.file.types.folder;
 
 import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileStub;
+import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 
 import java.io.IOException;
 import java.nio.channels.SeekableByteChannel;
 
-public final class FolderStub extends FileStub {
-    public FolderStub(Container container, FilePath path) {
+public final class FolderHandle extends FileHandle {
+    public FolderHandle(Container container, FilePath path) {
         super(container, path);
     }
 
@@ -24,11 +24,11 @@ public final class FolderStub extends FileStub {
 
     @Override
     public SeekableByteChannel openChannel() throws IOException {
-        throw new UnsupportedOperationException("FolderStub");
+        throw new UnsupportedOperationException("FolderHandle");
     }
 
     @Override
     public SeekableByteChannel openWritableChannel() throws IOException {
-        throw new UnsupportedOperationException("FolderStub");
+        throw new UnsupportedOperationException("FolderHandle");
     }
 }

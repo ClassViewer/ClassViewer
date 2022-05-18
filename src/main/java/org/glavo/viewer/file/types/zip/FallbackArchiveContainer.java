@@ -1,10 +1,9 @@
-package org.glavo.viewer.file.containers;
+package org.glavo.viewer.file.types.zip;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.FileStub;
-import org.glavo.viewer.file.stubs.FallbackArchiveFileStub;
+import org.glavo.viewer.file.types.zip.FallbackArchiveFileHandle;
 import org.glavo.viewer.util.StringUtils;
 
 import java.io.IOException;
@@ -41,13 +40,13 @@ public class FallbackArchiveContainer extends Container {
     }
 
     @Override
-    protected synchronized FileStub openFileImpl(FilePath path) throws IOException {
+    protected synchronized FileHandle openFileImpl(FilePath path) throws IOException {
         ZipEntry entry = map.get(path);
         if (entry == null) {
             throw new NoSuchFileException(path.toString());
         }
 
-        return new FallbackArchiveFileStub(this, path, entry);
+        return new FallbackArchiveFileHandle(this, path, entry);
     }
 
     @Override

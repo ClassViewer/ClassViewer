@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 import org.glavo.viewer.file.*;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.CustomFileType;
-import org.glavo.viewer.file.types.FolderType;
+import org.glavo.viewer.file.types.folder.FolderType;
 import org.glavo.viewer.resources.Images;
 
 import java.util.logging.Level;

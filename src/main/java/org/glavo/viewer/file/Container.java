@@ -1,6 +1,6 @@
 package org.glavo.viewer.file;
 
-import org.glavo.viewer.file.containers.RootContainer;
+import org.glavo.viewer.file.root.local.LocalContainer;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ForceCloseable;
 
@@ -17,7 +17,7 @@ public abstract class Container implements ForceCloseable {
 
     private final FileHandle handle;
 
-    final Map<FilePath, FileStub> fileStubs = new HashMap<>();
+    final Map<FilePath, FileHandle> handles = new HashMap<>();
     final HashSet<ContainerHandle> containerHandles = new HashSet<>();
 
     protected Container(FileHandle handle) {
@@ -26,7 +26,7 @@ public abstract class Container implements ForceCloseable {
 
     public static Container getContainer(FilePath path) throws Throwable {
         if (path == null) {
-            return RootContainer.CONTAINER;
+            return LocalContainer.CONTAINER;
         }
         synchronized (Container.class) {
             Container c = containerMap.get(path);
@@ -44,7 +44,7 @@ public abstract class Container implements ForceCloseable {
 
             Container container;
 
-            FileHandle handle = new FileHandle(getContainer(path.getParent()).getStub(path));
+            FileHandle handle = getContainer(path.getParent()).openFile(path);
 
             try {
                 container = ct.openContainerImpl(handle);
@@ -75,22 +75,22 @@ public abstract class Container implements ForceCloseable {
         return handle;
     }
 
-    public synchronized FileStub getStub(FilePath path) throws IOException {
+    public synchronized FileHandle openFile(FilePath path) throws IOException {
         assert getPath() == null && path.getParent() == null || getPath().equals(path);
 
-        FileStub h = fileStubs.get(path);
+        FileHandle h = handles.get(path);
         if (h != null) {
-            return h;
+            throw new UnsupportedOperationException("Open file " + path + " repeatedly");
         }
 
         h = openFileImpl(path);
         if (h != null) {
-            fileStubs.put(path, h);
+            handles.put(path, h);
         }
         return h;
     }
 
-    protected abstract FileStub openFileImpl(FilePath path) throws IOException, NoSuchFileException;
+    protected abstract FileHandle openFileImpl(FilePath path) throws IOException, NoSuchFileException;
 
     public abstract NavigableSet<FilePath> resolveFiles() throws Exception;
 
@@ -102,7 +102,7 @@ public abstract class Container implements ForceCloseable {
     }
 
     synchronized void checkStatus() {
-        if (fileStubs.isEmpty() && containerHandles.isEmpty()) {
+        if (handles.isEmpty() && containerHandles.isEmpty()) {
             forceClose();
         }
     }
@@ -124,11 +124,11 @@ public abstract class Container implements ForceCloseable {
             }
         }
 
-        for (FileStub stub : new ArrayList<>(this.fileStubs.values())) {
-            stub.forceClose();
+        for (FileHandle handle : new ArrayList<>(this.handles.values())) {
+            handle.forceClose();
         }
-        if (!fileStubs.isEmpty()) {
-            throw new AssertionError("fileStubs=" + fileStubs);
+        if (!handles.isEmpty()) {
+            throw new AssertionError("handles=" + handles);
         }
 
         for (ContainerHandle handle : new ArrayList<>(this.containerHandles)) {

@@ -1,11 +1,9 @@
-package org.glavo.viewer.file.types;
+package org.glavo.viewer.file.types.folder;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.containers.FolderContainer;
-import org.glavo.viewer.file.stubs.FolderStub;
+import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.resources.Images;
 
 import java.io.IOException;
@@ -26,10 +24,9 @@ public final class FolderType extends ContainerFileType {
 
     @Override
     public Container openContainerImpl(FileHandle handle) throws IOException {
-        assert handle.getStub() instanceof FolderStub;
+        assert handle instanceof FolderHandle;
         assert handle.getPath().isDirectory();
         assert handle.getPath().getParent().isLocalFile();
-
 
         Path p = Paths.get(handle.getPath().toString());
 

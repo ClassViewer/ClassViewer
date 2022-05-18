@@ -1,21 +1,21 @@
-package org.glavo.viewer.file.stubs;
+package org.glavo.viewer.file.types.java;
 
 import kala.compress.utils.SeekableInMemoryByteChannel;
 import org.glavo.jimage.ImageReader;
+import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.FileStub;
-import org.glavo.viewer.file.containers.JImageContainer;
+import org.glavo.viewer.file.types.java.JImageContainer;
 import org.glavo.viewer.util.FileUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.SeekableByteChannel;
 
-public class JImageFileStub extends FileStub {
+public class JImageFileHandle extends FileHandle {
     private final ImageReader reader;
     private final ImageReader.Node node;
 
-    public JImageFileStub(JImageContainer container, FilePath path, ImageReader reader, ImageReader.Node node) {
+    public JImageFileHandle(JImageContainer container, FilePath path, ImageReader reader, ImageReader.Node node) {
         super(container, path);
         this.reader = reader;
         this.node = node;

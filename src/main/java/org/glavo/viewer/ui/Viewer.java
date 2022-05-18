@@ -27,7 +27,6 @@ import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -216,16 +215,13 @@ public final class Viewer {
                 });
 
             } else if (type instanceof CustomFileType) {
-                FileStub stub = null;
-                try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
-                    stub = containerHandle.getContainer().getStub(path);
 
-                    FileHandle handle = new FileHandle(stub); // TODO
+                try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
+                    FileHandle handle = containerHandle.getContainer().openFile(path);
+
                     FileTab tab = ((CustomFileType) type).openTab(handle);
                     getPane().addFileTab(tab);
 
-                } finally {
-                    if (stub != null) stub.checkStatus();
                 }
             } else {
                 throw new AssertionError("Unhandled type: " + type);

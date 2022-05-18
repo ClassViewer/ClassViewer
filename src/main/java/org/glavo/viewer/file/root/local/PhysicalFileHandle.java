@@ -1,8 +1,7 @@
-package org.glavo.viewer.file.stubs;
+package org.glavo.viewer.file.root.local;
 
-import org.glavo.viewer.file.FileStub;
+import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.containers.RootContainer;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -12,15 +11,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-public class PhysicalFileStub extends FileStub {
+public class PhysicalFileHandle extends FileHandle {
     private final Path file;
 
-    public PhysicalFileStub(FilePath path) {
+    public PhysicalFileHandle(FilePath path) {
         this(path, Paths.get(path.getPath()));
     }
 
-    public PhysicalFileStub(FilePath path, Path file) {
-        super(RootContainer.CONTAINER, path);
+    public PhysicalFileHandle(FilePath path, Path file) {
+        super(LocalContainer.CONTAINER, path);
         this.file = file;
 
         assert path.getParent().isLocalFile();

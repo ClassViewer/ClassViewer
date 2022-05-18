@@ -3,7 +3,6 @@ package org.glavo.viewer.file.types;
 import javafx.scene.image.Image;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FileType;
 
 public abstract class ContainerFileType extends FileType {

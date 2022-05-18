@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import org.glavo.viewer.file.types.*;
 import org.glavo.viewer.file.types.aya.AyaSourceFileType;
 import org.glavo.viewer.file.types.css.CSSFileType;
+import org.glavo.viewer.file.types.folder.FolderType;
 import org.glavo.viewer.file.types.html.HTMLFileType;
 import org.glavo.viewer.file.types.image.ImageFileType;
 import org.glavo.viewer.file.types.java.*;

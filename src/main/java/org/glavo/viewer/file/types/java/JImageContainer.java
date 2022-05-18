@@ -1,16 +1,13 @@
-package org.glavo.viewer.file.containers;
+package org.glavo.viewer.file.types.java;
 
 import org.glavo.jimage.ImageReader;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.FileStub;
-import org.glavo.viewer.file.stubs.JImageFileStub;
 import org.glavo.viewer.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 
@@ -51,14 +48,14 @@ public class JImageContainer extends Container {
     }
 
     @Override
-    protected synchronized FileStub openFileImpl(FilePath path) throws IOException {
+    protected synchronized FileHandle openFileImpl(FilePath path) throws IOException {
         ImageReader.Node node = map.get(path);
 
         if (node == null) {
             throw new NoSuchFileException(path.toString());
         }
 
-        return new JImageFileStub(this, path, reader, node);
+        return new JImageFileHandle(this, path, reader, node);
     }
 
     @Override
