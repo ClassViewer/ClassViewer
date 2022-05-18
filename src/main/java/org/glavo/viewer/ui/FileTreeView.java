@@ -1,5 +1,9 @@
 package org.glavo.viewer.ui;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
@@ -13,13 +17,17 @@ import org.glavo.viewer.file.types.CustomFileType;
 import org.glavo.viewer.file.types.folder.FolderType;
 import org.glavo.viewer.resources.Images;
 
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
 public class FileTreeView extends TreeView<String> {
     public static TreeItem<String> fromTree(FileTree node, ContainerHandle handle) {
-        FileTreeItem item = new FileTreeItem(node);
+        ContainerFileTreeItem item = new ContainerFileTreeItem(node);
         item.setContainerHandle(handle);
         for (FileTree child : node.getChildren()) {
             item.getChildren().add(fromTree(child));
@@ -27,12 +35,40 @@ public class FileTreeView extends TreeView<String> {
         return item;
     }
 
-    public static TreeItem<String> fromTree(FileTree node) {
-        TreeItem<String> item = new FileTreeItem(node);
-        for (FileTree child : node.getChildren()) {
-            item.getChildren().add(fromTree(child));
+    private static void addAllFolderNode(Queue<FileTree> queue, Set<FileTree> children) {
+        for (FileTree child : children) {
+            if (!(child instanceof FileTree.FolderNode)) {
+                break;
+            }
+
+            queue.add(child);
         }
-        return item;
+    }
+
+    public static TreeItem<String> fromTree(FileTree node) {
+        TreeItem<String> res;
+        if (node instanceof FileTree.FolderNode) {
+            IntermediateFolderItem item = new IntermediateFolderItem(node);
+
+            FileTree n = node;
+            FileTree l;
+            while (n.getChildren().size() == 1 && (l = n.getChildren().iterator().next()) instanceof FileTree.FolderNode) {
+                item.getNodes().add(l);
+                n = l;
+            }
+
+            res = item;
+            node = n;
+        } else {
+            res = node.getType() instanceof ContainerFileType
+                    ? new ContainerFileTreeItem(node)
+                    : new FileTreeItem(node);
+        }
+
+        for (FileTree child : node.getChildren()) {
+            res.getChildren().add(fromTree(child));
+        }
+        return res;
     }
 
     public static void updateSubTree(TreeItem<String> tree) {
@@ -70,9 +106,9 @@ public class FileTreeView extends TreeView<String> {
         }
     }
 
-    public static final class FileTreeItem extends TreeItem<String> {
+    public static class FileTreeItem extends TreeItem<String> {
         private final FileTree fileTree;
-        private ContainerHandle containerHandle;
+
 
         public FileTreeItem(FileTree fileTree) {
             this.fileTree = fileTree;
@@ -84,54 +120,81 @@ public class FileTreeView extends TreeView<String> {
         public FileTree getFileTree() {
             return fileTree;
         }
+    }
 
-        private Boolean isLeaf;
+    public static class ContainerFileTreeItem extends FileTreeItem {
+        private final ObjectProperty<ContainerHandle> containerHandle = new SimpleObjectProperty<>();
 
-        @Override
-        public boolean isLeaf() {
-            if (isLeaf == null) {
-                FileType type = getFileTree().getType();
-                if (type instanceof FolderType) {
-                    return getChildren().isEmpty();
-                } else {
-                    isLeaf = !(type instanceof ContainerFileType);
-                }
-            }
-            return isLeaf;
+        public ContainerFileTreeItem(FileTree fileTree) {
+            super(fileTree);
         }
 
         private boolean needToInit = true;
 
         @Override
-        public ObservableList<TreeItem<String>> getChildren() {
-            if (needToInit) {
-                needToInit = false;
-                if (containerHandle == null && !(getFileTree() instanceof FileTree.FolderNode) && !isLeaf()) {
-                    FileTree node = this.getFileTree();
-                    try {
-                        Container container = Container.getContainer(node.getPath());
-                        containerHandle = new ContainerHandle(container);
-                        FileTree.buildFileTree(container, node);
-                        updateSubTree(this);
-                    } catch (Throwable e) {
-                        LOGGER.log(Level.WARNING, "Failed to open container", e);
-                    }
+        public boolean isLeaf() {
+            return !needToInit && getChildren().isEmpty();
+        }
 
-                    if (super.getChildren().isEmpty()) {
-                        isLeaf = true;
-                    }
+        @Override
+        public ObservableList<TreeItem<String>> getChildren() {
+            if (!needToInit) return super.getChildren();
+            synchronized (this) {
+                if (!needToInit) return super.getChildren();
+                needToInit = false;
+
+                FileTree node = this.getFileTree();
+                try {
+                    LOGGER.info("Expand " + node.getPath());
+                    Container container = Container.getContainer(node.getPath());
+                    setContainerHandle(new ContainerHandle(container));
+                    FileTree.buildFileTree(container, node);
+                    updateSubTree(this);
+                } catch (Throwable e) {
+                    LOGGER.log(Level.WARNING, "Failed to open container", e);
                 }
             }
-
             return super.getChildren();
         }
 
-        public ContainerHandle getContainerHandle() {
+        public ObjectProperty<ContainerHandle> containerHandleProperty() {
             return containerHandle;
         }
 
+        public ContainerHandle getContainerHandle() {
+            return containerHandle.get();
+        }
+
         public void setContainerHandle(ContainerHandle containerHandle) {
-            this.containerHandle = containerHandle;
+            this.containerHandle.set(containerHandle);
+        }
+    }
+
+    public static final class IntermediateFolderItem extends TreeItem<String> {
+        private final ObservableList<FileTree> nodes = FXCollections.observableList(new ArrayList<>(1));
+
+        public IntermediateFolderItem(FileTree node) {
+            this();
+            this.nodes.add(node);
+        }
+
+        public IntermediateFolderItem(FileTree... nodes) {
+            this();
+            this.nodes.addAll(nodes);
+        }
+
+        private IntermediateFolderItem() {
+            this.setGraphic(new ImageView(FolderType.TYPE.getImage()));
+            this.valueProperty().bind(Bindings.createStringBinding(() -> {
+                if (nodes.size() == 1) {
+                    return nodes.get(0).getText();
+                }
+                return nodes.stream().map(FileTree::getText).collect(Collectors.joining("/"));
+            }, nodes));
+        }
+
+        public ObservableList<FileTree> getNodes() {
+            return nodes;
         }
     }
 

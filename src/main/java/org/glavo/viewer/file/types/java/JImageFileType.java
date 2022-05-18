@@ -18,7 +18,7 @@ public class JImageFileType extends ContainerFileType {
 
     @Override
     public boolean check(FilePath path) {
-        return path.getParent().isLocalFile() && path.getFileName().equals("modules");
+        return path.getParent() == null && path.getFileName().equals("modules");
     }
 
     @Override
