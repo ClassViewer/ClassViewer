@@ -10,6 +10,9 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public class FolderContainer extends Container {
     private NavigableSet<FilePath> files;
@@ -37,6 +40,12 @@ public class FolderContainer extends Container {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     fs.add(FilePath.ofJavaPath(file));
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    LOGGER.log(Level.WARNING, "An exception occurred while resolve " + getFileHandle().getPath(), exc);
                     return FileVisitResult.CONTINUE;
                 }
             });

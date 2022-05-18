@@ -129,7 +129,7 @@ public class FileTreeView extends TreeView<String> {
             super(fileTree);
         }
 
-        private boolean needToInit = true;
+        private boolean needToInit = !(getFileTree().getType() instanceof FolderType);
 
         @Override
         public boolean isLeaf() {

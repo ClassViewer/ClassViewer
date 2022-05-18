@@ -178,7 +178,6 @@ public final class Viewer {
         SilentlyCloseable resource = null;
         try {
             if (type instanceof ContainerFileType) {
-                // TODO
                 //noinspection resource
                 ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
                 resource = handle;
@@ -206,22 +205,21 @@ public final class Viewer {
 
                     @Override
                     protected void failed() {
+                        LOGGER.log(Level.WARNING, "Failed to open container", getException());
                         int idx = treeItems.indexOf(loadingItem);
                         assert idx >= 0;
-
                         treeItems.set(idx, new FileTreeView.FailedItem(path.toString()));
                         handle.close();
                     }
                 });
 
             } else if (type instanceof CustomFileType) {
-
                 try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
                     FileHandle handle = containerHandle.getContainer().openFile(path);
+                    resource = handle;
 
                     FileTab tab = ((CustomFileType) type).openTab(handle);
                     getPane().addFileTab(tab);
-
                 }
             } else {
                 throw new AssertionError("Unhandled type: " + type);
