@@ -1,6 +1,7 @@
-package org.glavo.viewer.file.types;
+package org.glavo.viewer.file.types.xml;
 
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.types.TextFileType;
 
 public class XMLFileType extends TextFileType {
 

@@ -1,15 +1,13 @@
-package org.glavo.viewer.file.types;
+package org.glavo.viewer.file.types.java;
 
 import org.glavo.jimage.ImageReader;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FileStub;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.containers.JImageContainer;
-import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.file.types.ContainerFileType;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class JImageFileType extends ContainerFileType {

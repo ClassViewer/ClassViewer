@@ -1,6 +1,7 @@
-package org.glavo.viewer.file.types;
+package org.glavo.viewer.file.types.java;
 
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.types.BinaryFileType;
 
 public class JavaClassFileType extends BinaryFileType {
     public static final JavaClassFileType TYPE = new JavaClassFileType();

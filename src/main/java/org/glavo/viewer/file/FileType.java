@@ -4,6 +4,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import javafx.scene.image.Image;
 import org.glavo.viewer.file.types.*;
+import org.glavo.viewer.file.types.aya.AyaSourceFileType;
+import org.glavo.viewer.file.types.css.CSSFileType;
+import org.glavo.viewer.file.types.html.HTMLFileType;
+import org.glavo.viewer.file.types.image.ImageFileType;
+import org.glavo.viewer.file.types.java.*;
+import org.glavo.viewer.file.types.json.JsonFileType;
+import org.glavo.viewer.file.types.markdown.MarkdownFileType;
+import org.glavo.viewer.file.types.tar.TarFileType;
+import org.glavo.viewer.file.types.xml.XMLFileType;
+import org.glavo.viewer.file.types.yaml.YAMLFileType;
+import org.glavo.viewer.file.types.zip.ArchiveFileType;
 import org.glavo.viewer.resources.Images;
 
 import java.util.*;

@@ -1,14 +1,14 @@
-package org.glavo.viewer.file.types;
+package org.glavo.viewer.file.types.markdown;
 
 import com.vladsch.flexmark.ast.*;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.*;
-import com.vladsch.flexmark.util.sequence.BasedSequence;
 import kala.value.primitive.IntRef;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.Stylesheet;

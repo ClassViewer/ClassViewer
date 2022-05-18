@@ -1,8 +1,9 @@
-package org.glavo.viewer.file.types;
+package org.glavo.viewer.file.types.java;
 
 import org.antlr.v4.runtime.Token;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.highlighter.LookNextAntlrLexerHighlighter;
+import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.file.types.grammar.JavaLexer;
 import org.glavo.viewer.util.Stylesheet;
 

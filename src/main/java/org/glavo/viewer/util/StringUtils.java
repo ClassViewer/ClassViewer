@@ -1,6 +1,6 @@
 package org.glavo.viewer.util;
 
-import java.util.Arrays;
+import kala.collection.base.GenericArrays;
 
 public final class StringUtils {
     private StringUtils() {
@@ -10,10 +10,9 @@ public final class StringUtils {
 
     public static String[] spiltPath(String path) {
         String[] res = path.split("[/\\\\]");
-        if (path.startsWith("/")) {
-            return Arrays.copyOfRange(res, 1, res.length);
-        } else {
-            return res;
-        }
+
+        return GenericArrays.anyMatch(res, String::isEmpty)
+                ? GenericArrays.filterNot(res, String::isEmpty)
+                : res;
     }
 }
