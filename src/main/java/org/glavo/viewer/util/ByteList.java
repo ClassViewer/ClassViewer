@@ -6,6 +6,7 @@ import org.glavo.viewer.file.FileHandle;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.NoSuchElementException;
 
 public interface ByteList extends ByteTraversable {
@@ -56,5 +57,9 @@ public interface ByteList extends ByteTraversable {
 
     default void readFrom(FileHandle handle) throws IOException {
         appendAll(handle.readAllBytes());
+    }
+
+    default InputStream openInputStream() {
+        return new ByteListInputStream(this);
     }
 }

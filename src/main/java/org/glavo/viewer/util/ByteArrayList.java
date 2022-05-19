@@ -2,6 +2,9 @@ package org.glavo.viewer.util;
 
 import kala.Conditions;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 public class ByteArrayList implements ByteList {
     static final int DEFAULT_CAPACITY = 64;
     static final byte[] DEFAULT_EMPTY_ARRAY = new byte[0];
@@ -107,6 +110,11 @@ public class ByteArrayList implements ByteList {
     @Override
     public void clear() {
         size = 0;
+    }
+
+    @Override
+    public InputStream openInputStream() {
+        return new ByteArrayInputStream(elements, 0, size);
     }
 
     @Override
