@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.Logging.start;
 
 public class FileTreeView extends TreeView<String> {
     public static TreeItem<String> fromTree(FileTree node, ContainerHandle handle) {
@@ -129,7 +130,7 @@ public class FileTreeView extends TreeView<String> {
             super(fileTree);
         }
 
-        private boolean needToInit = !(getFileTree().getType() instanceof FolderType);
+        private boolean needToInit = !(getFileTree().getType() instanceof FolderType) && getContainerHandle() != null;
 
         @Override
         public boolean isLeaf() {
