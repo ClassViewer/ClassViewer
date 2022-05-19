@@ -55,8 +55,8 @@ public class HexText {
 
     public final String asciiString;
 
-    public HexText(byte[] bytes) {
-        rowHeaderText = formatRowHeader(bytes.length);
+    public HexText(ByteList bytes) {
+        rowHeaderText = formatRowHeader(bytes.size());
         bytesText = formatBytesText(bytes);
         asciiString = formatAsciiText(bytes);
     }
@@ -84,28 +84,28 @@ public class HexText {
         return sb.toString();
     }
 
-    private String formatBytesText(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length * 3 + bytes.length / BYTES_PER_ROW + 1);
-        for (int i = 0; i < bytes.length; i += BYTES_PER_ROW) {
+    private String formatBytesText(ByteList bytes) {
+        StringBuilder sb = new StringBuilder(bytes.size() * 3 + bytes.size() / BYTES_PER_ROW + 1);
+        for (int i = 0; i < bytes.size(); i += BYTES_PER_ROW) {
             rowToHex(bytes, i, sb);
             sb.append('\n');
         }
         return sb.toString();
     }
 
-    private String formatAsciiText(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length + bytes.length / BYTES_PER_ROW);
-        for (int i = 0; i < bytes.length; i += BYTES_PER_ROW) {
+    private String formatAsciiText(ByteList bytes) {
+        StringBuilder sb = new StringBuilder(bytes.size() + bytes.size() / BYTES_PER_ROW);
+        for (int i = 0; i < bytes.size(); i += BYTES_PER_ROW) {
             rowToAscii(bytes, i, sb);
             sb.append('\n');
         }
         return sb.toString();
     }
 
-    private void rowToHex(byte[] bytes, int offset, StringBuilder buf) {
+    private void rowToHex(ByteList bytes, int offset, StringBuilder buf) {
         for (int i = 0; i < BYTES_PER_ROW; i++) {
-            if (offset + i < bytes.length) {
-                byte b = bytes[offset + i];
+            if (offset + i < bytes.size()) {
+                byte b = bytes.get(offset + i);
                 buf.append(byteToUpperString(b));
                 buf.append(' ');
             } else {
@@ -114,10 +114,10 @@ public class HexText {
         }
     }
 
-    private void rowToAscii(byte[] bytes, int offset, StringBuilder buf) {
+    private void rowToAscii(ByteList bytes, int offset, StringBuilder buf) {
         for (int i = 0; i < BYTES_PER_ROW; i++) {
-            if (offset + i < bytes.length) {
-                char c = (char) bytes[offset + i];
+            if (offset + i < bytes.size()) {
+                char c = (char) bytes.get(offset + i);
                 if (c >= '!' && c <= '~') {
                     buf.append(c);
                 } else {

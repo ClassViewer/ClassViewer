@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.HexText;
 
 
@@ -20,7 +21,7 @@ public class ModernHexPane extends StackPane implements HexPane {
     private final CodeArea bytesArea;
     private final CodeArea asciiArea;
 
-    public ModernHexPane(byte[] array) {
+    public ModernHexPane(ByteList array) {
         HexText text = new HexText(array);
 
         bytesArea = new CodeArea();

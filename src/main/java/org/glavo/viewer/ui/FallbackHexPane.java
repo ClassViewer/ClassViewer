@@ -5,12 +5,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.HexText;
 
 public class FallbackHexPane extends StackPane implements HexPane {
     private final CodeArea area;
 
-    public FallbackHexPane(byte[] array) {
+    public FallbackHexPane(ByteList array) {
         area = new CodeArea();
 
         area.getStylesheets().clear();

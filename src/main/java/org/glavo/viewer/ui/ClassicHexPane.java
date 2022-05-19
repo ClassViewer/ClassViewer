@@ -3,6 +3,7 @@ package org.glavo.viewer.ui;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.HexText;
 
 public class ClassicHexPane extends ScrollPane implements HexPane {
@@ -12,7 +13,7 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
     private final TextArea textArea2;
     private final TextArea textArea3;
 
-    public ClassicHexPane(byte[] array) {
+    public ClassicHexPane(ByteList array) {
         this.hex = new HexText(array);
         textArea1 = new TextArea(hex.rowHeaderText);
         textArea2 = new TextArea(hex.bytesText);

@@ -37,38 +37,57 @@ public class BinaryFileType extends CustomFileType {
         throw new UnsupportedOperationException();
     }
 
+    protected void openContent(FileTab tab, FileHandle handle, byte[] bytes) {
+    }
+
     @Override
     public FileTab openTab(FileHandle handle) {
         FileTab res = new FileTab(this, handle.getPath());
         res.setContent(new StackPane(new ProgressIndicator()));
 
-        Task<HexPane> task = new Task<HexPane>() {
+        TaskUtils.submit(new Task<byte[]>() {
             @Override
-            protected HexPane call() throws Exception {
-                byte[] bytes = handle.readAllBytes();
-                if (bytes.length < 200 * 1024) { // TODO
-                    return new ClassicHexPane(bytes);
-                } else {
-                    return new FallbackHexPane(bytes);
-
-                }
+            protected byte[] call() throws Exception {
+                return handle.readAllBytes();
             }
 
             @Override
             protected void succeeded() {
-                res.setContent(this.getValue().getNode());
-                handle.close();
+                byte[] bytes = getValue();
+
+                TaskUtils.submit(new Task<HexPane>() {
+                    @Override
+                    protected HexPane call() throws Exception {
+                        if (bytes.length < 200 * 1024) { // 200 KiB
+                            return new ClassicHexPane(bytes);
+                        } else {
+                            return new FallbackHexPane(bytes);
+                        }
+                    }
+
+                    @Override
+                    protected void succeeded() {
+                        res.setContent(getValue().getNode());
+                    }
+
+                    @Override
+                    protected void failed() {
+                        LOGGER.log(Level.WARNING, "Failed to create hex pane", getException());
+                        res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
+                    }
+                });
+
+                openContent(res, handle, bytes);
             }
 
             @Override
             protected void failed() {
-                LOGGER.log(Level.WARNING, "Failed to open file", getException());
+                LOGGER.log(Level.WARNING, "Failed to read values", getException());
                 res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
                 handle.close();
             }
-        };
+        });
 
-        TaskUtils.submit(task);
 
         return res;
     }
