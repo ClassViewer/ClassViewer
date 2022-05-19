@@ -75,7 +75,7 @@ public class BinaryFileType extends CustomFileType {
                     @Override
                     protected void failed() {
                         LOGGER.log(Level.WARNING, "Failed to create hex pane", getException());
-                        res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
+                        res.setContent(new EmptyHexPane(bytes));
                     }
                 });
 
