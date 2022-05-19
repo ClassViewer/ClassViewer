@@ -11,14 +11,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-public class PhysicalFileHandle extends FileHandle {
+public class LocalFileHandle extends FileHandle {
     private final Path file;
 
-    public PhysicalFileHandle(FilePath path) {
+    public LocalFileHandle(FilePath path) {
         this(path, Paths.get(path.getPath()));
     }
 
-    public PhysicalFileHandle(FilePath path, Path file) {
+    public LocalFileHandle(FilePath path, Path file) {
         super(LocalContainer.CONTAINER, path);
         this.file = file;
 

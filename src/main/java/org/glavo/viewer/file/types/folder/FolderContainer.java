@@ -3,7 +3,7 @@ package org.glavo.viewer.file.types.folder;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.root.local.PhysicalFileHandle;
+import org.glavo.viewer.file.root.local.LocalFileHandle;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -56,6 +56,6 @@ public class FolderContainer extends Container {
 
     @Override
     protected FileHandle openFileImpl(FilePath path) throws IOException {
-        return new PhysicalFileHandle(path, Paths.get(path.getPath()));
+        return new LocalFileHandle(path, Paths.get(path.getPath()));
     }
 }

@@ -17,7 +17,7 @@ public class LocalContainer extends RootContainer {
     protected FileHandle openFileImpl(FilePath path) throws IOException {
         assert path.isLocalFile();
 
-        return new PhysicalFileHandle(path);
+        return new LocalFileHandle(path);
     }
 
     @Override
