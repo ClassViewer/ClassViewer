@@ -11,6 +11,8 @@ import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
+import org.glavo.viewer.util.ByteArrayList;
+import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.TaskUtils;
 
 import java.util.logging.Level;
@@ -37,7 +39,7 @@ public class BinaryFileType extends CustomFileType {
         throw new UnsupportedOperationException();
     }
 
-    protected void openContent(FileTab tab, FileHandle handle, byte[] bytes) {
+    protected void openContent(FileTab tab, FileHandle handle, ByteList bytes) {
     }
 
     @Override
@@ -45,20 +47,20 @@ public class BinaryFileType extends CustomFileType {
         FileTab res = new FileTab(this, handle.getPath());
         res.setContent(new StackPane(new ProgressIndicator()));
 
-        TaskUtils.submit(new Task<byte[]>() {
+        TaskUtils.submit(new Task<ByteList>() {
             @Override
-            protected byte[] call() throws Exception {
-                return handle.readAllBytes();
+            protected ByteList call() throws Exception {
+                return ByteArrayList.wrap(handle.readAllBytes());
             }
 
             @Override
             protected void succeeded() {
-                byte[] bytes = getValue();
+                ByteList bytes = getValue();
 
                 TaskUtils.submit(new Task<HexPane>() {
                     @Override
                     protected HexPane call() throws Exception {
-                        if (bytes.length < 200 * 1024) { // 200 KiB
+                        if (bytes.size() < 200 * 1024) { // 200 KiB
                             return new ClassicHexPane(bytes);
                         } else {
                             return new FallbackHexPane(bytes);
