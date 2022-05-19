@@ -1,7 +1,7 @@
 lexer grammar JavaModuleInfoLexer;
 
 @header {
-package org.glavo.viewer.file.types.grammar;
+package org.glavo.viewer.file.types.java;
 }
 
 KEYWORD

@@ -1,7 +1,7 @@
 lexer grammar Json5Lexer;
 
 @header {
-package org.glavo.viewer.file.types.grammar;
+package org.glavo.viewer.file.types.json;
 }
 
 DELIMITER

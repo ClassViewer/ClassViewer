@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.Token;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.highlighter.LookNextAntlrLexerHighlighter;
 import org.glavo.viewer.file.types.TextFileType;
-import org.glavo.viewer.file.types.grammar.JavaLexer;
 import org.glavo.viewer.util.Stylesheet;
 
 import java.util.Collection;

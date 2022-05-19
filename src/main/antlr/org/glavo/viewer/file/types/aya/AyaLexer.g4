@@ -1,7 +1,7 @@
 lexer grammar AyaLexer;
 
 @header {
-package org.glavo.viewer.file.types.grammar;
+package org.glavo.viewer.file.types.aya;
 }
 
 KEYWORD
