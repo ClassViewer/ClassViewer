@@ -39,6 +39,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains:annotations:23.0.0")
+
     implementation("org.glavo.kala:kala-platform:0.9.0")
     implementation("org.glavo.kala:kala-template:0.1.0")
     implementation("org.glavo.kala:kala-common:0.38.0")

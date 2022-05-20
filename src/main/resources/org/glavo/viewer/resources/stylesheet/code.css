@@ -4,6 +4,7 @@
 }
 
 .code-terminator {
+    -fx-fill: #a46000;
     -fx-font-weight: bold;
 }
 

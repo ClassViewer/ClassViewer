@@ -4,6 +4,8 @@ module org.glavo.viewer {
 
     requires javafx.controls;
 
+    requires static org.jetbrains.annotations;
+
     requires org.glavo.jimage;
     requires kala.platform;
     requires kala.template;
