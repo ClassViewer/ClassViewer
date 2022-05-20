@@ -12,6 +12,7 @@ module org.glavo.viewer {
 
     requires com.fasterxml.jackson.databind;
     requires com.github.albfernandez.juniversalchardet;
+    requires org.apache.commons.imaging;
     requires org.antlr.antlr4.runtime;
 
     requires org.fxmisc.richtext;

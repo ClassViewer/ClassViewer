@@ -53,14 +53,7 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
 
     public byte[] readAllBytes() throws IOException {
         try (InputStream in = openInputStream()) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int n;
-            while ((n = in.read(buffer)) > 0) {
-                out.write(buffer, 0, n);
-            }
-
-            return out.toByteArray();
+            return in.readAllBytes();
         }
     }
 
