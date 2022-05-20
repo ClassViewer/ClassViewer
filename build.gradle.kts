@@ -84,8 +84,8 @@ sourceSets {
 }
 
 tasks.compileJava {
-    sourceCompatibility = "8"
-    targetCompatibility = "8"
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
     options.encoding = "UTF-8"
 }
 
