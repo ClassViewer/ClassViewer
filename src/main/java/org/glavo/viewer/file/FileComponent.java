@@ -9,7 +9,6 @@ public abstract class FileComponent<C extends FileComponent<C>> extends TreeItem
     private final IntegerProperty length = new SimpleIntegerProperty();
 
 
-
     public IntegerProperty offsetProperty() {
         return offset;
     }
