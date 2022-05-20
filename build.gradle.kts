@@ -57,7 +57,7 @@ dependencies {
 
     implementation("org.fxmisc.richtext:richtextfx:0.10.8")
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
-    implementation("org.apache.commons:commons-imaging:1.0-alpha2")
+    implementation("org.apache.commons:commons-imaging:1.0-alpha3")
     implementation("com.jcraft:jsch:0.1.55")
 
     implementation("com.vladsch.flexmark:flexmark:0.64.0")
