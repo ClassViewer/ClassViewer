@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.layout.HBox;
+import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.FileComponent;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
 
@@ -56,56 +57,57 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
     }
 
     protected U1 readU1(ClassFileReader reader, String name) throws IOException {
-        int offset = reader.getOffset();
         var uint = new U1(reader.readUnsignedByte());
-        uint.setOffset(offset);
         uint.setName(name);
         this.getChildren().add(uint);
         return uint;
     }
 
     protected U2 readU2(ClassFileReader reader, String name) throws IOException {
-        int offset = reader.getOffset();
         var uint = new U2(reader.readUnsignedShort());
-        uint.setOffset(offset);
         uint.setName(name);
         this.getChildren().add(uint);
         return uint;
     }
 
     protected U4 readU4(ClassFileReader reader, String name) throws IOException {
-        int offset = reader.getOffset();
         var uint = new U4(reader.readInt());
-        uint.setOffset(offset);
         uint.setName(name);
         this.getChildren().add(uint);
         return uint;
     }
 
     protected U1Hex readU1Hex(ClassFileReader reader, String name) throws IOException {
-        int offset = reader.getOffset();
         var uint = new U1Hex(reader.readUnsignedByte());
-        uint.setOffset(offset);
         uint.setName(name);
         this.getChildren().add(uint);
         return uint;
     }
 
     protected U2Hex readU2Hex(ClassFileReader reader, String name) throws IOException {
-        int offset = reader.getOffset();
         var uint = new U2Hex(reader.readUnsignedShort());
-        uint.setOffset(offset);
         uint.setName(name);
         this.getChildren().add(uint);
         return uint;
     }
 
     protected U4Hex readU4Hex(ClassFileReader reader, String name) throws IOException {
-        int offset = reader.getOffset();
         var uint = new U4Hex(reader.readInt());
-        uint.setOffset(offset);
         uint.setName(name);
         this.getChildren().add(uint);
         return uint;
+    }
+
+    protected boolean isLeafComponent() {
+        return false;
+    }
+
+    public void calculateOffset(IntRef offset) {
+        this.setOffset(offset.value);
+        if (isLeafComponent()) {
+            offset.value += this.getLength();
+        } else {
+            this.getChildren().forEach(it -> it.getValue().calculateOffset(offset));
+        }
     }
 }

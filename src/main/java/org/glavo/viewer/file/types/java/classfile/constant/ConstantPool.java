@@ -32,6 +32,7 @@ public class ConstantPool extends ClassFileComponent {
 
     public static ConstantPool readFrom(ClassFileReader reader, U2 cpCount) throws IOException {
         int count = cpCount.getIntValue();
+        int offset = reader.getOffset();
         ObservableList<ConstantInfo> constants = FXCollections.observableList(new ArrayList<>(count));
         constants.add(null);
 
@@ -51,7 +52,9 @@ public class ConstantPool extends ClassFileComponent {
             }
         }
 
-        return new ConstantPool(constants);
+        ConstantPool constantPool = new ConstantPool(constants);
+        constantPool.setLength(reader.getOffset() - offset);
+        return constantPool;
     }
 
 

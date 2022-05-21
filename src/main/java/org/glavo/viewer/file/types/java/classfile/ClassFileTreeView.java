@@ -36,7 +36,7 @@ public class ClassFileTreeView extends TreeView<ClassFileComponent> {
                 Node desc = item.getDesc();
 
                 if (icon != null) box.getChildren().add(icon);
-                if (name != null) box.getChildren().add(new Label(desc == null ? name : name + ": "));
+                if (name != null) box.getChildren().add(new Label(desc == null ? name : name + ":"));
                 if (desc != null) box.getChildren().add(desc);
                 setText(null);
                 setGraphic(box);

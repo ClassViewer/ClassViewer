@@ -17,4 +17,9 @@ public class Bytes extends ClassFileComponent {
     public String contentToString() {
         return Arrays.toString(values);
     }
+
+    @Override
+    protected boolean isLeafComponent() {
+        return true;
+    }
 }

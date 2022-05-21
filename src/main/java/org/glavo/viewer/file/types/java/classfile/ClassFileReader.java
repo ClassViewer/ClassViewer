@@ -78,44 +78,26 @@ public class ClassFileReader {
     }
 
     public U1 readU1() throws IOException {
-        int offset = getOffset();
-        var uint = new U1(readUnsignedByte());
-        uint.setOffset(offset);
-        return uint;
+        return new U1(readUnsignedByte());
     }
 
     public U2 readU2() throws IOException {
-        int offset = getOffset();
-        var uint = new U2(readUnsignedShort());
-        uint.setOffset(offset);
-        return uint;
+        return new U2(readUnsignedShort());
     }
 
     public U4 readU4() throws IOException {
-        int offset = getOffset();
-        var uint = new U4(readInt());
-        uint.setOffset(offset);
-        return uint;
+        return new U4(readInt());
     }
 
     public U1Hex readU1Hex() throws IOException {
-        int offset = getOffset();
-        var uint = new U1Hex(readUnsignedByte());
-        uint.setOffset(offset);
-        return uint;
+        return new U1Hex(readUnsignedByte());
     }
 
     public U2Hex readU2Hex() throws IOException {
-        int offset = getOffset();
-        var uint = new U2Hex(readUnsignedShort());
-        uint.setOffset(offset);
-        return uint;
+        return new U2Hex(readUnsignedShort());
     }
 
     public U4Hex readU4Hex() throws IOException {
-        int offset = getOffset();
-        var uint = new U4Hex(readInt());
-        uint.setOffset(offset);
-        return uint;
+        return new U4Hex(readInt());
     }
 }

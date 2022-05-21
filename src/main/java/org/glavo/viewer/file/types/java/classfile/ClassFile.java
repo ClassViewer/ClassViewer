@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile;
 
+import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4Hex;
@@ -10,7 +11,6 @@ public class ClassFile extends ClassFileComponent {
 
     public static ClassFile readFrom(ClassFileReader reader) throws IOException {
         ClassFile res = new ClassFile();
-        res.setOffset(res.getOffset());
         res.setName("<In development>");
 
         U4Hex magic = res.readU4Hex(reader, "magic");
@@ -24,11 +24,9 @@ public class ClassFile extends ClassFileComponent {
         // TODO
         ConstantPool constantPool = ConstantPool.readFrom(reader, cpCount);
         res.getChildren().add(constantPool);
-
-
-
-
         res.setLength(reader.getOffset() - res.getOffset());
+
+        res.calculateOffset(new IntRef());
         return res;
     }
 }
