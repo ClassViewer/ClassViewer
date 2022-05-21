@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile;
 
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4Hex;
 
@@ -21,6 +22,9 @@ public class ClassFile extends ClassFileComponent {
         U2 cpCount = res.readU2(reader, "constant_pool_count");
 
         // TODO
+        ConstantPool constantPool = ConstantPool.readFrom(reader, cpCount);
+        res.getChildren().add(constantPool);
+
 
 
 

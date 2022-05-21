@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
+import javafx.scene.image.Image;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileParseException;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
@@ -57,8 +58,10 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
             case CONSTANT_NameAndType -> new ConstantNameAndTypeInfo(tag, reader.readU2(), reader.readU2());
             case CONSTANT_Utf8 -> {
                 U2 length = reader.readU2();
-                byte[] bytes = reader.readNBytes(length.getIntValue());
-                yield new ConstantUtf8Info(tag, length, new Bytes(bytes));
+                int o = reader.getOffset();
+                Bytes bytes = new Bytes(reader.readNBytes(length.getIntValue()));
+                bytes.setOffset(o);
+                yield new ConstantUtf8Info(tag, length, bytes);
             }
             case CONSTANT_MethodHandle -> new ConstantMethodHandleInfo(tag, reader.readU1(), reader.readU2());
             case CONSTANT_MethodTypeInfo -> new ConstantMethodTypeInfo(tag, reader.readU2());
@@ -67,8 +70,7 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
             case CONSTANT_PackageInfo -> new ConstantPackageInfo(tag, reader.readU2());
             default -> throw new ClassFileParseException("Unknown constant tag: " + tag.contentToString());
         };
-
-
+        info.setOffset(offset);
         info.setLength(reader.getOffset() - offset);
         return info;
     }
@@ -79,5 +81,9 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
 
     public U1 getTag() {
         return (U1) getChildren().get(0);
+    }
+
+    public Image getImage() {
+        return null;
     }
 }
