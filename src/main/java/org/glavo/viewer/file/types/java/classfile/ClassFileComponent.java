@@ -56,61 +56,56 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
     }
 
     protected U1 readU1(ClassFileReader reader, String name) throws IOException {
+        int offset = reader.getOffset();
         var uint = new U1(reader.readUnsignedByte());
+        uint.setOffset(offset);
         uint.setName(name);
+        this.getChildren().add(uint);
         return uint;
     }
 
     protected U2 readU2(ClassFileReader reader, String name) throws IOException {
+        int offset = reader.getOffset();
         var uint = new U2(reader.readUnsignedShort());
+        uint.setOffset(offset);
         uint.setName(name);
+        this.getChildren().add(uint);
         return uint;
     }
 
     protected U4 readU4(ClassFileReader reader, String name) throws IOException {
+        int offset = reader.getOffset();
         var uint = new U4(reader.readInt());
+        uint.setOffset(offset);
         uint.setName(name);
+        this.getChildren().add(uint);
         return uint;
     }
 
     protected U1Hex readU1Hex(ClassFileReader reader, String name) throws IOException {
+        int offset = reader.getOffset();
         var uint = new U1Hex(reader.readUnsignedByte());
+        uint.setOffset(offset);
         uint.setName(name);
+        this.getChildren().add(uint);
         return uint;
     }
 
     protected U2Hex readU2Hex(ClassFileReader reader, String name) throws IOException {
+        int offset = reader.getOffset();
         var uint = new U2Hex(reader.readUnsignedShort());
+        uint.setOffset(offset);
         uint.setName(name);
+        this.getChildren().add(uint);
         return uint;
     }
 
     protected U4Hex readU4Hex(ClassFileReader reader, String name) throws IOException {
+        int offset = reader.getOffset();
         var uint = new U4Hex(reader.readInt());
+        uint.setOffset(offset);
         uint.setName(name);
+        this.getChildren().add(uint);
         return uint;
-    }
-
-    public static final class Cell extends TreeCell<ClassFileComponent> {
-        @Override
-        protected void updateItem(ClassFileComponent item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty || item == null) {
-                setText(null);
-                setGraphic(null);
-            } else {
-                HBox box = new HBox();
-                Node icon = item.icon.get();
-                String name = item.name.get();
-                Node desc = item.desc.get();
-
-                if (icon != null) box.getChildren().add(icon);
-                if (name != null) box.getChildren().add(new Label(desc == null ? name : name + ": "));
-                if (desc != null) box.getChildren().add(desc);
-
-                setText(null);
-                setGraphic(box);
-            }
-        }
     }
 }

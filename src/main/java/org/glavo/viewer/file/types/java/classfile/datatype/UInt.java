@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile.datatype;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Label;
@@ -10,7 +11,8 @@ public abstract class UInt extends ClassFileComponent {
 
     protected UInt(int length, int value) {
         this.setLength(length);
-        this.setDesc(new Label(toString()));
+        this.setIntValue(value);
+        this.descProperty().bind(Bindings.createObjectBinding(() -> new Label(contentToString()), intValueProperty()));
     }
 
     public IntegerProperty intValueProperty() {
@@ -26,7 +28,7 @@ public abstract class UInt extends ClassFileComponent {
     }
 
     @Override
-    public String toString() {
+    public String contentToString() {
         return Integer.toUnsignedString(getIntValue());
     }
 }

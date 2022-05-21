@@ -5,11 +5,15 @@ import org.glavo.viewer.file.types.java.classfile.jvm.Mutf8Decoder;
 import java.io.*;
 
 public class ClassFileReader {
-    public int offset;
-    public DataInputStream input;
+    private int offset = 0;
+    private DataInputStream input;
 
     public ClassFileReader(InputStream input) {
         this.input = new DataInputStream(input);
+    }
+
+    public int getOffset() {
+        return offset;
     }
 
     public byte readByte() throws IOException {

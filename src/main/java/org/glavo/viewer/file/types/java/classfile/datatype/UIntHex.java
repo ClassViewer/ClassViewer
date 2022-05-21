@@ -8,7 +8,7 @@ public class UIntHex extends UInt {
     }
 
     @Override
-    public String toString() {
+    public String contentToString() {
         return "0x" + Integer.toHexString(getIntValue()).toUpperCase(Locale.ROOT);
     }
 }
