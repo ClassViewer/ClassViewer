@@ -8,6 +8,10 @@ public abstract class FileComponent<C extends FileComponent<C>> extends TreeItem
     private final IntegerProperty offset = new SimpleIntegerProperty();
     private final IntegerProperty length = new SimpleIntegerProperty();
 
+    @SuppressWarnings("unchecked")
+    protected FileComponent() {
+        this.setValue((C) this);
+    }
 
     public IntegerProperty offsetProperty() {
         return offset;
