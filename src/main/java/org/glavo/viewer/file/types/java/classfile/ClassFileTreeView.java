@@ -8,9 +8,9 @@ import javafx.scene.layout.HBox;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.ui.HexPane;
 
-public class ClassFileComponentTreeView extends TreeView<ClassFileComponent> {
+public class ClassFileTreeView extends TreeView<ClassFileComponent> {
 
-    public ClassFileComponentTreeView(FileTab tab) {
+    public ClassFileTreeView(FileTab tab) {
         this.setCellFactory(view -> new Cell());
 
         this.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
@@ -38,7 +38,6 @@ public class ClassFileComponentTreeView extends TreeView<ClassFileComponent> {
                 if (icon != null) box.getChildren().add(icon);
                 if (name != null) box.getChildren().add(new Label(desc == null ? name : name + ": "));
                 if (desc != null) box.getChildren().add(desc);
-
                 setText(null);
                 setGraphic(box);
             }

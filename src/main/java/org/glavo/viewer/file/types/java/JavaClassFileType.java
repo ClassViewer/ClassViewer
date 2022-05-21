@@ -7,11 +7,10 @@ import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.java.classfile.ClassFile;
-import org.glavo.viewer.file.types.java.classfile.ClassFileComponentTreeView;
+import org.glavo.viewer.file.types.java.classfile.ClassFileTreeView;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
-import org.glavo.viewer.ui.HexPane;
 import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.TaskUtils;
 
@@ -43,7 +42,7 @@ public class JavaClassFileType extends BinaryFileType {
 
             @Override
             protected void succeeded() {
-                ClassFileComponentTreeView tree = new ClassFileComponentTreeView(tab);
+                ClassFileTreeView tree = new ClassFileTreeView(tab);
                 tree.setRoot(getValue());
                 tab.setSideBar(tree);
             }

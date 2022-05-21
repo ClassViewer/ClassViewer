@@ -9,6 +9,7 @@ public class ClassFile extends ClassFileComponent {
 
     public static ClassFile readFrom(ClassFileReader reader) throws IOException {
         ClassFile res = new ClassFile();
+        res.setOffset(res.getOffset());
         res.setName("<In development>");
 
         U4Hex magic = res.readU4Hex(reader, "magic");
@@ -19,6 +20,11 @@ public class ClassFile extends ClassFileComponent {
 
         U2 cpCount = res.readU2(reader, "constant_pool_count");
 
+        // TODO
+
+
+
+        res.setLength(reader.getOffset() - res.getOffset());
         return res;
     }
 }
