@@ -19,6 +19,9 @@ import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.TaskUtils;
 
 import java.io.InputStream;
+import java.util.logging.Level;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public class JavaClassFileType extends BinaryFileType {
     public static final JavaClassFileType TYPE = new JavaClassFileType();
@@ -57,6 +60,7 @@ public class JavaClassFileType extends BinaryFileType {
 
             @Override
             protected void failed() {
+                LOGGER.log(Level.WARNING, "Failed to parse Java Class file", getException());
                 tab.setSideBar(new StackPane(new Label(I18N.getString("file.wrongFormat"))));
             }
         });
