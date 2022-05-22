@@ -2,13 +2,16 @@ package org.glavo.viewer.file.types.java;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;
+import javafx.scene.control.TreeItem;
 import javafx.scene.layout.StackPane;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.java.classfile.ClassFile;
+import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileTreeView;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.ByteList;
@@ -32,19 +35,22 @@ public class JavaClassFileType extends BinaryFileType {
     protected void openContent(FileTab tab, FileHandle handle, ByteList bytes) {
         handle.close();
 
-        TaskUtils.submit(new Task<ClassFile>() {
+        TaskUtils.submit(new Task<ClassFileTreeView>() {
             @Override
-            protected ClassFile call() throws Exception {
+            protected ClassFileTreeView call() throws Exception {
+                ClassFile file;
                 try (InputStream input = bytes.openInputStream()) {
-                    return ClassFile.readFrom(new ClassFileReader(input));
+                    file = ClassFile.readFrom(new ClassFileReader(input));
                 }
+                ClassFileTreeView view = new ClassFileTreeView(tab);
+                view.setRoot(file);
+                loadDesc(view, file);
+                return view;
             }
 
             @Override
             protected void succeeded() {
-                ClassFileTreeView tree = new ClassFileTreeView(tab);
-                tree.setRoot(getValue());
-                tab.setSideBar(tree);
+                tab.setSideBar(getValue());
             }
 
             @Override
@@ -53,5 +59,12 @@ public class JavaClassFileType extends BinaryFileType {
             }
         });
 
+    }
+
+    private static void loadDesc(ClassFileTreeView view, ClassFileComponent component) {
+        component.loadDesc(view);
+        for (TreeItem<ClassFileComponent> child : component.getChildren()) {
+            loadDesc(view, child.getValue());
+        }
     }
 }

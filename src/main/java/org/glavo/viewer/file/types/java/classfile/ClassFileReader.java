@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile;
 
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
 import org.glavo.viewer.file.types.java.classfile.jvm.Mutf8Decoder;
 
@@ -99,5 +100,9 @@ public class ClassFileReader {
 
     public U4Hex readU4Hex() throws IOException {
         return new U4Hex(readInt());
+    }
+
+    public <T extends ConstantInfo> CpIndex<T> readCpIndex(Class<T> type) throws IOException {
+        return new CpIndex<>(type, readUnsignedShort());
     }
 }

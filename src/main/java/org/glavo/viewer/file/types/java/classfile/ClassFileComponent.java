@@ -5,15 +5,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.layout.HBox;
 import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.FileComponent;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
-import org.glavo.viewer.ui.FileTab;
 
 import java.io.IOException;
 
@@ -114,6 +109,6 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         }
     }
 
-    public void loadDesc(ClassFile classFile, ConstantPool constantPool) {
+    public void loadDesc(ClassFileTreeView view) {
     }
 }

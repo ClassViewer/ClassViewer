@@ -12,3 +12,8 @@
     -fx-open-tab-animation: NONE;
     -fx-close-tab-animation: NONE;
 }
+
+.cp-index-hyper-link {
+    -fx-border-color: transparent;
+    -fx-underline: false;
+}

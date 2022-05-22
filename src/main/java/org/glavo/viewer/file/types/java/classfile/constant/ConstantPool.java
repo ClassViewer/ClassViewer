@@ -7,23 +7,13 @@ import javafx.collections.transformation.FilteredList;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
+import org.glavo.viewer.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class ConstantPool extends ClassFileComponent {
-
-
-    private static String formatIndex(int maxIndex, int index) {
-        int idxWidth = String.valueOf(maxIndex).length();
-        String fmtStr = "#%0" + idxWidth + "d";
-        return String.format(fmtStr, index);
-    }
-
-    private static void setConstantName(ConstantInfo constant, int cpCount, int idx) {
-        constant.setName(formatIndex(cpCount, idx));
-    }
 
     public static ConstantPool readFrom(ClassFileReader reader, U2 cpCount) throws IOException {
         int count = cpCount.getIntValue();
@@ -34,7 +24,7 @@ public class ConstantPool extends ClassFileComponent {
         // The constant_pool table is indexed from 1 to constant_pool_count - 1
         for (int i = 1; i < count; i++) {
             ConstantInfo c = ConstantInfo.readFrom(reader);
-            setConstantName(c, count, i);
+            c.setName(StringUtils.formatIndex(i, count));
             constants.add(c);
             // http://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.5
             // All 8-byte constants take up two entries in the constant_pool table of the class file.
@@ -63,5 +53,9 @@ public class ConstantPool extends ClassFileComponent {
 
     public ObservableList<ConstantInfo> getConstants() {
         return constants;
+    }
+
+    public ConstantInfo getConstant(int index) {
+        return index > 0 && index < constants.size() ? constants.get(index) : null;
     }
 }

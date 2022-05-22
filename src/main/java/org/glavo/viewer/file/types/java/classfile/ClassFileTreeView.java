@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.ui.HexPane;
 
@@ -20,6 +21,14 @@ public class ClassFileTreeView extends TreeView<ClassFileComponent> {
                 }
             }
         });
+    }
+
+    public ClassFile getClassFile() {
+        return (ClassFile) getRoot().getValue();
+    }
+
+    public ConstantPool getConstantPool() {
+        return getClassFile().getConstantPool();
     }
 
     public static final class Cell extends TreeCell<ClassFileComponent> {

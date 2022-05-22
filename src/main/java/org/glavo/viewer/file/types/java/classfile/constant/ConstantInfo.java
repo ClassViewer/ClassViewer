@@ -2,6 +2,7 @@ package org.glavo.viewer.file.types.java.classfile.constant;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
@@ -50,26 +51,31 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         int tagValue = reader.readUnsignedByte();
         Tag tag = new Tag(tagValue);
         ConstantInfo info = switch (tagValue) {
-            case CONSTANT_Class -> new ConstantClassInfo(tag, reader.readU2());
-            case CONSTANT_Fieldref -> new ConstantFieldrefInfo(tag, reader.readU2(), reader.readU2());
-            case CONSTANT_Methodref -> new ConstantMethodrefInfo(tag, reader.readU2(), reader.readU2());
+            case CONSTANT_Class -> new ConstantClassInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
+            case CONSTANT_Fieldref ->
+                    new ConstantFieldrefInfo(tag, reader.readCpIndex(ConstantClassInfo.class), reader.readCpIndex(ConstantNameAndTypeInfo.class));
+            case CONSTANT_Methodref ->
+                    new ConstantMethodrefInfo(tag, reader.readCpIndex(ConstantClassInfo.class), reader.readCpIndex(ConstantNameAndTypeInfo.class));
             case CONSTANT_InterfaceMethodref ->
-                    new ConstantInterfaceMethodrefInfo(tag, reader.readU2(), reader.readU2());
-            case CONSTANT_String -> new ConstantStringInfo(tag, reader.readU2());
+                    new ConstantInterfaceMethodrefInfo(tag, reader.readCpIndex(ConstantClassInfo.class), reader.readCpIndex(ConstantNameAndTypeInfo.class));
+            case CONSTANT_String -> new ConstantStringInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
             case CONSTANT_Integer -> new ConstantIntegerInfo(tag, reader.readU4());
             case CONSTANT_Float -> new ConstantFloatInfo(tag, reader.readU4());
             case CONSTANT_Long -> new ConstantLongInfo(tag, reader.readU4(), reader.readU4());
             case CONSTANT_Double -> new ConstantDoubleInfo(tag, reader.readU4(), reader.readU4());
-            case CONSTANT_NameAndType -> new ConstantNameAndTypeInfo(tag, reader.readU2(), reader.readU2());
+            case CONSTANT_NameAndType ->
+                    new ConstantNameAndTypeInfo(tag, reader.readCpIndex(ConstantUtf8Info.class), reader.readCpIndex(ConstantUtf8Info.class));
             case CONSTANT_Utf8 -> {
                 U2 length = reader.readU2();
                 yield new ConstantUtf8Info(tag, length, new Bytes(reader.readNBytes(length.getIntValue())));
             }
-            case CONSTANT_MethodHandle -> new ConstantMethodHandleInfo(tag, reader.readU1(), reader.readU2());
-            case CONSTANT_MethodTypeInfo -> new ConstantMethodTypeInfo(tag, reader.readU2());
-            case CONSTANT_InvokeDynamic -> new ConstantInvokeDynamicInfo(tag, reader.readU2(), reader.readU2());
-            case CONSTANT_ModuleInfo -> new ConstantModuleInfo(tag, reader.readU2());
-            case CONSTANT_PackageInfo -> new ConstantPackageInfo(tag, reader.readU2());
+            case CONSTANT_MethodHandle ->
+                    new ConstantMethodHandleInfo(tag, reader.readU1(), reader.readCpIndex(ConstantInfo.class));
+            case CONSTANT_MethodTypeInfo -> new ConstantMethodTypeInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
+            case CONSTANT_InvokeDynamic ->
+                    new ConstantInvokeDynamicInfo(tag, reader.readU2(), reader.readCpIndex(ConstantNameAndTypeInfo.class));
+            case CONSTANT_ModuleInfo -> new ConstantModuleInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
+            case CONSTANT_PackageInfo -> new ConstantPackageInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
             default -> throw new ClassFileParseException("Unknown constant tag: " + tag.contentToString());
         };
         info.setLength(reader.getOffset() - offset);
@@ -96,6 +102,14 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
     public String getConstantName() {
         String simpleName = this.getClass().getSimpleName();
         return simpleName.substring(PREFIX_LENGTH, simpleName.length() - SUFFIX_LENGTH);
+    }
+
+    public int getIndex() {
+        if (!(this.getParent().getValue() instanceof ConstantPool pool)) throw new AssertionError();
+
+        int idx = pool.getConstants().indexOf(this);
+        assert idx > 0;
+        return idx;
     }
 
     public static final class Tag extends ClassFileComponent {

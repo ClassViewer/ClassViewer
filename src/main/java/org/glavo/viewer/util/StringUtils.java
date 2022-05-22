@@ -41,4 +41,10 @@ public final class StringUtils {
             return str.substring(0, cutPos) + "...";
         }
     }
+
+    public static String formatIndex(int index, int maxIndex) {
+        int idxWidth = String.valueOf(maxIndex).length();
+        String fmtStr = "#%0" + idxWidth + "d";
+        return String.format(fmtStr, index);
+    }
 }

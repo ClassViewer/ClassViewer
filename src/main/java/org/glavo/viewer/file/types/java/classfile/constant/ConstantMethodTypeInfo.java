@@ -1,6 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
-import org.glavo.viewer.file.types.java.classfile.datatype.U2;
+import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 
 /*
 CONSTANT_MethodType_info {
@@ -9,10 +9,11 @@ CONSTANT_MethodType_info {
 }
 */
 public final class ConstantMethodTypeInfo extends ConstantInfo {
-    public ConstantMethodTypeInfo(ConstantInfo.Tag tag, U2 descriptorIndex) {
+    public ConstantMethodTypeInfo(ConstantInfo.Tag tag, CpIndex<ConstantUtf8Info> descriptorIndex) {
         super(tag);
         descriptorIndex.setName("descriptor_index");
 
+        //noinspection unchecked
         this.getChildren().setAll(tag, descriptorIndex);
     }
 }
