@@ -88,7 +88,10 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
                 valuePresenter.bind(info.descProperty());
 
                 Hyperlink link = TextUtils.createHyperlinkWithoutPadding(StringUtils.formatIndex(idx, constantPool.getConstants().size()));
-                link.setOnAction(event -> view.getSelectionModel().select(getConstantInfo()));
+                link.setOnAction(event -> {
+                    view.getSelectionModel().select(getConstantInfo());
+                    view.scrollTo(view.getRow(getConstantInfo()));
+                });
                 link.getStyleClass().add("cp-index-hyper-link");
                 infoLink.set(link);
 
