@@ -59,12 +59,17 @@ public abstract class JavaTypes {
         IntRef endIdx = new IntRef();
 
         if (descriptor.charAt(0) == '(') {
-            ArrayList<JavaType> parTypes = new ArrayList<>();
+            endIdx.value = 1;
 
-            do {
-                parTypes.add(scanDescriptor(descriptor, endIdx.value, endIdx));
-            } while (endIdx.value < descriptor.length() && descriptor.charAt(endIdx.value) != ')');
-
+            List<JavaType> parTypes;
+            if (descriptor.length() >= 3 && descriptor.charAt(1) == ')') {
+                parTypes = List.of();
+            } else {
+                parTypes = new ArrayList<>();
+                do {
+                    parTypes.add(scanDescriptor(descriptor, endIdx.value, endIdx));
+                } while (endIdx.value < descriptor.length() && descriptor.charAt(endIdx.value) != ')');
+            }
             if (endIdx.value < descriptor.length() && descriptor.charAt(endIdx.value) == ')') {
                 JavaType retType = scanDescriptor(descriptor, endIdx.value + 1, endIdx);
                 if (endIdx.value == descriptor.length())
@@ -83,7 +88,7 @@ public abstract class JavaTypes {
         int len = descriptor.length() - begin;
         if (len == 0) throw new IllegalArgumentException("descriptor is empty");
 
-        switch (descriptor.charAt(0)) {
+        switch (descriptor.charAt(begin)) {
             case 'B' -> {
                 endIdx.value = begin + 1;
                 return BYTE;
@@ -109,12 +114,16 @@ public abstract class JavaTypes {
                 return LONG;
             }
             case 'S' -> {
-                endIdx.value = (begin + 1);
+                endIdx.value = begin + 1;
                 return SHORT;
             }
             case 'Z' -> {
                 endIdx.value = begin + 1;
                 return BOOLEAN;
+            }
+            case 'V' -> {
+                endIdx.value = begin + 1;
+                return VOID;
             }
             case 'L' -> {
                 int idx = descriptor.indexOf(';', begin + 1);
@@ -138,6 +147,6 @@ public abstract class JavaTypes {
             }
         }
 
-        throw new IllegalArgumentException("malformed descriptor '" + descriptor + "'");
+        throw new IllegalArgumentException("malformed descriptor '" + descriptor.substring(begin) + "'");
     }
 }

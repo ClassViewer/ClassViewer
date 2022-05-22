@@ -9,6 +9,10 @@ public abstract sealed class JavaType permits PrimitiveType, ArrayType, ClassTyp
         this.descriptor = descriptor;
     }
 
+    public boolean isMethodType() {
+        return this instanceof MethodType;
+    }
+
     public String getQualified() {
         return qualified;
     }
