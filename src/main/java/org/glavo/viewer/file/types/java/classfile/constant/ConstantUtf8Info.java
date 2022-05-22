@@ -2,7 +2,6 @@ package org.glavo.viewer.file.types.java.classfile.constant;
 
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.datatype.Bytes;
-import org.glavo.viewer.file.types.java.classfile.datatype.U1;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 
 /*
@@ -13,7 +12,7 @@ CONSTANT_Utf8_info {
 }
 */
 public final class ConstantUtf8Info extends ConstantInfo {
-    public ConstantUtf8Info(U1 tag, U2 length, Bytes bytes) {
+    public ConstantUtf8Info(ConstantInfo.Tag tag, U2 length, Bytes bytes) {
         super(tag);
         length.setName("length");
         bytes.setName("bytes");

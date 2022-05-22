@@ -4,7 +4,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Label;
-import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 
 public abstract class UInt extends ClassFileComponent {

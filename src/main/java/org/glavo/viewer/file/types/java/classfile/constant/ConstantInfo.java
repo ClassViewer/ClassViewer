@@ -1,14 +1,21 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
+import javafx.beans.binding.Bindings;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileParseException;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.datatype.Bytes;
 import org.glavo.viewer.file.types.java.classfile.datatype.U1;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
+import org.glavo.viewer.resources.Images;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public sealed abstract class ConstantInfo extends ClassFileComponent
         permits ConstantClassInfo,
@@ -21,30 +28,30 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         ConstantInvokeDynamicInfo,
         ConstantModuleInfo, ConstantPackageInfo {
     //@formatter:off
-    public static final int CONSTANT_Class              = 7;
-    public static final int CONSTANT_Fieldref           = 9;
-    public static final int CONSTANT_Methodref          = 10;
-    public static final int CONSTANT_InterfaceMethodref = 11;
-    public static final int CONSTANT_String             = 8;
-    public static final int CONSTANT_Integer            = 3;
-    public static final int CONSTANT_Float              = 4;
-    public static final int CONSTANT_Long               = 5;
-    public static final int CONSTANT_Double             = 6;
-    public static final int CONSTANT_NameAndType        = 12;
-    public static final int CONSTANT_Utf8               = 1;
-    public static final int CONSTANT_MethodHandle       = 15;
-    public static final int CONSTANT_MethodTypeInfo     = 16;
-    public static final int CONSTANT_InvokeDynamic      = 18;
-    public static final int CONSTANT_ModuleInfo         = 19;
-    public static final int CONSTANT_PackageInfo        = 20;
+    public static final int CONSTANT_Class              = 7;  // C
+    public static final int CONSTANT_Fieldref           = 9;  // F
+    public static final int CONSTANT_Methodref          = 10; // M
+    public static final int CONSTANT_InterfaceMethodref = 11; // I
+    public static final int CONSTANT_String             = 8;  // S
+    public static final int CONSTANT_Integer            = 3;  // I
+    public static final int CONSTANT_Float              = 4;  // F
+    public static final int CONSTANT_Long               = 5;  // L
+    public static final int CONSTANT_Double             = 6;  // D
+    public static final int CONSTANT_NameAndType        = 12; // N
+    public static final int CONSTANT_Utf8               = 1;  // T
+    public static final int CONSTANT_MethodHandle       = 15; // H
+    public static final int CONSTANT_MethodTypeInfo     = 16; // T
+    public static final int CONSTANT_InvokeDynamic      = 18; // D
+    public static final int CONSTANT_ModuleInfo         = 19; // M
+    public static final int CONSTANT_PackageInfo        = 20; // P
     //@formatter:on
 
     public static ConstantInfo readFrom(ClassFileReader reader) throws IOException {
         int offset = reader.getOffset();
 
-        U1 tag = reader.readU1();
-
-        ConstantInfo info = switch (tag.getIntValue()) {
+        int tagValue = reader.readUnsignedByte();
+        Tag tag = new Tag(tagValue);
+        ConstantInfo info = switch (tagValue) {
             case CONSTANT_Class -> new ConstantClassInfo(tag, reader.readU2());
             case CONSTANT_Fieldref -> new ConstantFieldrefInfo(tag, reader.readU2(), reader.readU2());
             case CONSTANT_Methodref -> new ConstantMethodrefInfo(tag, reader.readU2(), reader.readU2());
@@ -71,15 +78,43 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         return info;
     }
 
-    public ConstantInfo(U1 tag) {
-        tag.setName("tag");
+    private static final Map<String, Image> images = new HashMap<>();
+
+    public ConstantInfo(ConstantInfo.Tag tag) {
+        String name = this.getConstantName();
+        tag.setTagName(name);
+        ImageView view = new ImageView(images.computeIfAbsent(name, key -> Images.loadImage("classfile/constant/" + key + ".png")));
+        Tooltip.install(view, new Tooltip(name));
+        this.setIcon(view);
     }
 
-    public U1 getTag() {
-        return (U1) getChildren().get(0);
+    public Tag getTag() {
+        return (Tag) getChildren().get(0);
     }
 
-    public Image getImage() {
-        return null;
+    private static final int PREFIX_LENGTH = "CONSTANT".length();
+    private static final int SUFFIX_LENGTH = "Info".length();
+
+    public String getConstantName() {
+        String simpleName = this.getClass().getSimpleName();
+        return simpleName.substring(PREFIX_LENGTH, simpleName.length() - SUFFIX_LENGTH);
+    }
+
+    public static final class Tag extends ClassFileComponent {
+        private final int intValue;
+
+        Tag(int value) {
+            this.setLength(1);
+            this.setName("tag");
+            this.intValue = value;
+        }
+
+        public int getIntValue() {
+            return intValue;
+        }
+
+        void setTagName(String tagName) {
+            this.setDesc(new Label("CONSTANT_" + tagName + "(" + intValue + ")"));
+        }
     }
 }

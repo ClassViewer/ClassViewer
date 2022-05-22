@@ -1,6 +1,5 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
-import org.glavo.viewer.file.types.java.classfile.datatype.U1;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 
 /*
@@ -10,7 +9,7 @@ CONSTANT_Package_info {
 }
 */
 public final class ConstantPackageInfo extends ConstantInfo {
-    public ConstantPackageInfo(U1 tag, U2 nameIndex) {
+    public ConstantPackageInfo(ConstantInfo.Tag tag, U2 nameIndex) {
         super(tag);
         nameIndex.setName("name_index");
 

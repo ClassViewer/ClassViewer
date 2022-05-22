@@ -21,13 +21,8 @@ public class ConstantPool extends ClassFileComponent {
         return String.format(fmtStr, index);
     }
 
-    // like #32: (Utf8)
     private static void setConstantName(ConstantInfo constant, int cpCount, int idx) {
-        String idxStr = formatIndex(cpCount, idx);
-        String constantName = constant.getClass().getSimpleName()
-                .replace("Constant", "")
-                .replace("Info", "");
-        constant.setName(idxStr + " (" + constantName + ")");
+        constant.setName(formatIndex(cpCount, idx));
     }
 
     public static ConstantPool readFrom(ClassFileReader reader, U2 cpCount) throws IOException {

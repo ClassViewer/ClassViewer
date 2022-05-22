@@ -1,6 +1,5 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
-import org.glavo.viewer.file.types.java.classfile.datatype.U1;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 
 /*
@@ -11,7 +10,7 @@ CONSTANT_InvokeDynamic_info {
 }
 */
 public final class ConstantInvokeDynamicInfo extends ConstantInfo {
-    public ConstantInvokeDynamicInfo(U1 tag, U2 bootstrapMethodAttrIndex, U2 nameAndTypeIndex) {
+    public ConstantInvokeDynamicInfo(ConstantInfo.Tag tag, U2 bootstrapMethodAttrIndex, U2 nameAndTypeIndex) {
         super(tag);
         bootstrapMethodAttrIndex.setName("bootstrap_method_attr_index");
         nameAndTypeIndex.setName("name_and_type_index");
