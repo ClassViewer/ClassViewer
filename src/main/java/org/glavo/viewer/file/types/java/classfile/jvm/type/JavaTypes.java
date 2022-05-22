@@ -2,6 +2,8 @@ package org.glavo.viewer.file.types.java.classfile.jvm.type;
 
 import kala.value.primitive.IntRef;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,51 +43,99 @@ public abstract class JavaTypes {
         return new MethodType(returnType, parameterTypes, qualified, descriptor);
     }
 
+    public static ClassType classTypeOfDescriptor(String descriptor) {
+        assert descriptor.length() > 2;
+        assert descriptor.charAt(0) == 'L';
+        assert descriptor.charAt(descriptor.length() - 1) == ';';
+
+        String qualified = descriptor.substring(1, descriptor.length() - 1).replace('/', '.');
+
+        return new ClassType(qualified, descriptor);
+    }
+
     public static JavaType parseDescriptor(String descriptor) {
         if (descriptor == null || descriptor.isEmpty()) throw new IllegalArgumentException("descriptor is empty");
 
-        IntRef length = new IntRef();
+        IntRef endIdx = new IntRef();
 
         if (descriptor.charAt(0) == '(') {
-            // TODO
+            ArrayList<JavaType> parTypes = new ArrayList<>();
+
+            do {
+                parTypes.add(scanDescriptor(descriptor, endIdx.value, endIdx));
+            } while (endIdx.value < descriptor.length() && descriptor.charAt(endIdx.value) != ')');
+
+            if (endIdx.value < descriptor.length() && descriptor.charAt(endIdx.value) == ')') {
+                JavaType retType = scanDescriptor(descriptor, endIdx.value + 1, endIdx);
+                if (endIdx.value == descriptor.length())
+                    return newMethodType(retType, Collections.unmodifiableList(parTypes));
+            }
+
         } else {
-            JavaType type = scanDescriptor(descriptor, 0, length);
-            if (length.value == descriptor.length()) return type;
+            JavaType type = scanDescriptor(descriptor, 0, endIdx);
+            if (endIdx.value == descriptor.length()) return type;
         }
 
         throw new IllegalArgumentException("malformed descriptor '" + descriptor + "'");
     }
 
-    public static JavaType scanDescriptor(String descriptor, int begin, IntRef length) {
+    public static JavaType scanDescriptor(String descriptor, int begin, IntRef endIdx) {
         int len = descriptor.length() - begin;
         if (len == 0) throw new IllegalArgumentException("descriptor is empty");
 
         switch (descriptor.charAt(0)) {
-            case 'B':
+            case 'B' -> {
+                endIdx.value = begin + 1;
                 return BYTE;
-            case 'C':
+            }
+            case 'C' -> {
+                endIdx.value = begin + 1;
                 return CHAR;
-            case 'D':
+            }
+            case 'D' -> {
+                endIdx.value = begin + 1;
                 return DOUBLE;
-            case 'F':
+            }
+            case 'F' -> {
+                endIdx.value = begin + 1;
                 return FLOAT;
-            case 'I':
+            }
+            case 'I' -> {
+                endIdx.value = begin + 1;
                 return INT;
-            case 'J':
+            }
+            case 'J' -> {
+                endIdx.value = begin + 1;
                 return LONG;
-            case 'S':
+            }
+            case 'S' -> {
+                endIdx.value = (begin + 1);
                 return SHORT;
-            case 'Z':
+            }
+            case 'Z' -> {
+                endIdx.value = begin + 1;
                 return BOOLEAN;
-            case 'L':
+            }
+            case 'L' -> {
                 int idx = descriptor.indexOf(';', begin + 1);
-                if (idx >= 0) {
-
+                if (idx > 0) {
+                    endIdx.value = idx + 1;
+                    return classTypeOfDescriptor(descriptor.substring(begin, idx + 1));
                 }
-                break;
-            case '[':
-                // TODO
-                break;
+            }
+            case '[' -> {
+                int level = 0;
+                int idx = begin;
+                while (idx < descriptor.length()) {
+                    if (descriptor.charAt(idx) != '[') break;
+                    level++;
+                    idx++;
+                }
+                if (idx != descriptor.length()) {
+                    JavaType tpe = scanDescriptor(descriptor, idx, endIdx);
+                    return newArrayType(tpe, level);
+                }
+            }
         }
 
         throw new IllegalArgumentException("malformed descriptor '" + descriptor + "'");

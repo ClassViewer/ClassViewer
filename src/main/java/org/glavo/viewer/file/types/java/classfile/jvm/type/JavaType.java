@@ -18,6 +18,16 @@ public abstract sealed class JavaType permits PrimitiveType, ArrayType, ClassTyp
     }
 
     @Override
+    public int hashCode() {
+        return descriptor.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof JavaType other && this.getDescriptor().equals(((JavaType) obj).getDescriptor());
+    }
+
+    @Override
     public String toString() {
         return getQualified();
     }
