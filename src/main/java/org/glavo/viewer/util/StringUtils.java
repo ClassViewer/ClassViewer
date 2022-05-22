@@ -22,7 +22,7 @@ public final class StringUtils {
     private static final Pattern newLine = Pattern.compile("[\\r\\n]");
 
     public static String cutAndAppendEllipsis(String str) {
-        return cutAndAppendEllipsis(str, 50);
+        return cutAndAppendEllipsis(str, 100);
     }
 
     public static String cutAndAppendEllipsis(String str, int maxLength) {

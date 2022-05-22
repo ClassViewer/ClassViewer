@@ -4,6 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.glavo.viewer.file.types.java.classfile.jvm.type.JavaType;
 import org.glavo.viewer.file.types.java.classfile.jvm.type.JavaTypes;
@@ -37,7 +38,11 @@ public final class ConstantNameAndTypeInfo extends ConstantInfo {
         this.descProperty().bind(Val.combine(nameIndex.constantInfoProperty(), this.typeProperty(),
                 (name, type) -> {
                     if (name == null || name.getText() == null || type == null) return null;
-                    return new Label(type.isMethodType() ? name.getText() + type.getQualified() : name.getText() + ": " + type.getQualified());
+
+                    String text = type.isMethodType() ? name.getText() + type.getQualified() : name.getText() + ": " + type.getQualified();
+                    Label label = new Label(text);
+                    label.setTooltip(new Tooltip(text));
+                    return label;
                 }));
     }
 
