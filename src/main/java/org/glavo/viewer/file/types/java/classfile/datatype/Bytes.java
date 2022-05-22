@@ -13,6 +13,10 @@ public class Bytes extends ClassFileComponent {
         this.setLength(values.length);
     }
 
+    public byte[] getValues() {
+        return values;
+    }
+
     @Override
     public String contentToString() {
         return Arrays.toString(values);

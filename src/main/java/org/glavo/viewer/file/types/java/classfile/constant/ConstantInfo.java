@@ -1,6 +1,5 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
-import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -9,7 +8,6 @@ import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileParseException;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.datatype.Bytes;
-import org.glavo.viewer.file.types.java.classfile.datatype.U1;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.resources.Images;
 
@@ -115,6 +113,11 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
 
         void setTagName(String tagName) {
             this.setDesc(new Label("CONSTANT_" + tagName + "(" + intValue + ")"));
+        }
+
+        @Override
+        protected boolean isLeafComponent() {
+            return true;
         }
     }
 }

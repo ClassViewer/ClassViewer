@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile;
 
+import javafx.scene.control.TreeItem;
 import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
@@ -27,6 +28,14 @@ public class ClassFile extends ClassFileComponent {
         res.setLength(reader.getOffset() - res.getOffset());
 
         res.calculateOffset(new IntRef());
+        loadDesc(res, res, constantPool);
         return res;
+    }
+
+    private static void loadDesc(ClassFileComponent component, ClassFile classFile, ConstantPool constantPool) {
+        component.loadDesc(classFile, constantPool);
+        for (TreeItem<ClassFileComponent> child : component.getChildren()) {
+            loadDesc(child.getValue(), classFile, constantPool);
+        }
     }
 }

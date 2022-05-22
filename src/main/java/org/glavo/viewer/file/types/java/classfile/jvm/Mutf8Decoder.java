@@ -1,8 +1,5 @@
 package org.glavo.viewer.file.types.java.classfile.jvm;
 
-import java.io.IOException;
-import java.io.UTFDataFormatException;
-
 public class Mutf8Decoder {
 
     /**
@@ -11,7 +8,7 @@ public class Mutf8Decoder {
      * @param bytes Mutf8 data
      * @return a Unicode string.
      */
-    public static String decodeMutf8(byte[] bytes) throws IOException {
+    public static String decodeMutf8(byte[] bytes) {
         int utflen = bytes.length;
 
         char[] chararr = new char[utflen];
@@ -39,11 +36,11 @@ public class Mutf8Decoder {
                     /* 110x xxxx   10xx xxxx*/
                     count += 2;
                     if (count > utflen)
-                        throw new UTFDataFormatException(
+                        throw new IllegalArgumentException(
                                 "malformed input: partial character at end");
                     char2 = (int) bytes[count - 1];
                     if ((char2 & 0xC0) != 0x80)
-                        throw new UTFDataFormatException(
+                        throw new IllegalArgumentException(
                                 "malformed input around byte " + count);
                     chararr[chararr_count++] = (char) (((c & 0x1F) << 6) |
                             (char2 & 0x3F));
@@ -52,12 +49,12 @@ public class Mutf8Decoder {
                     /* 1110 xxxx  10xx xxxx  10xx xxxx */
                     count += 3;
                     if (count > utflen)
-                        throw new UTFDataFormatException(
+                        throw new IllegalArgumentException(
                                 "malformed input: partial character at end");
                     char2 = (int) bytes[count - 2];
                     char3 = (int) bytes[count - 1];
                     if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80))
-                        throw new UTFDataFormatException(
+                        throw new IllegalArgumentException(
                                 "malformed input around byte " + (count - 1));
                     chararr[chararr_count++] = (char) (((c & 0x0F) << 12) |
                             ((char2 & 0x3F) << 6) |
@@ -65,7 +62,7 @@ public class Mutf8Decoder {
                 }
                 default ->
                     /* 10xx xxxx,  1111 xxxx */
-                        throw new UTFDataFormatException(
+                        throw new IllegalArgumentException(
                                 "malformed input around byte " + count);
             }
         }

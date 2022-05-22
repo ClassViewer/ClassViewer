@@ -1,8 +1,16 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
-import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Background;
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
+import org.glavo.viewer.file.types.java.classfile.ClassFile;
 import org.glavo.viewer.file.types.java.classfile.datatype.Bytes;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
+import org.glavo.viewer.file.types.java.classfile.jvm.Mutf8Decoder;
+import org.glavo.viewer.util.StringUtils;
 
 /*
 CONSTANT_Utf8_info {
@@ -20,7 +28,27 @@ public final class ConstantUtf8Info extends ConstantInfo {
         this.getChildren().setAll(tag, length, bytes);
     }
 
-    private static final class Mutf8 extends ClassFileComponent {
+    public Bytes getBytes() {
+        return (Bytes) getChildren().get(2);
+    }
 
+    @Override
+    public void loadDesc(ClassFile classFile, ConstantPool constantPool) {
+        String str = Mutf8Decoder.decodeMutf8(getBytes().getValues());
+        Label label = new Label(StringUtils.cutAndAppendEllipsis(str));
+        this.setDesc(label);
+
+        Tooltip tooltip = new Tooltip();
+        CodeArea area = new CodeArea(str);
+        area.getStylesheets().clear();
+        area.setBackground(Background.EMPTY);
+        area.setEditable(false);
+        area.getStyleClass().add("tooltip-code-area");
+
+        VirtualizedScrollPane<CodeArea> scrollPane = new VirtualizedScrollPane<>(area);
+        scrollPane.prefWidthProperty().bind(area.totalWidthEstimateProperty());
+        scrollPane.prefHeightProperty().bind(area.totalHeightEstimateProperty());
+        tooltip.setGraphic(scrollPane);
+        label.setTooltip(tooltip);
     }
 }

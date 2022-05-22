@@ -12,3 +12,7 @@
     -fx-open-tab-animation: NONE;
     -fx-close-tab-animation: NONE;
 }
+
+.tooltip-code-area .text {
+    -fx-fill: white;
+}
