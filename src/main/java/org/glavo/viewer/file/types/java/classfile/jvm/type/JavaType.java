@@ -6,12 +6,19 @@ public abstract sealed class JavaType permits PrimitiveType, ArrayType, ClassTyp
 
     JavaType(String qualified, String descriptor) {
         this.qualified = qualified;
-
         this.descriptor = descriptor;
+    }
+
+    public String getQualified() {
+        return qualified;
+    }
+
+    public String getDescriptor() {
+        return descriptor;
     }
 
     @Override
     public String toString() {
-        return qualified;
+        return getQualified();
     }
 }
