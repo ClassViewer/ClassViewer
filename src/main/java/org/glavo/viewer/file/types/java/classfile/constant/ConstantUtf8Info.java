@@ -37,18 +37,6 @@ public final class ConstantUtf8Info extends ConstantInfo {
         String str = Mutf8Decoder.decodeMutf8(getBytes().getValues());
         Label label = new Label(StringUtils.cutAndAppendEllipsis(str));
         this.setDesc(label);
-
-        Tooltip tooltip = new Tooltip();
-        CodeArea area = new CodeArea(str);
-        area.getStylesheets().clear();
-        area.setBackground(Background.EMPTY);
-        area.setEditable(false);
-        area.getStyleClass().add("tooltip-code-area");
-
-        VirtualizedScrollPane<CodeArea> scrollPane = new VirtualizedScrollPane<>(area);
-        scrollPane.prefWidthProperty().bind(area.totalWidthEstimateProperty());
-        scrollPane.prefHeightProperty().bind(area.totalHeightEstimateProperty());
-        tooltip.setGraphic(scrollPane);
-        label.setTooltip(tooltip);
+        label.setTooltip(new Tooltip(str));
     }
 }
