@@ -2,6 +2,7 @@ package org.glavo.viewer.file.types.java;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.StackPane;
 import org.glavo.viewer.file.FileHandle;
@@ -35,6 +36,7 @@ public class JavaClassFileType extends BinaryFileType {
     protected void openContent(FileTab tab, FileHandle handle, ByteList bytes) {
         handle.close();
 
+        tab.setSideBar(new StackPane(new ProgressIndicator()));
         TaskUtils.submit(new Task<ClassFileTreeView>() {
             @Override
             protected ClassFileTreeView call() throws Exception {

@@ -1,6 +1,8 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
+import javafx.scene.control.Label;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
+import org.reactfx.value.Val;
 
 /*
 CONSTANT_NameAndType_info {
@@ -17,5 +19,7 @@ public final class ConstantNameAndTypeInfo extends ConstantInfo {
 
         //noinspection unchecked
         this.getChildren().setAll(tag, nameIndex, descriptorIndex);
+        this.descProperty().bind(Val.combine(nameIndex.constantInfoProperty(), descriptorIndex.constantInfoProperty(),
+                (name, type) -> (name == null || type == null) ? null : new Label(name.getText() + "&" + type.getText())));
     }
 }
