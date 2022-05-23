@@ -4,6 +4,7 @@ import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4Hex;
+import org.glavo.viewer.file.types.java.classfile.jvm.AccessFlagType;
 
 import java.io.IOException;
 
@@ -40,11 +41,11 @@ public class ClassFile extends ClassFileComponent {
         res.readU2(reader, "major_version");
 
         U2 cpCount = res.readU2(reader, "constant_pool_count");
-
         ConstantPool constantPool = ConstantPool.readFrom(reader, cpCount);
         res.getChildren().add(constantPool);
         res.setLength(reader.getOffset() - res.getOffset());
 
+        res.readAccessFlags(reader, "access_flags", AccessFlagType.AF_CLASS);
 
 
         res.calculateOffset(new IntRef());

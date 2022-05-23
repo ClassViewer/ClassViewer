@@ -96,6 +96,13 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         return uint;
     }
 
+    protected AccessFlags readAccessFlags(ClassFileReader reader, String name, int flagType) throws IOException {
+        var flags = new AccessFlags(flagType, reader.readUnsignedShort());
+        flags.setName(name);
+        this.getChildren().add(flags);
+        return flags;
+    }
+
     public void calculateOffset(IntRef offset) {
         this.setOffset(offset.value);
         if (getChildren().isEmpty()) {
