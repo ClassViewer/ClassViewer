@@ -138,6 +138,16 @@ public class ViewerPane extends BorderPane {
         }
 
 
+        Menu editMenu = new Menu(I18N.getString("menu.edit"));
+        {
+
+        }
+
+        Menu windowMenu = new Menu(I18N.getString("menu.window"));
+        {
+
+        }
+
         Menu helpMenu = new Menu(I18N.getString("menu.help"));
         {
             helpMenu.setMnemonicParsing(true);
@@ -147,7 +157,7 @@ public class ViewerPane extends BorderPane {
             helpMenu.getItems().setAll(aboutItem);
         }
 
-        menuBar.getMenus().setAll(fileMenu, helpMenu);
+        menuBar.getMenus().setAll(fileMenu, editMenu, windowMenu, helpMenu);
         return menuBar;
     }
 
