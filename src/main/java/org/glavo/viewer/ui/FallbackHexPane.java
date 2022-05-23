@@ -3,13 +3,17 @@ package org.glavo.viewer.ui;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import kala.tuple.primitive.IntTuple2;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.HexText;
 
+import java.util.function.Consumer;
+
 public class FallbackHexPane extends StackPane implements HexPane {
     private final CodeArea area;
+    private Consumer<IntTuple2> onSelect;
 
     public FallbackHexPane(ByteList array) {
         area = new CodeArea();
@@ -33,6 +37,13 @@ public class FallbackHexPane extends StackPane implements HexPane {
     @Override
     public void select(int offset, int length) {
         area.selectRange(HexText.calcBytesTextPosition(offset), HexText.calcBytesTextPosition(offset + length) - 1);
+        if (onSelect != null) {
+            onSelect.accept(IntTuple2.of(offset, length));
+        }
     }
 
+    @Override
+    public void setOnSelect(Consumer<IntTuple2> consumer) {
+        onSelect = consumer;
+    }
 }

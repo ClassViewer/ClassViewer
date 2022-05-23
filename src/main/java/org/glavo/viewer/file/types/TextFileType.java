@@ -199,7 +199,7 @@ public class TextFileType extends CustomFileType {
         statusBar.setAlignment(Pos.CENTER_RIGHT);
         res.setStatusBar(statusBar);
 
-        Task<CodeArea> task = new Task<CodeArea>() {
+        Task<CodeArea> task = new Task<>() {
             Charset charset;
 
             @Override

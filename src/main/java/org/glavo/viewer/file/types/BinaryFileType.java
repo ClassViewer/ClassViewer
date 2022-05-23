@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
@@ -70,6 +71,20 @@ public class BinaryFileType extends CustomFileType {
                     @Override
                     protected void succeeded() {
                         res.setContent(getValue().getNode());
+
+                        // StatusBar (TODO?)
+                        BorderPane statusBar = new BorderPane();
+
+                        Label statusLabel = new Label(" ");
+                        statusBar.setLeft(statusLabel);
+
+                        HexPane.BytesBar bytesBar = new HexPane.BytesBar(bytes.size());
+                        bytesBar.setMaxHeight(statusLabel.getMaxHeight());
+                        bytesBar.setPrefWidth(200);
+                        statusBar.setRight(bytesBar);
+
+                        res.setStatusBar(statusBar);
+                        getValue().setOnSelect((tuple) -> bytesBar.select(tuple._1, tuple._2));
                     }
 
                     @Override
