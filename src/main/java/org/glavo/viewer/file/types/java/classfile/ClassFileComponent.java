@@ -96,13 +96,9 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         return uint;
     }
 
-    protected boolean isLeafComponent() {
-        return false;
-    }
-
     public void calculateOffset(IntRef offset) {
         this.setOffset(offset.value);
-        if (isLeafComponent()) {
+        if (getChildren().isEmpty()) {
             offset.value += this.getLength();
         } else {
             this.getChildren().forEach(it -> it.getValue().calculateOffset(offset));

@@ -41,10 +41,11 @@ public class ClassFile extends ClassFileComponent {
 
         U2 cpCount = res.readU2(reader, "constant_pool_count");
 
-        // TODO
         ConstantPool constantPool = ConstantPool.readFrom(reader, cpCount);
         res.getChildren().add(constantPool);
         res.setLength(reader.getOffset() - res.getOffset());
+
+
 
         res.calculateOffset(new IntRef());
         return res;

@@ -31,9 +31,4 @@ public abstract class UInt extends ClassFileComponent {
     public String contentToString() {
         return Integer.toUnsignedString(getIntValue());
     }
-
-    @Override
-    protected boolean isLeafComponent() {
-        return true;
-    }
 }

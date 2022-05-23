@@ -162,10 +162,5 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         void setTagName(String tagName) {
             this.setDesc(new Label("CONSTANT_" + tagName + "(" + intValue + ")"));
         }
-
-        @Override
-        protected boolean isLeafComponent() {
-            return true;
-        }
     }
 }

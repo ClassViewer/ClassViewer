@@ -33,11 +33,6 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
         this.setIndex(value);
     }
 
-    @Override
-    protected boolean isLeafComponent() {
-        return true;
-    }
-
     public IntegerProperty indexProperty() {
         return index;
     }
