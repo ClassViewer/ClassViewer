@@ -1,6 +1,8 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
+import javafx.beans.value.ObservableValue;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
+import org.reactfx.value.Val;
 
 /*
 CONSTANT_Package_info {
@@ -15,5 +17,14 @@ public final class ConstantPackageInfo extends ConstantInfo {
 
         //noinspection unchecked
         this.getChildren().setAll(tag, nameIndex);
+    }
+
+    public CpIndex<ConstantUtf8Info> nameIndex() {
+        return component(1);
+    }
+
+    @Override
+    protected ObservableValue<String> initDescText() {
+        return Val.map(nameIndex().constantInfoProperty(), ConstantUtf8Info::getDescText);
     }
 }

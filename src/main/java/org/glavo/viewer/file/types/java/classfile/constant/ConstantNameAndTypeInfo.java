@@ -1,10 +1,7 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.glavo.viewer.file.types.java.classfile.jvm.type.JavaType;
 import org.glavo.viewer.file.types.java.classfile.jvm.type.JavaTypes;
@@ -27,30 +24,39 @@ public final class ConstantNameAndTypeInfo extends ConstantInfo {
 
         //noinspection unchecked
         this.getChildren().setAll(tag, nameIndex, descriptorIndex);
-        this.type.bind(Val.map(descriptorIndex.constantInfoProperty(), descriptor -> {
-            if (descriptor == null || descriptor.getText() == null) return null;
-            try {
-                return JavaTypes.parseDescriptor(descriptor.getText());
-            } catch (IllegalArgumentException ignored) {
-                return null;
-            }
-        }));
-        this.descProperty().bind(Val.combine(nameIndex.constantInfoProperty(), this.typeProperty(),
-                (name, type) -> {
-                    if (name == null || name.getText() == null || type == null) return null;
-
-                    String text = type.isMethodType() ? name.getText() + type.getQualified() : name.getText() + ": " + type.getQualified();
-                    Label label = new Label(text);
-                    label.setTooltip(new Tooltip(text));
-                    return label;
-                }));
     }
 
-    public ReadOnlyObjectProperty<JavaType> typeProperty() {
+    public CpIndex<ConstantUtf8Info> nameIndex() {
+        return component(1);
+    }
+
+    public CpIndex<ConstantUtf8Info> descriptorIndex() {
+        return component(2);
+    }
+
+    public ObservableValue<JavaType> typeProperty() {
         return type;
     }
 
     public JavaType getType() {
-        return type.get();
+        return type.getValue();
+    }
+
+    @Override
+    protected ObservableValue<String> initDescText() {
+        type.bind(Val.map(descriptorIndex().constantInfoProperty(), descriptor -> {
+            if (descriptor == null || descriptor.getDescText() == null) return null;
+            try {
+                return JavaTypes.parseDescriptor(descriptor.getDescText());
+            } catch (IllegalArgumentException ignored) {
+                return null;
+            }
+        }));
+
+        return Val.combine(nameIndex().constantInfoProperty(), this.typeProperty(),
+                (name, type) -> {
+                    if (name == null || name.getDescText() == null || type == null) return null;
+                    return type.isMethodType() ? name.getDescText() + type.getQualified() : name.getDescText() + ": " + type.getQualified();
+                });
     }
 }

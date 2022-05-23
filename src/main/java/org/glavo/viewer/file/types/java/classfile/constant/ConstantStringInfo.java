@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.glavo.viewer.util.StringUtils;
@@ -19,6 +20,15 @@ public final class ConstantStringInfo extends ConstantInfo {
         //noinspection unchecked
         this.getChildren().setAll(tag, stringIndex);
         this.descProperty().bind(Val.map(stringIndex.constantInfoProperty(), it ->
-                it == null ? null : new Label(StringUtils.cutAndAppendEllipsis(it.getText()))));
+                it == null ? null : new Label(StringUtils.cutAndAppendEllipsis(it.getDescText()))));
+    }
+
+    public CpIndex<ConstantUtf8Info> stringIndex() {
+        return component(1);
+    }
+
+    @Override
+    protected ObservableValue<String> initDescText() {
+        return Val.map(stringIndex().constantInfoProperty(), ConstantUtf8Info::getDescText);
     }
 }

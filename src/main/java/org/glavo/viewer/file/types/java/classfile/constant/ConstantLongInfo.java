@@ -1,8 +1,8 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
-import javafx.beans.binding.Bindings;
-import javafx.scene.control.Label;
+import javafx.beans.value.ObservableValue;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
+import org.reactfx.value.Val;
 
 /*
 CONSTANT_Long_info {
@@ -18,19 +18,19 @@ public final class ConstantLongInfo extends ConstantInfo {
         lowBytes.setName("low_bytes");
 
         this.getChildren().setAll(tag, highBytes, lowBytes);
-        this.descProperty().bind(Bindings.createObjectBinding(() -> {
-                    long high = highBytes.getIntValue();
-                    long low = lowBytes.getIntValue();
-                    return new Label(String.valueOf((high << 32) + low));
-                },
-                highBytes.intValueProperty(), lowBytes.intValueProperty()));
     }
 
-    public U4 getHighBytes() {
-        return (U4) getChildren().get(1);
+    public U4 highBytes() {
+        return component(1);
     }
 
-    public U4 getLowBytes() {
-        return (U4) getChildren().get(2);
+    public U4 lowBytes() {
+        return component(2);
+    }
+
+    @Override
+    protected ObservableValue<String> initDescText() {
+        return Val.combine(highBytes().intValueProperty(), lowBytes().intValueProperty(),
+                (high, low) -> String.valueOf(((high.longValue()) << 32) + low.longValue()));
     }
 }

@@ -9,13 +9,8 @@ CONSTANT_InterfaceMethodref_info {
     u2 name_and_type_index;
 }
 */
-public final class ConstantInterfaceMethodrefInfo extends ConstantInfo {
-    public ConstantInterfaceMethodrefInfo(ConstantInfo.Tag tag, CpIndex<ConstantClassInfo> classIndex, CpIndex<ConstantNameAndTypeInfo> nameAndTypeIndex) {
-        super(tag);
-        classIndex.setName("class_index");
-        nameAndTypeIndex.setName("name_and_type_index");
-
-        //noinspection unchecked
-        this.getChildren().setAll(tag, classIndex, nameAndTypeIndex);
+public final class ConstantInterfaceMethodrefInfo extends ConstantRefInfo {
+    public ConstantInterfaceMethodrefInfo(Tag tag, CpIndex<ConstantClassInfo> classIndex, CpIndex<ConstantNameAndTypeInfo> nameAndTypeIndex) {
+        super(tag, classIndex, nameAndTypeIndex);
     }
 }

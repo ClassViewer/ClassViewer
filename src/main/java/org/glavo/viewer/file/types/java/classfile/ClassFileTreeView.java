@@ -13,7 +13,6 @@ public class ClassFileTreeView extends TreeView<ClassFileComponent> {
 
     public ClassFileTreeView(FileTab tab) {
         this.setCellFactory(view -> new Cell());
-
         this.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
             if (newValue != null) {
                 if (tab.getContent() instanceof HexPane hexPane) {

@@ -1,8 +1,8 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
-import javafx.beans.binding.Bindings;
-import javafx.scene.control.Label;
+import javafx.beans.value.ObservableValue;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
+import org.reactfx.value.Val;
 
 /*
 CONSTANT_Float_info {
@@ -16,11 +16,14 @@ public final class ConstantFloatInfo extends ConstantInfo {
         bytes.setName("bytes");
 
         this.getChildren().setAll(tag, bytes);
-        this.descProperty().bind(Bindings.createObjectBinding(() -> new Label(String.valueOf(Float.intBitsToFloat(bytes.getIntValue()))),
-                bytes.intValueProperty()));
     }
 
-    public U4 getBytes() {
-        return (U4) getChildren().get(1);
+    public U4 bytes() {
+        return component(1);
+    }
+
+    @Override
+    protected ObservableValue<String> initDescText() {
+        return Val.map(bytes().intValueProperty(), it -> String.valueOf(Float.intBitsToFloat(it.intValue())));
     }
 }

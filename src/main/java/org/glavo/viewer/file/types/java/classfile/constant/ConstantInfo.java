@@ -1,16 +1,19 @@
 package org.glavo.viewer.file.types.java.classfile.constant;
 
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileParseException;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
+import org.glavo.viewer.file.types.java.classfile.ClassFileTreeView;
 import org.glavo.viewer.file.types.java.classfile.datatype.Bytes;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.util.StringUtils;
+import org.reactfx.value.Val;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,7 +21,7 @@ import java.util.Map;
 
 public sealed abstract class ConstantInfo extends ClassFileComponent
         permits ConstantClassInfo,
-        ConstantFieldrefInfo, ConstantMethodrefInfo, ConstantInterfaceMethodrefInfo,
+        ConstantRefInfo,
         ConstantStringInfo, ConstantIntegerInfo, ConstantFloatInfo,
         ConstantLongInfo, ConstantDoubleInfo,
         ConstantNameAndTypeInfo,
@@ -92,8 +95,8 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         this.setIcon(view);
     }
 
-    public Tag getTag() {
-        return (Tag) getChildren().get(0);
+    public Tag tag() {
+        return component(0);
     }
 
     private static final int PREFIX_LENGTH = "CONSTANT".length();
@@ -104,12 +107,43 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         return simpleName.substring(PREFIX_LENGTH, simpleName.length() - SUFFIX_LENGTH);
     }
 
+    @SuppressWarnings("unchecked")
+    protected final <T extends ClassFileComponent> T component(int n) {
+        return (T) getChildren().get(n);
+    }
+
     public int getIndex() {
         if (!(this.getParent().getValue() instanceof ConstantPool pool)) throw new AssertionError();
 
         int idx = pool.getConstants().indexOf(this);
         assert idx > 0;
         return idx;
+    }
+
+    private ObservableValue<String> descText;
+
+    protected abstract ObservableValue<String> initDescText();
+
+    @Override
+    public void loadDesc(ClassFileTreeView view) {
+        this.descProperty().bind(Val.map(descTextProperty(), text -> {
+            if (text == null) return null;
+
+            Label label = new Label(StringUtils.cutAndAppendEllipsis(text));
+            label.setTooltip(new Tooltip(text));
+            return label;
+        }));
+    }
+
+    public ObservableValue<String> descTextProperty() {
+        if (descText == null) {
+            descText = initDescText();
+        }
+        return descText;
+    }
+
+    public String getDescText() {
+        return descText.getValue();
     }
 
     public static final class Tag extends ClassFileComponent {
