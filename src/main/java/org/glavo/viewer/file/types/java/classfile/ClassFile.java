@@ -2,6 +2,7 @@ package org.glavo.viewer.file.types.java.classfile;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -18,6 +19,8 @@ import org.glavo.viewer.resources.Images;
 import org.reactfx.value.Val;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 /*
 ClassFile {
@@ -78,39 +81,52 @@ public class ClassFile extends ClassFileComponent {
         classFile.calculateOffset(new IntRef());
         classFile.iconProperty().bind(Val.map(accessFlags.flagsProperty(), flags -> {
             HBox box = new HBox();
+            ArrayDeque<String> descriptors = new ArrayDeque<>(4);
 
             Node view;
             if (flags.contains(AccessFlag.ACC_ANNOTATION)) {
                 view = new ImageView(annotationImage);
+                descriptors.addFirst("annotation type");
             } else if (flags.contains(AccessFlag.ACC_ENUM)) {
                 view = new ImageView(enumImage);
+                descriptors.addFirst("enum");
             } else if (flags.contains(AccessFlag.ACC_INTERFACE)) {
                 view = new ImageView(interfaceImage);
+                descriptors.addFirst("interface");
             } else if (flags.contains(AccessFlag.ACC_ABSTRACT)) {
                 view = new ImageView(abstractClassImage);
+                descriptors.addFirst("abstract class");
             } else {
                 view = new ImageView(classImage);
+                descriptors.addFirst("class");
             }
 
-            if (flags.contains(AccessFlag.ACC_FINAL)) {
+            if (flags.contains(AccessFlag.ACC_FINAL) && !flags.contains(AccessFlag.ACC_ENUM)) {
                 view = new Group(view, new ImageView(finalMark));
+                descriptors.addFirst("final");
             }
 
             if (flags.contains(AccessFlag.ACC_STATIC)) {
                 view = new Group(view, new ImageView(staticMark));
+                descriptors.addFirst("static");
             }
             box.getChildren().add(view);
 
             if (flags.contains(AccessFlag.ACC_PUBLIC)) {
                 box.getChildren().add(new ImageView(publicImage));
+                descriptors.addFirst("public");
             } else if (flags.contains(AccessFlag.ACC_PROTECTED)) {
                 box.getChildren().add(new ImageView(protectedImage));
+                descriptors.addFirst("protected");
             } else if (flags.contains(AccessFlag.ACC_PRIVATE)) {
                 box.getChildren().add(new ImageView(privateImage));
+                descriptors.addFirst("private");
             } else {
                 box.getChildren().add(new ImageView(plocalImage));
+                descriptors.addFirst("package local");
             }
 
+            Tooltip.install(box, new Tooltip(String.join(" ", descriptors)));
             return box;
         }));
         classFile.nameProperty().bind(Val.map(thisClass.constantInfoProperty(), info -> {
@@ -122,6 +138,7 @@ public class ClassFile extends ClassFileComponent {
             }
             return text;
         }));
+        classFile.setExpanded(true);
         return classFile;
     }
 
