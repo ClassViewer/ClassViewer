@@ -1,10 +1,21 @@
 package org.glavo.viewer.file.types.java.classfile;
 
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import kala.value.primitive.IntRef;
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
+import org.glavo.viewer.file.types.java.classfile.datatype.AccessFlags;
+import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4Hex;
+import org.glavo.viewer.file.types.java.classfile.jvm.AccessFlag;
 import org.glavo.viewer.file.types.java.classfile.jvm.AccessFlagType;
+import org.glavo.viewer.resources.Images;
+import org.reactfx.value.Val;
 
 import java.io.IOException;
 
@@ -29,27 +40,89 @@ ClassFile {
 }
 */
 public class ClassFile extends ClassFileComponent {
+    public static final Image classImage = Images.loadImage("classfile/class.png");
+    public static final Image abstractClassImage = Images.loadImage("classfile/abstractClass.png");
+    public static final Image interfaceImage = Images.loadImage("classfile/interface.png");
+    public static final Image annotationImage = Images.loadImage("classfile/annotation.png");
+    public static final Image enumImage = Images.loadImage("classfile/enum.png");
+    public static final Image recordImage = Images.loadImage("classfile/enum.png");
+
+    public static final Image publicImage = Images.loadImage("classfile/public.png");
+    public static final Image protectedImage = Images.loadImage("classfile/protected.png");
+    public static final Image plocalImage = Images.loadImage("classfile/plocal.png");
+    public static final Image privateImage = Images.loadImage("classfile/private.png");
+
+    public static final Image finalMark = Images.loadImage("classfile/finalMark.png");
+    public static final Image staticMark = Images.loadImage("classfile/staticMark.png");
+    public static final Image runnableMark = Images.loadImage("classfile/runnableMark.png");
+
 
     public static ClassFile readFrom(ClassFileReader reader) throws IOException {
-        ClassFile res = new ClassFile();
-        res.setName("<In development>");
+        ClassFile classFile = new ClassFile();
 
-        U4Hex magic = res.readU4Hex(reader, "magic");
+        U4Hex magic = classFile.readU4Hex(reader, "magic");
         if (magic.getIntValue() != 0xCAFEBABE) throw new ClassFileParseException("magic number mismatch: " + magic);
 
-        res.readU2(reader, "minor_version");
-        res.readU2(reader, "major_version");
+        classFile.readU2(reader, "minor_version");
+        classFile.readU2(reader, "major_version");
 
-        U2 cpCount = res.readU2(reader, "constant_pool_count");
+        U2 cpCount = classFile.readU2(reader, "constant_pool_count");
         ConstantPool constantPool = ConstantPool.readFrom(reader, cpCount);
-        res.getChildren().add(constantPool);
-        res.setLength(reader.getOffset() - res.getOffset());
+        classFile.getChildren().add(constantPool);
+        classFile.setLength(reader.getOffset() - classFile.getOffset());
 
-        res.readAccessFlags(reader, "access_flags", AccessFlagType.AF_CLASS);
+        AccessFlags accessFlags = classFile.readAccessFlags(reader, "access_flags", AccessFlagType.AF_CLASS);
+        CpIndex<ConstantClassInfo> thisClass = classFile.readCpIndex(reader, "this_class", ConstantClassInfo.class);
+        CpIndex<ConstantClassInfo> superClass = classFile.readCpIndex(reader, "super_class", ConstantClassInfo.class);
 
+        classFile.calculateOffset(new IntRef());
+        classFile.iconProperty().bind(Val.map(accessFlags.flagsProperty(), flags -> {
+            HBox box = new HBox();
 
-        res.calculateOffset(new IntRef());
-        return res;
+            Node view;
+            if (flags.contains(AccessFlag.ACC_ANNOTATION)) {
+                view = new ImageView(annotationImage);
+            } else if (flags.contains(AccessFlag.ACC_ENUM)) {
+                view = new ImageView(enumImage);
+            } else if (flags.contains(AccessFlag.ACC_INTERFACE)) {
+                view = new ImageView(interfaceImage);
+            } else if (flags.contains(AccessFlag.ACC_ABSTRACT)) {
+                view = new ImageView(abstractClassImage);
+            } else {
+                view = new ImageView(classImage);
+            }
+
+            if (flags.contains(AccessFlag.ACC_FINAL)) {
+                view = new Group(view, new ImageView(finalMark));
+            }
+
+            if (flags.contains(AccessFlag.ACC_STATIC)) {
+                view = new Group(view, new ImageView(staticMark));
+            }
+            box.getChildren().add(view);
+
+            if (flags.contains(AccessFlag.ACC_PUBLIC)) {
+                box.getChildren().add(new ImageView(publicImage));
+            } else if (flags.contains(AccessFlag.ACC_PROTECTED)) {
+                box.getChildren().add(new ImageView(protectedImage));
+            } else if (flags.contains(AccessFlag.ACC_PRIVATE)) {
+                box.getChildren().add(new ImageView(privateImage));
+            } else {
+                box.getChildren().add(new ImageView(plocalImage));
+            }
+
+            return box;
+        }));
+        classFile.nameProperty().bind(Val.map(thisClass.constantInfoProperty(), info -> {
+            if (info == null || info.getDescText() == null) return null;
+            String text = info.getDescText();
+            int idx = text.lastIndexOf('/');
+            if (idx >= 0) {
+                text = text.substring(idx + 1);
+            }
+            return text;
+        }));
+        return classFile;
     }
 
 

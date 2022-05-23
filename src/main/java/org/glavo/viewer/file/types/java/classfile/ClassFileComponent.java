@@ -7,6 +7,7 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.FileComponent;
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
 
@@ -94,6 +95,13 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         uint.setName(name);
         this.getChildren().add(uint);
         return uint;
+    }
+
+    protected <T extends ConstantInfo> CpIndex<T> readCpIndex(ClassFileReader reader, String name, Class<T> type) throws IOException {
+        CpIndex<T> cpIdx = reader.readCpIndex(type);
+        cpIdx.setName(name);
+        this.getChildren().add(cpIdx);
+        return cpIdx;
     }
 
     protected AccessFlags readAccessFlags(ClassFileReader reader, String name, int flagType) throws IOException {
