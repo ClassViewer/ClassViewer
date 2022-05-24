@@ -9,10 +9,8 @@ import javafx.scene.layout.HBox;
 import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
-import org.glavo.viewer.file.types.java.classfile.datatype.AccessFlags;
-import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
-import org.glavo.viewer.file.types.java.classfile.datatype.U2;
-import org.glavo.viewer.file.types.java.classfile.datatype.U4Hex;
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
+import org.glavo.viewer.file.types.java.classfile.datatype.*;
 import org.glavo.viewer.file.types.java.classfile.jvm.AccessFlag;
 import org.glavo.viewer.file.types.java.classfile.jvm.AccessFlagType;
 import org.glavo.viewer.resources.Images;
@@ -20,7 +18,6 @@ import org.reactfx.value.Val;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 
 /*
 ClassFile {
@@ -49,6 +46,10 @@ public class ClassFile extends ClassFileComponent {
     public static final Image annotationImage = Images.loadImage("classfile/annotation.png");
     public static final Image enumImage = Images.loadImage("classfile/enum.png");
     public static final Image recordImage = Images.loadImage("classfile/enum.png");
+
+    public static final Image fieldImage = Images.loadImage("classfile/field.png");
+    public static final Image methodImage = Images.loadImage("classfile/method.png");
+    public static final Image abstractMethodImage = Images.loadImage("classfile/abstractMethod.png");
 
     public static final Image publicImage = Images.loadImage("classfile/public.png");
     public static final Image protectedImage = Images.loadImage("classfile/protected.png");
@@ -79,6 +80,11 @@ public class ClassFile extends ClassFileComponent {
         CpIndex<ConstantClassInfo> superClass = classFile.readCpIndex(reader, "super_class", ConstantClassInfo.class);
 
         U2 interfacesCount = classFile.readU2(reader, "interfaces_count");
+        Table<CpIndex<ConstantClassInfo>> interfaces = classFile.readTable(reader, "interfaces", interfacesCount, it -> it.readCpIndex(ConstantClassInfo.class));
+
+        U2 fieldsCount = classFile.readU2(reader, "fields_count");
+        Table<FieldInfo> methods = classFile.readTable(reader, "fields", fieldsCount, FieldInfo::readFrom);
+
 
         classFile.calculateOffset(new IntRef());
         classFile.iconProperty().bind(Val.map(accessFlags.flagsProperty(), flags -> {

@@ -5,10 +5,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
+import kala.function.CheckedFunction;
 import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.FileComponent;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
-import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
 
 import java.io.IOException;
@@ -109,6 +109,15 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         flags.setName(name);
         this.getChildren().add(flags);
         return flags;
+    }
+
+    protected <C extends ClassFileComponent> Table<C> readTable(ClassFileReader reader, String name,
+                                                                UInt length,
+                                                                CheckedFunction<ClassFileReader, C, IOException> f) throws IOException {
+        Table<C> table = Table.readFrom(reader, length, f);
+        table.setName(name);
+        this.getChildren().add(table);
+        return table;
     }
 
     public void calculateOffset(IntRef offset) {

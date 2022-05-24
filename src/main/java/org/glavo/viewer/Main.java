@@ -2,7 +2,6 @@ package org.glavo.viewer;
 
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.glavo.viewer.file.types.TextFileType;
@@ -10,9 +9,6 @@ import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public final class Main extends Application {
 
