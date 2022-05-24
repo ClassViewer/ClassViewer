@@ -36,11 +36,9 @@ public abstract class Container implements ForceCloseable {
             }
 
             FileType type = FileType.detectFileType(path);
-            if (!(type instanceof ContainerFileType)) {
+            if (!(type instanceof ContainerFileType ct)) {
                 throw new UnsupportedOperationException("file " + path + " is not a container");
             }
-
-            ContainerFileType ct = (ContainerFileType) type;
 
             Container container;
 
