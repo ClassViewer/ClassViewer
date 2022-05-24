@@ -78,6 +78,8 @@ public class ClassFile extends ClassFileComponent {
         CpIndex<ConstantClassInfo> thisClass = classFile.readCpIndex(reader, "this_class", ConstantClassInfo.class);
         CpIndex<ConstantClassInfo> superClass = classFile.readCpIndex(reader, "super_class", ConstantClassInfo.class);
 
+        U2 interfacesCount = classFile.readU2(reader, "interfaces_count");
+
         classFile.calculateOffset(new IntRef());
         classFile.iconProperty().bind(Val.map(accessFlags.flagsProperty(), flags -> {
             HBox box = new HBox();

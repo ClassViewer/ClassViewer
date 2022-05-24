@@ -39,6 +39,7 @@ public class ConstantPool extends ClassFileComponent {
 
         ConstantPool constantPool = new ConstantPool(constants);
         constantPool.setLength(reader.getOffset() - offset);
+        cpCount.intValueProperty().bind(Bindings.size(constants));
         return constantPool;
     }
 
