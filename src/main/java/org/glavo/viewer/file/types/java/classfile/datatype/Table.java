@@ -8,7 +8,12 @@ import java.io.IOException;
 
 public class Table<C extends ClassFileComponent> extends ClassFileComponent {
     public static <C extends ClassFileComponent> Table<C> readFrom(
-            ClassFileReader reader, UInt length, CheckedFunction<ClassFileReader, C, IOException> e) {
+            ClassFileReader reader, UInt length, CheckedFunction<ClassFileReader, C, IOException> e) throws IOException {
+
+        int len = length.getIntValue();
+
+
+
         throw new UnsupportedOperationException(); // TODO
     }
 }
