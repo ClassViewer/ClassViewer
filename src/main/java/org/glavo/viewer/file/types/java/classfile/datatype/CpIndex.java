@@ -91,7 +91,7 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
             if (type.isInstance(info)) {
                 constantInfo.set(type.cast(info));
 
-                Hyperlink link = TextUtils.createHyperlinkWithoutPadding(StringUtils.formatIndex(idx, constantPool.getConstants().size()));
+                Hyperlink link = TextUtils.createHyperlinkWithoutPadding(StringUtils.formatIndex(idx, constantPool.getConstants().size()) + " (" + info.getConstantName() + ")");
                 link.setOnAction(event -> {
                     view.getSelectionModel().select(getConstantInfo());
                     view.scrollTo(view.getRow(getConstantInfo()));

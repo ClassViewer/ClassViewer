@@ -44,8 +44,8 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
     public static final int CONSTANT_MethodHandle       = 15; // H
     public static final int CONSTANT_MethodTypeInfo     = 16; // T
     public static final int CONSTANT_InvokeDynamic      = 18; // D
-    public static final int CONSTANT_ModuleInfo         = 19; // M
-    public static final int CONSTANT_PackageInfo        = 20; // P
+    public static final int CONSTANT_Module         = 19; // M
+    public static final int CONSTANT_Package        = 20; // P
     //@formatter:on
 
     public static ConstantInfo readFrom(ClassFileReader reader) throws IOException {
@@ -77,8 +77,8 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
             case CONSTANT_MethodTypeInfo -> new ConstantMethodTypeInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
             case CONSTANT_InvokeDynamic ->
                     new ConstantInvokeDynamicInfo(tag, reader.readU2(), reader.readCpIndex(ConstantNameAndTypeInfo.class));
-            case CONSTANT_ModuleInfo -> new ConstantModuleInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
-            case CONSTANT_PackageInfo -> new ConstantPackageInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
+            case CONSTANT_Module -> new ConstantModuleInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
+            case CONSTANT_Package -> new ConstantPackageInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
             default -> throw new ClassFileParseException("Unknown constant tag: " + tag.contentToString());
         };
         info.setLength(reader.getOffset() - offset);
