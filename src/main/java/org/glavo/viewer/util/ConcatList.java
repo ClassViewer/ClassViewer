@@ -7,28 +7,29 @@ import javafx.collections.WeakListChangeListener;
 
 import java.util.List;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ConcatList<E> extends ObservableListBase<E> {
-    private final List<ObservableList<? extends E>> lists;
+    private final List<List<? extends E>> lists;
 
     @SuppressWarnings("FieldCanBeLocal")
     private final ListChangeListener<E> listener;
 
-    public ConcatList(ObservableList<? extends E>... lists) {
+    @SafeVarargs
+    public ConcatList(List<? extends E>... lists) {
         this.lists = List.of(lists);
 
         listener = change -> this.fireChange(new Change(change));
 
         WeakListChangeListener<E> l = new WeakListChangeListener<>(listener);
-        for (ObservableList<? extends E> list : lists) {
-            list.addListener(l);
+        for (List<? extends E> list : lists) {
+            if (list instanceof ObservableList ol) ol.addListener(l);
         }
     }
 
     private int getOffset(List<? extends E> list) {
         int offset = 0;
 
-        for (ObservableList<? extends E> l : this.lists) {
+        for (List<? extends E> l : this.lists) {
             if (l == list) return offset;
 
             offset += list.size();
@@ -37,7 +38,7 @@ public class ConcatList<E> extends ObservableListBase<E> {
         throw new AssertionError();
     }
 
-    public List<ObservableList<? extends E>> getLists() {
+    public List<List<? extends E>> getLists() {
         return lists;
     }
 
@@ -46,7 +47,7 @@ public class ConcatList<E> extends ObservableListBase<E> {
         if (index < 0) throw new IndexOutOfBoundsException(index);
 
         int idx = index;
-        for (ObservableList<? extends E> list : this.lists) {
+        for (List<? extends E> list : this.lists) {
             int listSize = list.size();
             if (idx < listSize) return list.get(idx);
 
@@ -60,7 +61,7 @@ public class ConcatList<E> extends ObservableListBase<E> {
     public int size() {
         int size = 0;
 
-        for (ObservableList<? extends E> list : lists) {
+        for (List<? extends E> list : lists) {
             size += list.size();
         }
         return size;
