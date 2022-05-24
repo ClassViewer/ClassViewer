@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import kala.value.primitive.IntRef;
+import org.glavo.viewer.file.types.java.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
@@ -83,8 +84,13 @@ public class ClassFile extends ClassFileComponent {
         Table<CpIndex<ConstantClassInfo>> interfaces = classFile.readTable(reader, "interfaces", interfacesCount, it -> it.readCpIndex(ConstantClassInfo.class));
 
         U2 fieldsCount = classFile.readU2(reader, "fields_count");
-        Table<FieldInfo> methods = classFile.readTable(reader, "fields", fieldsCount, FieldInfo::readFrom);
+        Table<FieldInfo> fields = classFile.readTable(reader, "fields", fieldsCount, FieldInfo::readFrom);
 
+        U2 methodsCount = classFile.readU2(reader, "methods_count");
+        Table<MethodInfo> methods = classFile.readTable(reader, "methods", methodsCount, MethodInfo::readFrom);
+
+        U2 attributesCount = classFile.readU2(reader, "attributes_count");
+        Table<AttributeInfo> attributes = classFile.readTable(reader, "attributes", attributesCount, AttributeInfo::readFrom);
 
         classFile.calculateOffset(new IntRef());
         classFile.iconProperty().bind(Val.map(accessFlags.flagsProperty(), flags -> {

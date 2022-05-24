@@ -42,20 +42,18 @@ public class FieldInfo extends ClassFileComponent {
         Table<AttributeInfo> attributes = info.readTable(reader, "attributes", attributesCount, AttributeInfo::readFrom);
 
 
-        info.nameProperty().bind(Val.map(nameIndex.constantInfoProperty(), it -> {
-            if (it == null) return null;
-            return it.getDescText();
-        }));
-        info.descProperty().bind(Val.map(descriptorIndex.constantInfoProperty(), it -> {
-            if (it == null || it.getDescText() == null) return null;
+        info.descProperty().bind(Val.combine(nameIndex.constantInfoProperty(), descriptorIndex.constantInfoProperty(),
+                (name, descriptor) -> {
+                    if (name == null || name.getDescText() == null
+                            || descriptor == null || descriptor.getDescText() == null) return null;
 
-            try {
-                JavaType type = JavaTypes.parseDescriptor(it.getDescText());
-                return new Label(type.getQualified());
-            } catch (Throwable ignored) {
-                return null;
-            }
-        }));
+                    try {
+                        JavaType type = JavaTypes.parseDescriptor(descriptor.getDescText());
+                        if (!type.isMethodType()) return new Label(name.getDescText() + ": " + type.getQualified());
+                    } catch (Throwable ignored) {
+                    }
+                    return null;
+                }));
         info.iconProperty().bind(Val.map(accessFlags.flagsProperty(), flags -> {
             Node view = new ImageView(ClassFile.fieldImage);
             ArrayDeque<String> descriptors = new ArrayDeque<>(3);
