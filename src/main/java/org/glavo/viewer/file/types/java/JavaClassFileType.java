@@ -43,11 +43,12 @@ public class JavaClassFileType extends BinaryFileType {
         TaskUtils.submit(new Task<ClassFileTreeView>() {
             @Override
             protected ClassFileTreeView call() throws Exception {
+                ClassFileTreeView view = new ClassFileTreeView(tab);
                 ClassFile file;
                 try (InputStream input = bytes.openInputStream()) {
-                    file = ClassFile.readFrom(new ClassFileReader(input));
+                    file = ClassFile.readFrom(view, new ClassFileReader(input));
                 }
-                ClassFileTreeView view = new ClassFileTreeView(tab);
+
                 view.setRoot(file);
                 loadDesc(view, file);
                 return view;

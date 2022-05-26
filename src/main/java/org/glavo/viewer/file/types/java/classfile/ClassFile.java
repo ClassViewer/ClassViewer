@@ -60,8 +60,14 @@ public class ClassFile extends ClassFileComponent {
     public static final Image runnableMark = Images.loadImage("classfile/runnableMark.png");
 
 
-    public static ClassFile readFrom(ClassFileReader reader) throws IOException {
-        ClassFile classFile = new ClassFile();
+    private final ClassFileTreeView view;
+
+    ClassFile(ClassFileTreeView view) {
+        this.view = view;
+    }
+
+    public static ClassFile readFrom(ClassFileTreeView v, ClassFileReader reader) throws IOException {
+        ClassFile classFile = new ClassFile(v);
 
         U4Hex magic = classFile.readU4Hex(reader, "magic");
         if (magic.getIntValue() != 0xCAFEBABE) throw new ClassFileParseException("magic number mismatch: " + magic);
@@ -154,8 +160,11 @@ public class ClassFile extends ClassFileComponent {
         return classFile;
     }
 
+    public ClassFileTreeView getView() {
+        return view;
+    }
 
     public ConstantPool getConstantPool() {
-        return (ConstantPool) getChildren().get(4);
+        return component(4);
     }
 }

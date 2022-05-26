@@ -9,6 +9,7 @@ import kala.function.CheckedFunction;
 import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.FileComponent;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
 
 import java.io.IOException;
@@ -135,5 +136,16 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
     }
 
     public void loadDesc(ClassFileTreeView view) {
+    }
+
+    public ConstantPool getConstantPool() {
+        ClassFileComponent component = this;
+
+        while (component.getParent() != null) {
+            component = component.getParent().getValue();
+        }
+
+        //assert component instanceof ClassFile;
+        return component.getConstantPool();
     }
 }
