@@ -55,6 +55,11 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         this.desc.set(desc);
     }
 
+    @SuppressWarnings("unchecked")
+    protected final <T extends ClassFileComponent> T component(int n) {
+        return (T) getChildren().get(n);
+    }
+
     protected U1 readU1(ClassFileReader reader, String name) throws IOException {
         var uint = new U1(reader.readUnsignedByte());
         uint.setName(name);

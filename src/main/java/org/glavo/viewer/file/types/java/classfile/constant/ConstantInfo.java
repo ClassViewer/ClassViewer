@@ -107,11 +107,6 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         return simpleName.substring(PREFIX_LENGTH, simpleName.length() - SUFFIX_LENGTH);
     }
 
-    @SuppressWarnings("unchecked")
-    protected final <T extends ClassFileComponent> T component(int n) {
-        return (T) getChildren().get(n);
-    }
-
     public int getIndex() {
         if (!(this.getParent().getValue() instanceof ConstantPool pool)) throw new AssertionError();
 

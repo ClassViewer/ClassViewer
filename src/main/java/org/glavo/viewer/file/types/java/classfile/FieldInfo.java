@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import org.glavo.viewer.file.types.java.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.AccessFlags;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
