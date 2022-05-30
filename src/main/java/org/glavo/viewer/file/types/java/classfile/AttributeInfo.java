@@ -3,9 +3,6 @@ package org.glavo.viewer.file.types.java.classfile;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
-import kala.control.Try;
-import kala.function.CheckedFunction;
 import kala.function.CheckedTriFunction;
 import org.glavo.viewer.file.types.java.classfile.attribute.Attribute;
 import org.glavo.viewer.file.types.java.classfile.attribute.UndefinedAttribute;
@@ -18,6 +15,9 @@ import org.reactfx.value.Val;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 /*
 attribute_info {
@@ -65,7 +65,8 @@ public class AttributeInfo extends ClassFileComponent {
                         if (constant != null && constant.getDescText() != null && (fun = map.get(constant.getDescText())) != null) {
                             return fun.applyChecked(attributeNameIndex, attributeLength, info);
                         }
-                    } catch (Throwable ignored) {
+                    } catch (Throwable e) {
+                        LOGGER.log(Level.WARNING, "Failed to parse attribute", e);
                     }
 
                     return new UndefinedAttribute(attributeNameIndex, attributeLength, info);

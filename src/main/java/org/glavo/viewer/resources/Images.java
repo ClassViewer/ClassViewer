@@ -16,6 +16,7 @@ public class Images {
     public static final Image fileStructure = loadImage("fileStructure.png");
 
     public static final Image failed = loadImage("failed.png");
+    public static final Image unknown = loadImage("unknown.png");
 
     public static final Image menuOpen = loadImage("menu-open.png");
 }
