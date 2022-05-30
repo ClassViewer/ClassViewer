@@ -11,7 +11,7 @@ CONSTANT_Long_info {
     u4 low_bytes;
 }
 */
-public final class ConstantLongInfo extends ConstantInfo {
+public final class ConstantLongInfo extends ConstantValueInfo {
     public ConstantLongInfo(ConstantInfo.Tag tag, U4 highBytes, U4 lowBytes) {
         super(tag);
         highBytes.setName("high_bytes");

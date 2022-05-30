@@ -10,7 +10,7 @@ CONSTANT_Integer_info {
     u4 bytes;
 }
 */
-public final class ConstantIntegerInfo extends ConstantInfo {
+public final class ConstantIntegerInfo extends ConstantValueInfo {
     public ConstantIntegerInfo(ConstantInfo.Tag tag, U4 bytes) {
         super(tag);
         bytes.setName("bytes");

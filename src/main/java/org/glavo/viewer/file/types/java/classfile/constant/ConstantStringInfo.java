@@ -12,7 +12,7 @@ CONSTANT_String_info {
     u2 string_index;
 }
 */
-public final class ConstantStringInfo extends ConstantInfo {
+public final class ConstantStringInfo extends ConstantValueInfo {
     public ConstantStringInfo(ConstantInfo.Tag tag, CpIndex<ConstantUtf8Info> stringIndex) {
         super(tag);
         stringIndex.setName("string_index");

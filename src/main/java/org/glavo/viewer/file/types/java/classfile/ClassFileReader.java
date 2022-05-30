@@ -71,7 +71,9 @@ public class ClassFileReader {
 
     public byte[] readNBytes(int n) throws IOException {
         offset += n;
-        return input.readNBytes(n);
+        byte[] res = input.readNBytes(n);
+        if (res.length != n) throw new EOFException();
+        return res;
     }
 
     public String readUTF() throws IOException {
@@ -111,5 +113,13 @@ public class ClassFileReader {
     public <T extends ConstantInfo> CpIndex<T> readCpIndex(Class<T> type) throws IOException {
         return new CpIndex<>(type, readUnsignedShort());
     }
+
+
+    public <T extends ConstantInfo> CpIndex<T> readCpIndexEager(Class<T> type) throws IOException {
+        CpIndex<T> idx = readCpIndex(type);
+        idx.loadDesc(getClassFile().getView());
+        return idx;
+    }
+
 
 }

@@ -22,8 +22,7 @@ import java.util.Map;
 public sealed abstract class ConstantInfo extends ClassFileComponent
         permits ConstantClassInfo,
         ConstantRefInfo,
-        ConstantStringInfo, ConstantIntegerInfo, ConstantFloatInfo,
-        ConstantLongInfo, ConstantDoubleInfo,
+        ConstantValueInfo,
         ConstantNameAndTypeInfo,
         ConstantUtf8Info,
         ConstantMethodHandleInfo, ConstantMethodTypeInfo,

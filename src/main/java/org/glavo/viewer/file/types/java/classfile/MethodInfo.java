@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import org.glavo.viewer.file.types.java.classfile.attribute.Attribute;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.AccessFlags;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
@@ -38,7 +39,7 @@ public class MethodInfo extends ClassFileComponent {
         CpIndex<ConstantUtf8Info> descriptorIndex = info.readCpIndex(reader, "descriptor_index", ConstantUtf8Info.class);
 
         U2 attributesCount = info.readU2(reader, "attributes_count");
-        Table<AttributeInfo> attributes = info.readTable(reader, "attributes", attributesCount, AttributeInfo::readFrom);
+        Table<Attribute> attributes = info.readTable(reader, "attributes", attributesCount, Attribute::readFrom);
 
 
         info.descProperty().bind(Val.combine(nameIndex.constantInfoProperty(), descriptorIndex.constantInfoProperty(),

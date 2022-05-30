@@ -14,10 +14,11 @@ attribute_info {
 }
  */
 public class UndefinedAttribute extends Attribute {
-    private static final Image image = Attribute.loadImage("unknown.png");
+    static final Image image = Attribute.loadImage("unknown.png");
 
     public UndefinedAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, Bytes info) {
-        super(attributeNameIndex, attributeLength, info);
+        super(attributeNameIndex, attributeLength);
+        info.setName("info");
 
         //noinspection unchecked
         this.getChildren().setAll(attributeNameIndex, attributeLength, info);

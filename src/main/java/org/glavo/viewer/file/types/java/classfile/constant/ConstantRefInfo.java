@@ -4,7 +4,7 @@ import javafx.beans.value.ObservableValue;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.reactfx.value.Val;
 
-abstract non-sealed class ConstantRefInfo extends ConstantInfo {
+abstract non-sealed  class ConstantRefInfo extends ConstantInfo {
     ConstantRefInfo(ConstantInfo.Tag tag, CpIndex<ConstantClassInfo> classIndex, CpIndex<ConstantNameAndTypeInfo> nameAndTypeIndex) {
         super(tag);
         classIndex.setName("class_index");

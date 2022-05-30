@@ -10,7 +10,7 @@ CONSTANT_Float_info {
     u4 bytes;
 }
 */
-public final class ConstantFloatInfo extends ConstantInfo {
+public final class ConstantFloatInfo extends ConstantValueInfo {
     public ConstantFloatInfo(ConstantInfo.Tag tag, U4 bytes) {
         super(tag);
         bytes.setName("bytes");
