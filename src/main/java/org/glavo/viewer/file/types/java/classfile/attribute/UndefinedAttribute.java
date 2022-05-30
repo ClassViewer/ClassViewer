@@ -13,8 +13,8 @@ attribute_info {
     u1 info[attribute_length];
 }
  */
-public class UndefinedAttribute extends Attribute {
-    static final Image image = Attribute.loadImage("unknown.png");
+public class UndefinedAttribute extends AttributeInfo {
+    static final Image image = AttributeInfo.loadImage("unknown.png");
 
     public UndefinedAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, Bytes info) {
         super(attributeNameIndex, attributeLength);

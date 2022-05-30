@@ -15,7 +15,7 @@ ConstantValue_attribute {
     u2 constantvalue_index;
 }
  */
-public class ConstantValueAttribute extends Attribute {
+public class ConstantValueAttribute extends AttributeInfo {
     public ConstantValueAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, CpIndex<ConstantValueInfo> constantvalueIndex) {
         super(attributeNameIndex, attributeLength);
 
