@@ -47,6 +47,17 @@ public class AttributeInfo extends ClassFileComponent {
         attributeLength.setName("attribute_length");
         info.setName("info");
 
+        attribute.addListener((o, oldValue, newValue) -> {
+            this.nameProperty().unbind();
+            this.descProperty().unbind();
+            this.iconProperty().unbind();
+            if (oldValue != null) Bindings.unbindContent(this.getChildren(), oldValue.getChildren());
+
+            this.nameProperty().bind(newValue.nameProperty());
+            this.descProperty().bind(newValue.descProperty());
+            this.iconProperty().bind(newValue.iconProperty());
+            Bindings.bindContent(this.getChildren(), newValue.getChildren());
+        });
         attribute.bind(Val.combine(attributeNameIndex.constantInfoProperty(), info.valuesProperty(),
                 (constant, bytes) -> {
                     try {
@@ -59,18 +70,6 @@ public class AttributeInfo extends ClassFileComponent {
 
                     return new UndefinedAttribute(attributeNameIndex, attributeLength, info);
                 }));
-
-        attribute.addListener((o, oldValue, newValue) -> {
-            this.nameProperty().unbind();
-            this.descProperty().unbind();
-            this.iconProperty().unbind();
-            if (oldValue != null) Bindings.unbindContent(this.getChildren(), oldValue.getChildren());
-
-            this.nameProperty().bind(newValue.nameProperty());
-            this.descProperty().bind(newValue.descProperty());
-            this.iconProperty().bind(newValue.iconProperty());
-            Bindings.bindContent(this.getChildren(), newValue.getChildren());
-        });
         //noinspection unchecked
         this.getChildren().setAll(attributeNameIndex, attributeLength, info);
     }
