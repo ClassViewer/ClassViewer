@@ -49,7 +49,6 @@ public class JavaClassFileType extends BinaryFileType {
                     file = ClassFile.readFrom(view, new ClassFileReader(input));
                 }
 
-                view.setRoot(file);
                 loadDesc(view, file);
                 return view;
             }

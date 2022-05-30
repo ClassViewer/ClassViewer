@@ -10,12 +10,18 @@ public class ClassFileReader {
     private int offset = 0;
     private DataInputStream input;
 
+    ClassFile classFile;
+
     public ClassFileReader(InputStream input) {
         this.input = new DataInputStream(input);
     }
 
     public int getOffset() {
         return offset;
+    }
+
+    public ClassFile getClassFile() {
+        return classFile;
     }
 
     public byte readByte() throws IOException {
@@ -105,4 +111,5 @@ public class ClassFileReader {
     public <T extends ConstantInfo> CpIndex<T> readCpIndex(Class<T> type) throws IOException {
         return new CpIndex<>(type, readUnsignedShort());
     }
+
 }

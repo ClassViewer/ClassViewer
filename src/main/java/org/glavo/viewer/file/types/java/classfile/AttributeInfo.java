@@ -9,7 +9,6 @@ import kala.function.CheckedFunction;
 import kala.function.CheckedTriFunction;
 import org.glavo.viewer.file.types.java.classfile.attribute.Attribute;
 import org.glavo.viewer.file.types.java.classfile.attribute.UndefinedAttribute;
-import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.Bytes;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
@@ -33,6 +32,8 @@ public class AttributeInfo extends ClassFileComponent {
         U4 attributeLength = reader.readU4();
         byte[] info = reader.readNBytes(attributeLength.getIntValue());
 
+        attributeNameIndex.loadDesc(reader.getClassFile().getView());
+
         return new AttributeInfo(attributeNameIndex, attributeLength, new Bytes(info));
     }
 
@@ -46,18 +47,6 @@ public class AttributeInfo extends ClassFileComponent {
         attributeLength.setName("attribute_length");
         info.setName("info");
 
-        attribute.addListener((o, oldValue, newValue) -> {
-            this.nameProperty().unbind();
-            this.descProperty().unbind();
-            this.iconProperty().unbind();
-            if (oldValue != null) Bindings.unbindContent(this.getChildren(), oldValue.getChildren());
-
-            this.nameProperty().bind(newValue.nameProperty());
-            this.descProperty().bind(newValue.descProperty());
-            this.iconProperty().bind(newValue.iconProperty());
-            Bindings.bindContent(this.getChildren(), newValue.getChildren());
-        });
-
         attribute.bind(Val.combine(attributeNameIndex.constantInfoProperty(), info.valuesProperty(),
                 (constant, bytes) -> {
                     try {
@@ -70,6 +59,18 @@ public class AttributeInfo extends ClassFileComponent {
 
                     return new UndefinedAttribute(attributeNameIndex, attributeLength, info);
                 }));
+
+        attribute.addListener((o, oldValue, newValue) -> {
+            this.nameProperty().unbind();
+            this.descProperty().unbind();
+            this.iconProperty().unbind();
+            if (oldValue != null) Bindings.unbindContent(this.getChildren(), oldValue.getChildren());
+
+            this.nameProperty().bind(newValue.nameProperty());
+            this.descProperty().bind(newValue.descProperty());
+            this.iconProperty().bind(newValue.iconProperty());
+            Bindings.bindContent(this.getChildren(), newValue.getChildren());
+        });
         //noinspection unchecked
         this.getChildren().setAll(attributeNameIndex, attributeLength, info);
     }
@@ -77,10 +78,5 @@ public class AttributeInfo extends ClassFileComponent {
 
     public Attribute getAttribute() {
         return attribute.get();
-    }
-
-    @Override
-    public void loadDesc(ClassFileTreeView view) {
-        System.out.println(getChildren());
     }
 }

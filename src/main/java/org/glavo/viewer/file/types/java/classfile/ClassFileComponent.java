@@ -148,4 +148,15 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         //assert component instanceof ClassFile;
         return component.getConstantPool();
     }
+
+    public ClassFileTreeView getView() {
+        ClassFileComponent component = this;
+
+        while (component.getParent() != null) {
+            component = component.getParent().getValue();
+        }
+
+        //assert component instanceof ClassFile;
+        return component.getView();
+    }
 }

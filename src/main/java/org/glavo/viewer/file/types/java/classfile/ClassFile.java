@@ -68,6 +68,8 @@ public class ClassFile extends ClassFileComponent {
 
     public static ClassFile readFrom(ClassFileTreeView v, ClassFileReader reader) throws IOException {
         ClassFile classFile = new ClassFile(v);
+        reader.classFile = classFile;
+        v.setRoot(classFile);
 
         U4Hex magic = classFile.readU4Hex(reader, "magic");
         if (magic.getIntValue() != 0xCAFEBABE) throw new ClassFileParseException("magic number mismatch: " + magic);

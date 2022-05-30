@@ -62,8 +62,12 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
         return String.valueOf(getIndex());
     }
 
+    private boolean isLoaded = false;
+
     @Override
     public void loadDesc(ClassFileTreeView view) {
+        if (isLoaded) return;
+        isLoaded = true;
         updateConstantInfo(view);
     }
 
