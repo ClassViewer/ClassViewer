@@ -56,6 +56,12 @@ public abstract class AttributeInfo extends ClassFileComponent {
 
                 yield new ExceptionsAttribute(attributeNameIndex, attributeLength, numberOfExceptions, exceptionIndexTable);
             }
+            case "InnerClasses" -> {
+                U2 numberOfClasses = reader.readU2();
+                Table<InnerClassesAttribute.InnerClassInfo> classes = Table.readFrom(reader, numberOfClasses, InnerClassesAttribute.InnerClassInfo::readFrom);
+
+                yield new InnerClassesAttribute(attributeNameIndex, attributeLength, numberOfClasses, classes);
+            }
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
