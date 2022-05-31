@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileParseException;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantValueInfo;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
@@ -29,10 +30,8 @@ public abstract class AttributeInfo extends ClassFileComponent {
         U4 attributeLength = reader.readU4();
 
         AttributeInfo res = switch (attributeNameIndex.getConstantInfo().getDescText()) {
-            case "ConstantValue" -> {
-                assertAttributeLength(2, attributeLength.getIntValue());
-                yield new ConstantValueAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantValueInfo.class));
-            }
+            case "ConstantValue" ->
+                    new ConstantValueAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantValueInfo.class));
             case "Code" -> {
                 U2 maxStack = reader.readU2();
                 U2 maxLocals = reader.readU2();
@@ -43,20 +42,27 @@ public abstract class AttributeInfo extends ClassFileComponent {
                 U2 attributesCount = reader.readU2();
                 Table<AttributeInfo> attributes = Table.readFrom(reader, attributesCount, AttributeInfo::readFrom);
 
-                assertAttributeLength(attributeLength.getIntValue(), reader.getOffset() - offset - 6);
-
                 yield new CodeAttribute(attributeNameIndex, attributeLength,
                         maxStack, maxLocals,
                         codeLength, code,
                         exceptionTableLength, exceptionTable,
                         attributesCount, attributes);
             }
-            case "StackMapTable" -> new StackMapTableAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
+            case "StackMapTable" ->
+                    new StackMapTableAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
+            case "Exceptions" -> {
+                U2 numberOfExceptions = reader.readU2();
+                Table<CpIndex<ConstantClassInfo>> exceptionIndexTable = Table.readFrom(reader, numberOfExceptions, it -> it.readCpIndex(ConstantClassInfo.class));
+
+                yield new ExceptionsAttribute(attributeNameIndex, attributeLength, numberOfExceptions, exceptionIndexTable);
+            }
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
 
         res.setLength(reader.getOffset() - offset);
+
+        assertAttributeLength(attributeLength.getIntValue(), res.getLength() - 6);
         return res;
     }
 
