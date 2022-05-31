@@ -42,6 +42,14 @@ public class CodeAttribute extends AttributeInfo {
         exceptionTable.setName("exception_table");
         attributesCount.setName("attributes_count");
         attributes.setName("attributes");
+
+        //noinspection unchecked
+        this.getChildren().setAll(
+                attributeNameIndex, attributeLength,
+                maxStack, maxLocals,
+                codeLength, code,
+                exceptionTableLength, exceptionTable,
+                attributesCount, attributes);
     }
 
     public static final class Code extends ClassFileComponent {

@@ -10,6 +10,8 @@ import java.io.IOException;
 public class Table<C extends ClassFileComponent> extends ClassFileComponent {
     public static <C extends ClassFileComponent> Table<C> readFrom(
             ClassFileReader reader, UInt length, CheckedFunction<ClassFileReader, C, IOException> f) throws IOException {
+        int offset = reader.getOffset();
+
         Table<C> table = new Table<>();
         int len = length.getIntValue();
         for (int i = 0; i < len; i++) {
@@ -17,6 +19,7 @@ public class Table<C extends ClassFileComponent> extends ClassFileComponent {
         }
         length.intValueProperty().bind(Bindings.size(table.getChildren()));
 
+        table.setLength(reader.getOffset() - offset);
         return table;
     }
 

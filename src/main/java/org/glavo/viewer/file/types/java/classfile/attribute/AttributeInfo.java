@@ -43,7 +43,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
                 U2 attributesCount = reader.readU2();
                 Table<AttributeInfo> attributes = Table.readFrom(reader, attributesCount, AttributeInfo::readFrom);
 
-                assertAttributeLength(attributeLength.getIntValue(), reader.getOffset() - offset);
+                assertAttributeLength(attributeLength.getIntValue(), reader.getOffset() - offset - 6);
 
                 yield new CodeAttribute(attributeNameIndex, attributeLength,
                         maxStack, maxLocals,
