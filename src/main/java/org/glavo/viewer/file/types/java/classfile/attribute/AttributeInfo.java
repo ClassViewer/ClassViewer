@@ -60,7 +60,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
         return res;
     }
 
-    //public static final Image image = loadImage("attribute.png");
+    public static final Image image = loadImage("attribute.png");
 
     AttributeInfo(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         attributeNameIndex.setName("attribute_name_index");
@@ -72,6 +72,6 @@ public abstract class AttributeInfo extends ClassFileComponent {
 
 
     public Image getImage() {
-        return UndefinedAttribute.image; // TODO
+        return image;
     }
 }
