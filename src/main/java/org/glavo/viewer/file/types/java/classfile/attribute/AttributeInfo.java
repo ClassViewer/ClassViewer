@@ -51,7 +51,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
                         exceptionTableLength, exceptionTable,
                         attributesCount, attributes);
             }
-
+            case "StackMapTable" -> new StackMapTableAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
