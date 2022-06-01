@@ -6,6 +6,7 @@ import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileParseException;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
+import org.glavo.viewer.file.types.java.classfile.constant.ConstantNameAndTypeInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantValueInfo;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
@@ -62,6 +63,8 @@ public abstract class AttributeInfo extends ClassFileComponent {
 
                 yield new InnerClassesAttribute(attributeNameIndex, attributeLength, numberOfClasses, classes);
             }
+            case "EnclosingMethod" ->
+                    new EnclosingMethodAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantClassInfo.class), reader.readCpIndexEager(ConstantNameAndTypeInfo.class));
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
