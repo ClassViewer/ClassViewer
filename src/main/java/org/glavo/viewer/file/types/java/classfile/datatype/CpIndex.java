@@ -3,6 +3,7 @@ package org.glavo.viewer.file.types.java.classfile.datatype;
 import javafx.beans.property.*;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -104,7 +105,17 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
                 infoLink.set(link);
 
                 this.descProperty().bind(Val.flatMap(constantInfoProperty(), ConstantInfo::descTextProperty)
-                        .map(text -> text == null ? link : new TextFlow(link, new Text(" -> "), new Text(text))));
+                        .map(text -> {
+                            if (text == null) return link;
+
+                            Text t = new Text(StringUtils.cutAndAppendEllipsis(text));
+                            //noinspection StringEquality
+                            if (t.getText() != text) {
+                                Tooltip.install(t, new Tooltip(text));
+                            }
+
+                            return new TextFlow(link, new Text(" -> "), t);
+                        }));
                 return;
             }
         }
