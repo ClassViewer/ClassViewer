@@ -65,6 +65,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
             }
             case "EnclosingMethod" ->
                     new EnclosingMethodAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantClassInfo.class), reader.readCpIndexEager(ConstantNameAndTypeInfo.class));
+            case "Synthetic" -> new SyntheticAttribute(attributeNameIndex, attributeLength);
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
