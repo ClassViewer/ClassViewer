@@ -110,7 +110,7 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
 
                             Text t = new Text(StringUtils.cutAndAppendEllipsis(text));
                             //noinspection StringEquality
-                            if (t.getText() != text) {
+                            if (t.getText() != text || text.length() > StringUtils.SHORT_TEXT_THRESHOLD) {
                                 Tooltip.install(t, new Tooltip(text));
                             }
 

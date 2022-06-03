@@ -68,6 +68,8 @@ public abstract class AttributeInfo extends ClassFileComponent {
             case "Synthetic" -> new SyntheticAttribute(attributeNameIndex, attributeLength);
             case "Signature" ->
                     new SignatureAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantUtf8Info.class));
+            case "SourceFile" ->
+                    new SourceFileAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantUtf8Info.class));
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
