@@ -78,6 +78,12 @@ public abstract class AttributeInfo extends ClassFileComponent {
 
                 yield new LineNumberTableAttribute(attributeNameIndex, attributeLength, lineNumberTableLength, lineNumberTable);
             }
+            case "LocalVariableTable" -> {
+                U2 localVariableTableLength = reader.readU2();
+                var localVariableTable = Table.readFrom(reader, localVariableTableLength, LocalVariableTableAttribute.LocalVariableTableEntry::readFrom);
+
+                yield new LocalVariableTableAttribute(attributeNameIndex, attributeLength, localVariableTableLength, localVariableTable);
+            }
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
