@@ -90,6 +90,8 @@ public abstract class AttributeInfo extends ClassFileComponent {
 
                 yield new LocalVariableTypeTableAttribute(attributeNameIndex, attributeLength, localVariableTypeTableLength, localVariableTypeTable);
             }
+            case "Deprecated" ->
+                    new DeprecatedAttribute(attributeNameIndex, attributeLength);
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
