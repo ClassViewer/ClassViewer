@@ -28,6 +28,9 @@ public class LocalVariableTableAttribute extends AttributeInfo {
                                        U2 localVariableTableLength, Table<LocalVariableTableEntry> localVariableTable) {
         super(attributeNameIndex, attributeLength);
 
+        localVariableTableLength.setName("local_variable_table_length");
+        localVariableTable.setName("local_variable_table");
+
         //noinspection unchecked
         this.getChildren().setAll(attributeNameIndex, attributeLength, localVariableTableLength, localVariableTable);
     }
