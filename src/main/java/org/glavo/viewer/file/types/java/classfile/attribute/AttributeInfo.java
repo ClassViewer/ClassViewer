@@ -72,6 +72,12 @@ public abstract class AttributeInfo extends ClassFileComponent {
                     new SourceFileAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantUtf8Info.class));
             case "SourceDebugExtension" ->
                     new SourceDebugExtensionAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
+            case "LineNumberTable" -> {
+                U2 lineNumberTableLength = reader.readU2();
+                var lineNumberTable = Table.readFrom(reader, lineNumberTableLength, LineNumberTableAttribute.LineNumberTableEntry::readFrom);
+
+                yield new LineNumberTableAttribute(attributeNameIndex, attributeLength, lineNumberTableLength, lineNumberTable);
+            }
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
