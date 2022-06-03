@@ -61,6 +61,13 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         return (T) getChildren().get(n);
     }
 
+    protected <T extends ClassFileComponent> T read(ClassFileReader reader, String name, CheckedFunction<ClassFileReader, T, IOException> func) throws IOException {
+        var component = func.apply(reader);
+        component.setName(name);
+        this.getChildren().add(component);
+        return component;
+    }
+
     protected U1 readU1(ClassFileReader reader, String name) throws IOException {
         var uint = new U1(reader.readUnsignedByte());
         uint.setName(name);
@@ -115,6 +122,26 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         flags.setName(name);
         this.getChildren().add(flags);
         return flags;
+    }
+
+    protected U2 readTableLength(ClassFileReader reader, String name) throws IOException {
+        U2 length = reader.readTableLength();
+        length.setName(name);
+        this.getChildren().add(length);
+        return length;
+    }
+
+    protected <C extends ClassFileComponent> Table<C> readTable(ClassFileReader reader, String name,
+                                                                CheckedFunction<ClassFileReader, C, IOException> f) throws IOException {
+        return readTable(reader, name, f, false);
+    }
+
+    protected <C extends ClassFileComponent> Table<C> readTable(ClassFileReader reader, String name,
+                                                                CheckedFunction<ClassFileReader, C, IOException> f, boolean showIndex) throws IOException {
+        Table<C> table = reader.readTable(f, showIndex);
+        table.setName(name);
+        this.getChildren().add(table);
+        return table;
     }
 
     protected <C extends ClassFileComponent> Table<C> readTable(ClassFileReader reader, String name,

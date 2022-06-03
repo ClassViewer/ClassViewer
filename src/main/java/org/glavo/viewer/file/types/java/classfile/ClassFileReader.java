@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile;
 
+import kala.function.CheckedFunction;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
 import org.glavo.viewer.file.types.java.classfile.jvm.Mutf8Decoder;
@@ -108,6 +109,28 @@ public class ClassFileReader {
 
     public U4Hex readU4Hex() throws IOException {
         return new U4Hex(readInt());
+    }
+
+    private U2 tableLength;
+
+    public U2 readTableLength() throws IOException {
+        if (tableLength != null) throw new AssertionError("tableLength = " + tableLength);
+
+        tableLength = readU2();
+        return tableLength;
+    }
+
+    public <C extends ClassFileComponent> Table<C> readTable(CheckedFunction<ClassFileReader, C, IOException> f) throws IOException {
+        return readTable(f, false);
+    }
+
+    public <C extends ClassFileComponent> Table<C> readTable(CheckedFunction<ClassFileReader, C, IOException> f, boolean showIndex) throws IOException {
+        if (tableLength == null) throw new AssertionError("tableLength = null");
+
+        U2 len = tableLength;
+        tableLength = null;
+
+        return Table.readFrom(this, len, f, showIndex);
     }
 
     public <T extends ConstantInfo> CpIndex<T> readCpIndex(Class<T> type) throws IOException {
