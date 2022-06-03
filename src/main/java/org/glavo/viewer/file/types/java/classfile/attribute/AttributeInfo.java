@@ -70,6 +70,8 @@ public abstract class AttributeInfo extends ClassFileComponent {
                     new SignatureAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantUtf8Info.class));
             case "SourceFile" ->
                     new SourceFileAttribute(attributeNameIndex, attributeLength, reader.readCpIndexEager(ConstantUtf8Info.class));
+            case "SourceDebugExtension" ->
+                    new SourceDebugExtensionAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
