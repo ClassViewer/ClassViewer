@@ -107,6 +107,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
                     new RuntimeTypeAnnotationsAttribute(attributeNameIndex, attributeLength, reader.readU2TableLength(), reader.readTable(RuntimeTypeAnnotationsAttribute.TypeAnnotation::readFrom, true));
             case "AnnotationDefault" ->
                     new AnnotationDefaultAttribute(attributeNameIndex, attributeLength, RuntimeAnnotationsAttribute.ElementValue.readFrom(reader));
+            case "BootstrapMethods" -> new BootstrapMethodsAttribute(attributeNameIndex, attributeLength, reader.readU2TableLength(), reader.readTable(BootstrapMethodsAttribute.BootstrapMethodInfo::readFrom, true));
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };
