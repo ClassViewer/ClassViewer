@@ -111,13 +111,19 @@ public class ClassFileReader {
         return new U4Hex(readInt());
     }
 
-    private U2 tableLength;
+    private UInt tableLength;
+    public U1 readU1TableLength() throws IOException {
+        if (tableLength != null) throw new AssertionError("tableLength = " + tableLength);
 
-    public U2 readTableLength() throws IOException {
+        tableLength = readU1();
+        return (U1) tableLength;
+    }
+
+    public U2 readU2TableLength() throws IOException {
         if (tableLength != null) throw new AssertionError("tableLength = " + tableLength);
 
         tableLength = readU2();
-        return tableLength;
+        return (U2) tableLength;
     }
 
     public <C extends ClassFileComponent> Table<C> readTable(CheckedFunction<ClassFileReader, C, IOException> f) throws IOException {
@@ -127,7 +133,7 @@ public class ClassFileReader {
     public <C extends ClassFileComponent> Table<C> readTable(CheckedFunction<ClassFileReader, C, IOException> f, boolean showIndex) throws IOException {
         if (tableLength == null) throw new AssertionError("tableLength = null");
 
-        U2 len = tableLength;
+        UInt len = tableLength;
         tableLength = null;
 
         return Table.readFrom(this, len, f, showIndex);

@@ -90,8 +90,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
 
                 yield new LocalVariableTypeTableAttribute(attributeNameIndex, attributeLength, localVariableTypeTableLength, localVariableTypeTable);
             }
-            case "Deprecated" ->
-                    new DeprecatedAttribute(attributeNameIndex, attributeLength);
+            case "Deprecated" -> new DeprecatedAttribute(attributeNameIndex, attributeLength);
             case "RuntimeVisibleAnnotations", "RuntimeInvisibleAnnotations" -> {
                 U2 annotationsCount = reader.readU2();
                 var annotations = Table.readFrom(reader, annotationsCount, RuntimeAnnotationsAttribute.Annotation::readFrom, true);
@@ -104,6 +103,8 @@ public abstract class AttributeInfo extends ClassFileComponent {
 
                 yield new RuntimeParameterAnnotationsAttribute(attributeNameIndex, attributeLength, numParameters, annotations);
             }
+            case "RuntimeVisibleTypeAnnotations", "RuntimeInvisibleTypeAnnotations" ->
+                    new RuntimeTypeAnnotationsAttribute(attributeNameIndex, attributeLength, reader.readU2TableLength(), reader.readTable(RuntimeTypeAnnotationsAttribute.TypeAnnotation::readFrom, true));
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));
         };

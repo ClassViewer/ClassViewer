@@ -51,7 +51,7 @@ public class RuntimeAnnotationsAttribute extends AttributeInfo {
         public static Annotation readFrom(ClassFileReader reader) throws IOException {
             Annotation annotation = new Annotation();
             annotation.readCpIndex(reader, "type_index", ConstantUtf8Info.class);
-            annotation.readTableLength(reader, "num_element_value_pairs");
+            annotation.readU2TableLength(reader, "num_element_value_pairs");
             annotation.readTable(reader, "element_value_pairs", ElementValuePair::readFrom, true);
             return annotation;
         }
@@ -119,7 +119,7 @@ public class RuntimeAnnotationsAttribute extends AttributeInfo {
     public static final class ArrayValue extends ClassFileComponent {
         public static ArrayValue readFrom(ClassFileReader reader) throws IOException {
             ArrayValue arrayValue = new ArrayValue();
-            arrayValue.readTableLength(reader, "num_values");
+            arrayValue.readU2TableLength(reader, "num_values");
             arrayValue.readTable(reader, "values", ElementValue::readFrom, true);
             return arrayValue;
         }

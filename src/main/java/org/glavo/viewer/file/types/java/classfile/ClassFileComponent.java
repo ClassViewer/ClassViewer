@@ -124,8 +124,15 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         return flags;
     }
 
-    protected U2 readTableLength(ClassFileReader reader, String name) throws IOException {
-        U2 length = reader.readTableLength();
+    protected U1 readU1TableLength(ClassFileReader reader, String name) throws IOException {
+        U1 length = reader.readU1TableLength();
+        length.setName(name);
+        this.getChildren().add(length);
+        return length;
+    }
+
+    protected U2 readU2TableLength(ClassFileReader reader, String name) throws IOException {
+        U2 length = reader.readU2TableLength();
         length.setName(name);
         this.getChildren().add(length);
         return length;
