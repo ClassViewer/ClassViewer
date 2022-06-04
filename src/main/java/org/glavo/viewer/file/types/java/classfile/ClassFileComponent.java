@@ -147,7 +147,13 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
     protected <C extends ClassFileComponent> Table<C> readTable(ClassFileReader reader, String name,
                                                                 UInt length,
                                                                 CheckedFunction<ClassFileReader, C, IOException> f) throws IOException {
-        Table<C> table = Table.readFrom(reader, length, f);
+        return readTable(reader, name, length, f, false);
+    }
+
+    protected <C extends ClassFileComponent> Table<C> readTable(ClassFileReader reader, String name,
+                                                                UInt length,
+                                                                CheckedFunction<ClassFileReader, C, IOException> f, boolean showIndex) throws IOException {
+        Table<C> table = Table.readFrom(reader, length, f, showIndex);
         table.setName(name);
         this.getChildren().add(table);
         return table;

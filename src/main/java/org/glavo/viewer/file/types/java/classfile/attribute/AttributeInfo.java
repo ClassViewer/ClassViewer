@@ -92,11 +92,17 @@ public abstract class AttributeInfo extends ClassFileComponent {
             }
             case "Deprecated" ->
                     new DeprecatedAttribute(attributeNameIndex, attributeLength);
-            case "RuntimeVisibleAnnotations" -> {
+            case "RuntimeVisibleAnnotations", "RuntimeInvisibleAnnotations" -> {
                 U2 annotationsCount = reader.readU2();
-                var annotations = Table.readFrom(reader, annotationsCount, RuntimeVisibleAnnotationsAttribute.Annotation::readFrom, true);
+                var annotations = Table.readFrom(reader, annotationsCount, RuntimeAnnotationsAttribute.Annotation::readFrom, true);
 
-                yield new RuntimeVisibleAnnotationsAttribute(attributeNameIndex, attributeLength, annotationsCount, annotations);
+                yield new RuntimeAnnotationsAttribute(attributeNameIndex, attributeLength, annotationsCount, annotations);
+            }
+            case "RuntimeVisibleParameterAnnotations", "RuntimeInvisibleParameterAnnotations" -> {
+                U1 numParameters = reader.readU1();
+                var annotations = Table.readFrom(reader, numParameters, RuntimeParameterAnnotationsAttribute.ParameterAnnotation::readFrom, true);
+
+                yield new RuntimeParameterAnnotationsAttribute(attributeNameIndex, attributeLength, numParameters, annotations);
             }
             default ->
                     new UndefinedAttribute(attributeNameIndex, attributeLength, new Bytes(reader.readNBytes(attributeLength.getIntValue())));

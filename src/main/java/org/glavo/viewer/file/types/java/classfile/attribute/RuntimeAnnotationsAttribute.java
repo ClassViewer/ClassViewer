@@ -16,11 +16,19 @@ RuntimeVisibleAnnotations_attribute {
     u4 attribute_length;
     u2 num_annotations;
     annotation annotations[num_annotations];
- */
-public class RuntimeVisibleAnnotationsAttribute extends AttributeInfo {
+}
 
-    public RuntimeVisibleAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                                              U2 numAnnotations, Table<Annotation> annotations) {
+RuntimeInvisibleAnnotations_attribute {
+    u2         attribute_name_index;
+    u4         attribute_length;
+    u2         num_annotations;
+    annotation annotations[num_annotations];
+}
+ */
+public class RuntimeAnnotationsAttribute extends AttributeInfo {
+
+    public RuntimeAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
+                                       U2 numAnnotations, Table<Annotation> annotations) {
         super(attributeNameIndex, attributeLength);
 
         numAnnotations.setName("num_annotations");
