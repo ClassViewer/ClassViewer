@@ -1,7 +1,10 @@
 package org.glavo.viewer.util;
 
+import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import kala.collection.base.GenericArrays;
 
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public final class StringUtils {
@@ -22,6 +25,18 @@ public final class StringUtils {
 
 
     private static final Pattern newLine = Pattern.compile("[\\r\\n]");
+
+    public static <T extends Node> T cutTextNode(String text, Function<String, T> f) {
+        String shortText = cutAndAppendEllipsis(text);
+
+        T t = f.apply(shortText);
+        //noinspection StringEquality
+        if (shortText != text || text.length() > StringUtils.SHORT_TEXT_THRESHOLD) {
+            Tooltip.install(t, new Tooltip(text));
+        }
+
+        return t;
+    }
 
     public static String cutAndAppendEllipsis(String str) {
         return cutAndAppendEllipsis(str, 100);

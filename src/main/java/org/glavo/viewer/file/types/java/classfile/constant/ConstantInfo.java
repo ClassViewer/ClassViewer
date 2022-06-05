@@ -114,6 +114,11 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         return idx;
     }
 
+    @Override
+    public String contentToString() {
+        return getDescText();
+    }
+
     private ObservableValue<String> descText;
 
     protected abstract ObservableValue<String> initDescText();
@@ -123,9 +128,7 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         this.descProperty().bind(Val.map(descTextProperty(), text -> {
             if (text == null) return null;
 
-            Label label = new Label(StringUtils.cutAndAppendEllipsis(text));
-            label.setTooltip(new Tooltip(text));
-            return label;
+            return StringUtils.cutTextNode(text, Label::new);
         }));
     }
 

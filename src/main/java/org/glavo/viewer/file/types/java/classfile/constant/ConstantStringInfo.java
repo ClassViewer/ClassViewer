@@ -20,7 +20,7 @@ public final class ConstantStringInfo extends ConstantValueInfo {
         //noinspection unchecked
         this.getChildren().setAll(tag, stringIndex);
         this.descProperty().bind(Val.map(stringIndex.constantInfoProperty(), it ->
-                it == null ? null : new Label(StringUtils.cutAndAppendEllipsis(it.getDescText()))));
+                it == null ? null : StringUtils.cutTextNode(it.getDescText(), Label::new)));
     }
 
     public CpIndex<ConstantUtf8Info> stringIndex() {

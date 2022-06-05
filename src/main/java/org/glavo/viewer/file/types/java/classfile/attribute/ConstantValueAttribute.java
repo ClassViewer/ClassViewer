@@ -24,7 +24,7 @@ public final class ConstantValueAttribute extends AttributeInfo {
         CpIndex<ConstantValueInfo> constantvalueIndex = attribute.readCpIndexEager(reader, "constantvalue_index", ConstantValueInfo.class);
 
         attribute.descProperty().bind(Val.flatMap(constantvalueIndex.constantInfoProperty(), it -> it == null ? null : it.descTextProperty())
-                .map(it -> it == null ? null : new Label(StringUtils.cutAndAppendEllipsis(it))));
+                .map(it -> it == null ? null : StringUtils.cutTextNode(it, Label::new)));
 
         return attribute;
     }

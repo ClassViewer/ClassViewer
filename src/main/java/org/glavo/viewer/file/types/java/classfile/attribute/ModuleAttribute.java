@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile.attribute;
 
+import javafx.scene.control.Label;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
@@ -8,7 +9,10 @@ import org.glavo.viewer.file.types.java.classfile.constant.ConstantPackageInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
+import org.glavo.viewer.file.types.java.classfile.jvm.AccessFlag;
 import org.glavo.viewer.file.types.java.classfile.jvm.AccessFlagType;
+import org.glavo.viewer.util.StringUtils;
+import org.reactfx.value.Val;
 
 import java.io.IOException;
 
@@ -52,16 +56,61 @@ Module_attribute {
 }
  */
 public class ModuleAttribute extends AttributeInfo {
-    ModuleAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
+    public static ModuleAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new ModuleAttribute(attributeNameIndex, attributeLength);
+
+        attribute.readCpIndex(reader, "module_name_index", ConstantModuleInfo.class);
+        attribute.readAccessFlags(reader, "module_flags", AccessFlagType.AF_ALL);
+        attribute.readCpIndex(reader, "module_version_index", ConstantUtf8Info.class);
+
+        attribute.readU2TableLength(reader, "requires_count");
+        attribute.readTable(reader, "requires", ModuleAttribute.RequiresInfo::readFrom);
+
+        attribute.readU2TableLength(reader, "exports_count");
+        attribute.readTable(reader, "exports", ModuleAttribute.ExportsInfo::readFrom);
+
+        attribute.readU2TableLength(reader, "opens_count");
+        attribute.readTable(reader, "opens", ModuleAttribute.OpensInfo::readFrom);
+
+        attribute.readU2TableLength(reader, "uses_count");
+        attribute.readTable(reader, "uses", it -> it.readCpIndexEager(ConstantClassInfo.class));
+
+        attribute.readU2TableLength(reader, "provides_count");
+        attribute.readTable(reader, "provides", ModuleAttribute.ProvidesInfo::readFrom, true);
+
+        return attribute;
+    }
+
+    private ModuleAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         super(attributeNameIndex, attributeLength);
     }
 
     public static final class RequiresInfo extends ClassFileComponent {
         public static RequiresInfo readFrom(ClassFileReader reader) throws IOException {
             RequiresInfo requiresInfo = new RequiresInfo();
-            requiresInfo.readCpIndex(reader, "requires_index", ConstantModuleInfo.class);
-            requiresInfo.readAccessFlags(reader, "requires_flags", AccessFlagType.AF_MODULE_ATTR);
+            var requiresIndex = requiresInfo.readCpIndex(reader, "requires_index", ConstantModuleInfo.class);
+            var requiresFlags = requiresInfo.readAccessFlags(reader, "requires_flags", AccessFlagType.AF_MODULE_ATTR);
             requiresInfo.readCpIndex(reader, "requires_version_index", ConstantUtf8Info.class);
+
+            requiresInfo.descProperty().bind(Val.combine(requiresIndex.constantInfoProperty(), requiresFlags.flagsProperty(), (info, flag) -> {
+                if (info == null || info.getDescText() == null || flag == null) return null;
+
+                StringBuilder builder = new StringBuilder();
+
+                builder.append("requires ");
+
+                if (flag.contains(AccessFlag.ACC_STATIC)) {
+                    builder.append("static ");
+                }
+                if (flag.contains(AccessFlag.ACC_TRANSITIVE)) {
+                    builder.append("transitive ");
+                }
+
+                builder.append(info.getDescText().replace('/', '.'));
+
+                return new Label(builder.toString());
+            }));
+
             return requiresInfo;
         }
     }
@@ -69,10 +118,17 @@ public class ModuleAttribute extends AttributeInfo {
     public static final class ExportsInfo extends ClassFileComponent {
         public static ExportsInfo readFrom(ClassFileReader reader) throws IOException {
             ExportsInfo exportsInfo = new ExportsInfo();
-            exportsInfo.readCpIndex(reader, "exports_index", ConstantPackageInfo.class);
-            exportsInfo.readAccessFlags(reader, "exports_flags", AccessFlagType.AF_MODULE_ATTR);
+            var exportsIndex = exportsInfo.readCpIndexEager(reader, "exports_index", ConstantPackageInfo.class);
+            var exportsFlags = exportsInfo.readAccessFlags(reader, "exports_flags", AccessFlagType.AF_MODULE_ATTR);
             exportsInfo.readU2TableLength(reader, "exports_to_count");
-            exportsInfo.readTable(reader, "exports_to_index", it -> it.readCpIndex(ConstantModuleInfo.class), true);
+            var exportsToIndex = exportsInfo.readTable(reader, "exports_to_index", it -> it.readCpIndexEager(ConstantModuleInfo.class), true);
+
+            exportsInfo.descProperty().bind(
+                    Val.map(
+                            Val.flatMap(exportsIndex.constantInfoProperty(), it -> it == null ? null : it.descTextProperty()),
+                            it -> it == null ? null : StringUtils.cutTextNode("exports " + it, Label::new))
+            );
+
             return exportsInfo;
         }
     }
@@ -80,10 +136,17 @@ public class ModuleAttribute extends AttributeInfo {
     public static final class OpensInfo extends ClassFileComponent {
         public static OpensInfo readFrom(ClassFileReader reader) throws IOException {
             OpensInfo opensInfo = new OpensInfo();
-            opensInfo.readCpIndex(reader, "opens_index", ConstantPackageInfo.class);
+            var opensIndex = opensInfo.readCpIndex(reader, "opens_index", ConstantPackageInfo.class);
             opensInfo.readAccessFlags(reader, "opens_flags", AccessFlagType.AF_MODULE_ATTR);
             opensInfo.readU2TableLength(reader, "opens_to_count");
             opensInfo.readTable(reader, "opens_to_index", it -> it.readCpIndex(ConstantModuleInfo.class), true);
+
+            opensInfo.descProperty().bind(
+                    Val.map(
+                            Val.flatMap(opensIndex.constantInfoProperty(), it -> it == null ? null : it.descTextProperty()),
+                            it -> it == null ? null : StringUtils.cutTextNode("opens " + it, Label::new))
+            );
+
             return opensInfo;
         }
     }
@@ -91,9 +154,16 @@ public class ModuleAttribute extends AttributeInfo {
     public static final class ProvidesInfo extends ClassFileComponent {
         public static ProvidesInfo readFrom(ClassFileReader reader) throws IOException {
             ProvidesInfo providesInfo = new ProvidesInfo();
-            providesInfo.readCpIndex(reader, "provides_index", ConstantClassInfo.class);
+            var providesIndex = providesInfo.readCpIndex(reader, "provides_index", ConstantClassInfo.class);
             providesInfo.readU2TableLength(reader, "provides_with_count");
             providesInfo.readTable(reader, "provides_with_index", it -> it.readCpIndex(ConstantClassInfo.class), true);
+
+            providesInfo.descProperty().bind(
+                    Val.map(
+                            Val.flatMap(providesIndex.constantInfoProperty(), it -> it == null ? null : it.descTextProperty()),
+                            it -> it == null ? null : StringUtils.cutTextNode("provides " + it, Label::new))
+            );
+
             return providesInfo;
         }
     }

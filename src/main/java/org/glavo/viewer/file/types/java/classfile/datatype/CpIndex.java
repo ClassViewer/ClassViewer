@@ -108,13 +108,7 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
                         .map(text -> {
                             if (text == null) return link;
 
-                            Text t = new Text(StringUtils.cutAndAppendEllipsis(text));
-                            //noinspection StringEquality
-                            if (t.getText() != text || text.length() > StringUtils.SHORT_TEXT_THRESHOLD) {
-                                Tooltip.install(t, new Tooltip(text));
-                            }
-
-                            return new TextFlow(link, new Text(" -> "), t);
+                            return new TextFlow(link, new Text(" -> "), StringUtils.cutTextNode(text, Text::new));
                         }));
                 return;
             }

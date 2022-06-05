@@ -51,6 +51,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
             readers.put("AnnotationDefault", AnnotationDefaultAttribute::readFrom);
             readers.put("BootstrapMethods", BootstrapMethodsAttribute::readFrom);
             readers.put("MethodParameters", MethodParametersAttribute::readFrom);
+            readers.put("Module", ModuleAttribute::readFrom);
         }
     }
 

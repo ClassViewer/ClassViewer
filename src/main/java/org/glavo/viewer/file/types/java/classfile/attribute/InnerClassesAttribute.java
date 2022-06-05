@@ -29,7 +29,7 @@ public final class InnerClassesAttribute extends AttributeInfo {
     public static InnerClassesAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
         var attribute = new InnerClassesAttribute(attributeNameIndex, attributeLength);
         attribute.readU2TableLength(reader, "number_of_classes");
-        attribute.readTable(reader, "classes", InnerClassInfo::readFrom, true);
+        attribute.readTable(reader, "classes", InnerClassInfo::readFrom);
         return attribute;
     }
 
