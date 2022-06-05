@@ -25,7 +25,7 @@ public final class BootstrapMethodsAttribute extends AttributeInfo {
     public static BootstrapMethodsAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
         var attribute = new BootstrapMethodsAttribute(attributeNameIndex, attributeLength);
         attribute.readU2TableLength(reader, "num_bootstrap_methods");
-        attribute.read(reader, "bootstrap_methods", BootstrapMethodInfo::readFrom);
+        attribute.readTable(reader, "bootstrap_methods", BootstrapMethodInfo::readFrom);
         return attribute;
     }
 

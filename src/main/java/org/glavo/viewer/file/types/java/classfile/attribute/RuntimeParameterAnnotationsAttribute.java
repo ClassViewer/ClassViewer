@@ -4,8 +4,6 @@ import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
-import org.glavo.viewer.file.types.java.classfile.datatype.Table;
-import org.glavo.viewer.file.types.java.classfile.datatype.U1;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
 
 import java.io.IOException;
@@ -44,8 +42,8 @@ public final class RuntimeParameterAnnotationsAttribute extends AttributeInfo {
     public static final class ParameterAnnotation extends ClassFileComponent {
         public static ParameterAnnotation readFrom(ClassFileReader reader) throws IOException {
             ParameterAnnotation parameterAnnotationInfo = new ParameterAnnotation();
-            U1 numAnnotations = parameterAnnotationInfo.readU1(reader, "num_annotations");
-            parameterAnnotationInfo.readTable(reader, "annotations", numAnnotations, RuntimeAnnotationsAttribute.Annotation::readFrom, true);
+            parameterAnnotationInfo.readU2TableLength(reader, "num_annotations");
+            parameterAnnotationInfo.readTable(reader, "annotations", RuntimeAnnotationsAttribute.Annotation::readFrom, true);
             return parameterAnnotationInfo;
         }
     }

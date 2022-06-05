@@ -54,9 +54,9 @@ public final class Viewer {
         this.pane = new ViewerPane(this);
 
         Scene scene = new Scene(pane);
-        stage.setWidth(config.getWindowSize().getWidth());
-        stage.setHeight(config.getWindowSize().getHeight());
-        if (config.getWindowSize().isMaximized()) {
+        stage.setWidth(config.getWindowSize().width());
+        stage.setHeight(config.getWindowSize().height());
+        if (config.getWindowSize().maximized()) {
             stage.setMaximized(true);
         }
 
@@ -98,7 +98,7 @@ public final class Viewer {
         stage.setOnCloseRequest(e -> {
             if (isPrimary) {
                 config.setWindowSize(stage.isMaximized()
-                        ? new WindowDimension(true, config.getWindowSize().getWidth(), config.getWindowSize().getHeight())
+                        ? new WindowDimension(true, config.getWindowSize().width(), config.getWindowSize().height())
                         : new WindowDimension(false, stage.getWidth(), stage.getHeight()));
             }
 

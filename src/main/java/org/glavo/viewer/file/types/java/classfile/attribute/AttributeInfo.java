@@ -56,6 +56,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
             readers.put("ModuleMainClass", ModuleMainClassAttribute::readFrom);
             readers.put("NestHost", NestHostAttribute::readFrom);
             readers.put("NestMembers", NestMembersAttribute::readFrom);
+            readers.put("Record", RecordAttribute::readFrom);
         }
     }
 
@@ -71,7 +72,8 @@ public abstract class AttributeInfo extends ClassFileComponent {
         res.setLength(reader.getOffset() - offset);
 
         if (res.getLength() - 6 != attributeLength.getIntValue())
-            throw new ClassFileParseException("attributeLength(%s) != %s".formatted(res.getLength() - 6, attributeLength.getIntValue()));
+            throw new ClassFileParseException("attributeLength(%s) != %s (offset=%s, attributeName=%s)"
+                    .formatted(res.getLength() - 6, attributeLength.getIntValue(), Integer.toHexString(offset), attributeNameIndex.getConstantInfo().getDescText()));
 
         return res;
     }
