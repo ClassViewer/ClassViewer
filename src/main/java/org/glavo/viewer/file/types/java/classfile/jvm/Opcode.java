@@ -2,9 +2,8 @@ package org.glavo.viewer.file.types.java.classfile.jvm;
 
 import org.glavo.viewer.file.types.java.classfile.ClassFileParseException;
 
-//@formatter:off
 public enum Opcode {
-    
+    //@formatter:off
     // Constants
     nop             (0x00, 0),
     aconst_null     (0x01, 0),
@@ -116,7 +115,7 @@ public enum Opcode {
     dsub            (0x67, 0),
     imul            (0x68, 0),
     lmul            (0x69, 0),
-    fmul            (0x6a, 0), 
+    fmul            (0x6a, 0),
     dmul            (0x6b, 0),
     idiv            (0x6c, 0),
     ldiv            (0x6d, 0),
@@ -222,22 +221,28 @@ public enum Opcode {
     impdep1         (0xfe, 0),
     impdep2         (0xff, 0),
     ;
-    
+    //@formatter:on
+
     public final int opcode;
     public final int operandCount;
+
+    public final String opName;
 
     Opcode(int opcode, int operandCount) {
         this.opcode = opcode;
         this.operandCount = operandCount;
+
+        this.opName = name().startsWith("_") ? name().substring(1) : name();
     }
-    
-    
+
+    private static final Opcode[] values = values();
+
     public static Opcode valueOf(int opcode) {
         if (opcode < 0xca) {
-            return values()[opcode];
+            return values[opcode];
         } else {
-            throw new ClassFileParseException("Invalid opcode: " + opcode);
+            throw new ClassFileParseException("Invalid opcode: " + Integer.toHexString(opcode));
         }
     }
-    
+
 }

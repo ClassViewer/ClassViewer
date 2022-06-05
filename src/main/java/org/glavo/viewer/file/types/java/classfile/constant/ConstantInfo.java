@@ -16,8 +16,8 @@ import org.glavo.viewer.util.StringUtils;
 import org.reactfx.value.Val;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Map;
 
 public sealed abstract class ConstantInfo extends ClassFileComponent
         permits ConstantClassInfo,
@@ -29,23 +29,50 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         ConstantInvokeDynamicInfo,
         ConstantModuleInfo, ConstantPackageInfo {
     //@formatter:off
-    public static final int CONSTANT_Class              = 7;  // C
-    public static final int CONSTANT_Fieldref           = 9;  // F
-    public static final int CONSTANT_Methodref          = 10; // M
-    public static final int CONSTANT_InterfaceMethodref = 11; // I
-    public static final int CONSTANT_String             = 8;  // S
-    public static final int CONSTANT_Integer            = 3;  // I
-    public static final int CONSTANT_Float              = 4;  // F
-    public static final int CONSTANT_Long               = 5;  // L
-    public static final int CONSTANT_Double             = 6;  // D
-    public static final int CONSTANT_NameAndType        = 12; // N
-    public static final int CONSTANT_Utf8               = 1;  // T
-    public static final int CONSTANT_MethodHandle       = 15; // H
-    public static final int CONSTANT_MethodTypeInfo     = 16; // T
-    public static final int CONSTANT_InvokeDynamic      = 18; // D
-    public static final int CONSTANT_Module         = 19; // M
-    public static final int CONSTANT_Package        = 20; // P
+    public static final int CONSTANT_Class              =  7;
+    public static final int CONSTANT_Fieldref           =  9;
+    public static final int CONSTANT_Methodref          = 10;
+    public static final int CONSTANT_InterfaceMethodref = 11;
+    public static final int CONSTANT_String             =  8;
+    public static final int CONSTANT_Integer            =  3;
+    public static final int CONSTANT_Float              =  4;
+    public static final int CONSTANT_Long               =  5;
+    public static final int CONSTANT_Double             =  6;
+    public static final int CONSTANT_NameAndType        = 12;
+    public static final int CONSTANT_Utf8               =  1;
+    public static final int CONSTANT_MethodHandle       = 15;
+    public static final int CONSTANT_MethodType         = 16;
+    public static final int CONSTANT_InvokeDynamic      = 18;
+    public static final int CONSTANT_Module             = 19;
+    public static final int CONSTANT_Package            = 20;
     //@formatter:on
+
+    private static final class Hole {
+        static final HashMap<Class<?>, String> constantNameMap = new HashMap<>();
+        static final HashMap<Class<?>, String> constantTagNameMap = new HashMap<>();
+        static final HashMap<Class<?>, Image> images = new HashMap<>();
+
+        static {
+            final int prefixLength = "CONSTANT_".length();
+            final String pkg = ConstantInfo.class.getPackageName();
+
+            try {
+                for (Field field : ConstantInfo.class.getFields()) {
+                    if (field.getType() == int.class && field.getName().startsWith("CONSTANT_")) {
+                        final String name = field.getName().substring(prefixLength).intern();
+                        final int tagValue = field.getInt(null);
+                        final Class<?> cls = Class.forName(pkg + ".Constant" + name + "Info");
+
+                        constantNameMap.put(cls, name);
+                        constantTagNameMap.put(cls, "CONSTANT_" + name + " (" + tagValue + ")");
+                        images.put(cls, Images.loadImage("classfile/constant/" + name + ".png"));
+                    }
+                }
+            } catch (Throwable e) {
+                throw new AssertionError(e);
+            }
+        }
+    }
 
     public static ConstantInfo readFrom(ClassFileReader reader) throws IOException {
         int offset = reader.getOffset();
@@ -73,7 +100,7 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
             }
             case CONSTANT_MethodHandle ->
                     new ConstantMethodHandleInfo(tag, reader.readU1(), reader.readCpIndex(ConstantInfo.class));
-            case CONSTANT_MethodTypeInfo -> new ConstantMethodTypeInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
+            case CONSTANT_MethodType -> new ConstantMethodTypeInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
             case CONSTANT_InvokeDynamic ->
                     new ConstantInvokeDynamicInfo(tag, reader.readU2(), reader.readCpIndex(ConstantNameAndTypeInfo.class));
             case CONSTANT_Module -> new ConstantModuleInfo(tag, reader.readCpIndex(ConstantUtf8Info.class));
@@ -84,12 +111,11 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         return info;
     }
 
-    private static final Map<String, Image> images = new HashMap<>();
 
     public ConstantInfo(ConstantInfo.Tag tag) {
         String name = this.getConstantName();
-        tag.setTagName(name);
-        ImageView view = new ImageView(images.computeIfAbsent(name, key -> Images.loadImage("classfile/constant/" + key + ".png")));
+        tag.setTagName(Hole.constantTagNameMap.get(this.getClass()));
+        ImageView view = new ImageView(Hole.images.get(this.getClass()));
         Tooltip.install(view, new Tooltip(name));
         this.setIcon(view);
     }
@@ -98,12 +124,8 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         return component(0);
     }
 
-    private static final int PREFIX_LENGTH = "CONSTANT".length();
-    private static final int SUFFIX_LENGTH = "Info".length();
-
     public String getConstantName() {
-        String simpleName = this.getClass().getSimpleName();
-        return simpleName.substring(PREFIX_LENGTH, simpleName.length() - SUFFIX_LENGTH);
+        return Hole.constantNameMap.get(this.getClass());
     }
 
     public int getIndex() {
@@ -157,7 +179,7 @@ public sealed abstract class ConstantInfo extends ClassFileComponent
         }
 
         void setTagName(String tagName) {
-            this.setDesc(new Label("CONSTANT_" + tagName + "(" + intValue + ")"));
+            this.setDesc(new Label(tagName));
         }
     }
 }
