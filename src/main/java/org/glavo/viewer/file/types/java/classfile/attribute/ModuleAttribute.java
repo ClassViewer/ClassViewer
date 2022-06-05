@@ -55,7 +55,7 @@ Module_attribute {
     } provides[provides_count];
 }
  */
-public class ModuleAttribute extends AttributeInfo {
+public final class ModuleAttribute extends AttributeInfo {
     public static ModuleAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
         var attribute = new ModuleAttribute(attributeNameIndex, attributeLength);
 
