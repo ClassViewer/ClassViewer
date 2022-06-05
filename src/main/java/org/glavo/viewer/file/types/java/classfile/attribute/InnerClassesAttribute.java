@@ -25,15 +25,16 @@ InnerClasses_attribute {
     } classes[number_of_classes];
 }
  */
-public class InnerClassesAttribute extends AttributeInfo {
-    InnerClassesAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                                 U2 numberOfClasses, Table<InnerClassInfo> classes) {
-        super(attributeNameIndex, attributeLength);
-        numberOfClasses.setName("number_of_classes");
-        classes.setName("classes");
+public final class InnerClassesAttribute extends AttributeInfo {
+    public static InnerClassesAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new InnerClassesAttribute(attributeNameIndex, attributeLength);
+        attribute.readU2TableLength(reader, "number_of_classes");
+        attribute.readTable(reader, "classes", InnerClassInfo::readFrom, true);
+        return attribute;
+    }
 
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, numberOfClasses, classes);
+    private InnerClassesAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
+        super(attributeNameIndex, attributeLength);
     }
 
     public static final class InnerClassInfo extends ClassFileComponent {

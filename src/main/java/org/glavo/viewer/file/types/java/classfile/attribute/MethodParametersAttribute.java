@@ -4,8 +4,6 @@ import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
-import org.glavo.viewer.file.types.java.classfile.datatype.Table;
-import org.glavo.viewer.file.types.java.classfile.datatype.U1;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
 import org.glavo.viewer.file.types.java.classfile.jvm.AccessFlagType;
 
@@ -21,16 +19,16 @@ MethodParameters_attribute {
     } parameters[parameters_count];
 }
  */
-public class MethodParametersAttribute extends AttributeInfo {
-    MethodParametersAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                              U1 parametersCount, Table<ParameterInfo> parameters) {
+public final class MethodParametersAttribute extends AttributeInfo {
+    public static MethodParametersAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new MethodParametersAttribute(attributeNameIndex, attributeLength);
+        attribute.readU1TableLength(reader, "parameters_count");
+        attribute.readTable(reader, "parameters", MethodParametersAttribute.ParameterInfo::readFrom, true);
+        return attribute;
+    }
+
+    private MethodParametersAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         super(attributeNameIndex, attributeLength);
-
-        parametersCount.setName("parameters_count");
-        parameters.setName("parameters");
-
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, parametersCount, parameters);
     }
 
     public static final class ParameterInfo extends ClassFileComponent {

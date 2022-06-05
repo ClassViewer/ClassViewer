@@ -22,16 +22,16 @@ RuntimeInvisibleTypeAnnotations_attribute {
     type_annotation annotations[num_annotations];
 }
  */
-public class RuntimeTypeAnnotationsAttribute extends AttributeInfo {
-    RuntimeTypeAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                                           U2 numAnnotations, Table<TypeAnnotation> annotations) {
+public final class RuntimeTypeAnnotationsAttribute extends AttributeInfo {
+    public static RuntimeTypeAnnotationsAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new RuntimeTypeAnnotationsAttribute(attributeNameIndex, attributeLength);
+        attribute.readU2TableLength(reader, "num_annotations");
+        attribute.readTable(reader, "annotations", TypeAnnotation::readFrom);
+        return attribute;
+    }
+
+    private RuntimeTypeAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         super(attributeNameIndex, attributeLength);
-        numAnnotations.setName("num_annotations");
-        annotations.setName("annotations");
-
-
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, numAnnotations, annotations);
     }
 
     /*

@@ -1,8 +1,11 @@
 package org.glavo.viewer.file.types.java.classfile.attribute;
 
+import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
+
+import java.io.IOException;
 
 /*
 SourceFile_attribute {
@@ -11,12 +14,14 @@ SourceFile_attribute {
     u2 sourcefile_index;
 }
  */
-public class SourceFileAttribute extends AttributeInfo {
-    SourceFileAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, CpIndex<ConstantUtf8Info> sourcefileIndex) {
-        super(attributeNameIndex, attributeLength);
+public final class SourceFileAttribute extends AttributeInfo {
+    public static SourceFileAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new SourceFileAttribute(attributeNameIndex, attributeLength);
+        attribute.readCpIndex(reader, "sourcefile_index", ConstantUtf8Info.class);
+        return attribute;
+    }
 
-        sourcefileIndex.setName("sourcefile_index");
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, sourcefileIndex);
+    private SourceFileAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
+        super(attributeNameIndex, attributeLength);
     }
 }

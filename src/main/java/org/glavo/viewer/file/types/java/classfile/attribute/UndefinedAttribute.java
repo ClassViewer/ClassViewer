@@ -1,10 +1,13 @@
 package org.glavo.viewer.file.types.java.classfile.attribute;
 
 import javafx.scene.image.Image;
+import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.Bytes;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
+
+import java.io.IOException;
 
 /*
 attribute_info {
@@ -13,15 +16,17 @@ attribute_info {
     u1 info[attribute_length];
 }
  */
-public class UndefinedAttribute extends AttributeInfo {
+public final class UndefinedAttribute extends AttributeInfo {
     static final Image image = AttributeInfo.loadImage("unknown.png");
 
-    UndefinedAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, Bytes info) {
-        super(attributeNameIndex, attributeLength);
-        info.setName("info");
+    public static UndefinedAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new UndefinedAttribute(attributeNameIndex, attributeLength);
+        attribute.readBytes(reader, "info", attributeLength);
+        return attribute;
+    }
 
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, info);
+    private UndefinedAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
+        super(attributeNameIndex, attributeLength);
     }
 
     @Override

@@ -4,8 +4,6 @@ import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
-import org.glavo.viewer.file.types.java.classfile.datatype.Table;
-import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
 
 import java.io.IOException;
@@ -24,15 +22,15 @@ LocalVariableTable_attribute {
 }
  */
 public class LocalVariableTableAttribute extends AttributeInfo {
-    LocalVariableTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                                       U2 localVariableTableLength, Table<LocalVariableTableEntry> localVariableTable) {
+    public static LocalVariableTableAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new LocalVariableTableAttribute(attributeNameIndex, attributeLength);
+        attribute.readU2TableLength(reader, "local_variable_table_length");
+        attribute.readTable(reader, "local_variable_table", LocalVariableTableAttribute.LocalVariableTableEntry::readFrom);
+        return attribute;
+    }
+
+    private LocalVariableTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         super(attributeNameIndex, attributeLength);
-
-        localVariableTableLength.setName("local_variable_table_length");
-        localVariableTable.setName("local_variable_table");
-
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, localVariableTableLength, localVariableTable);
     }
 
     public static final class LocalVariableTableEntry extends ClassFileComponent {

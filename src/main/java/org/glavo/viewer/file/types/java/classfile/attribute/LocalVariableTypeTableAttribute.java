@@ -23,16 +23,16 @@ LocalVariableTypeTable_attribute {
     } local_variable_type_table[local_variable_type_table_length];
 }
  */
-public class LocalVariableTypeTableAttribute extends AttributeInfo {
-    public LocalVariableTypeTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                                           U2 localVariableTypeTableLength, Table<LocalVariableTypeTableEntry> localVariableTypeTable) {
+public final class LocalVariableTypeTableAttribute extends AttributeInfo {
+    public static LocalVariableTypeTableAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new LocalVariableTypeTableAttribute(attributeNameIndex, attributeLength);
+        attribute.readU2TableLength(reader, "local_variable_type_table_length");
+        attribute.readTable(reader, "local_variable_type_table", LocalVariableTypeTableAttribute.LocalVariableTypeTableEntry::readFrom);
+        return attribute;
+    }
+
+    public LocalVariableTypeTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         super(attributeNameIndex, attributeLength);
-
-        localVariableTypeTableLength.setName("local_variable_type_table_length");
-        localVariableTypeTable.setName("local_variable_type_table");
-
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, localVariableTypeTableLength, localVariableTypeTable);
     }
 
     public static final class LocalVariableTypeTableEntry extends ClassFileComponent {

@@ -1,10 +1,13 @@
 package org.glavo.viewer.file.types.java.classfile.attribute;
 
+import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantNameAndTypeInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
+
+import java.io.IOException;
 
 /*
 EnclosingMethod_attribute {
@@ -14,14 +17,15 @@ EnclosingMethod_attribute {
     u2 method_index;
 }
  */
-public class EnclosingMethodAttribute extends AttributeInfo {
-    EnclosingMethodAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                             CpIndex<ConstantClassInfo> classIndex, CpIndex<ConstantNameAndTypeInfo> methodIndex) {
-        super(attributeNameIndex, attributeLength);
-        classIndex.setName("class_index");
-        methodIndex.setName("method_index");
+public final class EnclosingMethodAttribute extends AttributeInfo {
+    public static EnclosingMethodAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new EnclosingMethodAttribute(attributeNameIndex, attributeLength);
+        attribute.readCpIndex(reader, "class_index", ConstantClassInfo.class);
+        attribute.readCpIndex(reader, "method_index", ConstantNameAndTypeInfo.class);
+        return attribute;
+    }
 
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, classIndex, methodIndex);
+    private EnclosingMethodAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
+        super(attributeNameIndex, attributeLength);
     }
 }

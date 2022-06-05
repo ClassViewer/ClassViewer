@@ -29,18 +29,16 @@ RuntimeInvisibleParameterAnnotations_attribute {
     } parameter_annotations[num_parameters];
 }
  */
-public class RuntimeParameterAnnotationsAttribute extends AttributeInfo {
+public final class RuntimeParameterAnnotationsAttribute extends AttributeInfo {
+    public static RuntimeParameterAnnotationsAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new RuntimeParameterAnnotationsAttribute(attributeNameIndex, attributeLength);
+        attribute.readU1TableLength(reader, "num_parameters");
+        attribute.readTable(reader, "parameter_annotations", RuntimeParameterAnnotationsAttribute.ParameterAnnotation::readFrom);
+        return attribute;
+    }
 
-    RuntimeParameterAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                                                U1 numParameters, Table<ParameterAnnotation> parameterAnnotations) {
+    private RuntimeParameterAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         super(attributeNameIndex, attributeLength);
-
-        numParameters.setName("num_parameters");
-        parameterAnnotations.setName("parameter_annotations");
-
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, numParameters, parameterAnnotations);
-
     }
 
     public static final class ParameterAnnotation extends ClassFileComponent {

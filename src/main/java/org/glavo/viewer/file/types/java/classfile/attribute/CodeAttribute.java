@@ -26,30 +26,27 @@ Code_attribute {
     attribute_info attributes[attributes_count];
 }
  */
-public class CodeAttribute extends AttributeInfo {
-    CodeAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                  U2 maxStack, U2 maxLocals,
-                  U4 codeLength, Code code,
-                  U2 exceptionTableLength, Table<ExceptionTableEntry> exceptionTable,
-                  U2 attributesCount, Table<AttributeInfo> attributes
-    ) {
-        super(attributeNameIndex, attributeLength);
-        maxStack.setName("max_stack");
-        maxLocals.setName("max_locals");
-        codeLength.setName("code_length");
-        code.setName("code");
-        exceptionTableLength.setName("exception_table_length");
-        exceptionTable.setName("exception_table");
-        attributesCount.setName("attributes_count");
-        attributes.setName("attributes");
+public final class CodeAttribute extends AttributeInfo {
+    public static CodeAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new CodeAttribute(attributeNameIndex, attributeLength);
 
-        //noinspection unchecked
-        this.getChildren().setAll(
-                attributeNameIndex, attributeLength,
-                maxStack, maxLocals,
-                codeLength, code,
-                exceptionTableLength, exceptionTable,
-                attributesCount, attributes);
+        attribute.readU2(reader, "max_stack");
+        attribute.readU2(reader, "max_locals");
+
+        U4 codeLength = attribute.readU4(reader, "code_length");
+        attribute.read(reader, "code", it -> CodeAttribute.Code.readFrom(it, codeLength));
+
+        attribute.readU2TableLength(reader, "exception_table_length");
+        attribute.readTable(reader, "exception_table", CodeAttribute.ExceptionTableEntry::readFrom);
+
+        attribute.readU2TableLength(reader, "attributes_count");
+        attribute.readTable(reader, "attributes", AttributeInfo::readFrom);
+
+        return attribute;
+    }
+
+    private CodeAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
+        super(attributeNameIndex, attributeLength);
     }
 
     public static final class Code extends ClassFileComponent {

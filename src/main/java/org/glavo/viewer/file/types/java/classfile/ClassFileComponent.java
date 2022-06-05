@@ -110,8 +110,22 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         return uint;
     }
 
+    protected Bytes readBytes(ClassFileReader reader, String name, UInt length) throws IOException {
+        var bytes = new Bytes(reader.readNBytes(length.getIntValue()));
+        bytes.setName(name);
+        this.getChildren().add(bytes);
+        return bytes;
+    }
+
     protected <T extends ConstantInfo> CpIndex<T> readCpIndex(ClassFileReader reader, String name, Class<T> type) throws IOException {
         CpIndex<T> cpIdx = reader.readCpIndex(type);
+        cpIdx.setName(name);
+        this.getChildren().add(cpIdx);
+        return cpIdx;
+    }
+
+    protected <T extends ConstantInfo> CpIndex<T> readCpIndexEager(ClassFileReader reader, String name, Class<T> type) throws IOException {
+        CpIndex<T> cpIdx = reader.readCpIndexEager(type);
         cpIdx.setName(name);
         this.getChildren().add(cpIdx);
         return cpIdx;

@@ -4,8 +4,6 @@ import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
-import org.glavo.viewer.file.types.java.classfile.datatype.Table;
-import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
 
 import java.io.IOException;
@@ -20,16 +18,16 @@ LineNumberTable_attribute {
     } line_number_table[line_number_table_length];
 }
  */
-public class LineNumberTableAttribute extends AttributeInfo {
-    LineNumberTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                             U2 lineNumberTableLength, Table<LineNumberTableEntry> lineNumberTable) {
+public final class LineNumberTableAttribute extends AttributeInfo {
+    public static LineNumberTableAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new LineNumberTableAttribute(attributeNameIndex, attributeLength);
+        attribute.readU2TableLength(reader, "line_number_table_length");
+        attribute.readTable(reader, "line_number_table", LineNumberTableAttribute.LineNumberTableEntry::readFrom);
+        return attribute;
+    }
+
+    private LineNumberTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         super(attributeNameIndex, attributeLength);
-
-        lineNumberTableLength.setName("line_number_table_length");
-        lineNumberTable.setName("line_number_table");
-
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, lineNumberTableLength, lineNumberTable);
     }
 
     public static final class LineNumberTableEntry extends ClassFileComponent {

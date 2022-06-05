@@ -6,8 +6,6 @@ import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantMethodHandleInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.CpIndex;
-import org.glavo.viewer.file.types.java.classfile.datatype.Table;
-import org.glavo.viewer.file.types.java.classfile.datatype.U2;
 import org.glavo.viewer.file.types.java.classfile.datatype.U4;
 
 import java.io.IOException;
@@ -23,15 +21,16 @@ BootstrapMethods_attribute {
     } bootstrap_methods[num_bootstrap_methods];
 }
  */
-public class BootstrapMethodsAttribute extends AttributeInfo {
-    BootstrapMethodsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
-                              U2 numBootstrapMethods, Table<BootstrapMethodInfo> bootstrapMethods) {
-        super(attributeNameIndex, attributeLength);
-        numBootstrapMethods.setName("num_bootstrap_methods");
-        bootstrapMethods.setName("bootstrap_methods");
+public final class BootstrapMethodsAttribute extends AttributeInfo {
+    public static BootstrapMethodsAttribute readFrom(ClassFileReader reader, CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) throws IOException {
+        var attribute = new BootstrapMethodsAttribute(attributeNameIndex, attributeLength);
+        attribute.readU2TableLength(reader, "num_bootstrap_methods");
+        attribute.read(reader, "bootstrap_methods", BootstrapMethodInfo::readFrom);
+        return attribute;
+    }
 
-        //noinspection unchecked
-        this.getChildren().setAll(attributeNameIndex, attributeLength, numBootstrapMethods, bootstrapMethods);
+    private BootstrapMethodsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
+        super(attributeNameIndex, attributeLength);
     }
 
     public static final class BootstrapMethodInfo extends ClassFileComponent {
