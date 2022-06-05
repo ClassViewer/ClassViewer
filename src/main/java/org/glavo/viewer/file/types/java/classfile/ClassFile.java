@@ -6,8 +6,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import kala.collection.base.Iterators;
 import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.types.java.classfile.attribute.AttributeInfo;
+import org.glavo.viewer.file.types.java.classfile.attribute.RecordAttribute;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
@@ -45,7 +47,7 @@ public class ClassFile extends ClassFileComponent {
     public static final Image interfaceImage = Images.loadImage("classfile/interface.png");
     public static final Image annotationImage = Images.loadImage("classfile/annotation.png");
     public static final Image enumImage = Images.loadImage("classfile/enum.png");
-    public static final Image recordImage = Images.loadImage("classfile/enum.png");
+    public static final Image recordImage = Images.loadImage("classfile/record.png");
 
     public static final Image fieldImage = Images.loadImage("classfile/field.png");
     public static final Image methodImage = Images.loadImage("classfile/method.png");
@@ -117,6 +119,9 @@ public class ClassFile extends ClassFileComponent {
             } else if (flags.contains(AccessFlag.ACC_ABSTRACT)) {
                 view = new ImageView(abstractClassImage);
                 descriptors.addFirst("abstract class");
+            } else if (Iterators.anyMatch(attributes.getChildren().iterator(), it -> it instanceof RecordAttribute)) {
+                view = new ImageView(recordImage);
+                descriptors.addFirst("record");
             } else {
                 view = new ImageView(classImage);
                 descriptors.addFirst("class");
