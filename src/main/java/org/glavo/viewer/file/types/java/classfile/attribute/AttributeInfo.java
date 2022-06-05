@@ -57,6 +57,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
             readers.put("NestHost", NestHostAttribute::readFrom);
             readers.put("NestMembers", NestMembersAttribute::readFrom);
             readers.put("Record", RecordAttribute::readFrom);
+            readers.put("PermittedSubclasses", PermittedSubclassesAttribute::readFrom);
         }
     }
 
