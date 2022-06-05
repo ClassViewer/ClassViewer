@@ -53,6 +53,7 @@ public abstract class AttributeInfo extends ClassFileComponent {
             readers.put("MethodParameters", MethodParametersAttribute::readFrom);
             readers.put("Module", ModuleAttribute::readFrom);
             readers.put("ModulePackages", ModulePackagesAttribute::readFrom);
+            readers.put("ModuleMainClass", ModuleMainClassAttribute::readFrom);
         }
     }
 
