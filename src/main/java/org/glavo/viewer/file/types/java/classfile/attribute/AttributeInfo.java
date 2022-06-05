@@ -54,6 +54,8 @@ public abstract class AttributeInfo extends ClassFileComponent {
             readers.put("Module", ModuleAttribute::readFrom);
             readers.put("ModulePackages", ModulePackagesAttribute::readFrom);
             readers.put("ModuleMainClass", ModuleMainClassAttribute::readFrom);
+            readers.put("NestHost", NestHostAttribute::readFrom);
+            readers.put("NestMembers", NestMembersAttribute::readFrom);
         }
     }
 
