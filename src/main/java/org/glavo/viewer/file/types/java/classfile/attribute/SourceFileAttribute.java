@@ -12,7 +12,7 @@ SourceFile_attribute {
 }
  */
 public class SourceFileAttribute extends AttributeInfo {
-    public SourceFileAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, CpIndex<ConstantUtf8Info> sourcefileIndex) {
+    SourceFileAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, CpIndex<ConstantUtf8Info> sourcefileIndex) {
         super(attributeNameIndex, attributeLength);
 
         sourcefileIndex.setName("sourcefile_index");

@@ -27,7 +27,7 @@ RuntimeInvisibleAnnotations_attribute {
  */
 public class RuntimeAnnotationsAttribute extends AttributeInfo {
 
-    public RuntimeAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
+    RuntimeAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
                                        U2 numAnnotations, Table<Annotation> annotations) {
         super(attributeNameIndex, attributeLength);
 

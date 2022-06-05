@@ -16,7 +16,7 @@ ConstantValue_attribute {
 }
  */
 public class ConstantValueAttribute extends AttributeInfo {
-    public ConstantValueAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, CpIndex<ConstantValueInfo> constantvalueIndex) {
+    ConstantValueAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, CpIndex<ConstantValueInfo> constantvalueIndex) {
         super(attributeNameIndex, attributeLength);
 
         constantvalueIndex.setName("constantvalue_index");

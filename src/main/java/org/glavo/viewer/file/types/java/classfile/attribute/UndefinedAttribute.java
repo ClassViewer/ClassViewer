@@ -16,7 +16,7 @@ attribute_info {
 public class UndefinedAttribute extends AttributeInfo {
     static final Image image = AttributeInfo.loadImage("unknown.png");
 
-    public UndefinedAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, Bytes info) {
+    UndefinedAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, Bytes info) {
         super(attributeNameIndex, attributeLength);
         info.setName("info");
 

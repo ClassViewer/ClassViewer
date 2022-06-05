@@ -31,7 +31,7 @@ RuntimeInvisibleParameterAnnotations_attribute {
  */
 public class RuntimeParameterAnnotationsAttribute extends AttributeInfo {
 
-    public RuntimeParameterAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
+    RuntimeParameterAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
                                                 U1 numParameters, Table<ParameterAnnotation> parameterAnnotations) {
         super(attributeNameIndex, attributeLength);
 

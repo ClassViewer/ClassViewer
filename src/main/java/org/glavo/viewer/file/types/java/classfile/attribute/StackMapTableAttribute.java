@@ -16,7 +16,7 @@ StackMapTable_attribute {
 public class StackMapTableAttribute extends AttributeInfo {
 
     // TODO
-    public StackMapTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, Bytes info) {
+    StackMapTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength, Bytes info) {
         super(attributeNameIndex, attributeLength);
 
         info.setName("info");

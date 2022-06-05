@@ -26,7 +26,7 @@ InnerClasses_attribute {
 }
  */
 public class InnerClassesAttribute extends AttributeInfo {
-    public InnerClassesAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
+    InnerClassesAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
                                  U2 numberOfClasses, Table<InnerClassInfo> classes) {
         super(attributeNameIndex, attributeLength);
         numberOfClasses.setName("number_of_classes");

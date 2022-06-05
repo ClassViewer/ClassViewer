@@ -11,7 +11,7 @@ Deprecated_attribute {
 }
  */
 public class DeprecatedAttribute extends AttributeInfo {
-    public DeprecatedAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
+    DeprecatedAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength) {
         super(attributeNameIndex, attributeLength);
 
         //noinspection unchecked

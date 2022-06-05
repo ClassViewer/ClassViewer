@@ -24,7 +24,7 @@ LocalVariableTable_attribute {
 }
  */
 public class LocalVariableTableAttribute extends AttributeInfo {
-    public LocalVariableTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
+    LocalVariableTableAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
                                        U2 localVariableTableLength, Table<LocalVariableTableEntry> localVariableTable) {
         super(attributeNameIndex, attributeLength);
 

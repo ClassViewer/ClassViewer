@@ -23,7 +23,7 @@ RuntimeInvisibleTypeAnnotations_attribute {
 }
  */
 public class RuntimeTypeAnnotationsAttribute extends AttributeInfo {
-    public RuntimeTypeAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
+    RuntimeTypeAnnotationsAttribute(CpIndex<ConstantUtf8Info> attributeNameIndex, U4 attributeLength,
                                            U2 numAnnotations, Table<TypeAnnotation> annotations) {
         super(attributeNameIndex, attributeLength);
         numAnnotations.setName("num_annotations");
