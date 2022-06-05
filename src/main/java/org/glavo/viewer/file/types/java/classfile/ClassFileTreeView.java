@@ -2,6 +2,7 @@ package org.glavo.viewer.file.types.java.classfile;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
@@ -42,10 +43,13 @@ public class ClassFileTreeView extends TreeView<ClassFileComponent> {
                 Node icon = item.getIcon();
                 String name = item.getName();
                 Node desc = item.getDesc();
+                Tooltip tooltip = item.getTooltip();
 
                 if (icon != null) box.getChildren().add(icon);
                 if (name != null) box.getChildren().add(new Label(desc == null ? name : name + ":"));
                 if (desc != null) box.getChildren().add(desc);
+                if (tooltip != null) Tooltip.install(box, tooltip);
+
                 setText(null);
                 setGraphic(box);
             }

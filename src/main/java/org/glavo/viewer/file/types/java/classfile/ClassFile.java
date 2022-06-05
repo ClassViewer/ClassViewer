@@ -1,5 +1,7 @@
 package org.glavo.viewer.file.types.java.classfile;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
@@ -77,8 +79,60 @@ public class ClassFile extends ClassFileComponent {
         U4Hex magic = classFile.readU4Hex(reader, "magic");
         if (magic.getIntValue() != 0xCAFEBABE) throw new ClassFileParseException("magic number mismatch: " + magic);
 
-        classFile.readU2(reader, "minor_version");
-        classFile.readU2(reader, "major_version");
+        U2 minorVersion = classFile.readU2(reader, "minor_version");
+        U2 majorVersion = classFile.readU2(reader, "major_version");
+
+        {
+            StringBinding javaSEVersion = Bindings.createStringBinding(() -> {
+                final String unknownVersion = "Java SE ???";
+
+                int minor = minorVersion.getIntValue();
+                int major = majorVersion.getIntValue();
+
+                if (major < 45) {
+                    return unknownVersion;
+                }
+
+                int versionNumber = major - 44;
+
+
+                if (major >= 56) {
+                    if (minor == 0)
+                        return "Java SE " + versionNumber;
+                    else if (minor == 0xFFFF)
+                        return "Java SE " + versionNumber + " (Preview)";
+                    else
+                        return unknownVersion;
+                }
+
+                if (major >= 50) { // >= Java SE 6
+                    if (minor == 0)
+                        return "Java SE " + versionNumber;
+                    else
+                        return "Java SE " + versionNumber + "." + minor;
+                }
+
+                if (major >= 46) {
+                    if (minor == 0)
+                        return "Java SE 1." + versionNumber;
+                    else
+                        return "Java SE 1." + versionNumber + "." + minor;
+                }
+
+                // assert major == 45;
+
+                if (minor == 3)
+                    return "Java SE 1.1";
+
+                return unknownVersion;
+            }, minorVersion.intValueProperty(), majorVersion.intValueProperty());
+
+            Tooltip tooltip = new Tooltip();
+            tooltip.textProperty().bind(javaSEVersion);
+            minorVersion.setTooltip(tooltip);
+            majorVersion.setTooltip(tooltip);
+        }
+
 
         U2 cpCount = classFile.readU2(reader, "constant_pool_count");
         ConstantPool constantPool = ConstantPool.readFrom(reader, cpCount);

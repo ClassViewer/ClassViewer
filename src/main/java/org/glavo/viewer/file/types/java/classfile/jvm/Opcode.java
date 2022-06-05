@@ -227,12 +227,14 @@ public enum Opcode {
     public final int operandCount;
 
     public final String opName;
+    public final String opDesc;
 
     Opcode(int opcode, int operandCount) {
         this.opcode = opcode;
         this.operandCount = operandCount;
 
         this.opName = name().startsWith("_") ? name().substring(1) : name();
+        this.opDesc = opName + " (" + Integer.toHexString(opcode) + ")";
     }
 
     private static final Opcode[] values = values();

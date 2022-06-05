@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import kala.function.CheckedFunction;
 import kala.value.primitive.IntRef;
 import org.glavo.viewer.file.FileComponent;
@@ -18,7 +19,7 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
     private final ObjectProperty<Node> icon = new SimpleObjectProperty<>();
     private final StringProperty name = new SimpleStringProperty();
     private final ObjectProperty<Node> desc = new SimpleObjectProperty<>();
-
+    private Tooltip tooltip;
 
     public ObjectProperty<Node> iconProperty() {
         return icon;
@@ -54,6 +55,14 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
 
     public void setDesc(Node desc) {
         this.desc.set(desc);
+    }
+
+    public Tooltip getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(Tooltip tooltip) {
+        this.tooltip = tooltip;
     }
 
     @SuppressWarnings("unchecked")

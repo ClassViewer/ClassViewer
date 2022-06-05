@@ -1,5 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile.datatype;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
@@ -21,8 +22,8 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
     private final Class<T> type;
 
     private final ObjectProperty<T> constantInfo = new SimpleObjectProperty<>();
-
     private final ObjectProperty<Hyperlink> infoLink = new SimpleObjectProperty<>();
+    private final StringProperty formattedIndex = new SimpleStringProperty();
 
     public CpIndex(Class<T> type) {
         this.type = type;
@@ -46,6 +47,18 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
         this.index.set(index);
     }
 
+    public String getFormattedIndex() {
+        return formattedIndex.get();
+    }
+
+    public StringProperty formattedIndexProperty() {
+        return formattedIndex;
+    }
+
+    public void setFormattedIndex(String formattedIndex) {
+        this.formattedIndex.set(formattedIndex);
+    }
+
     public Class<T> getType() {
         return type;
     }
@@ -57,7 +70,6 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
     public ConstantInfo getConstantInfo() {
         return constantInfo.get();
     }
-
     @Override
     public String contentToString() {
         return String.valueOf(getIndex());
@@ -74,6 +86,8 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
 
     private void updateConstantInfo(ClassFileTreeView view) {
         ConstantPool constantPool = view.getConstantPool();
+        formattedIndex.bind(Bindings.createStringBinding(() ->
+                StringUtils.formatIndex(getIndex(), constantPool.getConstants().size()), indexProperty()));
 
         int idx = index.get();
         boolean validIndex = false;
@@ -81,7 +95,7 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
         if (idx == 0) {
             constantInfo.set(null);
 
-            Hyperlink link = TextUtils.createHyperlinkWithoutPadding(StringUtils.formatIndex(idx, constantPool.getConstants().size()));
+            Hyperlink link = TextUtils.createHyperlinkWithoutPadding(getFormattedIndex());
             link.getStyleClass().add("cp-index-hyper-link");
             link.setDisable(true);
             infoLink.set(link);
@@ -96,7 +110,7 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
             if (type.isInstance(info)) {
                 constantInfo.set(type.cast(info));
 
-                Hyperlink link = TextUtils.createHyperlinkWithoutPadding(StringUtils.formatIndex(idx, constantPool.getConstants().size()) + " (" + info.getConstantName() + ")");
+                Hyperlink link = TextUtils.createHyperlinkWithoutPadding(getFormattedIndex() + " (" + info.getConstantName() + ")");
                 link.setOnAction(event -> {
                     view.getSelectionModel().select(getConstantInfo());
                     view.scrollTo(view.getRow(getConstantInfo()));
