@@ -1,7 +1,9 @@
 package org.glavo.viewer.file.types.java.classfile.attribute;
 
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
+import org.glavo.viewer.file.types.java.classfile.ClassFileParseException;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
+import org.glavo.viewer.file.types.java.classfile.Instruction;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantUtf8Info;
 import org.glavo.viewer.file.types.java.classfile.datatype.*;
@@ -51,26 +53,34 @@ public final class CodeAttribute extends AttributeInfo {
 
     public static final class Code extends ClassFileComponent {
         public static Code readFrom(ClassFileReader reader, UInt codeLength) throws IOException {
-            reader.readNBytes(codeLength.getIntValue()); // TODO: Parse byte code
-
             Code res = new Code();
-            res.setLength(codeLength.getIntValue());
+            int length = codeLength.getIntValue();
+            int baseOffset = reader.getOffset();
+
+            int pc;
+            while ((pc = reader.getOffset() - baseOffset) < length) {
+                res.getChildren().add(Instruction.readFrom(reader, pc));
+            }
+
+            if (pc != length) {
+                throw new ClassFileParseException("code length mismatch");
+            }
+
+            res.setLength(length);
             return res;
         }
     }
 
     public static final class ExceptionTableEntry extends ClassFileComponent {
         public static ExceptionTableEntry readFrom(ClassFileReader reader) throws IOException {
-            return new ExceptionTableEntry(reader.readU2(), reader.readU2(), reader.readU2(), reader.readCpIndex(ConstantClassInfo.class));
+            ExceptionTableEntry entry = new ExceptionTableEntry();
+            entry.readU2(reader, "start_pc");
+            entry.readU2(reader, "end_pc");
+            entry.readU2(reader, "handler_pc");
+            entry.readCpIndex(reader, "catch_type", ConstantClassInfo.class);
+
+            return entry;
         }
 
-        public ExceptionTableEntry(U2 startPC, U2 endPC, U2 handlerPC, CpIndex<ConstantClassInfo> catchType) {
-            startPC.setName("start_pc");
-            endPC.setName("end_pc");
-            handlerPC.setName("handler_pc");
-            catchType.setName("catch_type");
-
-            this.setLength(8);
-        }
     }
 }

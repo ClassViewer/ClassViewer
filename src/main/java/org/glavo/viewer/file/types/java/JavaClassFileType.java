@@ -41,12 +41,14 @@ public class JavaClassFileType extends BinaryFileType {
 
         tab.setSideBar(new StackPane(new ProgressIndicator()));
         TaskUtils.submit(new Task<ClassFileTreeView>() {
+            private ClassFileReader reader;
+
             @Override
             protected ClassFileTreeView call() throws Exception {
                 ClassFileTreeView view = new ClassFileTreeView(tab);
                 ClassFile file;
                 try (InputStream input = bytes.openInputStream()) {
-                    file = ClassFile.readFrom(view, new ClassFileReader(input));
+                    file = ClassFile.readFrom(view, reader = new ClassFileReader(input));
                 }
 
                 loadDesc(view, file);
@@ -55,12 +57,18 @@ public class JavaClassFileType extends BinaryFileType {
 
             @Override
             protected void succeeded() {
+                reader = null;
                 tab.setSideBar(getValue());
             }
 
             @Override
             protected void failed() {
-                LOGGER.log(Level.WARNING, "Failed to parse Java Class file", getException());
+                if (reader != null) {
+                    LOGGER.log(Level.WARNING, "Failed to parse Java Class file (offset=" + Integer.toHexString(reader.getOffset()) + ")", getException());
+                    reader = null;
+                } else {
+                    LOGGER.log(Level.WARNING, "Failed to parse Java Class file", getException());
+                }
                 tab.setSideBar(new StackPane(new Label(I18N.getString("file.wrongFormat"))));
             }
         });

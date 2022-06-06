@@ -111,7 +111,20 @@ public class ClassFileReader {
         return new U4Hex(readInt());
     }
 
+    public S1 readS1() throws IOException {
+        return new S1(readByte());
+    }
+
+    public S2 readS2() throws IOException {
+        return new S2(readShort());
+    }
+
+    public S4 readS4() throws IOException {
+        return new S4(readInt());
+    }
+
     private UInt tableLength;
+
     public U1 readU1TableLength() throws IOException {
         if (tableLength != null) throw new AssertionError("tableLength = " + tableLength);
 
@@ -143,6 +156,9 @@ public class ClassFileReader {
         return new CpIndex<>(type, readUnsignedShort());
     }
 
+    public <T extends ConstantInfo> CpIndex<T> readU1CpIndex(Class<T> type) throws IOException {
+        return new CpIndex<>(1, type, readUnsignedByte());
+    }
 
     public <T extends ConstantInfo> CpIndex<T> readCpIndexEager(Class<T> type) throws IOException {
         CpIndex<T> idx = readCpIndex(type);

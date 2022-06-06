@@ -25,14 +25,23 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
     private final ObjectProperty<Hyperlink> infoLink = new SimpleObjectProperty<>();
     private final StringProperty formattedIndex = new SimpleStringProperty();
 
-    public CpIndex(Class<T> type) {
+    public CpIndex(int length, Class<T> type) {
         this.type = type;
-        this.setLength(2);
+        this.setLength(length);
+    }
+
+    public CpIndex(int length, Class<T> type, int value) {
+        this.type = type;
+        this.setLength(length);
+        this.setIndex(value);
+    }
+
+    public CpIndex(Class<T> type) {
+        this(2, type);
     }
 
     public CpIndex(Class<T> type, int value) {
-        this(type);
-        this.setIndex(value);
+        this(2, type, value);
     }
 
     public IntegerProperty indexProperty() {
@@ -70,6 +79,7 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
     public ConstantInfo getConstantInfo() {
         return constantInfo.get();
     }
+
     @Override
     public String contentToString() {
         return String.valueOf(getIndex());
