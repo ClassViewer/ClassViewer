@@ -67,7 +67,7 @@ public class Instruction extends ClassFileComponent {
                     return component;
                 };
 
-                int paddingLength = (pc + 1) % 4;
+                int paddingLength = (pc - 1) % 4;
                 if (paddingLength != 0)
                     instruction.readBytes(reader, "padding", paddingLength);
 
@@ -84,7 +84,7 @@ public class Instruction extends ClassFileComponent {
                 instruction.setDesc(new Label(opcode.opName));
             }
             case lookupswitch -> {
-                int paddingLength = (pc + 1) % 4;
+                int paddingLength = (pc - 1) % 4;
                 if (paddingLength != 0)
                     instruction.readBytes(reader, "padding", paddingLength);
 
