@@ -4,6 +4,15 @@ import org.glavo.viewer.file.*;
 import org.glavo.viewer.file.root.RootContainer;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
 
 public class LocalContainer extends RootContainer {
     public static final LocalContainer CONTAINER = new LocalContainer();
@@ -18,6 +27,20 @@ public class LocalContainer extends RootContainer {
         assert path.isLocalFile();
 
         return new LocalFileHandle(path);
+    }
+
+    @Override
+    public Set<FilePath> list(FilePath dir) {
+        assert dir.isDefaultFileSystemPath();
+        assert dir.isDirectory();
+
+        try (var stream = Files.list(Paths.get(dir.toString()))) {
+            return stream.map(it -> FilePath.ofJavaPath(it, Files.isDirectory(it)))
+                    .collect(Collectors.toSet());
+        } catch (Throwable e) {
+            LOGGER.log(Level.WARNING, "Failed to get file list", e);
+            return Collections.emptySet();
+        }
     }
 
     @Override

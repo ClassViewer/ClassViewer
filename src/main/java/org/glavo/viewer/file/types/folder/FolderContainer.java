@@ -3,14 +3,18 @@ package org.glavo.viewer.file.types.folder;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.root.local.LocalContainer;
 import org.glavo.viewer.file.root.local.LocalFileHandle;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collections;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
@@ -52,6 +56,11 @@ public class FolderContainer extends Container {
 
             return files = fs;
         }
+    }
+
+    @Override
+    public Set<FilePath> list(FilePath dir) {
+        return LocalContainer.CONTAINER.list(dir);
     }
 
     @Override

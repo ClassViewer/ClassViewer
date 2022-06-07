@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.Enumeration;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -52,6 +53,11 @@ public class FallbackArchiveContainer extends Container {
     @Override
     public NavigableSet<FilePath> resolveFiles() throws Exception {
         return map.navigableKeySet();
+    }
+
+    @Override
+    public Set<FilePath> list(FilePath dir) {
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

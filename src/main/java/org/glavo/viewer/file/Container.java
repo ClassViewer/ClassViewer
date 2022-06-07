@@ -92,6 +92,8 @@ public abstract class Container implements ForceCloseable {
 
     public abstract NavigableSet<FilePath> resolveFiles() throws Exception;
 
+    public abstract Set<FilePath> list(FilePath dir);
+
     public boolean isReadonly() {
         return true;
     }

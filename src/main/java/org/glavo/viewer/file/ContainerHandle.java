@@ -65,4 +65,9 @@ public class ContainerHandle implements SilentlyCloseable, ForceCloseable {
     public void forceClose() {
         close(true);
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[" + container + "]";
+    }
 }
