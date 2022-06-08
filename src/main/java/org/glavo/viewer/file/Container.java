@@ -90,7 +90,7 @@ public abstract class Container implements ForceCloseable {
 
     protected abstract FileHandle openFileImpl(FilePath path) throws IOException, NoSuchFileException;
 
-    public abstract NavigableSet<FilePath> resolveFiles() throws Exception;
+    public final NavigableSet<FilePath> resolveFiles() throws Exception {return null;}
 
     public abstract Set<FilePath> list(FilePath dir);
 

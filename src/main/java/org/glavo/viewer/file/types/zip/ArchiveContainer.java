@@ -31,7 +31,7 @@ public class ArchiveContainer extends Container {
             ZipArchiveEntry entry = it.next();
 
             if (!entry.isDirectory() && !entry.isUnixSymlink()) {
-                map.put(new FilePath(StringUtils.spiltPath(entry.getName()), parentPath), entry);
+                map.put(FilePath.of(entry.getName(), false, parentPath), entry);
             }
         }
     }
@@ -47,11 +47,6 @@ public class ArchiveContainer extends Container {
             throw new NoSuchFileException(path.toString());
         }
         return new ArchiveFileHandle(this, path, entry);
-    }
-
-    @Override
-    public NavigableSet<FilePath> resolveFiles() throws Exception {
-        return map.navigableKeySet();
     }
 
     @Override

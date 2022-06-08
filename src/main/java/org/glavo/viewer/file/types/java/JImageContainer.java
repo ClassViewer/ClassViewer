@@ -30,7 +30,7 @@ public class JImageContainer extends Container {
     private void buildDirTree(ImageReader.Node node) throws IOException {
         assert node.getName().startsWith("/modules/");
         if (node.isResource()) {
-            map.put(new FilePath(StringUtils.spiltPath(node.getName().substring(offset)), getPath()), node);
+            map.put(FilePath.of(node.getName().substring(offset), false, getPath()), node);
         }
 
         if (node.isDirectory()) {
@@ -57,11 +57,6 @@ public class JImageContainer extends Container {
         }
 
         return new JImageFileHandle(this, path, reader, node);
-    }
-
-    @Override
-    public NavigableSet<FilePath> resolveFiles() throws Exception {
-        return map.navigableKeySet();
     }
 
     @Override

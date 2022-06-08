@@ -10,9 +10,4 @@ public abstract class RootContainer extends Container {
     protected RootContainer(FileHandle handle) {
         super(handle);
     }
-
-    @Override
-    public NavigableSet<FilePath> resolveFiles() throws Exception {
-        throw new UnsupportedOperationException("RootContainer does not support indexing all files");
-    }
 }

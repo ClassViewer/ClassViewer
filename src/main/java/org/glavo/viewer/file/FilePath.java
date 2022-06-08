@@ -23,34 +23,7 @@ public class FilePath implements Comparable<FilePath> {
 
     private final FilePath parent;
 
-    public FilePath(String path) {
-        this(path, false, null);
-    }
-
-    public FilePath(String path, FilePath parent) {
-        this(path, false, parent);
-    }
-
-    @JsonCreator
-    public FilePath(
-            @JsonProperty("path") String path,
-            @JsonProperty("isDirectory") boolean isDirectory,
-            @JsonProperty("parent") FilePath parent) {
-        this.path = path.replace('\\', '/');
-        this.isDirectory = isDirectory;
-        this.parent = parent;
-        this.pathElements = StringUtils.spiltPath(this.path);
-    }
-
-    public FilePath(String[] pathElements) {
-        this(pathElements, false, null);
-    }
-
-    public FilePath(String[] pathElements, FilePath parent) {
-        this(pathElements, false, parent);
-    }
-
-    public FilePath(String[] pathElements, boolean isDirectory, FilePath parent) {
+    private FilePath(String[] pathElements, boolean isDirectory, FilePath parent) {
         this.isDirectory = isDirectory;
         this.parent = parent;
         this.pathElements = pathElements;
@@ -68,12 +41,25 @@ public class FilePath implements Comparable<FilePath> {
         this.path = builder.toString();
     }
 
+    private FilePath(String path, String[] pathElements, boolean isDirectory, FilePath parent) {
+        this.isDirectory = isDirectory;
+        this.parent = parent;
+        this.pathElements = pathElements;
+        this.path = path;
+    }
+
+    public static FilePath of(@JsonProperty("path") String path,
+                              @JsonProperty("isDirectory") boolean isDirectory,
+                              @JsonProperty("parent") FilePath parent) {
+        return new FilePath(StringUtils.spiltPath(path), isDirectory, parent);
+    }
+
     public static FilePath ofJavaPath(Path p) {
         return ofJavaPath(p, false);
     }
 
     public static FilePath ofJavaPath(Path p, boolean isDirectory) {
-        return new FilePath(p.normalize().toAbsolutePath().toString(), isDirectory, null);
+        return of(p.normalize().toAbsolutePath().toString(), isDirectory, null);
     }
 
     public String getPath() {

@@ -31,7 +31,7 @@ public class FallbackArchiveContainer extends Container {
             ZipEntry entry = it.nextElement();
 
             if (!entry.isDirectory()) {
-                map.put(new FilePath(StringUtils.spiltPath(entry.getName()), parentPath), entry);
+                map.put(FilePath.of(entry.getName(), false, parentPath), entry);
             }
         }
     }
@@ -48,11 +48,6 @@ public class FallbackArchiveContainer extends Container {
         }
 
         return new FallbackArchiveFileHandle(this, path, entry);
-    }
-
-    @Override
-    public NavigableSet<FilePath> resolveFiles() throws Exception {
-        return map.navigableKeySet();
     }
 
     @Override

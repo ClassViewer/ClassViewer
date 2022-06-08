@@ -27,6 +27,7 @@ public class FolderContainer extends Container {
         this.folder = folder;
     }
 
+    /*
     @Override
     public NavigableSet<FilePath> resolveFiles() throws IOException {
         if (files != null) {
@@ -57,6 +58,7 @@ public class FolderContainer extends Container {
             return files = fs;
         }
     }
+     */
 
     @Override
     public Set<FilePath> list(FilePath dir) {
