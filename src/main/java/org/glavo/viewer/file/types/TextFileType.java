@@ -13,14 +13,13 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.PlainTextChange;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.LocalFilePath;
 import org.glavo.viewer.file.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.DaemonThreadFactory;
 import org.glavo.viewer.util.FileUtils;
-import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.TaskUtils;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.reactfx.EventStream;
@@ -67,7 +66,7 @@ public class TextFileType extends CustomFileType {
     }
 
     @Override
-    public boolean check(FilePath path) {
+    public boolean check(LocalFilePath path) {
         switch (path.getFileNameExtension()) {
             case "txt":
             case "md":

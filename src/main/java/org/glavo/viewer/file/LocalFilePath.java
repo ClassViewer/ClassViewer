@@ -1,29 +1,25 @@
 package org.glavo.viewer.file;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import javafx.beans.property.StringProperty;
 import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 import org.glavo.viewer.util.ArrayUtils;
-import org.glavo.viewer.util.JsonUtils;
 import org.glavo.viewer.util.StringUtils;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
 @JsonIncludeProperties({"parent", "path", "isDirectory"})
 @JsonPropertyOrder({"parent", "path", "isDirectory"})
-public class FilePath implements Comparable<FilePath> {
+public class LocalFilePath implements Comparable<LocalFilePath> {
 
     private final String[] pathElements;
     private final String path;
     private final boolean isDirectory;
 
-    private final FilePath parent;
+    private final LocalFilePath parent;
 
-    private FilePath(String[] pathElements, boolean isDirectory, FilePath parent) {
+    private LocalFilePath(String[] pathElements, boolean isDirectory, LocalFilePath parent) {
         this.isDirectory = isDirectory;
         this.parent = parent;
         this.pathElements = pathElements;
@@ -41,24 +37,24 @@ public class FilePath implements Comparable<FilePath> {
         this.path = builder.toString();
     }
 
-    private FilePath(String path, String[] pathElements, boolean isDirectory, FilePath parent) {
+    private LocalFilePath(String path, String[] pathElements, boolean isDirectory, LocalFilePath parent) {
         this.isDirectory = isDirectory;
         this.parent = parent;
         this.pathElements = pathElements;
         this.path = path;
     }
 
-    public static FilePath of(@JsonProperty("path") String path,
-                              @JsonProperty("isDirectory") boolean isDirectory,
-                              @JsonProperty("parent") FilePath parent) {
-        return new FilePath(StringUtils.spiltPath(path), isDirectory, parent);
+    public static LocalFilePath of(@JsonProperty("path") String path,
+                                   @JsonProperty("isDirectory") boolean isDirectory,
+                                   @JsonProperty("parent") LocalFilePath parent) {
+        return new LocalFilePath(StringUtils.spiltPath(path), isDirectory, parent);
     }
 
-    public static FilePath ofJavaPath(Path p) {
+    public static LocalFilePath ofJavaPath(Path p) {
         return ofJavaPath(p, false);
     }
 
-    public static FilePath ofJavaPath(Path p, boolean isDirectory) {
+    public static LocalFilePath ofJavaPath(Path p, boolean isDirectory) {
         return of(p.normalize().toAbsolutePath().toString(), isDirectory, null);
     }
 
@@ -72,7 +68,7 @@ public class FilePath implements Comparable<FilePath> {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public FilePath getParent() {
+    public LocalFilePath getParent() {
         return parent;
     }
 
@@ -80,8 +76,8 @@ public class FilePath implements Comparable<FilePath> {
         return getParent() == null;
     }
 
-    public FilePath getParentContainerPath() {
-        FilePath p;
+    public LocalFilePath getParentContainerPath() {
+        LocalFilePath p;
         do {
             p = getParent();
         } while (p != null && p.isDirectory());
@@ -113,7 +109,7 @@ public class FilePath implements Comparable<FilePath> {
         return pathElements;
     }
 
-    public String[] relativize(FilePath other) {
+    public String[] relativize(LocalFilePath other) {
         if (this.equals(other.getParent())) {
             return other.getPathElements();
         } else if (Objects.equals(this.getParent(), other.getParent())) {
@@ -154,7 +150,7 @@ public class FilePath implements Comparable<FilePath> {
      */
 
     @Override
-    public int compareTo(FilePath that) {
+    public int compareTo(LocalFilePath that) {
         if (this.parent == null && that.parent != null) {
             return -1;
         }
@@ -190,12 +186,12 @@ public class FilePath implements Comparable<FilePath> {
             return true;
         }
 
-        if (!(obj instanceof FilePath)) {
+        if (!(obj instanceof LocalFilePath)) {
             return false;
         }
 
-        FilePath that = (FilePath) obj;
-        return Objects.equals(this.parent, that.parent) && this.path.equals(that.path);
+        LocalFilePath that = (LocalFilePath) obj;
+        return Objects.equals(this.parent, that.parent) && this.getPath().equals(that.getPath());
     }
 
     private String str;
@@ -210,7 +206,7 @@ public class FilePath implements Comparable<FilePath> {
             }
         }
 
-        builder.append(path);
+        builder.append(getPath());
         return builder;
     }
 

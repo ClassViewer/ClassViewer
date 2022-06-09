@@ -1,6 +1,6 @@
 package org.glavo.viewer.file.types.json;
 
-import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.LocalFilePath;
 import org.glavo.viewer.file.types.TextFileType;
 
 public class Json5FileType extends TextFileType {
@@ -13,7 +13,7 @@ public class Json5FileType extends TextFileType {
     }
 
     @Override
-    public boolean check(FilePath path) {
+    public boolean check(LocalFilePath path) {
         return path.getFileNameExtension().equals("json5");
     }
 }

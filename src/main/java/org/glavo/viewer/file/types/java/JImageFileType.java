@@ -3,7 +3,7 @@ package org.glavo.viewer.file.types.java;
 import org.glavo.jimage.ImageReader;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.LocalFilePath;
 import org.glavo.viewer.file.types.ContainerFileType;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class JImageFileType extends ContainerFileType {
     }
 
     @Override
-    public boolean check(FilePath path) {
+    public boolean check(LocalFilePath path) {
         return path.getParent() == null && path.getFileName().equals("modules");
     }
 

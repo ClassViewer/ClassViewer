@@ -46,7 +46,7 @@ public abstract class FileType {
         return image;
     }
 
-    public abstract boolean check(FilePath path);
+    public abstract boolean check(LocalFilePath path);
 
     @Override
     public int hashCode() {
@@ -74,7 +74,7 @@ public abstract class FileType {
         return Hole.types;
     }
 
-    public static FileType detectFileType(FilePath path) {
+    public static FileType detectFileType(LocalFilePath path) {
         if (path.isDirectory()) {
             return FolderType.TYPE;
         }

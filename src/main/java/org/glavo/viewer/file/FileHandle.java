@@ -4,7 +4,6 @@ import kala.function.CheckedRunnable;
 import org.glavo.viewer.util.ForceCloseable;
 import org.glavo.viewer.util.SilentlyCloseable;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,10 +16,10 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
 
     private final Container container;
-    private final FilePath path;
+    private final LocalFilePath path;
     private CheckedRunnable<?> onForceClose;
 
-    protected FileHandle(Container container, FilePath path) {
+    protected FileHandle(Container container, LocalFilePath path) {
         this.container = container;
         this.path = path;
     }
@@ -29,7 +28,7 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
         this.onForceClose = onForceClose;
     }
 
-    public FilePath getPath() {
+    public LocalFilePath getPath() {
         return path;
     }
 

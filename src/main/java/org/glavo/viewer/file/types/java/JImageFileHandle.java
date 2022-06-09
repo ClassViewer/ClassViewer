@@ -3,8 +3,7 @@ package org.glavo.viewer.file.types.java;
 import kala.compress.utils.SeekableInMemoryByteChannel;
 import org.glavo.jimage.ImageReader;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.types.java.JImageContainer;
+import org.glavo.viewer.file.LocalFilePath;
 import org.glavo.viewer.util.FileUtils;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ public class JImageFileHandle extends FileHandle {
     private final ImageReader reader;
     private final ImageReader.Node node;
 
-    public JImageFileHandle(JImageContainer container, FilePath path, ImageReader reader, ImageReader.Node node) {
+    public JImageFileHandle(JImageContainer container, LocalFilePath path, ImageReader reader, ImageReader.Node node) {
         super(container, path);
         this.reader = reader;
         this.node = node;

@@ -5,7 +5,7 @@ import kala.compress.archivers.zip.ZipArchiveReader;
 import kala.compress.utils.IOUtils;
 import kala.compress.utils.SeekableInMemoryByteChannel;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.LocalFilePath;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +15,7 @@ import java.nio.channels.SeekableByteChannel;
 public class ArchiveFileHandle extends FileHandle {
     private final ZipArchiveEntry entry;
 
-    public ArchiveFileHandle(ArchiveContainer container, FilePath path, ZipArchiveEntry entry) {
+    public ArchiveFileHandle(ArchiveContainer container, LocalFilePath path, ZipArchiveEntry entry) {
         super(container, path);
         this.entry = entry;
     }
