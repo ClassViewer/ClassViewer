@@ -1,7 +1,7 @@
 package org.glavo.viewer.file.types.json;
 
 import org.antlr.v4.runtime.Token;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.file.highlighter.LookNextAntlrLexerHighlighter;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.util.Stylesheet;
@@ -46,7 +46,7 @@ public class JsonFileType extends TextFileType {
     }
 
     @Override
-    public boolean check(LocalFilePath path) {
+    public boolean check(OldFilePath path) {
         return path.getFileNameExtension().equals("json");
     }
 }

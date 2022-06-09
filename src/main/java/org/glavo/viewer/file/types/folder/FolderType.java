@@ -2,7 +2,7 @@ package org.glavo.viewer.file.types.folder;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.resources.Images;
 
@@ -18,7 +18,7 @@ public final class FolderType extends ContainerFileType {
     }
 
     @Override
-    public boolean check(LocalFilePath path) {
+    public boolean check(OldFilePath path) {
         return false;
     }
 

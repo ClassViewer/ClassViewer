@@ -1,6 +1,6 @@
 package org.glavo.viewer.file.types.css;
 
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.file.types.TextFileType;
 
 public class CSSFileType extends TextFileType {
@@ -12,7 +12,7 @@ public class CSSFileType extends TextFileType {
     }
 
     @Override
-    public boolean check(LocalFilePath path) {
+    public boolean check(OldFilePath path) {
         return path.getFileNameExtension().equals("css");
     }
 }

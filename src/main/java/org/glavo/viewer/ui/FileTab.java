@@ -5,18 +5,18 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.resources.I18N;
 
 public class FileTab extends Tab {
     private final FileType type;
-    private final LocalFilePath path;
+    private final OldFilePath path;
 
     private final ObjectProperty<Node> sideBar = new SimpleObjectProperty<>();
     private final ObjectProperty<Node> statusBar = new SimpleObjectProperty<>();
 
-    public FileTab(FileType type, LocalFilePath path) {
+    public FileTab(FileType type, OldFilePath path) {
         this.type = type;
         this.path = path;
 
@@ -30,7 +30,7 @@ public class FileTab extends Tab {
         return type;
     }
 
-    public LocalFilePath getPath() {
+    public OldFilePath getPath() {
         return path;
     }
 

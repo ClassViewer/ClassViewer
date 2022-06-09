@@ -3,7 +3,7 @@ package org.glavo.viewer.file.types.zip;
 import kala.compress.utils.IOUtils;
 import kala.compress.utils.SeekableInMemoryByteChannel;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +15,7 @@ import java.util.zip.ZipFile;
 public class FallbackArchiveFileHandle extends FileHandle {
     private final ZipEntry entry;
 
-    public FallbackArchiveFileHandle(FallbackArchiveContainer container, LocalFilePath path, ZipEntry entry) {
+    public FallbackArchiveFileHandle(FallbackArchiveContainer container, OldFilePath path, ZipEntry entry) {
         super(container, path);
         this.entry = entry;
     }

@@ -12,7 +12,7 @@ import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.file.types.CustomFileType;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
@@ -32,7 +32,7 @@ public class ImageFileType extends CustomFileType {
     }
 
     @Override
-    public boolean check(LocalFilePath path) {
+    public boolean check(OldFilePath path) {
         switch (path.getFileNameExtension()) {
             case "bmp":
             case "gif":

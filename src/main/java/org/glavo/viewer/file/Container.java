@@ -13,18 +13,18 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public abstract class Container implements ForceCloseable {
 
-    private static final Map<LocalFilePath, Container> containerMap = new HashMap<>();
+    private static final Map<OldFilePath, Container> containerMap = new HashMap<>();
 
     private final FileHandle handle;
 
-    final Map<LocalFilePath, FileHandle> handles = new HashMap<>();
+    final Map<OldFilePath, FileHandle> handles = new HashMap<>();
     final HashSet<ContainerHandle> containerHandles = new HashSet<>();
 
     protected Container(FileHandle handle) {
         this.handle = handle;
     }
 
-    public static Container getContainer(LocalFilePath path) throws Throwable {
+    public static Container getContainer(OldFilePath path) throws Throwable {
         if (path == null) {
             return LocalContainer.CONTAINER;
         }
@@ -56,7 +56,7 @@ public abstract class Container implements ForceCloseable {
         }
     }
 
-    public static Container getContainerOrNull(LocalFilePath path) {
+    public static Container getContainerOrNull(OldFilePath path) {
         try {
             return Container.getContainer(path);
         } catch (Throwable e) {
@@ -65,7 +65,7 @@ public abstract class Container implements ForceCloseable {
         }
     }
 
-    public LocalFilePath getPath() {
+    public OldFilePath getPath() {
         return handle.getPath();
     }
 
@@ -73,7 +73,7 @@ public abstract class Container implements ForceCloseable {
         return handle;
     }
 
-    public synchronized FileHandle openFile(LocalFilePath path) throws IOException {
+    public synchronized FileHandle openFile(OldFilePath path) throws IOException {
         assert getPath() == null && path.getParent() == null || getPath().equals(path);
 
         FileHandle h = handles.get(path);
@@ -88,11 +88,11 @@ public abstract class Container implements ForceCloseable {
         return h;
     }
 
-    protected abstract FileHandle openFileImpl(LocalFilePath path) throws IOException, NoSuchFileException;
+    protected abstract FileHandle openFileImpl(OldFilePath path) throws IOException, NoSuchFileException;
 
-    public final NavigableSet<LocalFilePath> resolveFiles() throws Exception {return null;}
+    public final NavigableSet<OldFilePath> resolveFiles() throws Exception {return null;}
 
-    public abstract Set<LocalFilePath> list(LocalFilePath dir);
+    public abstract Set<OldFilePath> list(OldFilePath dir);
 
     public boolean isReadonly() {
         return true;

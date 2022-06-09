@@ -22,19 +22,19 @@ public class LocalContainer extends RootContainer {
     }
 
     @Override
-    protected FileHandle openFileImpl(LocalFilePath path) throws IOException {
+    protected FileHandle openFileImpl(OldFilePath path) throws IOException {
         assert path.isLocalFile();
 
         return new LocalFileHandle(path);
     }
 
     @Override
-    public Set<LocalFilePath> list(LocalFilePath dir) {
+    public Set<OldFilePath> list(OldFilePath dir) {
         assert dir.isDefaultFileSystemPath();
         assert dir.isDirectory();
 
         try (var stream = Files.list(Paths.get(dir.toString()))) {
-            return stream.map(it -> LocalFilePath.ofJavaPath(it, Files.isDirectory(it)))
+            return stream.map(it -> OldFilePath.ofJavaPath(it, Files.isDirectory(it)))
                     .collect(Collectors.toSet());
         } catch (Throwable e) {
             LOGGER.log(Level.WARNING, "Failed to get file list", e);

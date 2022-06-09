@@ -2,13 +2,13 @@ package org.glavo.viewer.file.types.folder;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 
 import java.io.IOException;
 import java.nio.channels.SeekableByteChannel;
 
 public final class FolderHandle extends FileHandle {
-    public FolderHandle(Container container, LocalFilePath path) {
+    public FolderHandle(Container container, OldFilePath path) {
         super(container, path);
     }
 

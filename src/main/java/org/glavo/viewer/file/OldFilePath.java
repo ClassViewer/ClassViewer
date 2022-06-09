@@ -11,15 +11,15 @@ import java.util.*;
 
 @JsonIncludeProperties({"parent", "path", "isDirectory"})
 @JsonPropertyOrder({"parent", "path", "isDirectory"})
-public class LocalFilePath implements Comparable<LocalFilePath> {
+public class OldFilePath implements Comparable<OldFilePath> {
 
     private final String[] pathElements;
     private final String path;
     private final boolean isDirectory;
 
-    private final LocalFilePath parent;
+    private final OldFilePath parent;
 
-    private LocalFilePath(String[] pathElements, boolean isDirectory, LocalFilePath parent) {
+    private OldFilePath(String[] pathElements, boolean isDirectory, OldFilePath parent) {
         this.isDirectory = isDirectory;
         this.parent = parent;
         this.pathElements = pathElements;
@@ -37,24 +37,24 @@ public class LocalFilePath implements Comparable<LocalFilePath> {
         this.path = builder.toString();
     }
 
-    private LocalFilePath(String path, String[] pathElements, boolean isDirectory, LocalFilePath parent) {
+    private OldFilePath(String path, String[] pathElements, boolean isDirectory, OldFilePath parent) {
         this.isDirectory = isDirectory;
         this.parent = parent;
         this.pathElements = pathElements;
         this.path = path;
     }
 
-    public static LocalFilePath of(@JsonProperty("path") String path,
-                                   @JsonProperty("isDirectory") boolean isDirectory,
-                                   @JsonProperty("parent") LocalFilePath parent) {
-        return new LocalFilePath(StringUtils.spiltPath(path), isDirectory, parent);
+    public static OldFilePath of(@JsonProperty("path") String path,
+                                 @JsonProperty("isDirectory") boolean isDirectory,
+                                 @JsonProperty("parent") OldFilePath parent) {
+        return new OldFilePath(StringUtils.spiltPath(path), isDirectory, parent);
     }
 
-    public static LocalFilePath ofJavaPath(Path p) {
+    public static OldFilePath ofJavaPath(Path p) {
         return ofJavaPath(p, false);
     }
 
-    public static LocalFilePath ofJavaPath(Path p, boolean isDirectory) {
+    public static OldFilePath ofJavaPath(Path p, boolean isDirectory) {
         return of(p.normalize().toAbsolutePath().toString(), isDirectory, null);
     }
 
@@ -68,7 +68,7 @@ public class LocalFilePath implements Comparable<LocalFilePath> {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public LocalFilePath getParent() {
+    public OldFilePath getParent() {
         return parent;
     }
 
@@ -76,8 +76,8 @@ public class LocalFilePath implements Comparable<LocalFilePath> {
         return getParent() == null;
     }
 
-    public LocalFilePath getParentContainerPath() {
-        LocalFilePath p;
+    public OldFilePath getParentContainerPath() {
+        OldFilePath p;
         do {
             p = getParent();
         } while (p != null && p.isDirectory());
@@ -109,7 +109,7 @@ public class LocalFilePath implements Comparable<LocalFilePath> {
         return pathElements;
     }
 
-    public String[] relativize(LocalFilePath other) {
+    public String[] relativize(OldFilePath other) {
         if (this.equals(other.getParent())) {
             return other.getPathElements();
         } else if (Objects.equals(this.getParent(), other.getParent())) {
@@ -150,7 +150,7 @@ public class LocalFilePath implements Comparable<LocalFilePath> {
      */
 
     @Override
-    public int compareTo(LocalFilePath that) {
+    public int compareTo(OldFilePath that) {
         if (this.parent == null && that.parent != null) {
             return -1;
         }
@@ -186,11 +186,11 @@ public class LocalFilePath implements Comparable<LocalFilePath> {
             return true;
         }
 
-        if (!(obj instanceof LocalFilePath)) {
+        if (!(obj instanceof OldFilePath)) {
             return false;
         }
 
-        LocalFilePath that = (LocalFilePath) obj;
+        OldFilePath that = (OldFilePath) obj;
         return Objects.equals(this.parent, that.parent) && this.getPath().equals(that.getPath());
     }
 

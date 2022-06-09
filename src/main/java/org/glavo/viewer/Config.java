@@ -8,7 +8,7 @@ import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.JsonUtils;
 import org.glavo.viewer.util.WindowDimension;
@@ -42,7 +42,7 @@ public final class Config {
     private final StringProperty textFontFamily = new SimpleStringProperty();
     private final DoubleProperty textFontSize = new SimpleDoubleProperty();
 
-    private final ObservableList<LocalFilePath> recentFiles = FXCollections.observableList(new LinkedList<>());
+    private final ObservableList<OldFilePath> recentFiles = FXCollections.observableList(new LinkedList<>());
 
     private static Config config;
 
@@ -249,16 +249,16 @@ public final class Config {
         this.textFontSize.set(textFontSizeProperty);
     }
 
-    public ObservableList<LocalFilePath> getRecentFiles() {
+    public ObservableList<OldFilePath> getRecentFiles() {
         return recentFiles;
     }
 
-    public void setRecentFiles(List<LocalFilePath> paths) {
+    public void setRecentFiles(List<OldFilePath> paths) {
         getRecentFiles().setAll(paths);
     }
 
-    public void addRecentFile(LocalFilePath path) {
-        ObservableList<LocalFilePath> files = getRecentFiles();
+    public void addRecentFile(OldFilePath path) {
+        ObservableList<OldFilePath> files = getRecentFiles();
         synchronized (files) {
             files.remove(path);
             if (files.size() == RECENT_FILES_LIMIT) {

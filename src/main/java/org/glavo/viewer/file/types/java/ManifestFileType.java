@@ -1,6 +1,6 @@
 package org.glavo.viewer.file.types.java;
 
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.file.types.TextFileType;
 
 public class ManifestFileType extends TextFileType {
@@ -11,7 +11,7 @@ public class ManifestFileType extends TextFileType {
     }
 
     @Override
-    public boolean check(LocalFilePath path) {
+    public boolean check(OldFilePath path) {
         return path.getFileNameExtension().equals("mf");
     }
 }

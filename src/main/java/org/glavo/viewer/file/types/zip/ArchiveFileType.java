@@ -4,7 +4,7 @@ import kala.compress.archivers.zip.ZipArchiveReader;
 import kala.compress.utils.IOUtils;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ZipUtils;
 
@@ -25,7 +25,7 @@ public final class ArchiveFileType extends ContainerFileType {
     }
 
     @Override
-    public boolean check(LocalFilePath path) {
+    public boolean check(OldFilePath path) {
         switch (path.getFileNameExtension()) {
             case "zip":
             case "jar":

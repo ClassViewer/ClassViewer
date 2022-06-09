@@ -1,7 +1,7 @@
 package org.glavo.viewer.file.root.local;
 
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -14,11 +14,11 @@ import java.nio.file.StandardOpenOption;
 public class LocalFileHandle extends FileHandle {
     private final Path file;
 
-    public LocalFileHandle(LocalFilePath path) {
+    public LocalFileHandle(OldFilePath path) {
         this(path, Paths.get(path.getPath()));
     }
 
-    public LocalFileHandle(LocalFilePath path, Path file) {
+    public LocalFileHandle(OldFilePath path, Path file) {
         super(LocalContainer.CONTAINER, path);
         this.file = file;
 

@@ -2,7 +2,7 @@ package org.glavo.viewer.file.types.folder;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.LocalFilePath;
+import org.glavo.viewer.file.OldFilePath;
 import org.glavo.viewer.file.root.local.LocalContainer;
 import org.glavo.viewer.file.root.local.LocalFileHandle;
 
@@ -12,7 +12,7 @@ import java.util.NavigableSet;
 import java.util.Set;
 
 public class FolderContainer extends Container {
-    private NavigableSet<LocalFilePath> files;
+    private NavigableSet<OldFilePath> files;
     private final Path folder;
 
     public FolderContainer(FileHandle handle, Path folder) {
@@ -54,12 +54,12 @@ public class FolderContainer extends Container {
      */
 
     @Override
-    public Set<LocalFilePath> list(LocalFilePath dir) {
+    public Set<OldFilePath> list(OldFilePath dir) {
         return LocalContainer.CONTAINER.list(dir);
     }
 
     @Override
-    protected FileHandle openFileImpl(LocalFilePath path) throws IOException {
+    protected FileHandle openFileImpl(OldFilePath path) throws IOException {
         return new LocalFileHandle(path, Paths.get(path.getPath()));
     }
 }
