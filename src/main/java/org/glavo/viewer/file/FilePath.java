@@ -1,7 +1,10 @@
 package org.glavo.viewer.file;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.File;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "@type")
 public interface FilePath {
     String getPath();
 
