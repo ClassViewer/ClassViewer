@@ -1,7 +1,7 @@
-package org.glavo.viewer.file.root.local;
+package org.glavo.viewer.file.roots.local;
 
 import org.glavo.viewer.file.*;
-import org.glavo.viewer.file.root.RootContainer;
+import org.glavo.viewer.file.RootContainer;
 
 import java.io.IOException;
 import java.nio.file.Files;

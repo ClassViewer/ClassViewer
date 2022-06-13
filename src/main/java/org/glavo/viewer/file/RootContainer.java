@@ -1,4 +1,4 @@
-package org.glavo.viewer.file.root;
+package org.glavo.viewer.file;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;

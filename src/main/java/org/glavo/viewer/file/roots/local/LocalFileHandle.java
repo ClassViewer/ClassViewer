@@ -1,4 +1,4 @@
-package org.glavo.viewer.file.root.local;
+package org.glavo.viewer.file.roots.local;
 
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.OldFilePath;

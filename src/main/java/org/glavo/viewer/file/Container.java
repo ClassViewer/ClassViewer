@@ -1,6 +1,6 @@
 package org.glavo.viewer.file;
 
-import org.glavo.viewer.file.root.local.LocalContainer;
+import org.glavo.viewer.file.roots.local.LocalContainer;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ForceCloseable;
 

@@ -3,8 +3,8 @@ package org.glavo.viewer.file.types.folder;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.OldFilePath;
-import org.glavo.viewer.file.root.local.LocalContainer;
-import org.glavo.viewer.file.root.local.LocalFileHandle;
+import org.glavo.viewer.file.roots.local.LocalContainer;
+import org.glavo.viewer.file.roots.local.LocalFileHandle;
 
 import java.io.IOException;
 import java.nio.file.*;
