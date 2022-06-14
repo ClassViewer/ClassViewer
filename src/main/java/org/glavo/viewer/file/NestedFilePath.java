@@ -6,12 +6,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonIncludeProperties({"parent", "path", "isDirectory"})
 @JsonPropertyOrder({"parent", "path", "isDirectory"})
-public final class NestedPath extends FilePath {
+public final class NestedFilePath extends FilePath {
     private final String[] pathElements;
     private final boolean isDirectory;
     private final FilePath parent;
 
-    public NestedPath(String[] pathElements, boolean isDirectory, FilePath parent) {
+    public NestedFilePath(String[] pathElements, boolean isDirectory, FilePath parent) {
         this.pathElements = pathElements;
         this.isDirectory = isDirectory;
         this.parent = parent;

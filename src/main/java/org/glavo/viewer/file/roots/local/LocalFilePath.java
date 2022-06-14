@@ -5,17 +5,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 import org.glavo.viewer.file.RootPath;
-import org.glavo.viewer.file.DefaultFilePath;
+import org.glavo.viewer.file.TopFilePath;
 
 @JsonIncludeProperties({"path", "isDirectory"})
 @JsonPropertyOrder({"path", "isDirectory"})
-public final class LocalFilePath extends DefaultFilePath {
+public final class LocalFilePath extends TopFilePath {
 
     public LocalFilePath(String[] pathElements, boolean isDirectory) {
         super(pathElements, isDirectory, LocalRootPath.Path);
     }
-
-
 
     @Override
     public RootPath getRootPath() {
