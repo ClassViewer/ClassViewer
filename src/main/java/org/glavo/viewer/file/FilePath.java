@@ -9,9 +9,10 @@ import java.io.File;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = LocalFilePath.class, name = "local"),
-        @JsonSubTypes.Type(value = NestedPath.class, name = "nested")
+        @JsonSubTypes.Type(value = NestedPath.class, name = "nested"),
+        @JsonSubTypes.Type(value = DefaultFilePath.class, name = "default")
 })
-public abstract class FilePath {
+public sealed abstract class FilePath permits RootPath, DefaultFilePath, NestedPath {
     public abstract boolean isDirectory();
 
     public abstract RootPath getRootPath();

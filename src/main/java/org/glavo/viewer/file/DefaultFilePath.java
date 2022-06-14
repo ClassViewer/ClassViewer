@@ -1,12 +1,12 @@
 package org.glavo.viewer.file;
 
-public class TopFilePath extends FilePath {
+public non-sealed class DefaultFilePath extends FilePath {
     private final String[] pathElements;
     private final boolean isDirectory;
     private final RootPath rootPath;
     private final String path;
 
-    public TopFilePath(String[] pathElements, boolean isDirectory, RootPath rootPath) {
+    public DefaultFilePath(String[] pathElements, boolean isDirectory, RootPath rootPath) {
         this.pathElements = pathElements;
         this.isDirectory = isDirectory;
         this.rootPath = rootPath;
@@ -29,6 +29,18 @@ public class TopFilePath extends FilePath {
     }
 
     protected String str;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof DefaultFilePath that
+                && getRootPath().equals(that.getRootPath())
+                && getPath().equals(that.getPath());
+    }
 
     @Override
     public String toString() {
