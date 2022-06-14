@@ -12,7 +12,7 @@ import java.io.File;
         @JsonSubTypes.Type(value = NestedFilePath.class, name = "nested"),
         @JsonSubTypes.Type(value = DefaultFilePath.class, name = "default")
 })
-public sealed abstract class FilePath permits NestedFilePath, RootPath, TopFilePath {
+public sealed abstract class FilePath permits NestedFilePath, RootPath, TopPath {
     public abstract boolean isDirectory();
 
     public abstract RootPath getRootPath();

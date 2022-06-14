@@ -1,13 +1,13 @@
 package org.glavo.viewer.file.roots.local;
 
 import org.glavo.viewer.file.RootPath;
-import org.glavo.viewer.file.DefaultFilePath;
+import org.glavo.viewer.file.TopPath;
 
 public final class LocalRootPath extends RootPath {
     public static final LocalRootPath Path = new LocalRootPath();
 
     @Override
-    protected DefaultFilePath createTopPath(String[] pathElements, boolean isDirectory) {
+    protected TopPath createTopPath(String[] pathElements, boolean isDirectory) {
         return new LocalFilePath(pathElements, isDirectory);
     }
 

@@ -1,7 +1,7 @@
 package org.glavo.viewer.file;
 
 public non-sealed abstract class RootPath extends FilePath {
-    protected DefaultFilePath createTopPath(String[] pathElements, boolean isDirectory) {
+    protected TopPath createTopPath(String[] pathElements, boolean isDirectory) {
         return new DefaultFilePath(pathElements, isDirectory, this);
     }
 
