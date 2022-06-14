@@ -1,7 +1,18 @@
 package org.glavo.viewer.file;
 
-public final class DefaultFilePath extends TopPath {
-    public DefaultFilePath(String[] pathElements, boolean isDirectory, RootPath rootPath) {
-        super(pathElements, isDirectory, rootPath);
+public final class DefaultFilePath extends FilePath {
+    public DefaultFilePath(String[] pathElements, boolean isDirectory, FilePath parent) {
+        super(pathElements, isDirectory, parent);
+    }
+
+    private String str;
+
+    @Override
+    public String toString() {
+        if (str == null) {
+            str = getParent() + "/" + getPath();
+        }
+
+        return str;
     }
 }
