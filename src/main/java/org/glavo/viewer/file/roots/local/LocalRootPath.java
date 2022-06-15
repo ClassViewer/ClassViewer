@@ -11,11 +11,6 @@ public final class LocalRootPath extends RootPath {
     }
 
     @Override
-    public boolean isDirectory() {
-        return true;
-    }
-
-    @Override
     public String toString() {
         return "[LocalRootPath]";
     }
