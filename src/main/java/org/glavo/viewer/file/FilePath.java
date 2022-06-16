@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import kala.platform.OperatingSystem;
+import kala.platform.Platform;
 import org.glavo.viewer.file.roots.local.LocalRootPath;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,16 +16,28 @@ import java.util.Objects;
 @JsonPropertyOrder({"parent", "path", "isDirectory"})
 public final class FilePath extends AbstractPath {
     private final String[] pathElements;
-    private final boolean isDirectory;
     private final String path;
     private final AbstractPath parent;
+
+    private final boolean isDirectory;
+    private final byte level;
 
     public FilePath(String[] pathElements, boolean isDirectory, AbstractPath parent) {
         this.pathElements = pathElements;
         this.isDirectory = isDirectory;
         this.parent = parent;
+        this.level = (byte) (parent instanceof FilePath p ? p.getLevel() + 1 : 1);
 
-        this.path = String.join("/", pathElements);
+        if (parent == LocalRootPath.Path && Platform.CURRENT_SYSTEM == OperatingSystem.WINDOWS) {
+            this.path = String.join("/", pathElements);
+            this.str = path;
+        } else {
+            this.path = "/" + String.join("/", pathElements);
+        }
+    }
+
+    int getLevel() {
+        return level;
     }
 
     @JsonProperty("isDirectory")
@@ -59,6 +73,13 @@ public final class FilePath extends AbstractPath {
         return pathElements;
     }
 
+    private static int compare(FilePath p1, FilePath p2, int level) {
+        int c = level == 1
+                ? p1.getParent().compareTo(p2.getParent())
+                : compare((FilePath) p1.getParent(), (FilePath) p2.getParent(), level - 1);
+
+        return c != 0 ? c : Arrays.compare(p1.getPathElements(), p2.getPathElements());
+    }
 
     @Override
     public int compareTo(@NotNull AbstractPath o) {
@@ -67,12 +88,21 @@ public final class FilePath extends AbstractPath {
             return res == 0 ? 1 : res;
         }
 
-        if (this.getParent() instanceof RootPath r1 && p.getParent() instanceof RootPath r2) {
-            int c = r1.compareTo(r2);
-            if (c != 0) return c;
+        FilePath p1 = this;
+        FilePath p2 = p;
 
-            return Arrays.compare(this.getPathElements(), p.getPathElements());
+        if (p1.getLevel() > p2.getLevel()) {
+            while (p1.getLevel() != p2.getLevel()) {
+                p1 = (FilePath) p1.getParent();
+            }
+        } else if (p1.getLevel() < p2.getLevel()) {
+            while (p1.getLevel() != p2.getLevel()) {
+                p2 = (FilePath) p2.getParent();
+            }
         }
+
+        int c = compare(p1, p2, p1.getLevel());
+        return c != 0 ? c : Integer.compare(this.getLevel(), p.getLevel());
     }
 
     @Override
