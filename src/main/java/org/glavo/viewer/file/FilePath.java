@@ -60,11 +60,11 @@ public final class FilePath extends AbstractPath {
         return path;
     }
 
-    public RootPath getRoot() {
+    public RootPath<?> getRoot() {
         FilePath path = this;
         do {
             AbstractPath p = path.getParent();
-            if (p instanceof RootPath root) return root;
+            if (p instanceof RootPath<?> root) return root;
             path = ((FilePath) p);
         } while (true);
     }

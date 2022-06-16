@@ -8,7 +8,7 @@ public abstract non-sealed class RootPath<R extends RootPath<R>> extends Abstrac
     }
 
     @Override
-    public R getRoot() {
+    public final R getRoot() {
         return (R) this;
     }
 
@@ -48,8 +48,8 @@ public abstract non-sealed class RootPath<R extends RootPath<R>> extends Abstrac
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null
-                && this.getClass() == obj.getClass()
-                && this.toString().equals(obj.toString());
+        return obj instanceof RootPath<?> root
+                && this.type().equals(root.type())
+                && this.compareToImpl((R) obj) == 0;
     }
 }
