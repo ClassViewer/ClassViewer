@@ -78,7 +78,7 @@ public final class Viewer {
                 success = true;
                 for (File file : db.getFiles()) {
                     if (file.exists()) {
-                        open(OldFilePath.ofJavaPath(file.toPath(), file.isDirectory()));
+                        open(FilePath.ofJavaPath(file.toPath(), file.isDirectory()));
                     }
                 }
             }
@@ -155,18 +155,18 @@ public final class Viewer {
     public void openFile() {
         File file = showFileChooser();
         if (file != null) {
-            open(OldFilePath.ofJavaPath(file.toPath()));
+            open(FilePath.ofJavaPath(file.toPath()));
         }
     }
 
     public void openFolder() {
         File file = showDirectoryChooser();
         if (file != null) {
-            open(OldFilePath.ofJavaPath(file.toPath(), true));
+            open(FilePath.ofJavaPath(file.toPath(), true));
         }
     }
 
-    public void open(OldFilePath path) {
+    public void open(FilePath path) {
         if (path.isDirectory()) {
             LOGGER.info("Open folder " + path);
         } else {

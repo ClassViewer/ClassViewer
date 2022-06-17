@@ -1,20 +1,20 @@
 package org.glavo.viewer.file;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 import org.glavo.viewer.file.roots.local.LocalRootPath;
-import org.jetbrains.annotations.NotNull;
+import org.glavo.viewer.util.ArrayUtils;
+import org.glavo.viewer.util.StringUtils;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 @JsonIncludeProperties({"parent", "path", "isDirectory"})
 @JsonPropertyOrder({"parent", "path", "isDirectory"})
 public final class FilePath extends AbstractPath {
+
     private final String[] pathElements;
     private final String path;
     private final AbstractPath parent;
@@ -34,6 +34,22 @@ public final class FilePath extends AbstractPath {
         } else {
             this.path = "/" + String.join("/", pathElements);
         }
+    }
+
+    public static FilePath of(
+            @JsonProperty("path") String path,
+            @JsonProperty("isDirectory") boolean isDirectory,
+            @JsonProperty("parent") AbstractPath parent
+    ) {
+        return new FilePath(StringUtils.spiltPath(path), isDirectory, Objects.requireNonNullElse(parent, LocalRootPath.Path));
+    }
+
+    public static FilePath ofJavaPath(Path p) {
+        return ofJavaPath(p, Files.isDirectory(p));
+    }
+
+    public static FilePath ofJavaPath(Path p, boolean isDirectory) {
+        return of(p.normalize().toAbsolutePath().toString(), isDirectory, null);
     }
 
     int getLevel() {
@@ -56,17 +72,58 @@ public final class FilePath extends AbstractPath {
 
     }
 
+    public FilePath getParentFilePath() {
+        return getParent() instanceof FilePath p ? p : null;
+    }
+
     public String getPath() {
         return path;
     }
 
-    public RootPath<?> getRoot() {
+    public RootPath getRoot() {
         FilePath path = this;
         do {
             AbstractPath p = path.getParent();
-            if (p instanceof RootPath<?> root) return root;
+            if (p instanceof RootPath root) return root;
             path = ((FilePath) p);
         } while (true);
+    }
+
+    public boolean isLocalFile() {
+        return getParent() == LocalRootPath.Path;
+    }
+
+    public String getFileName() {
+        return pathElements.length == 0 ? "" : pathElements[pathElements.length - 1];
+    }
+
+    private String extension;
+
+    public String getFileNameExtension() {
+        if (extension == null) {
+            String fn = getFileName();
+            int idx = fn.lastIndexOf('.');
+            extension = idx <= 0 ? "" : fn.substring(idx + 1).toLowerCase(Locale.ROOT);
+        }
+
+        return extension;
+    }
+
+    public String[] relativize(FilePath other) {
+        if (this.equals(other.getParent())) {
+            return other.getPathElements();
+        } else if (Objects.equals(this.getParent(), other.getParent())) {
+            if (!this.isDirectory()) {
+                throw new UnsupportedOperationException(this + " is not folder path");
+            }
+            if (!ArrayUtils.isPrefix(other.getPathElements(), this.getPathElements())) {
+                throw new UnsupportedOperationException(this + " is not prefix of " + other);
+            }
+
+            return Arrays.copyOfRange(other.getPathElements(), this.getPathElements().length, other.getPathElements().length);
+        } else {
+            throw new UnsupportedOperationException(String.format("this=%s, other=%s", this, other));
+        }
     }
 
     String[] getPathElements() {
@@ -82,7 +139,7 @@ public final class FilePath extends AbstractPath {
     }
 
     @Override
-    public int compareTo(@NotNull AbstractPath o) {
+    public int compareTo(AbstractPath o) {
         if (!(o instanceof FilePath p)) {
             int res = this.getRoot().compareTo(o);
             return res == 0 ? 1 : res;

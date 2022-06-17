@@ -13,7 +13,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.PlainTextChange;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.OldFilePath;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
@@ -66,7 +66,7 @@ public class TextFileType extends CustomFileType {
     }
 
     @Override
-    public boolean check(OldFilePath path) {
+    public boolean check(FilePath path) {
         switch (path.getFileNameExtension()) {
             case "txt":
             case "md":

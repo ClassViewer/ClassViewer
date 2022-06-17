@@ -1,6 +1,7 @@
 package org.glavo.viewer.file;
 
 import org.glavo.viewer.file.roots.local.LocalContainer;
+import org.glavo.viewer.file.roots.local.LocalRootPath;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ForceCloseable;
 
@@ -13,50 +14,53 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public abstract class Container implements ForceCloseable {
 
-    private static final Map<OldFilePath, Container> containerMap = new HashMap<>();
+    private static final Map<AbstractPath, Container> containerMap = new HashMap<>();
 
     private final FileHandle handle;
 
-    final Map<OldFilePath, FileHandle> handles = new HashMap<>();
+    final Map<FilePath, FileHandle> handles = new HashMap<>();
     final HashSet<ContainerHandle> containerHandles = new HashSet<>();
 
     protected Container(FileHandle handle) {
         this.handle = handle;
     }
 
-    public static Container getContainer(OldFilePath path) throws Throwable {
-        if (path == null) {
+    public static Container getContainer(AbstractPath path) throws Throwable {
+        if (path == null || path == LocalRootPath.Path) {
             return LocalContainer.CONTAINER;
         }
         synchronized (Container.class) {
             Container c = containerMap.get(path);
 
-            if (c != null) {
-                return c;
+            if (c != null) return c;
+
+            if (path instanceof FilePath filePath) {
+
+                FileType type = FileType.detectFileType(filePath);
+                if (!(type instanceof ContainerFileType ct)) {
+                    throw new UnsupportedOperationException("file " + path + " is not a container");
+                }
+
+                Container container;
+
+                FileHandle handle = getContainer(filePath.getParentFilePath()).openFile(filePath);
+
+                try {
+                    container = ct.openContainerImpl(handle);
+                } catch (Throwable ex) {
+                    handle.close();
+                    throw ex;
+                }
+
+                containerMap.put(path, container);
+                return container;
+            } else {
+                throw new RootContainerNotOpenException(((RootPath) path)); // TODO
             }
-
-            FileType type = FileType.detectFileType(path);
-            if (!(type instanceof ContainerFileType ct)) {
-                throw new UnsupportedOperationException("file " + path + " is not a container");
-            }
-
-            Container container;
-
-            FileHandle handle = getContainer(path.getParent()).openFile(path);
-
-            try {
-                container = ct.openContainerImpl(handle);
-            } catch (Throwable ex) {
-                handle.close();
-                throw ex;
-            }
-
-            containerMap.put(path, container);
-            return container;
         }
     }
 
-    public static Container getContainerOrNull(OldFilePath path) {
+    public static Container getContainerOrNull(FilePath path) {
         try {
             return Container.getContainer(path);
         } catch (Throwable e) {
@@ -65,7 +69,7 @@ public abstract class Container implements ForceCloseable {
         }
     }
 
-    public OldFilePath getPath() {
+    public FilePath getPath() {
         return handle.getPath();
     }
 
@@ -73,7 +77,7 @@ public abstract class Container implements ForceCloseable {
         return handle;
     }
 
-    public synchronized FileHandle openFile(OldFilePath path) throws IOException {
+    public synchronized FileHandle openFile(FilePath path) throws IOException {
         assert getPath() == null && path.getParent() == null || getPath().equals(path);
 
         FileHandle h = handles.get(path);
@@ -88,11 +92,11 @@ public abstract class Container implements ForceCloseable {
         return h;
     }
 
-    protected abstract FileHandle openFileImpl(OldFilePath path) throws IOException, NoSuchFileException;
+    protected abstract FileHandle openFileImpl(FilePath path) throws IOException, NoSuchFileException;
 
-    public final NavigableSet<OldFilePath> resolveFiles() throws Exception {return null;}
+    public final NavigableSet<FilePath> resolveFiles() throws Exception {return null;}
 
-    public abstract Set<OldFilePath> list(OldFilePath dir);
+    public abstract Set<FilePath> list(FilePath dir);
 
     public boolean isReadonly() {
         return true;

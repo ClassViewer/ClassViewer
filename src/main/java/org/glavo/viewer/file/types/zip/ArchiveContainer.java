@@ -4,7 +4,7 @@ import kala.compress.archivers.zip.ZipArchiveEntry;
 import kala.compress.archivers.zip.ZipArchiveReader;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.OldFilePath;
+import org.glavo.viewer.file.FilePath;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
@@ -14,21 +14,21 @@ import java.util.TreeMap;
 
 public class ArchiveContainer extends Container {
     private final ZipArchiveReader reader;
-    private final TreeMap<OldFilePath, ZipArchiveEntry> map = new TreeMap<>();
+    private final TreeMap<FilePath, ZipArchiveEntry> map = new TreeMap<>();
 
 
     public ArchiveContainer(FileHandle handle, ZipArchiveReader reader) {
         super(handle);
         this.reader = reader;
 
-        OldFilePath parentPath = handle.getPath();
+        FilePath parentPath = handle.getPath();
 
         Iterator<ZipArchiveEntry> it = reader.getEntriesIterator();
         while (it.hasNext()) {
             ZipArchiveEntry entry = it.next();
 
             if (!entry.isDirectory() && !entry.isUnixSymlink()) {
-                map.put(OldFilePath.of(entry.getName(), false, parentPath), entry);
+                map.put(FilePath.of(entry.getName(), false, parentPath), entry);
             }
         }
     }
@@ -38,7 +38,7 @@ public class ArchiveContainer extends Container {
     }
 
     @Override
-    protected synchronized FileHandle openFileImpl(OldFilePath path) throws IOException {
+    protected synchronized FileHandle openFileImpl(FilePath path) throws IOException {
         ZipArchiveEntry entry = map.get(path);
         if (entry == null) {
             throw new NoSuchFileException(path.toString());
@@ -47,7 +47,7 @@ public class ArchiveContainer extends Container {
     }
 
     @Override
-    public Set<OldFilePath> list(OldFilePath dir) {
+    public Set<FilePath> list(FilePath dir) {
         throw new UnsupportedOperationException(); // TODO
     }
 

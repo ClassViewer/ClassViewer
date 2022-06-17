@@ -6,7 +6,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.StackPane;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.OldFilePath;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.java.classfile.ClassFile;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
@@ -30,7 +30,7 @@ public class JavaClassFileType extends BinaryFileType {
     }
 
     @Override
-    public boolean check(OldFilePath path) {
+    public boolean check(FilePath path) {
         return path.getFileNameExtension().equals("class") || path.getFileNameExtension().equals("sig");
     }
 

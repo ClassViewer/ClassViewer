@@ -2,7 +2,7 @@ package org.glavo.viewer.file.types.folder;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.OldFilePath;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.resources.Images;
 
@@ -18,7 +18,7 @@ public final class FolderType extends ContainerFileType {
     }
 
     @Override
-    public boolean check(OldFilePath path) {
+    public boolean check(FilePath path) {
         return false;
     }
 
@@ -26,7 +26,7 @@ public final class FolderType extends ContainerFileType {
     public Container openContainerImpl(FileHandle handle) throws IOException {
         assert handle instanceof FolderHandle;
         assert handle.getPath().isDirectory();
-        assert handle.getPath().getParent().isLocalFile();
+        assert handle.getPath().isLocalFile();
 
         Path p = Paths.get(handle.getPath().toString());
 

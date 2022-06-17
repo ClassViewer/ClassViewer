@@ -7,7 +7,7 @@ import kala.value.primitive.IntRef;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.glavo.viewer.file.OldFilePath;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
@@ -142,7 +142,7 @@ public class MarkdownFileType extends TextFileType {
     }
 
     @Override
-    public boolean check(OldFilePath path) {
+    public boolean check(FilePath path) {
         return path.getFileNameExtension().equals("md");
     }
 }

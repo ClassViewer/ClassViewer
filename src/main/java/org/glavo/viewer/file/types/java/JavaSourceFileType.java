@@ -1,7 +1,7 @@
 package org.glavo.viewer.file.types.java;
 
 import org.antlr.v4.runtime.Token;
-import org.glavo.viewer.file.OldFilePath;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.highlighter.LookNextAntlrLexerHighlighter;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.util.Stylesheet;
@@ -48,7 +48,7 @@ public class JavaSourceFileType extends TextFileType {
     }
 
     @Override
-    public boolean check(OldFilePath path) {
+    public boolean check(FilePath path) {
         return path.getFileNameExtension().equals("java") && !path.getFileName().equals("module-info.java");
     }
 }

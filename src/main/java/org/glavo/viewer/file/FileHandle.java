@@ -16,10 +16,10 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
 
     private final Container container;
-    private final OldFilePath path;
+    private final FilePath path;
     private CheckedRunnable<?> onForceClose;
 
-    protected FileHandle(Container container, OldFilePath path) {
+    protected FileHandle(Container container, FilePath path) {
         this.container = container;
         this.path = path;
     }
@@ -28,7 +28,7 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
         this.onForceClose = onForceClose;
     }
 
-    public OldFilePath getPath() {
+    public FilePath getPath() {
         return path;
     }
 

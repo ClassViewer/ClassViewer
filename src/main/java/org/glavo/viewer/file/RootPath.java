@@ -2,31 +2,30 @@ package org.glavo.viewer.file;
 
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("unchecked")
-public abstract non-sealed class RootPath<R extends RootPath<R>> extends AbstractPath {
+public abstract non-sealed class RootPath extends AbstractPath {
     public RootPath() {
     }
 
     @Override
-    public final R getRoot() {
-        return (R) this;
+    public final RootPath getRoot() {
+        return this;
     }
 
-    protected Class<R> type() {
-        return (Class<R>) this.getClass();
+    protected Class<? extends RootPath> type() {
+        return this.getClass();
     }
 
     protected int order() {
         return Integer.MAX_VALUE;
     }
 
-    protected int compareToImpl(R other) {
+    protected int compareToImpl(RootPath other) {
         return this.toString().compareTo(other.toString());
     }
 
     @Override
     public final int compareTo(@NotNull AbstractPath o) {
-        if (!(o instanceof RootPath<?> other)) {
+        if (!(o instanceof RootPath other)) {
             int c = this.compareTo(o.getRoot());
 
             return c != 0 ? 0 : -1;
@@ -38,7 +37,7 @@ public abstract non-sealed class RootPath<R extends RootPath<R>> extends Abstrac
             return this.type().getName().compareTo(other.type().getName());
         }
 
-        return this.compareToImpl((R) other);
+        return this.compareToImpl( other);
     }
 
     @Override
@@ -48,8 +47,8 @@ public abstract non-sealed class RootPath<R extends RootPath<R>> extends Abstrac
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof RootPath<?> root
+        return obj instanceof RootPath root
                 && this.type().equals(root.type())
-                && this.compareToImpl((R) obj) == 0;
+                && this.compareToImpl(root) == 0;
     }
 }

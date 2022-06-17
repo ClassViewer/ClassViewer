@@ -6,10 +6,10 @@ import java.util.*;
 
 public abstract class FileTree implements Comparable<FileTree> {
     private final FileType type;
-    private final OldFilePath path;
+    private final FilePath path;
     private final NavigableSet<FileTree> children = new TreeSet<>();
 
-    FileTree(FileType type, OldFilePath path) {
+    FileTree(FileType type, FilePath path) {
         this.type = type;
         this.path = path;
     }
@@ -20,7 +20,7 @@ public abstract class FileTree implements Comparable<FileTree> {
         return type;
     }
 
-    public OldFilePath getPath() {
+    public FilePath getPath() {
         return path;
     }
 
@@ -34,10 +34,10 @@ public abstract class FileTree implements Comparable<FileTree> {
     }
 
     public static void buildFileTree(Container container, FileTree root) throws Exception {
-        NavigableSet<OldFilePath> files = null; // TODO: container.resolveFiles();
+        NavigableSet<FilePath> files = null; // TODO: container.resolveFiles();
 
         // build tree
-        for (OldFilePath file : files) {
+        for (FilePath file : files) {
             String[] elements = root.getPath().relativize(file);
 
             FileTree node = root;
@@ -87,7 +87,7 @@ public abstract class FileTree implements Comparable<FileTree> {
 
     public static final class RootNode extends FileTree {
 
-        public RootNode(FileType type, OldFilePath path) {
+        public RootNode(FileType type, FilePath path) {
             super(type, path);
         }
 
@@ -139,7 +139,7 @@ public abstract class FileTree implements Comparable<FileTree> {
     }
 
     public static final class FileNode extends FileTree {
-        public FileNode(FileType type, OldFilePath path) {
+        public FileNode(FileType type, FilePath path) {
             super(type, path);
         }
 

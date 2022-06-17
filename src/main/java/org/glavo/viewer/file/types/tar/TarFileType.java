@@ -2,7 +2,7 @@ package org.glavo.viewer.file.types.tar;
 
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.OldFilePath;
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.zip.ArchiveFileType;
 
@@ -14,7 +14,7 @@ public final class TarFileType extends ContainerFileType {
     }
 
     @Override
-    public boolean check(OldFilePath path) {
+    public boolean check(FilePath path) {
         switch (path.getFileNameExtension()) {
             case "tar":
                 return true;
