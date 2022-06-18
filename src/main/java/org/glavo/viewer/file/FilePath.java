@@ -159,7 +159,10 @@ public final class FilePath extends AbstractPath {
         }
 
         int c = compare(p1, p2, p1.getLevel());
-        return c != 0 ? c : Integer.compare(this.getLevel(), p.getLevel());
+        if (c == 0) c = Integer.compare(this.getLevel(), p.getLevel());
+        if (c == 0 && this.isDirectory() != p.isDirectory()) c = this.isDirectory() ? -1 : 1;
+
+        return c;
     }
 
     @Override
