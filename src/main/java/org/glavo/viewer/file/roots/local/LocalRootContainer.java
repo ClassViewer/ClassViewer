@@ -8,16 +8,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public class LocalContainer extends RootContainer {
-    public static final LocalContainer CONTAINER = new LocalContainer();
+public class LocalRootContainer extends RootContainer {
+    public static final LocalRootContainer CONTAINER = new LocalRootContainer();
     private static final ContainerHandle ignored = new ContainerHandle(CONTAINER); // should not be closed
 
-    private LocalContainer() {
+    private LocalRootContainer() {
         super(null);
     }
 
@@ -33,9 +34,10 @@ public class LocalContainer extends RootContainer {
         assert dir.isLocalFile();
         assert dir.isDirectory();
 
+
         try (var stream = Files.list(Paths.get(dir.toString()))) {
-            return stream.map(it -> FilePath.ofJavaPath(it, Files.isDirectory(it)))
-                    .collect(Collectors.toSet());
+            return stream.map(FilePath::ofJavaPath)
+                    .collect(Collectors.toCollection(TreeSet::new));
         } catch (Throwable e) {
             LOGGER.log(Level.WARNING, "Failed to get file list", e);
             return Collections.emptySet();

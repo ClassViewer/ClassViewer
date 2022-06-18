@@ -1,6 +1,6 @@
 package org.glavo.viewer.file;
 
-import org.glavo.viewer.file.roots.local.LocalContainer;
+import org.glavo.viewer.file.roots.local.LocalRootContainer;
 import org.glavo.viewer.file.roots.local.LocalRootPath;
 import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.util.ForceCloseable;
@@ -27,7 +27,7 @@ public abstract class Container implements ForceCloseable {
 
     public static Container getContainer(AbstractPath path) throws Throwable {
         if (path == null || path == LocalRootPath.Path) {
-            return LocalContainer.CONTAINER;
+            return LocalRootContainer.CONTAINER;
         }
         synchronized (Container.class) {
             Container c = containerMap.get(path);

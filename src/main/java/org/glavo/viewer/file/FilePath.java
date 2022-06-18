@@ -126,7 +126,7 @@ public final class FilePath extends AbstractPath {
         }
     }
 
-    String[] getPathElements() {
+    public String[] getPathElements() {
         return pathElements;
     }
 

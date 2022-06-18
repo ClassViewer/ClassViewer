@@ -19,7 +19,7 @@ public class LocalFileHandle extends FileHandle {
     }
 
     public LocalFileHandle(FilePath path, Path file) {
-        super(LocalContainer.CONTAINER, path);
+        super(LocalRootContainer.CONTAINER, path);
         this.file = file;
 
         assert path.isLocalFile();

@@ -33,19 +33,11 @@ public class ImageFileType extends CustomFileType {
 
     @Override
     public boolean check(FilePath path) {
-        switch (path.getFileNameExtension()) {
-            case "bmp":
-            case "gif":
-            case "png":
-            case "jpg":
-            case "jpeg":
-            case "webp":
-            case "ico":
-            case "cur":
-                return true;
-        }
+        return switch (path.getFileNameExtension()) {
+            case "bmp", "gif", "png", "jpg", "jpeg", "webp", "ico", "cur" -> true;
+            default -> false;
+        };
 
-        return false;
     }
 
     @Override
