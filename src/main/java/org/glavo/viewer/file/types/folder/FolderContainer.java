@@ -14,8 +14,6 @@ import java.util.NavigableSet;
 import java.util.Set;
 
 public class FolderContainer extends Container {
-    private NavigableSet<FilePath> files;
-
     public FolderContainer(FileHandle handle) {
         super(handle);
     }

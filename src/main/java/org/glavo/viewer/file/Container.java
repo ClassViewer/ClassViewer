@@ -3,6 +3,7 @@ package org.glavo.viewer.file;
 import org.glavo.viewer.file.roots.local.LocalRootContainer;
 import org.glavo.viewer.file.roots.local.LocalRootPath;
 import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.file.types.folder.FolderHandle;
 import org.glavo.viewer.util.ForceCloseable;
 
 import java.io.IOException;
@@ -85,7 +86,7 @@ public abstract class Container implements ForceCloseable {
             throw new UnsupportedOperationException("Open file " + path + " repeatedly");
         }
 
-        h = openFileImpl(path);
+        h = path.isDirectory() ? new FolderHandle(this, path) : openFileImpl(path);
         if (h != null) {
             handles.put(path, h);
         }
@@ -94,7 +95,9 @@ public abstract class Container implements ForceCloseable {
 
     protected abstract FileHandle openFileImpl(FilePath path) throws IOException, NoSuchFileException;
 
-    public final NavigableSet<FilePath> resolveFiles() throws Exception {return null;}
+    public final NavigableSet<FilePath> resolveFiles() throws Exception {
+        return null;
+    }
 
     public abstract Set<FilePath> list(FilePath dir);
 
