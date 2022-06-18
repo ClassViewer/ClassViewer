@@ -167,7 +167,7 @@ public final class FilePath extends AbstractPath {
 
     @Override
     public int hashCode() {
-        return this.getClass().hashCode() + this.getPath().hashCode() + getPath().hashCode();
+        return this.getPath().hashCode() + getParent().hashCode();
     }
 
     @Override
