@@ -1,5 +1,6 @@
 package org.glavo.viewer.file;
 
+import org.glavo.viewer.ui.Viewer;
 import org.jetbrains.annotations.NotNull;
 
 public abstract non-sealed class RootPath extends AbstractPath {
@@ -21,6 +22,10 @@ public abstract non-sealed class RootPath extends AbstractPath {
 
     protected int compareToImpl(RootPath other) {
         return this.toString().compareTo(other.toString());
+    }
+
+    public RootContainer openRootContainer(Viewer viewer) {
+        return null;
     }
 
     @Override

@@ -36,6 +36,7 @@ public final class FilePath extends AbstractPath {
         }
     }
 
+    @JsonCreator
     public static FilePath of(
             @JsonProperty("path") String path,
             @JsonProperty("isDirectory") boolean isDirectory,
