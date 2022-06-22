@@ -99,7 +99,7 @@ public abstract class Container implements ForceCloseable {
         return null;
     }
 
-    public abstract Set<FilePath> list(FilePath dir);
+    public abstract Set<FilePath> list(FilePath dir) throws Throwable;
 
     public boolean isReadonly() {
         return true;

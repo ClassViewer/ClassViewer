@@ -19,7 +19,7 @@ public class FolderContainer extends Container {
     }
 
     @Override
-    public Set<FilePath> list(FilePath dir) {
+    public Set<FilePath> list(FilePath dir) throws Throwable {
         return this.getFileHandle().getContainer().list(dir);
     }
 

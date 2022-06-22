@@ -30,7 +30,7 @@ public class LocalRootContainer extends RootContainer {
     }
 
     @Override
-    public Set<FilePath> list(FilePath dir) {
+    public Set<FilePath> list(FilePath dir) throws IOException {
         assert dir.isLocalFile();
         assert dir.isDirectory();
 
@@ -38,9 +38,6 @@ public class LocalRootContainer extends RootContainer {
         try (var stream = Files.list(Paths.get(dir.toString()))) {
             return stream.map(FilePath::ofJavaPath)
                     .collect(Collectors.toCollection(TreeSet::new));
-        } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, "Failed to get file list", e);
-            return Collections.emptySet();
         }
     }
 
