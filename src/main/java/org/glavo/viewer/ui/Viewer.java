@@ -190,8 +190,8 @@ public final class Viewer {
                 TaskUtils.submit(new Task<TreeItem<String>>() {
                     @Override
                     protected TreeItem<String> call() throws Exception {
-                        FileTree.RootNode root = new FileTree.RootNode(type, path);
-                        FileTree.buildFileTree(handle.getContainer(), root);
+                        OldFileTree.RootNode root = new OldFileTree.RootNode(type, path);
+                        OldFileTree.buildFileTree(handle.getContainer(), root);
                         return FileTreeView.fromTree(root, handle);
                     }
 

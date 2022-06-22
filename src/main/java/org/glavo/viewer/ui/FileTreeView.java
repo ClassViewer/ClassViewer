@@ -24,21 +24,20 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
-import static org.glavo.viewer.util.Logging.start;
 
 public class FileTreeView extends TreeView<String> {
-    public static TreeItem<String> fromTree(FileTree node, ContainerHandle handle) {
+    public static TreeItem<String> fromTree(OldFileTree node, ContainerHandle handle) {
         ContainerFileTreeItem item = new ContainerFileTreeItem(node);
         item.setContainerHandle(handle);
-        for (FileTree child : node.getChildren()) {
+        for (OldFileTree child : node.getChildren()) {
             item.getChildren().add(fromTree(child));
         }
         return item;
     }
 
-    private static void addAllFolderNode(Queue<FileTree> queue, Set<FileTree> children) {
-        for (FileTree child : children) {
-            if (!(child instanceof FileTree.FolderNode)) {
+    private static void addAllFolderNode(Queue<OldFileTree> queue, Set<OldFileTree> children) {
+        for (OldFileTree child : children) {
+            if (!(child instanceof OldFileTree.FolderNode)) {
                 break;
             }
 
@@ -46,14 +45,14 @@ public class FileTreeView extends TreeView<String> {
         }
     }
 
-    public static TreeItem<String> fromTree(FileTree node) {
+    public static TreeItem<String> fromTree(OldFileTree node) {
         TreeItem<String> res;
-        if (node instanceof FileTree.FolderNode) {
+        if (node instanceof OldFileTree.FolderNode) {
             IntermediateFolderItem item = new IntermediateFolderItem(node);
 
-            FileTree n = node;
-            FileTree l;
-            while (n.getChildren().size() == 1 && (l = n.getChildren().iterator().next()) instanceof FileTree.FolderNode) {
+            OldFileTree n = node;
+            OldFileTree l;
+            while (n.getChildren().size() == 1 && (l = n.getChildren().iterator().next()) instanceof OldFileTree.FolderNode) {
                 item.getNodes().add(l);
                 n = l;
             }
@@ -66,7 +65,7 @@ public class FileTreeView extends TreeView<String> {
                     : new FileTreeItem(node);
         }
 
-        for (FileTree child : node.getChildren()) {
+        for (OldFileTree child : node.getChildren()) {
             res.getChildren().add(fromTree(child));
         }
         return res;
@@ -75,7 +74,7 @@ public class FileTreeView extends TreeView<String> {
     public static void updateSubTree(TreeItem<String> tree) {
         if (tree instanceof FileTreeItem) {
             tree.getChildren().clear();
-            for (FileTree child : ((FileTreeItem) tree).getFileTree().getChildren()) {
+            for (OldFileTree child : ((FileTreeItem) tree).getFileTree().getChildren()) {
                 tree.getChildren().add(fromTree(child));
             }
         }
@@ -99,7 +98,7 @@ public class FileTreeView extends TreeView<String> {
 
             FileTreeItem item = ((FileTreeItem) it);
 
-            FileTree node = ((FileTreeItem) it).getFileTree();
+            OldFileTree node = ((FileTreeItem) it).getFileTree();
 
             if (!(node.getType() instanceof CustomFileType)) return;
 
@@ -108,17 +107,17 @@ public class FileTreeView extends TreeView<String> {
     }
 
     public static class FileTreeItem extends TreeItem<String> {
-        private final FileTree fileTree;
+        private final OldFileTree fileTree;
 
 
-        public FileTreeItem(FileTree fileTree) {
+        public FileTreeItem(OldFileTree fileTree) {
             this.fileTree = fileTree;
 
             this.setGraphic(new ImageView(fileTree.getType().getImage()));
             this.setValue(fileTree.getText());
         }
 
-        public FileTree getFileTree() {
+        public OldFileTree getFileTree() {
             return fileTree;
         }
     }
@@ -126,7 +125,7 @@ public class FileTreeView extends TreeView<String> {
     public static class ContainerFileTreeItem extends FileTreeItem {
         private final ObjectProperty<ContainerHandle> containerHandle = new SimpleObjectProperty<>();
 
-        public ContainerFileTreeItem(FileTree fileTree) {
+        public ContainerFileTreeItem(OldFileTree fileTree) {
             super(fileTree);
         }
 
@@ -144,12 +143,12 @@ public class FileTreeView extends TreeView<String> {
                 if (!needToInit) return super.getChildren();
                 needToInit = false;
 
-                FileTree node = this.getFileTree();
+                OldFileTree node = this.getFileTree();
                 try {
                     LOGGER.info("Expand " + node.getPath());
                     Container container = Container.getContainer(node.getPath());
                     setContainerHandle(new ContainerHandle(container));
-                    FileTree.buildFileTree(container, node);
+                    OldFileTree.buildFileTree(container, node);
                     updateSubTree(this);
                 } catch (Throwable e) {
                     LOGGER.log(Level.WARNING, "Failed to open container", e);
@@ -172,14 +171,14 @@ public class FileTreeView extends TreeView<String> {
     }
 
     public static final class IntermediateFolderItem extends TreeItem<String> {
-        private final ObservableList<FileTree> nodes = FXCollections.observableList(new ArrayList<>(1));
+        private final ObservableList<OldFileTree> nodes = FXCollections.observableList(new ArrayList<>(1));
 
-        public IntermediateFolderItem(FileTree node) {
+        public IntermediateFolderItem(OldFileTree node) {
             this();
             this.nodes.add(node);
         }
 
-        public IntermediateFolderItem(FileTree... nodes) {
+        public IntermediateFolderItem(OldFileTree... nodes) {
             this();
             this.nodes.addAll(nodes);
         }
@@ -190,11 +189,11 @@ public class FileTreeView extends TreeView<String> {
                 if (nodes.size() == 1) {
                     return nodes.get(0).getText();
                 }
-                return nodes.stream().map(FileTree::getText).collect(Collectors.joining("/"));
+                return nodes.stream().map(OldFileTree::getText).collect(Collectors.joining("/"));
             }, nodes));
         }
 
-        public ObservableList<FileTree> getNodes() {
+        public ObservableList<OldFileTree> getNodes() {
             return nodes;
         }
     }
