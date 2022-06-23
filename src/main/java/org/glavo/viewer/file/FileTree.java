@@ -33,7 +33,7 @@ public final class FileTree extends TreeItem<String> {
             this.status = status;
 
             switch (status) {
-                case DEFAULT -> this.setGraphic(new ImageView(type.getImage()));
+                case DEFAULT, UNEXPANDED -> this.setGraphic(new ImageView(type.getImage()));
                 case FAILED -> this.setGraphic(new ImageView(Images.failed));
                 case LOADING -> {
                     ProgressIndicator indicator = new ProgressIndicator();
@@ -47,6 +47,7 @@ public final class FileTree extends TreeItem<String> {
     public enum Status {
         DEFAULT,
         FAILED,
-        LOADING
+        LOADING,
+        UNEXPANDED
     }
 }
