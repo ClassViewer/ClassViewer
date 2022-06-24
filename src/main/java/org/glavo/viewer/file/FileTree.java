@@ -1,8 +1,11 @@
 package org.glavo.viewer.file;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.file.types.folder.FolderType;
 import org.glavo.viewer.resources.Images;
 
 public final class FileTree extends TreeItem<String> {
@@ -42,6 +45,38 @@ public final class FileTree extends TreeItem<String> {
                 }
             }
         }
+    }
+
+    private ContainerHandle containerHandle;
+    private boolean needToInit = getType() instanceof ContainerFileType;
+
+    public void setContainerHandle(ContainerHandle containerHandle) {
+        this.containerHandle = containerHandle;
+    }
+
+    public ContainerHandle getContainerHandle() {
+        return containerHandle;
+    }
+
+    @Override
+    public ObservableList<TreeItem<String>> getChildren() {
+        ObservableList<TreeItem<String>> children = super.getChildren();
+        if (needToInit) {
+            needToInit = false;
+
+            if (type instanceof FolderType) {
+                // TODO
+            } else {
+                // TODO
+            }
+        }
+
+        return children;
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return !needToInit && super.getChildren().isEmpty();
     }
 
     public enum Status {
