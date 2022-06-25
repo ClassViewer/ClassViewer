@@ -8,6 +8,10 @@ import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.folder.FolderType;
 import org.glavo.viewer.resources.Images;
 
+import java.util.logging.Level;
+
+import static org.glavo.viewer.util.Logging.LOGGER;
+
 public final class FileTree extends TreeItem<String> {
     private final FileType type;
     private final FilePath path;
@@ -64,10 +68,19 @@ public final class FileTree extends TreeItem<String> {
         if (needToInit) {
             needToInit = false;
 
-            if (type instanceof FolderType) {
+            if (getType() instanceof FolderType) {
                 // TODO
+            } else if (getType() instanceof ContainerFileType t) {
+                try {
+                    LOGGER.info("Expand " + getPath());
+                    Container container = Container.getContainer(getPath());
+                    setContainerHandle(new ContainerHandle(container));
+                    // OldFileTree.buildFileTree(container, node);
+                } catch (Throwable e) {
+                    LOGGER.log(Level.WARNING, "Failed to open container", e);
+                }
             } else {
-                // TODO
+                throw new AssertionError();
             }
         }
 
