@@ -30,6 +30,10 @@ public class LocalFileHandle extends FileHandle {
         return Files.exists(file);
     }
 
+    public Path getFile() {
+        return file;
+    }
+
     @Override
     public boolean isReadonly() {
         return exists() && !Files.isWritable(file);

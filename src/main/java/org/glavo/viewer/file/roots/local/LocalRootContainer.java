@@ -5,6 +5,7 @@ import org.glavo.viewer.file.RootContainer;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
@@ -26,7 +27,12 @@ public class LocalRootContainer extends RootContainer {
     protected FileHandle openFileImpl(FilePath path) throws IOException {
         assert path.isLocalFile();
 
-        return new LocalFileHandle(path);
+        LocalFileHandle handle = new LocalFileHandle(path);
+        if (!handle.exists()) {
+            throw new NoSuchFileException(handle.getFile().toString());
+        }
+
+        return handle;
     }
 
     @Override

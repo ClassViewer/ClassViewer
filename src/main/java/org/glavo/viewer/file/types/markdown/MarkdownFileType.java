@@ -3,7 +3,7 @@ package org.glavo.viewer.file.types.markdown;
 import com.vladsch.flexmark.ast.*;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.*;
-import kala.value.primitive.IntRef;
+import kala.value.primitive.IntVar;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -87,7 +87,7 @@ public class MarkdownFileType extends TextFileType {
     }
 
     private static final class HighlighterHelper {
-        private final IntRef lastEnd = new IntRef();
+        private final IntVar lastEnd = new IntVar();
         final StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         private final NodeVisitor visitor = new NodeVisitor();
 

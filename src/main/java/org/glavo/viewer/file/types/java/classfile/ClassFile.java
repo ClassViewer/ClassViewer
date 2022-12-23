@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import kala.collection.base.Iterators;
-import kala.value.primitive.IntRef;
+import kala.value.primitive.IntVar;
 import org.glavo.viewer.file.types.java.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.file.types.java.classfile.attribute.RecordAttribute;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantClassInfo;
@@ -155,7 +155,7 @@ public class ClassFile extends ClassFileComponent {
         U2 attributesCount = classFile.readU2(reader, "attributes_count");
         Table<AttributeInfo> attributes = classFile.readTable(reader, "attributes", attributesCount, AttributeInfo::readFrom);
 
-        classFile.calculateOffset(new IntRef());
+        classFile.calculateOffset(new IntVar());
         classFile.iconProperty().bind(Val.map(accessFlags.flagsProperty(), flags -> {
             HBox box = new HBox();
             ArrayDeque<String> descriptors = new ArrayDeque<>(4);

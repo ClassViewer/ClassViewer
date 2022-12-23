@@ -7,7 +7,7 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import kala.function.CheckedFunction;
-import kala.value.primitive.IntRef;
+import kala.value.primitive.IntVar;
 import org.glavo.viewer.file.FileComponent;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
@@ -224,7 +224,7 @@ public class ClassFileComponent extends FileComponent<ClassFileComponent> {
         return table;
     }
 
-    public void calculateOffset(IntRef offset) {
+    public void calculateOffset(IntVar offset) {
         this.setOffset(offset.value);
         if (getChildren().isEmpty()) {
             offset.value += this.getLength();

@@ -4,7 +4,7 @@ import org.glavo.viewer.Options;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -34,11 +34,7 @@ public final class Logging {
                 try (final PrintWriter writer = new PrintWriter(buffer)) {
                     record.getThrown().printStackTrace(writer);
                 }
-                try {
-                    builder.append(buffer.toString("UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    throw new AssertionError(e);
-                }
+                builder.append(buffer.toString(StandardCharsets.UTF_8));
             }
 
             return builder.toString();

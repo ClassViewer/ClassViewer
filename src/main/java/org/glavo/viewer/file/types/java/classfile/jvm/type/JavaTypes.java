@@ -1,6 +1,6 @@
 package org.glavo.viewer.file.types.java.classfile.jvm.type;
 
-import kala.value.primitive.IntRef;
+import kala.value.primitive.IntVar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public abstract class JavaTypes {
     public static JavaType parseDescriptor(String descriptor) {
         if (descriptor == null || descriptor.isEmpty()) throw new IllegalArgumentException("descriptor is empty");
 
-        IntRef endIdx = new IntRef();
+        IntVar endIdx = new IntVar();
 
         if (descriptor.charAt(0) == '(') {
             endIdx.value = 1;
@@ -84,7 +84,7 @@ public abstract class JavaTypes {
         throw new IllegalArgumentException("malformed descriptor '" + descriptor + "'");
     }
 
-    public static JavaType scanDescriptor(String descriptor, int begin, IntRef endIdx) {
+    public static JavaType scanDescriptor(String descriptor, int begin, IntVar endIdx) {
         int len = descriptor.length() - begin;
         if (len == 0) throw new IllegalArgumentException("descriptor is empty");
 

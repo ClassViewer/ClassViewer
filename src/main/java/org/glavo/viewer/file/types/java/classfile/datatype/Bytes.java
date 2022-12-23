@@ -2,6 +2,7 @@ package org.glavo.viewer.file.types.java.classfile.datatype;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.Label;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ public class Bytes extends ClassFileComponent {
     public Bytes(byte[] values) {
         this.valuesProperty().addListener((o, oldValue, newValue) -> setLength(newValue.length));
         this.setValues(values);
+        this.descProperty().bind(this.lengthProperty().map(it -> new Label("byte[" + it + "]")));
     }
 
     public ObjectProperty<byte[]> valuesProperty() {
