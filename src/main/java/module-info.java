@@ -7,6 +7,8 @@ module org.glavo.viewer {
     requires static org.jetbrains.annotations;
 
     requires org.glavo.jimage;
+
+    // Kala
     requires kala.platform;
     requires kala.template;
     requires kala.compress.archivers.zip;
@@ -17,6 +19,7 @@ module org.glavo.viewer {
     requires org.apache.commons.imaging;
     requires org.antlr.antlr4.runtime;
 
+    // RichTextFX
     requires org.fxmisc.richtext;
     requires reactfx;
     requires flowless;
