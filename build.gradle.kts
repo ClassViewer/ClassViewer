@@ -42,8 +42,8 @@ dependencies {
     implementation("org.jetbrains:annotations:23.1.0")
 
     implementation("org.glavo.kala:kala-platform:0.10.0")
-    implementation("org.glavo.kala:kala-template:0.1.0")
-    implementation("org.glavo.kala:kala-common:0.60.1")
+    implementation("org.glavo.kala:kala-template:0.2.0")
+    implementation("org.glavo.kala:kala-common:0.62.0")
 
     val kalaCompressVersion = "1.21.0.1-beta3"
     implementation("org.glavo.kala:kala-compress-archivers-zip:$kalaCompressVersion")
