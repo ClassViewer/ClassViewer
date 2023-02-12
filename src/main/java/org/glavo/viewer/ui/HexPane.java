@@ -34,8 +34,7 @@ public interface HexPane {
             final double h = getHeight();
 
             getChildren().add(new Line(0, h / 2, w, h / 2));
-            getChildren().add(new Rectangle(w * offset / byteCount, 4,
-                    w * length / byteCount, h - 8));
+            getChildren().add(new Rectangle(w * offset / byteCount, 4, w * length / byteCount, h - 8));
         }
 
     }
