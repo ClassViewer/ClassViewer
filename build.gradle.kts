@@ -9,9 +9,9 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.glavo.kala:kala-platform:0.8.0")
-        classpath("org.apache.xmlgraphics:batik-transcoder:1.14")
-        classpath("org.apache.xmlgraphics:batik-codec:1.14")
+        classpath("org.glavo.kala:kala-platform:0.10.0")
+        classpath("org.apache.xmlgraphics:batik-transcoder:1.17")
+        classpath("org.apache.xmlgraphics:batik-codec:1.17")
     }
 }
 
@@ -62,7 +62,7 @@ dependencies {
 
     implementation("com.vladsch.flexmark:flexmark:0.64.0")
 
-    val antlrVersion = "4.10.1"
+    val antlrVersion = "4.13.1"
     implementation("org.antlr:antlr4-runtime:$antlrVersion")
 
     antlr("org.antlr:antlr4:$antlrVersion")
@@ -111,6 +111,8 @@ val processSVG: Task by tasks.creating {
     outputs.files(outputPaths)
 
     doLast {
+        System.setProperty("java.awt.headless", "true")
+
         for (path in inputPaths) {
             val od = outputPath.resolve(resourcesPath.relativize(path.parent))
             Files.createDirectories(od)
