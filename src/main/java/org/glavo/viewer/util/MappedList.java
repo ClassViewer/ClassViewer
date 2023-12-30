@@ -46,7 +46,7 @@ public class MappedList<E, F> extends TransformationList<E, F> {
                 }
                 if (c.wasAdded()) {
                     for (int i = c.getFrom(); i < c.getTo(); i++) {
-                        mapped.addAll(c.getFrom(), c.getAddedSubList().stream().map(mapper).collect(Collectors.toList()));
+                        mapped.addAll(c.getFrom(), c.getAddedSubList().stream().map(mapper).toList());
                         remapIndex(i);
                     }
                     nextAdd(c.getFrom(), c.getTo());
@@ -70,7 +70,7 @@ public class MappedList<E, F> extends TransformationList<E, F> {
         return index;
     }
 
-    @SuppressWarnings("Since15")
+    @Override
     public int getViewIndex(int index) {
         return index;
     }

@@ -26,7 +26,6 @@ import java.util.function.Consumer;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-@SuppressWarnings("Since15")
 public final class JavaFXPatcher {
 
     public static void tryPatch() throws Throwable {

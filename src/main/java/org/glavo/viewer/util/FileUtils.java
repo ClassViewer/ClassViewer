@@ -40,7 +40,7 @@ public final class FileUtils {
     public static void save(Path path, String value) throws IOException {
         path = path.toAbsolutePath();
         Path tmpPath = tmpFile(path);
-        Files.write(tmpPath, value.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(tmpPath, value);
         Files.move(tmpPath, path, StandardCopyOption.REPLACE_EXISTING);
     }
 

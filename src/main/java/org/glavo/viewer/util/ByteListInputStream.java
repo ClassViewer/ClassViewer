@@ -1,7 +1,5 @@
 package org.glavo.viewer.util;
 
-import org.glavo.viewer.util.ByteList;
-
 import java.io.IOException;
 import java.io.InputStream;
 
