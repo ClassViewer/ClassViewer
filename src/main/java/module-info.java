@@ -22,9 +22,9 @@ module org.glavo.viewer {
     // RichTextFX
     requires org.fxmisc.richtext;
     requires reactfx;
-    requires flowless;
 
     requires flexmark;
     requires flexmark.util.ast;
     requires flexmark.util.sequence;
+    requires org.fxmisc.flowless;
 }
