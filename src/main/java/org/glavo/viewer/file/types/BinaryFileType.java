@@ -83,7 +83,7 @@ public class BinaryFileType extends CustomFileType {
                         statusBar.setRight(bytesBar);
 
                         res.setStatusBar(statusBar);
-                        getValue().setOnSelect((tuple) -> bytesBar.select(tuple._1, tuple._2));
+                        getValue().setOnSelect((tuple) -> bytesBar.select(tuple.component1(), tuple.component2()));
                     }
 
                     @Override

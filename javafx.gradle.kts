@@ -24,14 +24,14 @@ data class Platform(
         module: String, classifier: String, ext: String,
         repo: String = System.getenv("MAVEN_CENTRAL_MIRROR") ?: "https://repo1.maven.org/maven2"
     ): java.net.URL =
-        java.net.URL(
+        java.net.URI(
             "$repo/${groupId.replace('.', '/')}/javafx-$module/$version/javafx-$module-$version-$classifier.$ext"
-        )
+        ).toURL()
 }
 
 val jfxModules = listOf("base", "graphics", "controls")
 val jfxMirrorRepos = listOf("https://maven.aliyun.com/repository/central")
-val jfxDependenciesFile = rootProject.buildDir.resolve("resources/openjfx/openjfx-dependencies.json")
+val jfxDependenciesFile = rootProject.layout.buildDirectory.asFile.get().resolve("resources/openjfx/openjfx-dependencies.json")
 val jfxPlatforms = listOf(
     Platform("windows-x86", "win-x86"),
     Platform("windows-x86_64", "win"),
@@ -51,7 +51,7 @@ val jfxInClasspath =
     }
 
 if (!jfxInClasspath && JavaVersion.current() >= JavaVersion.VERSION_11) {
-    val os = System.getProperty("os.name").toLowerCase().let { osName ->
+    val os = System.getProperty("os.name").lowercase().let { osName ->
         when {
             osName.contains("win") -> "windows"
             osName.contains("mac") -> "osx"
@@ -60,7 +60,7 @@ if (!jfxInClasspath && JavaVersion.current() >= JavaVersion.VERSION_11) {
         }
     }
 
-    val arch = when (System.getProperty("os.arch").toLowerCase()) {
+    val arch = when (System.getProperty("os.arch").lowercase()) {
         "x86_64", "x86-64", "amd64", "ia32e", "em64t", "x64" -> "x86_64"
         "x86", "x86_32", "x86-32", "i386", "i486", "i586", "i686", "i86pc", "ia32", "x32" -> "x86"
         "arm64", "aarch64", "armv8", "armv9" -> "arm64"

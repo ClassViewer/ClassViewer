@@ -97,7 +97,7 @@ tasks.named<org.glavo.mic.tasks.CompileModuleInfo>("compileModuleInfo") {
 
 val processSVG: Task by tasks.creating {
     val resourcesPath = file("src/main/resources").toPath()
-    val outputPath = buildDir.resolve("resources/images").toPath()
+    val outputPath = layout.buildDirectory.asFile.get().resolve("resources/images").toPath()
 
     val inputPaths = fileTree("src/main/resources") { include("**/*.svg") }.files.map { it.toPath() }
     val outputPaths = inputPaths.flatMap {
@@ -136,10 +136,10 @@ val processSVG: Task by tasks.creating {
 tasks.processResources {
     dependsOn(":generateOpenJFXDependencies", ":processSVG")
     into("org/glavo/viewer") {
-        from(project.buildDir.resolve("resources/openjfx/openjfx-dependencies.json"))
+        from(project.layout.buildDirectory.asFile.get().resolve("resources/openjfx/openjfx-dependencies.json"))
     }
 
-    from(buildDir.resolve("resources/images"))
+    from(layout.buildDirectory.asFile.get().resolve("resources/images"))
 }
 
 val addOpens = listOf(
