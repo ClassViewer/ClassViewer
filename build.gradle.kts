@@ -39,11 +39,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:23.1.0")
+    implementation("org.jetbrains:annotations:24.0.1")
 
     implementation("org.glavo.kala:kala-platform:0.10.0")
     implementation("org.glavo.kala:kala-template:0.2.0")
-    implementation("org.glavo.kala:kala-common:0.62.0")
+    implementation("org.glavo.kala:kala-common:0.69.0")
 
     val kalaCompressVersion = "1.21.0.1-beta3"
     implementation("org.glavo.kala:kala-compress-archivers-zip:$kalaCompressVersion")
@@ -53,9 +53,9 @@ dependencies {
     implementation("org.glavo:jimage:1.0.0")
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
 
-    implementation("org.fxmisc.richtext:richtextfx:0.10.8")
+    implementation("org.fxmisc.richtext:richtextfx:0.11.2")
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
     implementation("org.apache.commons:commons-imaging:1.0-alpha3")
     implementation("com.jcraft:jsch:0.1.55")
