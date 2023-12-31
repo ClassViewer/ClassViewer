@@ -136,11 +136,7 @@ val processSVG: Task by tasks.creating {
 }
 
 tasks.processResources {
-    dependsOn(":generateOpenJFXDependencies", ":processSVG")
-    into("org/glavo/viewer") {
-        from(project.layout.buildDirectory.asFile.get().resolve("resources/openjfx/openjfx-dependencies.json"))
-    }
-
+    dependsOn(":processSVG")
     from(layout.buildDirectory.asFile.get().resolve("resources/images"))
 }
 
