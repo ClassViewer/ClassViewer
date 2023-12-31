@@ -5,7 +5,7 @@ import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FileType;
 
-public abstract class ContainerFileType extends FileType {
+public abstract non-sealed class ContainerFileType extends FileType {
 
     protected ContainerFileType(String name) {
         super(name);

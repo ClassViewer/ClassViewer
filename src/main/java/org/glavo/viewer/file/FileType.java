@@ -20,7 +20,7 @@ import org.glavo.viewer.resources.Images;
 
 import java.util.*;
 
-public abstract class FileType {
+public abstract sealed class FileType permits ContainerFileType, CustomFileType {
     private final String name;
     private final Image image;
 

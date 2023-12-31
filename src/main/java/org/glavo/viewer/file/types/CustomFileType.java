@@ -5,7 +5,7 @@ import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.ui.FileTab;
 
-public abstract class CustomFileType extends FileType {
+public abstract non-sealed class CustomFileType extends FileType {
     protected CustomFileType(String name) {
         super(name);
     }
