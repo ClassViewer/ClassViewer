@@ -55,16 +55,25 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
 
+    // https://mvnrepository.com/artifact/org.fxmisc.richtext/richtextfx
     implementation("org.fxmisc.richtext:richtextfx:0.11.2")
+
+    // https://mvnrepository.com/artifact/com.github.albfernandez/juniversalchardet
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-imaging
     implementation("org.apache.commons:commons-imaging:1.0-alpha3")
+
+    // https://mvnrepository.com/artifact/com.jcraft/jsch
     implementation("com.jcraft:jsch:0.1.55")
 
-    implementation("com.vladsch.flexmark:flexmark:0.64.0")
+    // https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark
+    implementation("com.vladsch.flexmark:flexmark:0.64.8")
 
     val antlrVersion = "4.13.1"
-    implementation("org.antlr:antlr4-runtime:$antlrVersion")
 
+    // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
+    implementation("org.antlr:antlr4-runtime:$antlrVersion")
     antlr("org.antlr:antlr4:$antlrVersion")
 }
 
