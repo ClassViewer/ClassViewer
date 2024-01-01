@@ -119,9 +119,8 @@ public class ClassFile extends ClassFileComponent {
                         return "Java SE 1." + versionNumber + "." + minor;
                 }
 
-                // assert major == 45;
-
-                if (minor == 3)
+                //noinspection ConstantValue
+                if (major == 45 && minor == 3)
                     return "Java SE 1.1";
 
                 return unknownVersion;

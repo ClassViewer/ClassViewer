@@ -177,52 +177,53 @@ public final class Viewer {
 
         SilentlyCloseable resource = null;
         try {
-            if (type instanceof ContainerFileType) {
-                //noinspection resource
-                ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
-                resource = handle;
-
-                ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
-
-                FileTreeView.LoadingItem loadingItem = new FileTreeView.LoadingItem(path.toString());
-                treeItems.add(loadingItem);
-
-                TaskUtils.submit(new Task<TreeItem<String>>() {
-                    @Override
-                    protected TreeItem<String> call() throws Exception {
-                        OldFileTree.RootNode root = new OldFileTree.RootNode(type, path);
-                        OldFileTree.buildFileTree(handle.getContainer(), root);
-                        return FileTreeView.fromTree(root, handle);
-                    }
-
-                    @Override
-                    protected void succeeded() {
-                        int idx = treeItems.indexOf(loadingItem);
-                        assert idx >= 0;
-
-                        treeItems.set(idx, getValue());
-                    }
-
-                    @Override
-                    protected void failed() {
-                        LOGGER.log(Level.WARNING, "Failed to open container", getException());
-                        int idx = treeItems.indexOf(loadingItem);
-                        assert idx >= 0;
-                        treeItems.set(idx, new FileTreeView.FailedItem(path.toString()));
-                        handle.close();
-                    }
-                });
-
-            } else if (type instanceof CustomFileType) {
-                try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
-                    FileHandle handle = containerHandle.getContainer().openFile(path);
+            switch (type) {
+                case ContainerFileType containerFileType -> {
+                    //noinspection resource
+                    ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
                     resource = handle;
 
-                    FileTab tab = ((CustomFileType) type).openTab(handle);
-                    getPane().addFileTab(tab);
+                    ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
+
+                    FileTreeView.LoadingItem loadingItem = new FileTreeView.LoadingItem(path.toString());
+                    treeItems.add(loadingItem);
+
+                    TaskUtils.submit(new Task<TreeItem<String>>() {
+                        @Override
+                        protected TreeItem<String> call() throws Exception {
+                            OldFileTree.RootNode root = new OldFileTree.RootNode(type, path);
+                            OldFileTree.buildFileTree(handle.getContainer(), root);
+                            return FileTreeView.fromTree(root, handle);
+                        }
+
+                        @Override
+                        protected void succeeded() {
+                            int idx = treeItems.indexOf(loadingItem);
+                            assert idx >= 0;
+
+                            treeItems.set(idx, getValue());
+                        }
+
+                        @Override
+                        protected void failed() {
+                            LOGGER.log(Level.WARNING, "Failed to open container", getException());
+                            int idx = treeItems.indexOf(loadingItem);
+                            assert idx >= 0;
+                            treeItems.set(idx, new FileTreeView.FailedItem(path.toString()));
+                            handle.close();
+                        }
+                    });
                 }
-            } else {
-                throw new AssertionError("Unhandled type: " + type);
+                case CustomFileType customFileType -> {
+                    try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
+                        FileHandle handle = containerHandle.getContainer().openFile(path);
+                        resource = handle;
+
+                        FileTab tab = ((CustomFileType) type).openTab(handle);
+                        getPane().addFileTab(tab);
+                    }
+                }
+                default -> throw new AssertionError("Unhandled type: " + type);
             }
 
             Config.getConfig().addRecentFile(path);
