@@ -11,10 +11,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-public class Options {
-    private static volatile Options options;
+public final class Options {
+    private static Options options;
 
-    public static synchronized void parse(String[] args) {
+    public static void parse(String[] args) {
         if (options != null) {
             throw new IllegalStateException("command line arguments have been initialized");
         }
@@ -60,10 +60,10 @@ public class Options {
         }
 
         options = new Options(home, files);
-        Logging.start(home);
     }
 
-    public static synchronized Options getOptions() {
+    public static Options getOptions() {
+        assert options != null : "Options is not initialized";
         return options;
     }
 

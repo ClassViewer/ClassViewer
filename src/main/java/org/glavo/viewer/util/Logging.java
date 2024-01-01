@@ -41,7 +41,7 @@ public final class Logging {
         }
     };
 
-    private static volatile boolean started = false;
+    private static boolean started = false;
 
     static {
         LOGGER.setLevel(Level.ALL);
@@ -53,7 +53,7 @@ public final class Logging {
         LOGGER.addHandler(consoleHandler);
     }
 
-    public static synchronized void start(Path home) {
+    public static void start(Path home) {
         if (started) {
             throw new IllegalStateException();
         }
