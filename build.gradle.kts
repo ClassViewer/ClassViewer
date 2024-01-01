@@ -81,11 +81,6 @@ configurations[JavaPlugin.API_CONFIGURATION_NAME].let { apiConfiguration ->
     apiConfiguration.setExtendsFrom(apiConfiguration.extendsFrom.filter { it.name != "antlr" })
 }
 
-
-apply {
-    from("javafx.gradle.kts")
-}
-
 sourceSets {
     main {
         resources {
