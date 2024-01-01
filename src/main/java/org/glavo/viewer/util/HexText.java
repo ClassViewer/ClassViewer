@@ -1,5 +1,7 @@
 package org.glavo.viewer.util;
 
+import kala.collection.primitive.ByteSeq;
+
 /**
  * Displayed by HexPane.
  * <p>
@@ -55,7 +57,7 @@ public class HexText {
 
     public final String asciiString;
 
-    public HexText(ByteList bytes) {
+    public HexText(ByteSeq bytes) {
         rowHeaderText = formatRowHeader(bytes.size());
         bytesText = formatBytesText(bytes);
         asciiString = formatAsciiText(bytes);
@@ -84,7 +86,7 @@ public class HexText {
         return sb.toString();
     }
 
-    private String formatBytesText(ByteList bytes) {
+    private String formatBytesText(ByteSeq bytes) {
         StringBuilder sb = new StringBuilder(bytes.size() * 3 + bytes.size() / BYTES_PER_ROW + 1);
         for (int i = 0; i < bytes.size(); i += BYTES_PER_ROW) {
             rowToHex(bytes, i, sb);
@@ -93,7 +95,7 @@ public class HexText {
         return sb.toString();
     }
 
-    private String formatAsciiText(ByteList bytes) {
+    private String formatAsciiText(ByteSeq bytes) {
         StringBuilder sb = new StringBuilder(bytes.size() + bytes.size() / BYTES_PER_ROW);
         for (int i = 0; i < bytes.size(); i += BYTES_PER_ROW) {
             rowToAscii(bytes, i, sb);
@@ -102,7 +104,7 @@ public class HexText {
         return sb.toString();
     }
 
-    private void rowToHex(ByteList bytes, int offset, StringBuilder buf) {
+    private void rowToHex(ByteSeq bytes, int offset, StringBuilder buf) {
         for (int i = 0; i < BYTES_PER_ROW; i++) {
             if (offset + i < bytes.size()) {
                 byte b = bytes.get(offset + i);
@@ -114,7 +116,7 @@ public class HexText {
         }
     }
 
-    private void rowToAscii(ByteList bytes, int offset, StringBuilder buf) {
+    private void rowToAscii(ByteSeq bytes, int offset, StringBuilder buf) {
         for (int i = 0; i < BYTES_PER_ROW; i++) {
             if (offset + i < bytes.size()) {
                 char c = (char) bytes.get(offset + i);

@@ -2,11 +2,11 @@ package org.glavo.viewer.ui;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import kala.collection.primitive.ByteSeq;
 import org.glavo.viewer.resources.I18N;
-import org.glavo.viewer.util.ByteList;
 
 public class EmptyHexPane extends StackPane implements HexPane {
-    public EmptyHexPane(ByteList bytes) {
+    public EmptyHexPane(ByteSeq bytes) {
         this.getChildren().add(new Label(I18N.getString("file.tooLarge")));
     }
 

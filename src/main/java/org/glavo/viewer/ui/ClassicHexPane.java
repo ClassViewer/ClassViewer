@@ -3,8 +3,8 @@ package org.glavo.viewer.ui;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import kala.collection.primitive.ByteSeq;
 import kala.tuple.primitive.IntTuple2;
-import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.HexText;
 
 import java.util.function.Consumer;
@@ -17,8 +17,8 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
     private final TextArea textArea3;
     private Consumer<IntTuple2> onSelect;
 
-    public ClassicHexPane(ByteList array) {
-        this.hex = new HexText(array);
+    public ClassicHexPane(ByteSeq seq) {
+        this.hex = new HexText(seq);
         textArea1 = new TextArea(hex.rowHeaderText);
         textArea2 = new TextArea(hex.bytesText);
         textArea3 = new TextArea(hex.asciiString);

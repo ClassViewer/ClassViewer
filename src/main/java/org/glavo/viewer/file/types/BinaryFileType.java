@@ -6,13 +6,13 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import kala.collection.immutable.primitive.ImmutableByteArray;
+import kala.collection.primitive.ByteSeq;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
-import org.glavo.viewer.util.ByteArrayList;
-import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.TaskUtils;
 
 import java.util.logging.Level;
@@ -39,7 +39,7 @@ public class BinaryFileType extends CustomFileType {
         throw new UnsupportedOperationException();
     }
 
-    protected void openContent(FileTab tab, FileHandle handle, ByteList bytes) {
+    protected void openContent(FileTab tab, FileHandle handle, ByteSeq bytes) {
     }
 
     @Override
@@ -47,15 +47,15 @@ public class BinaryFileType extends CustomFileType {
         FileTab res = new FileTab(this, handle.getPath());
         res.setContent(new StackPane(new ProgressIndicator()));
 
-        TaskUtils.submit(new Task<ByteList>() {
+        TaskUtils.submit(new Task<ByteSeq>() {
             @Override
-            protected ByteList call() throws Exception {
-                return ByteArrayList.wrap(handle.readAllBytes());
+            protected ByteSeq call() throws Exception {
+                return ImmutableByteArray.Unsafe.wrap(handle.readAllBytes());
             }
 
             @Override
             protected void succeeded() {
-                ByteList bytes = getValue();
+                ByteSeq bytes = getValue();
 
                 TaskUtils.submit(new Task<HexPane>() {
                     @Override

@@ -1,30 +1,32 @@
 package org.glavo.viewer.util;
 
+import kala.collection.primitive.ByteSeq;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ByteListInputStream extends InputStream {
-    protected ByteList list;
+public class ByteSeqInputStream extends InputStream {
+    protected ByteSeq seq;
 
     protected int pos;
     protected int mark = 0;
     protected int count;
 
-    public ByteListInputStream(ByteList list) {
-        this.list = list;
+    public ByteSeqInputStream(ByteSeq seq) {
+        this.seq = seq;
         this.pos = 0;
-        this.count = list.size();
+        this.count = seq.size();
     }
 
-    public ByteListInputStream(ByteList list, int offset, int length) {
-        this.list = list;
+    public ByteSeqInputStream(ByteSeq seq, int offset, int length) {
+        this.seq = seq;
         this.pos = offset;
-        this.count = Math.min(offset + length, list.size());
+        this.count = Math.min(offset + length, seq.size());
         this.mark = offset;
     }
 
     public synchronized int read() {
-        return (pos < count) ? (list.get(pos++) & 0xff) : -1;
+        return (pos < count) ? (seq.get(pos++) & 0xff) : -1;
     }
 
     public synchronized int read(byte b[], int off, int len) {
@@ -41,7 +43,7 @@ public class ByteListInputStream extends InputStream {
         }
 
         for (int i = 0; i < len; i++) {
-            b[off + i] = list.get(pos + 1);
+            b[off + i] = seq.get(pos + 1);
         }
         pos += len;
         return len;

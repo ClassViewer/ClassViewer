@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.StackPane;
+import kala.collection.primitive.ByteSeq;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.types.BinaryFileType;
@@ -14,7 +15,7 @@ import org.glavo.viewer.file.types.java.classfile.ClassFileTreeView;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
-import org.glavo.viewer.util.ByteList;
+import org.glavo.viewer.util.ByteSeqInputStream;
 import org.glavo.viewer.util.TaskUtils;
 
 import java.io.InputStream;
@@ -35,7 +36,7 @@ public class JavaClassFileType extends BinaryFileType {
     }
 
     @Override
-    protected void openContent(FileTab tab, FileHandle handle, ByteList bytes) {
+    protected void openContent(FileTab tab, FileHandle handle, ByteSeq bytes) {
         handle.close();
 
         tab.setSideBar(new StackPane(new ProgressIndicator()));
@@ -46,7 +47,7 @@ public class JavaClassFileType extends BinaryFileType {
             protected ClassFileTreeView call() throws Exception {
                 ClassFileTreeView view = new ClassFileTreeView(tab);
                 ClassFile file;
-                try (InputStream input = bytes.openInputStream()) {
+                try (InputStream input = new ByteSeqInputStream(bytes)) {
                     file = ClassFile.readFrom(view, reader = new ClassFileReader(input));
                 }
 

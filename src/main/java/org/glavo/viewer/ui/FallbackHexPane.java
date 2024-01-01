@@ -3,10 +3,10 @@ package org.glavo.viewer.ui;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import kala.collection.primitive.ByteSeq;
 import kala.tuple.primitive.IntTuple2;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.HexText;
 
 import java.util.function.Consumer;
@@ -15,7 +15,7 @@ public class FallbackHexPane extends StackPane implements HexPane {
     private final CodeArea area;
     private Consumer<IntTuple2> onSelect;
 
-    public FallbackHexPane(ByteList array) {
+    public FallbackHexPane(ByteSeq seq) {
         area = new CodeArea();
 
         area.getStylesheets().clear();
@@ -27,7 +27,7 @@ public class FallbackHexPane extends StackPane implements HexPane {
             return label;
         });
         area.setEditable(false);
-        String text = new HexText(array).bytesText;
+        String text = new HexText(seq).bytesText;
         area.replaceText(text);
         area.scrollToPixel(0, 0);
         VirtualizedScrollPane<CodeArea> scrollPane = new VirtualizedScrollPane<>(area);

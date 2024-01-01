@@ -6,10 +6,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import kala.collection.primitive.ByteSeq;
 import kala.tuple.primitive.IntTuple2;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import org.glavo.viewer.util.ByteList;
 import org.glavo.viewer.util.HexText;
 
 import java.util.function.Consumer;
@@ -24,7 +24,7 @@ public class ModernHexPane extends StackPane implements HexPane {
 
     private Consumer<IntTuple2> onSelect;
 
-    public ModernHexPane(ByteList array) {
+    public ModernHexPane(ByteSeq array) {
         HexText text = new HexText(array);
 
         bytesArea = new CodeArea();
