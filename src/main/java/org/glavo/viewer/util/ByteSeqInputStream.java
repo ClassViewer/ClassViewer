@@ -25,11 +25,11 @@ public class ByteSeqInputStream extends InputStream {
         this.mark = offset;
     }
 
-    public synchronized int read() {
+    public int read() {
         return (pos < count) ? (seq.get(pos++) & 0xff) : -1;
     }
 
-    public synchronized int read(byte b[], int off, int len) {
+    public int read(byte[] b, int off, int len) {
         if (pos >= count) {
             return -1;
         }
@@ -50,7 +50,7 @@ public class ByteSeqInputStream extends InputStream {
     }
 
 
-    public synchronized long skip(long n) {
+    public long skip(long n) {
         long k = count - pos;
         if (n < k) {
             k = n < 0 ? 0 : n;
@@ -60,7 +60,7 @@ public class ByteSeqInputStream extends InputStream {
         return k;
     }
 
-    public synchronized int available() {
+    public int available() {
         return count - pos;
     }
 
@@ -72,8 +72,7 @@ public class ByteSeqInputStream extends InputStream {
         mark = pos;
     }
 
-
-    public synchronized void reset() {
+    public void reset() {
         pos = mark;
     }
 
