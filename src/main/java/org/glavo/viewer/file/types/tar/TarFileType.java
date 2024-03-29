@@ -15,14 +15,12 @@ public final class TarFileType extends ContainerFileType {
 
     @Override
     public boolean check(FilePath path) {
-        switch (path.getFileNameExtension()) {
-            case "tar":
-                return true;
-            case "gz":
-            case "xz":
-                return path.getFileName().startsWith(".tar", path.getFileName().length() - (path.getFileNameExtension().length() + 5));
-        }
-        return false;
+        return switch (path.getFileNameExtension()) {
+            case "tar" -> true;
+            case "gz", "xz" ->
+                    path.getFileName().startsWith(".tar", path.getFileName().length() - (path.getFileNameExtension().length() + 5));
+            default -> false;
+        };
     }
 
     @Override
