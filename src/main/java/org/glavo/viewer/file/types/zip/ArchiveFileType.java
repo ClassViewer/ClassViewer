@@ -5,7 +5,7 @@ import kala.compress.utils.IOUtils;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.file.ContainerFileType;
 import org.glavo.viewer.util.ZipUtils;
 
 import java.io.File;

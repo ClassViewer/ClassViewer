@@ -1,4 +1,4 @@
-package org.glavo.viewer.file.types;
+package org.glavo.viewer.file;
 
 import javafx.scene.image.Image;
 import org.glavo.viewer.file.Container;

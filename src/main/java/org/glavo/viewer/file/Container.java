@@ -2,7 +2,6 @@ package org.glavo.viewer.file;
 
 import org.glavo.viewer.file.roots.local.LocalRootContainer;
 import org.glavo.viewer.file.roots.local.LocalRootPath;
-import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.folder.FolderHandle;
 import org.glavo.viewer.util.ForceCloseable;
 

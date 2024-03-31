@@ -4,7 +4,7 @@ import org.glavo.jimage.ImageReader;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.file.ContainerFileType;
 
 import java.io.IOException;
 import java.nio.file.Paths;

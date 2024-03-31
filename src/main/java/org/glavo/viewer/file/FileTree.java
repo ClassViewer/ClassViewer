@@ -4,7 +4,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
-import org.glavo.viewer.file.types.ContainerFileType;
 import org.glavo.viewer.file.types.folder.FolderType;
 import org.glavo.viewer.resources.Images;
 

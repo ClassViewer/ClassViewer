@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import kala.collection.immutable.primitive.ImmutableByteArray;
 import kala.collection.primitive.ByteSeq;
+import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.resources.I18N;

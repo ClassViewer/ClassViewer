@@ -13,7 +13,7 @@ import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.types.CustomFileType;
+import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.TaskUtils;

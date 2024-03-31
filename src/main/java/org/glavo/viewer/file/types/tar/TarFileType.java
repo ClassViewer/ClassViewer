@@ -3,7 +3,7 @@ package org.glavo.viewer.file.types.tar;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.types.ContainerFileType;
+import org.glavo.viewer.file.ContainerFileType;
 import org.glavo.viewer.file.types.zip.ArchiveFileType;
 
 public final class TarFileType extends ContainerFileType {
