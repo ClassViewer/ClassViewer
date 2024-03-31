@@ -68,7 +68,6 @@ public final class Config {
         }
         LOGGER.info("Load config from '" + path + "'");
 
-
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             Config res = JsonUtils.MAPPER.readValue(reader, Config.class);
             if (res.hasUnknownProperties) {
