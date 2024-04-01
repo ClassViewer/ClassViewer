@@ -2,22 +2,21 @@ package org.glavo.viewer.file2;
 
 import kala.platform.OperatingSystem;
 import kala.platform.Platform;
-import org.glavo.viewer.util.ArrayUtils;
 import org.glavo.viewer.util.StringUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 public final class FilePath {
 
-    private final String[] pathElements;
+    private final List<String> pathElements;
     private final String path;
     private final FilePath parent;
 
-    public FilePath(String[] pathElements, boolean isDirectory, FilePath parent) {
+    private FilePath(List<String> pathElements, boolean isDirectory, FilePath parent) {
         this.pathElements = pathElements;
         this.parent = parent;
 
@@ -30,7 +29,7 @@ public final class FilePath {
     }
 
     public static FilePath of(String path, boolean isDirectory, FilePath parent) {
-        return new FilePath(StringUtils.spiltPath(path), isDirectory, parent);
+        return new FilePath(List.of(StringUtils.spiltPath(path)), isDirectory, parent);
     }
 
     public static FilePath ofJavaPath(Path p) {
@@ -58,7 +57,7 @@ public final class FilePath {
     }
 
     public String getFileName() {
-        return pathElements.length == 0 ? "" : pathElements[pathElements.length - 1];
+        return pathElements.isEmpty() ? "" : pathElements.getLast();
     }
 
     private String extension;
@@ -73,21 +72,7 @@ public final class FilePath {
         return extension;
     }
 
-    public String[] relativize(FilePath other) {
-        if (this.equals(other.getParent())) {
-            return other.getPathElements();
-        } else if (Objects.equals(this.getParent(), other.getParent())) {
-            if (!ArrayUtils.isPrefix(other.getPathElements(), this.getPathElements())) {
-                throw new UnsupportedOperationException(this + " is not prefix of " + other);
-            }
-
-            return Arrays.copyOfRange(other.getPathElements(), this.getPathElements().length, other.getPathElements().length);
-        } else {
-            throw new UnsupportedOperationException(String.format("this=%s, other=%s", this, other));
-        }
-    }
-
-    public String[] getPathElements() {
+    public List<String> getPathElements() {
         return pathElements;
     }
 
