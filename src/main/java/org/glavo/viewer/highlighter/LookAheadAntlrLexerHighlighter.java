@@ -1,4 +1,4 @@
-package org.glavo.viewer.file.highlighter;
+package org.glavo.viewer.highlighter;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-public abstract class LookNextAntlrLexerHighlighter implements Highlighter {
+public abstract class LookAheadAntlrLexerHighlighter implements Highlighter {
     private final Function<CharStream, ? extends Lexer> lexerFactory;
 
-    protected LookNextAntlrLexerHighlighter(Function<CharStream, ? extends Lexer> lexerFactory) {
+    protected LookAheadAntlrLexerHighlighter(Function<CharStream, ? extends Lexer> lexerFactory) {
         this.lexerFactory = lexerFactory;
     }
 
@@ -26,36 +26,31 @@ public abstract class LookNextAntlrLexerHighlighter implements Highlighter {
         Lexer lexer = lexerFactory.apply(CharStreams.fromString(text));
         lexer.removeErrorListeners();
 
+        List<Token> tokens = new ArrayList<>();
+        Token t;
+        while ((t = lexer.nextToken()).getType() != Token.EOF) {
+            if (t.getChannel() == Token.DEFAULT_CHANNEL) {
+                tokens.add(t);
+            }
+        }
+
+        IntFunction<Token> lookahead = idx -> idx < 0 || idx >= tokens.size() ? null : tokens.get(idx);
+
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         int lastKwEnd = 0;
 
-        Token current = nextToken(lexer);
-        Token next = nextToken(lexer);
-
-        while (current.getType() != Token.EOF) {
-            int begin = current.getStartIndex();
-            int end = current.getStopIndex() + 1;
+        for (int i = 0; i < tokens.size(); i++) {
+            Token token = tokens.get(i);
+            int begin = token.getStartIndex();
+            int end = token.getStopIndex() + 1;
 
             spansBuilder.add(Collections.emptyList(), begin - lastKwEnd);
-            spansBuilder.add(getStyleClass(current, next), end - begin);
+            spansBuilder.add(getStyleClass(token, i, lookahead), end - begin);
             lastKwEnd = end;
-
-            current = next;
-            next = nextToken(lexer);
         }
-
         spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
     }
 
-    private static Token nextToken(Lexer lexer) {
-        Token token;
-        do {
-            token = lexer.nextToken();
-        } while (token.getChannel() != Token.DEFAULT_CHANNEL);
-
-        return token;
-    }
-
-    protected abstract Collection<String> getStyleClass(Token token, Token nextToken);
+    protected abstract Collection<String> getStyleClass(Token token, int tokenIndex, IntFunction<Token> lookahead);
 }

@@ -3,7 +3,7 @@ package org.glavo.viewer.util;
 import javafx.geometry.Insets;
 import javafx.scene.control.Hyperlink;
 
-public class TextUtils {
+public final class TextUtils {
     public static Hyperlink createHyperlinkWithoutPadding() {
         Hyperlink link = new Hyperlink();
         link.setPadding(Insets.EMPTY);

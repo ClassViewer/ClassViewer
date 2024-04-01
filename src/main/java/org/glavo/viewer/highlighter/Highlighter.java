@@ -1,4 +1,4 @@
-package org.glavo.viewer.file.highlighter;
+package org.glavo.viewer.highlighter;
 
 import org.fxmisc.richtext.model.StyleSpans;
 

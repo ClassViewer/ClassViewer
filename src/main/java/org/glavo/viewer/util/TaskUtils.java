@@ -19,7 +19,7 @@ public final class TaskUtils {
     }
 
     public static <T> Task<T> submit(Executor executor, Callable<T> callable) {
-        return submit(executor, new Task<T>() {
+        return submit(executor, new Task<>() {
             @Override
             protected T call() throws Exception {
                 return callable.call();

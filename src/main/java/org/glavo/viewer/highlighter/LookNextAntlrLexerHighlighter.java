@@ -1,4 +1,4 @@
-package org.glavo.viewer.file.highlighter;
+package org.glavo.viewer.highlighter;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -11,10 +11,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
 
-public abstract class AntlrLexerHighlighter implements Highlighter {
+public abstract class LookNextAntlrLexerHighlighter implements Highlighter {
     private final Function<CharStream, ? extends Lexer> lexerFactory;
 
-    protected AntlrLexerHighlighter(Function<CharStream, ? extends Lexer> lexerFactory) {
+    protected LookNextAntlrLexerHighlighter(Function<CharStream, ? extends Lexer> lexerFactory) {
         this.lexerFactory = lexerFactory;
     }
 
@@ -26,18 +26,33 @@ public abstract class AntlrLexerHighlighter implements Highlighter {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         int lastKwEnd = 0;
 
-        Token token;
-        while ((token = lexer.nextToken()).getType() != Token.EOF) {
-            int begin = token.getStartIndex();
-            int end = token.getStopIndex() + 1;
+        Token current = nextToken(lexer);
+        Token next = nextToken(lexer);
+
+        while (current.getType() != Token.EOF) {
+            int begin = current.getStartIndex();
+            int end = current.getStopIndex() + 1;
 
             spansBuilder.add(Collections.emptyList(), begin - lastKwEnd);
-            spansBuilder.add(getStyleClass(token), end - begin);
+            spansBuilder.add(getStyleClass(current, next), end - begin);
             lastKwEnd = end;
+
+            current = next;
+            next = nextToken(lexer);
         }
+
         spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
     }
 
-    protected abstract Collection<String> getStyleClass(Token token);
+    private static Token nextToken(Lexer lexer) {
+        Token token;
+        do {
+            token = lexer.nextToken();
+        } while (token.getChannel() != Token.DEFAULT_CHANNEL);
+
+        return token;
+    }
+
+    protected abstract Collection<String> getStyleClass(Token token, Token nextToken);
 }

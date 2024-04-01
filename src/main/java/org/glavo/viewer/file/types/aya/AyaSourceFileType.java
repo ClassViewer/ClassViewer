@@ -2,7 +2,7 @@ package org.glavo.viewer.file.types.aya;
 
 import org.antlr.v4.runtime.Token;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.highlighter.AntlrLexerHighlighter;
+import org.glavo.viewer.highlighter.AntlrLexerHighlighter;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.util.Stylesheet;
 

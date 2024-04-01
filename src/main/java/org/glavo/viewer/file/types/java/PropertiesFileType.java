@@ -3,7 +3,7 @@ package org.glavo.viewer.file.types.java;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.glavo.viewer.file.FilePath;
-import org.glavo.viewer.file.highlighter.Highlighter;
+import org.glavo.viewer.highlighter.Highlighter;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.util.Stylesheet;
 

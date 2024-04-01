@@ -14,6 +14,7 @@ module org.glavo.viewer {
     requires kala.compress.archivers.zip;
     requires kala.common;
 
+    requires com.google.gson;
     requires com.fasterxml.jackson.databind;
     requires com.github.albfernandez.juniversalchardet;
     requires org.apache.commons.imaging;

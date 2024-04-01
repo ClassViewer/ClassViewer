@@ -4,6 +4,7 @@ import org.glavo.viewer.file.types.folder.FolderType;
 
 import java.util.*;
 
+@Deprecated
 public abstract class OldFileTree implements Comparable<OldFileTree> {
     private final FileType type;
     private final FilePath path;
