@@ -17,11 +17,8 @@ public final class FilePath {
     private final String path;
     private final FilePath parent;
 
-    private final boolean isDirectory;
-
     public FilePath(String[] pathElements, boolean isDirectory, FilePath parent) {
         this.pathElements = pathElements;
-        this.isDirectory = isDirectory;
         this.parent = parent;
 
         if (parent == null && Platform.CURRENT_SYSTEM == OperatingSystem.WINDOWS) {
@@ -42,10 +39,6 @@ public final class FilePath {
 
     public static FilePath ofJavaPath(Path p, boolean isDirectory) {
         return of(p.normalize().toAbsolutePath().toString(), isDirectory, null);
-    }
-
-    public boolean isDirectory() {
-        return isDirectory;
     }
 
     public FilePath getParent() {
@@ -84,9 +77,6 @@ public final class FilePath {
         if (this.equals(other.getParent())) {
             return other.getPathElements();
         } else if (Objects.equals(this.getParent(), other.getParent())) {
-            if (!this.isDirectory()) {
-                throw new UnsupportedOperationException(this + " is not folder path");
-            }
             if (!ArrayUtils.isPrefix(other.getPathElements(), this.getPathElements())) {
                 throw new UnsupportedOperationException(this + " is not prefix of " + other);
             }
