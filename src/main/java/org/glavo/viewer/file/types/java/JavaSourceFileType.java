@@ -7,7 +7,7 @@ import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.util.Stylesheet;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 public class JavaSourceFileType extends TextFileType {
 
@@ -18,31 +18,21 @@ public class JavaSourceFileType extends TextFileType {
         this.highlighter = new LookNextAntlrLexerHighlighter(JavaLexer::new) {
             @Override
             protected Collection<String> getStyleClass(Token token, Token nextToken) {
-                switch (token.getType()) {
-                    case JavaLexer.VAR:
-                        if (nextToken == null || !(nextToken.getType() == JavaLexer.IDENTIFIER || nextToken.getType() == JavaLexer.VAR)) {
-                            return Collections.emptyList();
-                        }
-                    case JavaLexer.KEY_WORD:
-                    case JavaLexer.ANNOTATION:
-                        return Stylesheet.CODE_KEYWORD_CLASSES;
-                    case JavaLexer.STRING:
-                        return Stylesheet.CODE_STRING_CLASSES;
-                    case JavaLexer.COMMENT:
-                        return Stylesheet.CODE_COMMENT_CLASSES;
-                    case JavaLexer.OPERATOR:
-                        return Stylesheet.CODE_OPERATOR_CLASSES;
-                    case JavaLexer.TERMINATOR:
-                        return Stylesheet.CODE_TERMINATOR_CLASSES;
-                    case JavaLexer.DELIMITER:
-                        return Stylesheet.CODE_DELIMITER_CLASSES;
-                    case JavaLexer.NUMBER:
-                        return Stylesheet.CODE_NUMBER_CLASSES;
-                    case JavaLexer.BRACKETS:
-                        return Stylesheet.CODE_BRACKETS_CLASSES;
-                    default:
-                        return Collections.emptyList();
-                }
+                return switch (token.getType()) {
+                    case JavaLexer.VAR ->
+                            nextToken == null || !(nextToken.getType() == JavaLexer.IDENTIFIER || nextToken.getType() == JavaLexer.VAR)
+                                    ? List.of()
+                                    : Stylesheet.CODE_KEYWORD_CLASSES;
+                    case JavaLexer.KEY_WORD, JavaLexer.ANNOTATION -> Stylesheet.CODE_KEYWORD_CLASSES;
+                    case JavaLexer.STRING -> Stylesheet.CODE_STRING_CLASSES;
+                    case JavaLexer.COMMENT -> Stylesheet.CODE_COMMENT_CLASSES;
+                    case JavaLexer.OPERATOR -> Stylesheet.CODE_OPERATOR_CLASSES;
+                    case JavaLexer.TERMINATOR -> Stylesheet.CODE_TERMINATOR_CLASSES;
+                    case JavaLexer.DELIMITER -> Stylesheet.CODE_DELIMITER_CLASSES;
+                    case JavaLexer.NUMBER -> Stylesheet.CODE_NUMBER_CLASSES;
+                    case JavaLexer.BRACKETS -> Stylesheet.CODE_BRACKETS_CLASSES;
+                    default -> List.of();
+                };
             }
         };
     }
