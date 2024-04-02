@@ -4,7 +4,6 @@ import kala.platform.OperatingSystem;
 import kala.platform.Platform;
 import org.glavo.viewer.util.StringUtils;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
@@ -16,7 +15,7 @@ public final class FilePath {
     private final String path;
     private final FilePath parent;
 
-    private FilePath(List<String> pathElements, boolean isDirectory, FilePath parent) {
+    private FilePath(List<String> pathElements, FilePath parent) {
         this.pathElements = pathElements;
         this.parent = parent;
 
@@ -28,16 +27,12 @@ public final class FilePath {
         }
     }
 
-    public static FilePath of(String path, boolean isDirectory, FilePath parent) {
-        return new FilePath(List.of(StringUtils.spiltPath(path)), isDirectory, parent);
+    public static FilePath of(String path, FilePath parent) {
+        return new FilePath(List.of(StringUtils.spiltPath(path)), parent);
     }
 
     public static FilePath ofJavaPath(Path p) {
-        return ofJavaPath(p, Files.isDirectory(p));
-    }
-
-    public static FilePath ofJavaPath(Path p, boolean isDirectory) {
-        return of(p.normalize().toAbsolutePath().toString(), isDirectory, null);
+        return of(p.normalize().toAbsolutePath().toString(), null);
     }
 
     public FilePath getParent() {
