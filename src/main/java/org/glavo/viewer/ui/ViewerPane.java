@@ -19,7 +19,7 @@ import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.MappedList;
 
-public class ViewerPane extends BorderPane {
+public final class ViewerPane extends BorderPane {
     private static final double DEFAULT_DIVIDER_POSITION = 0.25;
 
     private final Viewer viewer;
@@ -202,11 +202,7 @@ public class ViewerPane extends BorderPane {
             }
         });
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-        try {
-            //noinspection Since15
-            tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
-        } catch (Throwable ignored) {
-        }
+        tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
 
         return tabPane;
     }
