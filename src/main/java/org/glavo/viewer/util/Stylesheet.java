@@ -3,13 +3,13 @@ package org.glavo.viewer.util;
 import javafx.scene.text.Font;
 import kala.template.TemplateEngine;
 import org.glavo.viewer.Config;
-import org.glavo.viewer.Main;
 import org.glavo.viewer.resources.Resources;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -84,13 +84,13 @@ public final class Stylesheet {
 
     }
 
-    public static final List<String> CODE_KEYWORD_CLASSES = Collections.singletonList("code-keyword");
-    public static final List<String> CODE_TERMINATOR_CLASSES = Collections.singletonList("code-terminator");
-    public static final List<String> CODE_DELIMITER_CLASSES = Collections.singletonList("code-delimiter");
-    public static final List<String> CODE_BRACKETS_CLASSES = Collections.singletonList("code-brackets");
-    public static final List<String> CODE_OPERATOR_CLASSES = Collections.singletonList("code-operator");
-    public static final List<String> CODE_STRING_CLASSES = Collections.singletonList("code-string");
-    public static final List<String> CODE_COMMENT_CLASSES = Collections.singletonList("code-comment");
-    public static final List<String> CODE_NUMBER_CLASSES = Collections.singletonList("code-number");
-    public static final List<String> CODE_PROPERTY_KEY = Collections.singletonList("code-property-key");
+    public static final List<String> CODE_KEYWORD_CLASSES = List.of("code-keyword");
+    public static final List<String> CODE_TERMINATOR_CLASSES = List.of("code-terminator");
+    public static final List<String> CODE_DELIMITER_CLASSES = List.of("code-delimiter");
+    public static final List<String> CODE_BRACKETS_CLASSES = List.of("code-brackets");
+    public static final List<String> CODE_OPERATOR_CLASSES = List.of("code-operator");
+    public static final List<String> CODE_STRING_CLASSES = List.of("code-string");
+    public static final List<String> CODE_COMMENT_CLASSES = List.of("code-comment");
+    public static final List<String> CODE_NUMBER_CLASSES = List.of("code-number");
+    public static final List<String> CODE_PROPERTY_KEY = List.of("code-property-key");
 }
