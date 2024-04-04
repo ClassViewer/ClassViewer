@@ -36,7 +36,6 @@ public class LocalRootContainer extends RootContainer {
         assert dir.isLocalFile();
         assert dir.isDirectory();
 
-
         try (var stream = Files.list(Paths.get(dir.toString()))) {
             return stream.map(FilePath::ofJavaPath)
                     .collect(Collectors.toCollection(TreeSet::new));

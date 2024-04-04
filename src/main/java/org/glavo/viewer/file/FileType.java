@@ -101,7 +101,7 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType 
     }
 
     private static final class Hole {
-        static final List<FileType> extTypes = Collections.unmodifiableList(Arrays.asList(
+        static final List<FileType> extTypes = List.of(
                 JImageFileType.TYPE,
                 ArchiveFileType.TYPE,
                 TarFileType.TYPE,
@@ -121,7 +121,7 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType 
                 JavaClassFileType.TYPE,
 
                 ImageFileType.TYPE
-        ));
+        );
 
         static final List<FileType> types;
 

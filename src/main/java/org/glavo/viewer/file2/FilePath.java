@@ -1,96 +1,15 @@
 package org.glavo.viewer.file2;
 
-import kala.platform.OperatingSystem;
-import kala.platform.Platform;
-import org.glavo.viewer.util.StringUtils;
+import org.glavo.viewer.file.Container;
 
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
-public final class FilePath {
+public interface FilePath {
 
-    private final List<String> pathElements;
-    private final String path;
-    private final FilePath parent;
+    Container getContainer();
 
-    private FilePath(List<String> pathElements, FilePath parent) {
-        this.pathElements = pathElements;
-        this.parent = parent;
-
-        if (parent == null && Platform.CURRENT_SYSTEM == OperatingSystem.WINDOWS) {
-            this.path = String.join("/", pathElements);
-            this.str = path;
-        } else {
-            this.path = "/" + String.join("/", pathElements);
-        }
-    }
-
-    public static FilePath of(String path, FilePath parent) {
-        return new FilePath(List.of(StringUtils.spiltPath(path)), parent);
-    }
-
-    public static FilePath ofJavaPath(Path p) {
-        return of(p.normalize().toAbsolutePath().toString(), null);
-    }
-
-    public FilePath getParent() {
-        return parent;
-    }
-
-    public FilePath getParentFilePath() {
-        return getParent() instanceof FilePath p ? p : null;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public boolean isLocalFile() {
-        return parent == null;
-    }
-
-    public String getFileName() {
-        return pathElements.isEmpty() ? "" : pathElements.getLast();
-    }
-
-    private String extension;
-
-    public String getFileNameExtension() {
-        if (extension == null) {
-            String fn = getFileName();
-            int idx = fn.lastIndexOf('.');
-            extension = idx <= 0 ? "" : fn.substring(idx + 1).toLowerCase(Locale.ROOT);
-        }
-
-        return extension;
-    }
-
-    public List<String> getPathElements() {
-        return pathElements;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.getPath().hashCode() + getParent().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof FilePath that
-                && Objects.equals(this.getParent(), that.getParent())
-                && getPath().equals(that.getPath());
-    }
-
-    private String str;
-
-    @Override
-    public String toString() {
-        if (str == null) {
-            str = getParent() + "/" + getPath();
-        }
-
-        return str;
-    }
+    /**
+     * @throws IllegalArgumentException if other is not a Path that can be relativized against this path
+     */
+    List<String> relativize(FilePath other);
 }

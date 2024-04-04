@@ -16,8 +16,6 @@ public class ArchiveContainer extends Container {
     private final ZipArchiveReader reader;
     private final TreeMap<FilePath, ZipArchiveEntry> map = new TreeMap<>();
 
-
-
     public ArchiveContainer(FileHandle handle, ZipArchiveReader reader) {
         super(handle);
         this.reader = reader;

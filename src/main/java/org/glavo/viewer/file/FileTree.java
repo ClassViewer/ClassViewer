@@ -38,15 +38,15 @@ public final class FileTree extends TreeItem<String> {
         if (status != this.status) {
             this.status = status;
 
-            switch (status) {
-                case DEFAULT, UNEXPANDED -> this.setGraphic(new ImageView(type.getImage()));
-                case FAILED -> this.setGraphic(new ImageView(Images.failed));
+            this.setGraphic(switch (status) {
+                case DEFAULT, UNEXPANDED -> new ImageView(type.getImage());
+                case FAILED -> new ImageView(Images.failed);
                 case LOADING -> {
                     ProgressIndicator indicator = new ProgressIndicator();
                     indicator.setPrefSize(16, 16);
-                    this.setGraphic(indicator);
+                    yield indicator;
                 }
-            }
+            });
         }
     }
 
