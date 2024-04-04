@@ -130,8 +130,7 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType 
             list.add(BinaryFileType.TYPE);
             list.add(FolderType.TYPE);
             list.add(TextFileType.TYPE);
-
-            types = Collections.unmodifiableList(list);
+            types = List.copyOf(list);
         }
     }
 }

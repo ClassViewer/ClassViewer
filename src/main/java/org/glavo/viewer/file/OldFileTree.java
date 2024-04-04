@@ -35,7 +35,7 @@ public abstract class OldFileTree implements Comparable<OldFileTree> {
     }
 
     public static void buildFileTree(Container container, OldFileTree root) throws Exception {
-        NavigableSet<FilePath> files = null; // TODO: container.resolveFiles();
+        NavigableSet<FilePath> files = container.resolveFiles();
 
         // build tree
         for (FilePath file : files) {

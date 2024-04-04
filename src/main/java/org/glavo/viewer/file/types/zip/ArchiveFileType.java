@@ -26,13 +26,10 @@ public final class ArchiveFileType extends ContainerFileType {
 
     @Override
     public boolean check(FilePath path) {
-        switch (path.getFileNameExtension()) {
-            case "zip":
-            case "jar":
-            case "jmod":
-                return true;
-        }
-        return path.getFileName().equals("ct.sym");
+        return switch (path.getFileNameExtension()) {
+            case "zip", "jar", "jmod" -> true;
+            default -> path.getFileName().equals("ct.sym");
+        };
     }
 
     @Override

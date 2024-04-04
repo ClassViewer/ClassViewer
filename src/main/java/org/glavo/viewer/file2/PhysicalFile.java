@@ -1,20 +1,19 @@
 package org.glavo.viewer.file2;
 
 import org.glavo.viewer.file.Container;
-import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
-public final class JavaFilePath implements FilePath {
+public final class PhysicalFile extends VirtualFile {
     private final Container container;
-    private final Path javaPath;
+    private final Path path;
 
-
-    public JavaFilePath(Container container, Path javaPath) {
+    public PhysicalFile(Container container, Path path) {
         this.container = container;
-        this.javaPath = javaPath.toAbsolutePath().normalize();
+        this.path = path.toAbsolutePath().normalize();
     }
 
     @Override
@@ -23,9 +22,9 @@ public final class JavaFilePath implements FilePath {
     }
 
     @Override
-    public List<String> relativize(FilePath other) {
-        if (other instanceof JavaFilePath path && this.getContainer().equals(path.getContainer())) {
-            Path relativized = this.javaPath().relativize(path.javaPath());
+    public List<String> relativize(VirtualFile other) {
+        if (other instanceof PhysicalFile file && this.getContainer().equals(file.getContainer())) {
+            Path relativized = this.path.relativize(file.path);
             String[] paths = new String[relativized.getNameCount()];
             for (int i = 0; i < paths.length; i++) {
                 paths[i] = relativized.getName(i).toString();
@@ -35,25 +34,31 @@ public final class JavaFilePath implements FilePath {
         throw new IllegalArgumentException();
     }
 
-    public Path javaPath() {
-        return javaPath;
+    @Override
+    public String getFileName() {
+        return path.getFileName().toString();
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return Files.isDirectory(path);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        return obj instanceof JavaFilePath other
+        return obj instanceof PhysicalFile other
                 && this.container.equals(other.container)
-                && this.javaPath.equals(other.javaPath);
+                && this.path.equals(other.path);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(container, javaPath);
+        return Objects.hash(container, path);
     }
 
     @Override
     public String toString() {
-        return "JavaFilePath[container=%s, javaPath=%s]".formatted(container, javaPath);
+        return "PhysicalFile[container=%s, javaPath=%s]".formatted(container, path);
     }
 }

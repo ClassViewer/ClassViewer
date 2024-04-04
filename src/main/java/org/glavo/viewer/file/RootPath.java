@@ -43,7 +43,7 @@ public abstract non-sealed class RootPath extends AbstractPath {
             return this.type().getName().compareTo(other.type().getName());
         }
 
-        return this.compareToImpl( other);
+        return this.compareToImpl(other);
     }
 
     @Override

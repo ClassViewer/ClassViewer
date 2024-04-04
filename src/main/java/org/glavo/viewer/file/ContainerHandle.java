@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public class ContainerHandle implements SilentlyCloseable, ForceCloseable {
+public final class ContainerHandle implements SilentlyCloseable, ForceCloseable {
     private final Container container;
     private CheckedRunnable<?> onForceClose;
 
@@ -27,15 +27,17 @@ public class ContainerHandle implements SilentlyCloseable, ForceCloseable {
         this.onForceClose = onForceClose;
     }
 
-    private boolean closed = false;
+    private volatile boolean closed = false;
 
     private synchronized void close(boolean force) {
         if (closed) return;
-        closed = true;
 
         synchronized (container) {
+            if (closed) return;
+            closed = true;
+
             if (!container.containerHandles.remove(this)) {
-                throw new AssertionError("handle=" + this);
+                throw new IllegalStateException("handle=" + this);
             }
 
             if (force) {
