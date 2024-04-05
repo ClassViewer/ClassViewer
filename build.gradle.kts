@@ -43,7 +43,7 @@ dependencies {
 
     implementation("org.glavo.kala:kala-platform:0.10.0")
     implementation("org.glavo.kala:kala-template:0.2.0")
-    implementation("org.glavo.kala:kala-common:0.69.0")
+    implementation("org.glavo.kala:kala-common:0.70.0")
 
     val kalaCompressVersion = "1.21.0.1-beta3"
     implementation("org.glavo.kala:kala-compress-archivers-zip:$kalaCompressVersion")
