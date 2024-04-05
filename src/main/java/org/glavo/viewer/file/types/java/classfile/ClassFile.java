@@ -43,7 +43,7 @@ ClassFile {
     attribute_info attributes[attributes_count];
 }
 */
-public class ClassFile extends ClassFileComponent {
+public final class ClassFile extends ClassFileComponent {
     public static final Image classImage = Images.loadImage("classfile/class.png");
     public static final Image abstractClassImage = Images.loadImage("classfile/abstractClass.png");
     public static final Image interfaceImage = Images.loadImage("classfile/interface.png");
@@ -94,7 +94,6 @@ public class ClassFile extends ClassFileComponent {
                 }
 
                 int versionNumber = major - 44;
-
 
                 if (major >= 56) {
                     if (minor == 0)
