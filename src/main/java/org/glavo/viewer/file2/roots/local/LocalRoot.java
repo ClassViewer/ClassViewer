@@ -7,6 +7,6 @@ public final class LocalRoot extends VirtualRoot {
 
     @Override
     public String toString() {
-        return "[LocalRoot]";
+        return "LocalRoot";
     }
 }

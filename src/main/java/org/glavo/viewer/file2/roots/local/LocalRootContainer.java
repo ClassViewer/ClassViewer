@@ -6,8 +6,11 @@ import org.glavo.viewer.file2.FileHandle;
 import org.glavo.viewer.file2.VirtualFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.util.Set;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Stream;
 
 public final class LocalRootContainer extends Container {
     public static final LocalRootContainer CONTAINER = new LocalRootContainer();
@@ -23,8 +26,14 @@ public final class LocalRootContainer extends Container {
     }
 
     @Override
-    public Set<VirtualFile> list(VirtualFile dir) throws Throwable {
-        return Set.of();
+    public List<VirtualFile> list(VirtualFile dir) throws Throwable {
+        if (!(dir instanceof LocalFile localDir)) {
+            throw new IllegalArgumentException(dir + " is not a LocalFile");
+        }
+
+        try (Stream<Path> stream = Files.list(localDir.getPath())) {
+            return stream.<VirtualFile>map(LocalFile::new).toList();
+        }
     }
 
     @Override

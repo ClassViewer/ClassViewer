@@ -75,7 +75,7 @@ public abstract class Container implements ForceCloseable {
         return null; // TODO
     }
 
-    public abstract Set<VirtualFile> list(VirtualFile dir) throws Throwable;
+    public abstract List<VirtualFile> list(VirtualFile dir) throws Throwable;
 
     public boolean isReadonly() {
         return true;
