@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.glavo.viewer.file2;
+package org.glavo.viewer.ui;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressIndicator;
@@ -23,6 +23,8 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import org.glavo.viewer.file.ContainerFileType;
 import org.glavo.viewer.file.FileType;
+import org.glavo.viewer.file2.ContainerHandle;
+import org.glavo.viewer.file2.VirtualFile;
 import org.glavo.viewer.resources.Images;
 
 public final class FileTree extends TreeItem<String> {
