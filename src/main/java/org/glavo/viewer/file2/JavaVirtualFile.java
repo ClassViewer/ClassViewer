@@ -20,13 +20,12 @@ package org.glavo.viewer.file2;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 
-public final class PhysicalFile extends VirtualFile {
-    private final Container container;
-    private final Path path;
+public abstract class JavaVirtualFile extends VirtualFile {
+    protected final Container container;
+    protected final Path path;
 
-    public PhysicalFile(Container container, Path path) {
+    protected JavaVirtualFile(Container container, Path path) {
         this.container = container;
         this.path = path.toAbsolutePath().normalize();
     }
@@ -36,9 +35,13 @@ public final class PhysicalFile extends VirtualFile {
         return container;
     }
 
+    public Path getPath() {
+        return path;
+    }
+
     @Override
     public List<String> relativize(VirtualFile other) {
-        if (other instanceof PhysicalFile file && this.getContainer().equals(file.getContainer())) {
+        if (other instanceof JavaVirtualFile file && this.getContainer().equals(file.getContainer())) {
             Path relativized = this.path.relativize(file.path);
             String[] paths = new String[relativized.getNameCount()];
             for (int i = 0; i < paths.length; i++) {
@@ -60,20 +63,7 @@ public final class PhysicalFile extends VirtualFile {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        return obj instanceof PhysicalFile other
-                && this.container.equals(other.container)
-                && this.path.equals(other.path);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(container, path);
-    }
-
-    @Override
     public String toString() {
-        return "PhysicalFile[container=%s, path=%s]".formatted(container, path);
+        return "JavaVirtualFile[container=%s, path=%s]".formatted(container, path);
     }
 }
