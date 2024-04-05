@@ -1,9 +1,6 @@
 package org.glavo.viewer.file;
 
 import javafx.scene.image.Image;
-import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FileType;
 
 public abstract non-sealed class ContainerFileType extends FileType {
 
