@@ -30,15 +30,15 @@ public abstract class Container implements ForceCloseable {
 
     private final FileHandle handle;
 
-    final Map<VirtualFile, FileHandle> fileHandles = new HashMap<>();
-    final HashSet<ContainerHandle> containerHandles = new HashSet<>();
+    final Set<FileHandle> fileHandles = new HashSet<>();
+    final Set<ContainerHandle> containerHandles = new HashSet<>();
 
     protected Container(FileHandle handle) {
         this.handle = handle;
     }
 
     public static Container getContainer(VirtualFile file) throws Throwable {
-        if (file == null) { // TODO: || file == LocalRootPath.Path
+        if (file == null) { // TODO: || file == LocalRoot.Path
             return null; // TODO: return LocalRootContainer.CONTAINER;
         }
 
@@ -58,19 +58,16 @@ public abstract class Container implements ForceCloseable {
     }
 
     public final synchronized FileHandle openFile(VirtualFile file) throws IOException {
-        FileHandle h = fileHandles.get(file);
-        if (h != null) {
-            throw new UnsupportedOperationException("Open file " + file + " repeatedly");
+        if (closed) {
+            throw new IllegalStateException(this + " is already closed");
         }
 
-//        h = file.isDirectory() ? new FolderHandle(this, file) : openFileImpl(file);
-//        if (h != null) {
-//            handles.put(file, h);
-//        }
-        return h;
+        FileHandle handle = openFileImpl(file);
+        fileHandles.add(handle);
+        return handle;
     }
 
-    protected abstract FileHandle openFileImpl(VirtualFile path) throws IOException, NoSuchFileException;
+    protected abstract FileHandle openFileImpl(VirtualFile file) throws IOException, NoSuchFileException;
 
     public final NavigableSet<VirtualFile> resolveFiles() throws Exception {
         return null; // TODO
@@ -108,14 +105,14 @@ public abstract class Container implements ForceCloseable {
             }
         }
 
-        for (FileHandle handle : new ArrayList<>(this.fileHandles.values())) {
+        for (FileHandle handle : this.fileHandles.toArray(FileHandle[]::new)) {
             handle.forceClose();
         }
         if (!fileHandles.isEmpty()) {
             throw new AssertionError("handles=" + fileHandles);
         }
 
-        for (ContainerHandle handle : new ArrayList<>(this.containerHandles)) {
+        for (ContainerHandle handle : this.containerHandles.toArray(ContainerHandle[]::new)) {
             handle.forceClose();
         }
         if (!this.containerHandles.isEmpty()) {

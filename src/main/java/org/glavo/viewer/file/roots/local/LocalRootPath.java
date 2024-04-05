@@ -12,6 +12,6 @@ public final class LocalRootPath extends RootPath {
 
     @Override
     public String toString() {
-        return "[LocalRootPath]";
+        return "[LocalRoot]";
     }
 }

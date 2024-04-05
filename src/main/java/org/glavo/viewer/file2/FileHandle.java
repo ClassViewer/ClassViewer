@@ -30,6 +30,7 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
 
+    private volatile boolean closed = false;
     private final VirtualFile file;
     private volatile CheckedRunnable<?> onForceClose;
 
@@ -78,15 +79,17 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
     protected void closeImpl() throws Exception {
     }
 
-    private boolean closed = false;
-
     private synchronized void close(boolean force) {
         if (closed) {
             return;
         }
-        closed = true;
 
         synchronized (file.getContainer()) {
+            if (closed) {
+                return;
+            }
+            closed = true;
+
             LOGGER.info("Close handle " + this);
 
             if (force && onForceClose != null) {
@@ -103,9 +106,8 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
                 LOGGER.log(Level.WARNING, "Failed to close " + this, e);
             }
 
-            FileHandle h;
-            if ((h = file.getContainer().fileHandles.remove(getFile())) != this) {
-                throw new AssertionError(String.format("expected=%s, actual=%s", this, h));
+            if (!file.getContainer().fileHandles.remove(this)) {
+                throw new AssertionError();
             }
             file.getContainer().checkStatus();
         }

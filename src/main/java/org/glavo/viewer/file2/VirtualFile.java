@@ -17,7 +17,7 @@ package org.glavo.viewer.file2;
 
 import java.util.List;
 
-public abstract class VirtualFile {
+public abstract non-sealed class VirtualFile extends VirtualPath {
 
     public abstract Container getContainer();
 

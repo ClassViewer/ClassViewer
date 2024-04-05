@@ -3,7 +3,6 @@ package org.glavo.viewer.file;
 import org.glavo.viewer.ui.Viewer;
 import org.jetbrains.annotations.NotNull;
 
-@Deprecated
 public abstract non-sealed class RootPath extends AbstractPath {
     public RootPath() {
     }

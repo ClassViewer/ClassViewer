@@ -1,23 +1,35 @@
-package org.glavo.viewer.file;
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.glavo.viewer.file2;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
-import org.glavo.viewer.file.types.folder.FolderType;
+import org.glavo.viewer.file.ContainerFileType;
+import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.resources.Images;
-
-import java.util.logging.Level;
-
-import static org.glavo.viewer.util.Logging.LOGGER;
 
 public final class FileTree extends TreeItem<String> {
     private final FileType type;
-    private final FilePath path;
+    private final VirtualFile path;
 
     private Status status;
 
-    public FileTree(FileType type, FilePath path) {
+    public FileTree(FileType type, VirtualFile path) {
         this.type = type;
         this.path = path;
     }
@@ -26,7 +38,7 @@ public final class FileTree extends TreeItem<String> {
         return type;
     }
 
-    public FilePath getPath() {
+    public VirtualFile getPath() {
         return path;
     }
 
@@ -50,14 +62,14 @@ public final class FileTree extends TreeItem<String> {
         }
     }
 
-    private ContainerHandle containerHandle;
+    private org.glavo.viewer.file.ContainerHandle containerHandle;
     private boolean needToInit = getType() instanceof ContainerFileType;
 
-    public void setContainerHandle(ContainerHandle containerHandle) {
+    public void setContainerHandle(org.glavo.viewer.file.ContainerHandle containerHandle) {
         this.containerHandle = containerHandle;
     }
 
-    public ContainerHandle getContainerHandle() {
+    public org.glavo.viewer.file.ContainerHandle getContainerHandle() {
         return containerHandle;
     }
 
@@ -67,20 +79,20 @@ public final class FileTree extends TreeItem<String> {
         if (needToInit) {
             needToInit = false;
 
-            if (getType() instanceof FolderType) {
-                // TODO
-            } else if (getType() instanceof ContainerFileType t) {
-                try {
-                    LOGGER.info("Expand " + getPath());
-                    Container container = Container.getContainer(getPath());
-                    setContainerHandle(new ContainerHandle(container));
-                    // OldFileTree.buildFileTree(container, node);
-                } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to open container", e);
-                }
-            } else {
-                throw new AssertionError();
-            }
+//            if (getType() instanceof FolderType) {
+//                // TODO
+//            } else if (getType() instanceof ContainerFileType t) {
+//                try {
+//                    LOGGER.info("Expand " + getPath());
+//                    org.glavo.viewer.file.Container container = Container.getContainer(getPath());
+//                    setContainerHandle(new ContainerHandle(container));
+//                    // OldFileTree.buildFileTree(container, node);
+//                } catch (Throwable e) {
+//                    LOGGER.log(Level.WARNING, "Failed to open container", e);
+//                }
+//            } else {
+//                throw new AssertionError();
+//            }
         }
 
         return children;
