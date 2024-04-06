@@ -32,11 +32,12 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 
 public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
 
+    protected final VirtualFile file;
+
     private volatile boolean closed = false;
-    private final VirtualFile file;
     private volatile CheckedRunnable<?> onForceClose;
 
-    protected FileHandle(Container container, VirtualFile file) {
+    protected FileHandle(VirtualFile file) {
         this.file = file;
     }
 
@@ -44,7 +45,7 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
         this.onForceClose = onForceClose;
     }
 
-    public VirtualFile getFile() {
+    public final VirtualFile getFile() {
         return file;
     }
 
@@ -85,20 +86,16 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
         if (closed) {
             return;
         }
+        closed = true;
 
         synchronized (file.getContainer()) {
-            if (closed) {
-                return;
-            }
-            closed = true;
-
             LOGGER.info("Close handle " + this);
 
             if (force && onForceClose != null) {
                 try {
                     onForceClose.runChecked();
                 } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to force close " + this, e);
+                    LOGGER.log(Level.WARNING, "Failed to run onForceClose", e);
                 }
             }
 
@@ -126,7 +123,17 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
     }
 
     @Override
+    public final int hashCode() {
+        return System.identityHashCode(this);
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+        return this == obj;
+    }
+
+    @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "[file=" + this.getFile() + "]";
+        return super.toString() + "[file=" + this.getFile() + "]";
     }
 }

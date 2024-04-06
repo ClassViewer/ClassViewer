@@ -30,18 +30,6 @@ public abstract non-sealed class VirtualFile extends VirtualPath {
 
     public abstract String getFileName();
 
-    private String extension;
-
-    public String getFileNameExtension() {
-        if (extension == null) {
-            String fn = getFileName();
-            int idx = fn.lastIndexOf('.');
-            extension = idx <= 0 ? "" : fn.substring(idx + 1);
-        }
-
-        return extension;
-    }
-
     // ---
 
     public abstract boolean isDirectory();
