@@ -22,17 +22,11 @@ import java.nio.file.Path;
 import java.util.List;
 
 public abstract class JavaVirtualFile extends VirtualFile {
-    protected final Container container;
     protected final Path path;
 
     protected JavaVirtualFile(Container container, Path path) {
-        this.container = container;
+        super(container);
         this.path = path.toAbsolutePath().normalize();
-    }
-
-    @Override
-    public Container getContainer() {
-        return container;
     }
 
     public Path getPath() {

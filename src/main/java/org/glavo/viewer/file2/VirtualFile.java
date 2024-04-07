@@ -17,11 +17,21 @@
  */
 package org.glavo.viewer.file2;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public abstract non-sealed class VirtualFile extends VirtualPath {
 
-    public abstract Container getContainer();
+    protected final Container container;
+
+    protected VirtualFile(Container container) {
+        this.container = container;
+    }
+
+    public final @NotNull Container getContainer() {
+        return container;
+    }
 
     /**
      * @throws IllegalArgumentException if other is not a Path that can be relativized against this path

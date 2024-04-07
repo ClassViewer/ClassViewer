@@ -22,11 +22,13 @@ import org.glavo.viewer.file2.ContainerHandle;
 import org.glavo.viewer.file2.FileHandle;
 import org.glavo.viewer.file2.VirtualFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.NavigableSet;
 import java.util.stream.Stream;
 
 public final class LocalRootContainer extends Container {
@@ -37,13 +39,35 @@ public final class LocalRootContainer extends Container {
         super(null);
     }
 
+    private static Path toPath(VirtualFile file) {
+        if (!(file instanceof LocalFile localFile)) {
+            throw new IllegalArgumentException("File " + file + " is not a LocalFile");
+        }
+
+        return localFile.getPath();
+    }
+
     @Override
     protected FileHandle openFileImpl(VirtualFile file) throws IOException, NoSuchFileException {
+        Path path = toPath(file);
+        if (!Files.exists(path)) {
+            throw new FileNotFoundException(path.toString());
+        }
+
+        if (!Files.isReadable(path)) {
+            throw new IOException(path + " is not readable");
+        }
+
         return null;
     }
 
     @Override
-    public List<VirtualFile> list(VirtualFile dir) throws Throwable {
+    public NavigableSet<VirtualFile> resolveFiles() throws IOException {
+        return null; // TODO
+    }
+
+    @Override
+    public List<VirtualFile> list(VirtualFile dir) throws IOException {
         if (!(dir instanceof LocalFile localDir)) {
             throw new IllegalArgumentException(dir + " is not a LocalFile");
         }
