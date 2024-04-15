@@ -19,7 +19,6 @@ plugins {
     java
     antlr
     id("com.github.johnrengelman.shadow") version "7.1.0"
-    id("org.glavo.compile-module-info-plugin") version "2.0"
 }
 
 group = "org.glavo"
@@ -98,10 +97,6 @@ tasks.compileJava {
     options.encoding = "UTF-8"
 }
 
-tasks.named<org.glavo.mic.tasks.CompileModuleInfo>("compileModuleInfo") {
-    moduleMainClass = viewerMain
-}
-
 val processSVG: Task by tasks.creating {
     val resourcesPath = file("src/main/resources").toPath()
     val outputPath = layout.buildDirectory.asFile.get().resolve("resources/images").toPath()
@@ -177,8 +172,4 @@ tasks.create<JavaExec>("run") {
 
     classpath = files(tasks.shadowJar.get().archiveFile)
     workingDir = rootProject.rootDir
-}
-
-tasks.generateGrammarSource {
-
 }
