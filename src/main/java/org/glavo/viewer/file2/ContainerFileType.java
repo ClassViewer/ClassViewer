@@ -16,8 +16,8 @@
 package org.glavo.viewer.file2;
 
 import javafx.scene.image.Image;
-import org.glavo.viewer.file.Container;
-import org.glavo.viewer.file.FileHandle;
+
+import java.io.IOException;
 
 public abstract non-sealed class ContainerFileType extends FileType {
 
@@ -29,5 +29,5 @@ public abstract non-sealed class ContainerFileType extends FileType {
         super(name, image);
     }
 
-    public abstract Container openContainerImpl(FileHandle handle) throws Throwable;
+    public abstract Container openContainerImpl(FileHandle handle) throws IOException;
 }

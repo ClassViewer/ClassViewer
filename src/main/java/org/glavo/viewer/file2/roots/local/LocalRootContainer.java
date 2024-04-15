@@ -17,64 +17,22 @@
  */
 package org.glavo.viewer.file2.roots.local;
 
-import org.glavo.viewer.file2.Container;
-import org.glavo.viewer.file2.ContainerHandle;
-import org.glavo.viewer.file2.FileHandle;
-import org.glavo.viewer.file2.VirtualFile;
+import org.glavo.viewer.file2.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.NavigableSet;
-import java.util.stream.Stream;
 
-public final class LocalRootContainer extends Container {
+public final class LocalRootContainer extends JavaFileSystemContainer {
     public static final LocalRootContainer CONTAINER = new LocalRootContainer();
-    private static final ContainerHandle ignored = new ContainerHandle(CONTAINER); // should not be closed
+    private static final ContainerHandle IGNORED = new ContainerHandle(CONTAINER); // should not be closed
 
     private LocalRootContainer() {
-        super(null);
-    }
-
-    private static Path toPath(VirtualFile file) {
-        if (!(file instanceof LocalFile localFile)) {
-            throw new IllegalArgumentException("File " + file + " is not a LocalFile");
-        }
-
-        return localFile.getPath();
+        super(null, FileSystems.getDefault());
     }
 
     @Override
-    protected FileHandle openFileImpl(VirtualFile file) throws IOException, NoSuchFileException {
-        Path path = toPath(file);
-        if (!Files.exists(path)) {
-            throw new FileNotFoundException(path.toString());
-        }
-
-        if (!Files.isReadable(path)) {
-            throw new IOException(path + " is not readable");
-        }
-
-        return null;
-    }
-
-    @Override
-    public NavigableSet<VirtualFile> resolveFiles() throws IOException {
-        return null; // TODO
-    }
-
-    @Override
-    public List<VirtualFile> list(VirtualFile dir) throws IOException {
-        if (!(dir instanceof LocalFile localDir)) {
-            throw new IllegalArgumentException(dir + " is not a LocalFile");
-        }
-
-        try (Stream<Path> stream = Files.list(localDir.getPath())) {
-            return stream.<VirtualFile>map(LocalFile::new).toList();
-        }
+    protected LocalFile createVirtualFile(Path path) {
+        return new LocalFile(path);
     }
 
     @Override

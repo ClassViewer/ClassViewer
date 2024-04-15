@@ -76,9 +76,13 @@ public abstract class Container implements ForceCloseable {
             throw new IOException("File " + file + " is already open");
         }
 
+        FileType type = FileType.detectFileType(file);
+        if (!(type instanceof ContainerFileType containerFileType))
+            throw new IOException(); // TODO
+
         FileHandle fileHandle = openFile(file);
         try {
-            subContainer = null; // TODO
+            subContainer = containerFileType.openContainerImpl(fileHandle);
             subContainers.put(file, subContainer);
             return subContainer;
         } catch (Throwable e) {

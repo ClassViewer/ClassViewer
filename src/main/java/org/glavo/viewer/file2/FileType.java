@@ -64,7 +64,7 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType 
     }
 
     public static FileType detectFileType(VirtualFile file) {
-        throw new UnsupportedOperationException(); // TODO
+        return null; // TODO
     }
 
     public static FileType ofName(String name) {
