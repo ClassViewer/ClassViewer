@@ -65,7 +65,7 @@ dependencies {
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-imaging
-    implementation("org.apache.commons:commons-imaging:1.0-alpha3")
+    implementation("org.apache.commons:commons-imaging:1.0.0-alpha4")
 
     // https://mvnrepository.com/artifact/com.jcraft/jsch
     implementation("com.jcraft:jsch:0.1.55")
