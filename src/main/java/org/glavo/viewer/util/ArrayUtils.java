@@ -1,6 +1,5 @@
 package org.glavo.viewer.util;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public final class ArrayUtils {
