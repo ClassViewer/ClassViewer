@@ -7,7 +7,7 @@ import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.util.Stylesheet;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 public class AyaSourceFileType extends TextFileType {
 
@@ -19,37 +19,17 @@ public class AyaSourceFileType extends TextFileType {
         this.highlighter = new AntlrLexerHighlighter(AyaLexer::new) {
             @Override
             protected Collection<String> getStyleClass(Token token) {
-                switch (token.getType()) {
-                    case AyaLexer.KEYWORD:
-                        return Stylesheet.CODE_KEYWORD_CLASSES;
-                    case AyaLexer.LBRACE:
-                    case AyaLexer.RBRACE:
-                    case AyaLexer.LPAREN:
-                    case AyaLexer.RPAREN:
-                    case AyaLexer.LGOAL:
-                    case AyaLexer.RGOAL:
-                        return Stylesheet.CODE_BRACKETS_CLASSES;
-                    case AyaLexer.COLON:
-                    case AyaLexer.COLON2:
-                    case AyaLexer.COMMA:
-                    case AyaLexer.DOT:
-                        return Stylesheet.CODE_DELIMITER_CLASSES;
-                    case AyaLexer.SUCHTHAT:
-                    case AyaLexer.IMPLIES:
-                    case AyaLexer.TO:
-                        return Stylesheet.CODE_OPERATOR_CLASSES;
-                    case AyaLexer.NUMBER:
-                        return Stylesheet.CODE_NUMBER_CLASSES;
-                    case AyaLexer.STRING:
-                    case AyaLexer.INCOMPLETE_STRING:
-                        return Stylesheet.CODE_STRING_CLASSES;
-                    case AyaLexer.COMMENT:
-                    case AyaLexer.LINE_COMMENT:
-                    case AyaLexer.DOC_COMMENT:
-                        return Stylesheet.CODE_COMMENT_CLASSES;
-                    default:
-                        return Collections.emptyList();
-                }
+                return switch (token.getType()) {
+                    case AyaLexer.KEYWORD -> Stylesheet.CODE_KEYWORD_CLASSES;
+                    case AyaLexer.LBRACE, AyaLexer.RBRACE, AyaLexer.LPAREN, AyaLexer.RPAREN, AyaLexer.LGOAL,
+                         AyaLexer.RGOAL -> Stylesheet.CODE_BRACKETS_CLASSES;
+                    case AyaLexer.COLON, AyaLexer.COLON2, AyaLexer.COMMA, AyaLexer.DOT -> Stylesheet.CODE_DELIMITER_CLASSES;
+                    case AyaLexer.SUCHTHAT, AyaLexer.IMPLIES, AyaLexer.TO -> Stylesheet.CODE_OPERATOR_CLASSES;
+                    case AyaLexer.NUMBER -> Stylesheet.CODE_NUMBER_CLASSES;
+                    case AyaLexer.STRING, AyaLexer.INCOMPLETE_STRING -> Stylesheet.CODE_STRING_CLASSES;
+                    case AyaLexer.COMMENT, AyaLexer.LINE_COMMENT, AyaLexer.DOC_COMMENT -> Stylesheet.CODE_COMMENT_CLASSES;
+                    default -> List.of();
+                };
             }
         };
     }
