@@ -21,29 +21,29 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
-import org.glavo.viewer.file.ContainerFileType;
-import org.glavo.viewer.file.FileType;
+import org.glavo.viewer.file2.ContainerFileType;
 import org.glavo.viewer.file2.ContainerHandle;
+import org.glavo.viewer.file2.FileType;
 import org.glavo.viewer.file2.VirtualFile;
 import org.glavo.viewer.resources.Images;
 
 public final class FileTree extends TreeItem<String> {
     private final FileType type;
-    private final VirtualFile path;
+    private final VirtualFile file;
 
     private Status status = Status.DEFAULT;
 
-    public FileTree(FileType type, VirtualFile path) {
+    public FileTree(FileType type, VirtualFile file) {
         this.type = type;
-        this.path = path;
+        this.file = file;
     }
 
     public FileType getType() {
         return type;
     }
 
-    public VirtualFile getPath() {
-        return path;
+    public VirtualFile getFile() {
+        return file;
     }
 
     public Status getStatus() {
@@ -82,6 +82,10 @@ public final class FileTree extends TreeItem<String> {
         ObservableList<TreeItem<String>> children = super.getChildren();
         if (needToInit) {
             needToInit = false;
+
+            if (file.isDirectory()) {
+                // TODO
+            }
 
 //            if (getType() instanceof FolderType) {
 //                // TODO

@@ -17,6 +17,7 @@
  */
 package org.glavo.viewer.file2;
 
+import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.util.ForceCloseable;
 
 import java.io.IOException;
@@ -78,7 +79,7 @@ public abstract class Container implements ForceCloseable {
 
         FileType type = FileType.detectFileType(file);
         if (!(type instanceof ContainerFileType containerFileType))
-            throw new IOException(); // TODO
+            throw new IOException();
 
         FileHandle fileHandle = openFile(file);
         try {
@@ -91,7 +92,9 @@ public abstract class Container implements ForceCloseable {
         }
     }
 
-    public abstract NavigableSet<VirtualFile> resolveFiles() throws IOException;
+    public final NavigableSet<FilePath> resolveFiles() throws Exception {
+        return null;
+    }
 
     public abstract List<VirtualFile> list(VirtualFile dir) throws IOException;
 
@@ -134,13 +137,13 @@ public abstract class Container implements ForceCloseable {
         assert subContainers.isEmpty();
 
         for (FileHandle handle : this.fileHandles.values().toArray(FileHandle[]::new)) {
-            handle.forceClose();
+            handle.close(true);
         }
 
         assert fileHandles.isEmpty();
 
         for (ContainerHandle handle : this.containerHandles.toArray(ContainerHandle[]::new)) {
-            handle.forceClose();
+            handle.close(true);
         }
 
         assert containerHandles.isEmpty();

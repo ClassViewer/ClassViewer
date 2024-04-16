@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.NavigableSet;
 import java.util.stream.Stream;
 
 public abstract class JavaFileSystemContainer extends Container {
@@ -59,11 +58,6 @@ public abstract class JavaFileSystemContainer extends Container {
         }
 
         return null;
-    }
-
-    @Override
-    public NavigableSet<VirtualFile> resolveFiles() throws IOException {
-        return null; // TODO
     }
 
     @Override

@@ -18,7 +18,6 @@
 package org.glavo.viewer.file2;
 
 import kala.function.CheckedRunnable;
-import org.glavo.viewer.util.ForceCloseable;
 import org.glavo.viewer.util.SilentlyCloseable;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +30,7 @@ import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
 
-public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
+public abstract class FileHandle implements SilentlyCloseable {
 
     protected final VirtualFile file;
 
@@ -83,12 +82,12 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
     protected void closeImpl() throws Exception {
     }
 
-    private synchronized void close(boolean force) {
+    synchronized void close(boolean force) {
         if (closed) {
             return;
         }
-        closed = true;
 
+        closed = true;
         synchronized (file.getContainer()) {
             LOGGER.info("Close handle " + this);
 
@@ -116,11 +115,6 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
     @Override
     public final synchronized void close() {
         close(false);
-    }
-
-    @Override
-    public void forceClose() {
-        close(true);
     }
 
     @Override

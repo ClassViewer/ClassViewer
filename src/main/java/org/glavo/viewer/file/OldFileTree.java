@@ -4,7 +4,7 @@ import org.glavo.viewer.file.types.folder.FolderType;
 
 import java.util.*;
 
-public abstract class OldFileTree implements Comparable<OldFileTree> {
+public sealed abstract class OldFileTree implements Comparable<OldFileTree> {
     private final FileType type;
     private final FilePath path;
     private final NavigableSet<OldFileTree> children = new TreeSet<>();
@@ -97,9 +97,9 @@ public abstract class OldFileTree implements Comparable<OldFileTree> {
         }
     }
 
-    public static class FolderNode extends OldFileTree {
+    public static final class FolderNode extends OldFileTree {
 
-        protected final String topName;
+        private final String topName;
         private List<String> extNames;
         private String text;
 
