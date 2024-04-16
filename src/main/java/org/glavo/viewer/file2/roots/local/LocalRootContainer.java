@@ -35,6 +35,10 @@ public final class LocalRootContainer extends JavaFileSystemContainer {
         return new LocalFile(path);
     }
 
+    protected JavaVirtualFileHandle createVirtualFileHandle(JavaVirtualFile file) {
+        return new LocalFileHandle((LocalFile) file);
+    }
+
     @Override
     public void closeImpl() {
         throw new UnsupportedOperationException("LocalContainer should not be closed");

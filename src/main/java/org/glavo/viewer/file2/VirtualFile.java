@@ -19,6 +19,7 @@ package org.glavo.viewer.file2;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.List;
 
 public abstract non-sealed class VirtualFile extends VirtualPath {
@@ -42,6 +43,9 @@ public abstract non-sealed class VirtualFile extends VirtualPath {
 
     // ---
 
+    protected abstract FileHandle open() throws IOException;
+
     public abstract boolean isDirectory();
 
+    public abstract List<VirtualFile> listFiles() throws IOException;
 }

@@ -17,14 +17,17 @@
  */
 package org.glavo.viewer.file2;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 public abstract class JavaVirtualFile extends VirtualFile {
     protected final Path path;
 
-    protected JavaVirtualFile(Container container, Path path) {
+    protected JavaVirtualFile(JavaFileSystemContainer container, Path path) {
         super(container);
         this.path = path.toAbsolutePath().normalize();
     }
@@ -52,8 +55,32 @@ public abstract class JavaVirtualFile extends VirtualFile {
     }
 
     @Override
+    protected FileHandle open() throws IOException {
+        if (!Files.exists(path)) {
+            throw new FileNotFoundException(path.toString());
+        }
+
+        if (!Files.isRegularFile(path)) {
+            throw new IOException(path + " is not a regular file");
+        }
+
+        if (!Files.isReadable(path)) {
+            throw new IOException(path + " is not readable");
+        }
+
+        return ((JavaFileSystemContainer) container).createVirtualFileHandle(this);
+    }
+
+    @Override
     public boolean isDirectory() {
         return Files.isDirectory(path);
+    }
+
+    @Override
+    public List<VirtualFile> listFiles() throws IOException {
+        try (Stream<Path> stream = Files.list(path)) {
+            return stream.<VirtualFile>map(path -> ((JavaFileSystemContainer) container).createVirtualFile(path)).toList();
+        }
     }
 
     @Override

@@ -17,41 +17,10 @@
  */
 package org.glavo.viewer.file2.roots.local;
 
-import org.glavo.viewer.file2.FileHandle;
+import org.glavo.viewer.file2.JavaVirtualFileHandle;
 
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-
-public final class LocalFileHandle extends FileHandle {
+public final class LocalFileHandle extends JavaVirtualFileHandle {
     public LocalFileHandle(LocalFile file) {
         super(file);
-    }
-
-    public Path getPath() {
-        return ((LocalFile) file).getPath();
-    }
-
-    @Override
-    public boolean exists() {
-        return Files.exists(getPath());
-    }
-
-    @Override
-    public boolean isReadonly() {
-        return !Files.isWritable(getPath());
-    }
-
-    @Override
-    public SeekableByteChannel openChannel() throws IOException {
-        return FileChannel.open(getPath());
-    }
-
-    @Override
-    public SeekableByteChannel openWritableChannel() throws IOException {
-        return FileChannel.open(getPath(), StandardOpenOption.WRITE);
     }
 }

@@ -55,6 +55,9 @@ public abstract class Container implements ForceCloseable {
     public final synchronized FileHandle openFile(VirtualFile file) throws IOException {
         ensureOpen();
 
+        if (file.getContainer() != this)
+            throw new IOException("Container mismatch");
+
         if (fileHandles.containsKey(file)) {
             throw new IOException("File " + file + " is already open");
         }
@@ -95,8 +98,6 @@ public abstract class Container implements ForceCloseable {
     public final NavigableSet<FilePath> resolveFiles() throws Exception {
         return null;
     }
-
-    public abstract List<VirtualFile> list(VirtualFile dir) throws IOException;
 
     public boolean isReadonly() {
         return true;

@@ -21,8 +21,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Stream;
 
 public abstract class JavaFileSystemContainer extends Container {
 
@@ -46,6 +44,8 @@ public abstract class JavaFileSystemContainer extends Container {
 
     protected abstract JavaVirtualFile createVirtualFile(Path path);
 
+    protected abstract JavaVirtualFileHandle createVirtualFileHandle(JavaVirtualFile file);
+
     @Override
     protected FileHandle openFileImpl(VirtualFile file) throws IOException, NoSuchFileException {
         Path path = toPath(file);
@@ -58,12 +58,5 @@ public abstract class JavaFileSystemContainer extends Container {
         }
 
         return null;
-    }
-
-    @Override
-    public List<VirtualFile> list(VirtualFile dir) throws IOException {
-        try (Stream<Path> stream = Files.list(toPath(dir))) {
-            return stream.<VirtualFile>map(this::createVirtualFile).toList();
-        }
     }
 }
