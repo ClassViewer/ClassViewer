@@ -80,9 +80,12 @@ public abstract class Container implements ForceCloseable {
             throw new IOException("File " + file + " is already open");
         }
 
+        if (file.isDirectory())
+            throw new IOException("File " + file + " is a directory");
+
         FileType type = FileType.detectFileType(file);
         if (!(type instanceof ContainerFileType containerFileType))
-            throw new IOException();
+            throw new IOException("File " + file + " is not a container");
 
         FileHandle fileHandle = openFile(file);
         try {
@@ -93,10 +96,6 @@ public abstract class Container implements ForceCloseable {
             fileHandle.close();
             throw e;
         }
-    }
-
-    public final NavigableSet<FilePath> resolveFiles() throws Exception {
-        return null;
     }
 
     public boolean isReadonly() {

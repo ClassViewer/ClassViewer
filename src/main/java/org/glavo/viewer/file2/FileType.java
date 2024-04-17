@@ -18,7 +18,7 @@ package org.glavo.viewer.file2;
 import javafx.scene.image.Image;
 import org.glavo.viewer.resources.Images;
 
-public abstract sealed class FileType permits ContainerFileType, CustomFileType {
+public abstract sealed class FileType permits ContainerFileType, CustomFileType, DirectoryFileType {
     private final String name;
     private final Image image;
 
@@ -64,6 +64,10 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType 
     }
 
     public static FileType detectFileType(VirtualFile file) {
+        if (file.isDirectory()) {
+            return DirectoryFileType.TYPE;
+        }
+
         return null; // TODO
     }
 

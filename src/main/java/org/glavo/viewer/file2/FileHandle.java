@@ -53,6 +53,10 @@ public abstract class FileHandle implements SilentlyCloseable {
 
     public abstract boolean isReadonly();
 
+    public boolean isDirectory() {
+        return file.isDirectory();
+    }
+
     public abstract SeekableByteChannel openChannel() throws IOException;
 
     public SeekableByteChannel openWritableChannel() throws IOException {

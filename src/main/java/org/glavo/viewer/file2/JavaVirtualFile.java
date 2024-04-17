@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public abstract class JavaVirtualFile extends VirtualFile {
@@ -40,6 +41,9 @@ public abstract class JavaVirtualFile extends VirtualFile {
     public List<String> relativize(VirtualFile other) {
         if (other instanceof JavaVirtualFile file && this.getContainer().equals(file.getContainer())) {
             Path relativized = this.path.relativize(file.path);
+            if (relativized.getNameCount() == 1) {
+                return List.of(relativized.getName(0).toString());
+            }
             String[] paths = new String[relativized.getNameCount()];
             for (int i = 0; i < paths.length; i++) {
                 paths[i] = relativized.getName(i).toString();
@@ -52,6 +56,12 @@ public abstract class JavaVirtualFile extends VirtualFile {
     @Override
     public String getFileName() {
         return path.getFileName().toString();
+    }
+
+    @Override
+    public VirtualFile getParent() {
+        Path parent = path.getParent();
+        return parent != null ? ((JavaFileSystemContainer) container).createVirtualFile(parent) : null;
     }
 
     @Override
@@ -81,6 +91,16 @@ public abstract class JavaVirtualFile extends VirtualFile {
         try (Stream<Path> stream = Files.list(path)) {
             return stream.<VirtualFile>map(path -> ((JavaFileSystemContainer) container).createVirtualFile(path)).toList();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(container, path);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this || (obj != null && this.getClass() == obj.getClass() && this.path.equals(((JavaVirtualFile) obj).path));
     }
 
     @Override

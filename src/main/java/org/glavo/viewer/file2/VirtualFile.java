@@ -41,6 +41,8 @@ public abstract non-sealed class VirtualFile extends VirtualPath {
 
     public abstract String getFileName();
 
+    public abstract VirtualFile getParent();
+
     // ---
 
     protected abstract FileHandle open() throws IOException;

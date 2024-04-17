@@ -5,10 +5,13 @@ import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.glavo.viewer.file.types.TextFileType;
+import org.glavo.viewer.ui.Schedulers;
 import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
+
+import java.util.concurrent.Executor;
 
 public final class Main extends Application {
 
@@ -62,6 +65,7 @@ public final class Main extends Application {
         FileUtils.ioThread.shutdown();
         TaskUtils.taskPool.shutdown();
         TextFileType.highlightPool.shutdown();
+        Schedulers.shutdown();
 
         app = null;
     }

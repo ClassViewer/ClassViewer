@@ -19,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 public abstract class JavaFileSystemContainer extends Container {
@@ -47,7 +46,7 @@ public abstract class JavaFileSystemContainer extends Container {
     protected abstract JavaVirtualFileHandle createVirtualFileHandle(JavaVirtualFile file);
 
     @Override
-    protected FileHandle openFileImpl(VirtualFile file) throws IOException, NoSuchFileException {
+    protected FileHandle openFileImpl(VirtualFile file) throws IOException {
         Path path = toPath(file);
         if (!Files.exists(path)) {
             throw new FileNotFoundException(path.toString());
@@ -57,6 +56,6 @@ public abstract class JavaFileSystemContainer extends Container {
             throw new IOException(path + " is not readable");
         }
 
-        return null;
+        return createVirtualFileHandle((JavaVirtualFile) file);
     }
 }

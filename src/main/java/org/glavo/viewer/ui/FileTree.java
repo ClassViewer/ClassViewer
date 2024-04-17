@@ -21,100 +21,146 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
-import org.glavo.viewer.file2.ContainerFileType;
-import org.glavo.viewer.file2.ContainerHandle;
-import org.glavo.viewer.file2.FileType;
-import org.glavo.viewer.file2.VirtualFile;
+import kala.function.CheckedFunction;
+import org.glavo.viewer.annotation.FXThread;
+import org.glavo.viewer.file2.*;
 import org.glavo.viewer.resources.Images;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
+
+import static org.glavo.viewer.util.logging.Logger.LOG;
+
 public final class FileTree extends TreeItem<String> {
-    private final FileType type;
-    private final VirtualFile file;
 
-    private Status status = Status.DEFAULT;
+    private static FileTree createFileTree(TypedVirtualFile file) {
+        FileTree root = new FileTree(file, file.getFileName());
+        if (file.isDirectory()) {
+            root.loadAction = LOAD_DIRECTORY;
+        } else if (file.isContainer()) {
+            root.loadAction = LOAD_CONTAINER;
+        }
+        return root;
+    }
 
-    public FileTree(FileType type, VirtualFile file) {
-        this.type = type;
+    public static FileTree createRoot(TypedVirtualFile file) {
+        FileTree root = createFileTree(file);
+        root.isRootNode = true;
+        return root;
+    }
+
+    private static List<FileTree> createNodes(List<TypedVirtualFile> files) {
+        return files.stream()
+                .sorted(Comparator.comparing(TypedVirtualFile::isDirectory).reversed().thenComparing(TypedVirtualFile::getFileName))
+                .map(FileTree::createFileTree)
+                .toList();
+    }
+
+    private static final CheckedFunction<FileTree, Runnable, IOException> LOAD_DIRECTORY = root -> {
+        TypedVirtualFile file = root.getFile();
+
+        List<TypedVirtualFile> files = file.listFiles();
+        if (!root.isRootNode && files.size() == 1 && files.getFirst().isDirectory()) {
+            var nameList = new ArrayList<String>(10);
+
+            TypedVirtualFile current = file;
+            List<TypedVirtualFile> currentFiles = files;
+
+            while (currentFiles.size() == 1 && currentFiles.getFirst().isDirectory()) {
+                current = files.getFirst();
+                currentFiles = current.listFiles();
+                nameList.add(current.getFileName());
+            }
+
+            FileTree currentTree = new FileTree(current, String.join("/", nameList));
+            currentTree.getChildren().setAll(createNodes(currentFiles));
+            currentTree.setExpanded(root.isExpanded());
+
+            return () -> {
+                var parentChildren = root.getParent().getChildren();
+
+                int idx = parentChildren.indexOf(root);
+                if (idx >= 0) {
+                    parentChildren.set(idx, currentTree);
+                }
+            };
+        }
+
+        root.getChildren().setAll(createNodes(files));
+        return () -> root.setGraphic(new ImageView(root.file.type().getImage()));
+    };
+
+    private static final CheckedFunction<FileTree, Runnable, IOException> LOAD_CONTAINER = root -> {
+        throw new IOException("TODO: LOAD_CONTAINER");
+    };
+
+    private final TypedVirtualFile file;
+
+    private ContainerHandle containerHandle;
+
+    private boolean isRootNode = false;
+
+    @FXThread
+    private CheckedFunction<FileTree, Runnable, IOException> loadAction;
+
+    @FXThread
+    private boolean isLoading = false;
+
+    private FileTree(TypedVirtualFile file, String name) {
         this.file = file;
+        this.setValue(name);
+        this.setGraphic(new ImageView(file.type().getImage()));
     }
 
-    public FileType getType() {
-        return type;
-    }
-
-    public VirtualFile getFile() {
+    public TypedVirtualFile getFile() {
         return file;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        if (status != this.status) {
-            this.status = status;
-
-            this.setGraphic(switch (status) {
-                case DEFAULT, UNEXPANDED -> new ImageView(type.getImage());
-                case FAILED -> new ImageView(Images.failed);
-                case LOADING -> {
-                    ProgressIndicator indicator = new ProgressIndicator();
-                    indicator.setPrefSize(16, 16);
-                    yield indicator;
-                }
-            });
-        }
-    }
-
-    private ContainerHandle containerHandle;
-    private boolean needToInit = getType() instanceof ContainerFileType;
-
-    public void setContainerHandle(ContainerHandle containerHandle) {
-        this.containerHandle = containerHandle;
-    }
-
-    public ContainerHandle getContainerHandle() {
-        return containerHandle;
+    private ObservableList<TreeItem<String>> getRawChildren() {
+        return super.getChildren();
     }
 
     @Override
     public ObservableList<TreeItem<String>> getChildren() {
-        ObservableList<TreeItem<String>> children = super.getChildren();
-        if (needToInit) {
-            needToInit = false;
-
-            if (file.isDirectory()) {
-                // TODO
-            }
-
-//            if (getType() instanceof FolderType) {
-//                // TODO
-//            } else if (getType() instanceof ContainerFileType t) {
-//                try {
-//                    LOGGER.info("Expand " + getPath());
-//                    org.glavo.viewer.file.Container container = Container.getContainer(getPath());
-//                    setContainerHandle(new ContainerHandle(container));
-//                    // OldFileTree.buildFileTree(container, node);
-//                } catch (Throwable e) {
-//                    LOGGER.log(Level.WARNING, "Failed to open container", e);
-//                }
-//            } else {
-//                throw new AssertionError();
-//            }
+        if (loadAction != null) {
+            load();
         }
 
-        return children;
+        return getRawChildren();
     }
 
     @Override
     public boolean isLeaf() {
-        return !needToInit && super.getChildren().isEmpty();
+        return loadAction == null && getRawChildren().isEmpty();
     }
 
-    public enum Status {
-        DEFAULT,
-        FAILED,
-        LOADING,
-        UNEXPANDED
+    @FXThread
+    private void load() {
+        var loadAction = this.loadAction;
+        if (loadAction == null || isLoading) {
+            return;
+        }
+
+        this.loadAction = null;
+        isLoading = true;
+
+        var progressIndicator = new ProgressIndicator();
+        progressIndicator.setPrefSize(16, 16);
+        this.setGraphic(progressIndicator);
+
+        CompletableFuture.supplyAsync(() -> loadAction.apply(this), Schedulers.virtualThread())
+                .whenCompleteAsync((action, exception) -> {
+                    isLoading = false;
+                    if (exception == null) {
+                        if (action != null) {
+                            action.run();
+                        }
+                    } else {
+                        LOG.warning("Failed to load file: " + file, exception);
+                        setGraphic(new ImageView(Images.failed));
+                    }
+                }, Schedulers.javafx());
     }
 }
