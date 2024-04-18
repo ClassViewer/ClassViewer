@@ -17,7 +17,6 @@ package org.glavo.viewer.file2.types;
 
 import javafx.scene.image.Image;
 import org.glavo.viewer.file2.CustomFileType;
-import org.glavo.viewer.file2.FileHandle;
 import org.glavo.viewer.file2.VirtualFile;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
@@ -43,7 +42,7 @@ public class BinaryFileType extends CustomFileType {
     }
 
     @Override
-    public FileTab2 openTab(FileHandle handle) {
+    public FileTab2 openTab(VirtualFile file) {
         throw new UnsupportedOperationException(); // TODO
     }
 }

@@ -27,7 +27,7 @@ public abstract non-sealed class CustomFileType extends FileType {
         super(name, image);
     }
 
-    public FileTab2 openTab(FileHandle handle) {
+    public FileTab2 openTab(VirtualFile file) {
         throw new UnsupportedOperationException("CustomFileType::openTab");
     }
 }

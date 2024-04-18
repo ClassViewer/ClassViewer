@@ -123,7 +123,7 @@ public final class Logger {
                         int second = Integer.parseInt(matcher.group("second"));
                         int n = Optional.ofNullable(matcher.group("n")).map(Integer::parseInt).orElse(0);
 
-                        list.add(Tuple.of(path, new int[]{year, month, day, hour, minute, second, n}));
+                        list.add(new Tuple2<>(path, new int[]{year, month, day, hour, minute, second, n}));
                     }
                 }
             } catch (IOException e) {

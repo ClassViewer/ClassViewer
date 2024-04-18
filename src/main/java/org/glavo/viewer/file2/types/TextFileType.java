@@ -20,7 +20,6 @@ import kala.compress.utils.Charsets;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.PlainTextChange;
 import org.glavo.viewer.file2.CustomFileType;
-import org.glavo.viewer.file2.FileHandle;
 import org.glavo.viewer.file2.VirtualFile;
 import org.glavo.viewer.highlighter.Highlighter;
 import org.glavo.viewer.resources.Resources;
@@ -160,7 +159,7 @@ public class TextFileType extends CustomFileType {
     private static final ThreadLocal<UniversalDetector> detector = ThreadLocal.withInitial(UniversalDetector::new);
 
     @Override
-    public FileTab2 openTab(FileHandle handle) {
+    public FileTab2 openTab(VirtualFile file) {
 //        FileTab res = new FileTab(this, handle.getPath());
 //        res.setContent(new StackPane(new ProgressIndicator()));
 //

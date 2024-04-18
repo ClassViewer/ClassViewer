@@ -41,7 +41,7 @@ public abstract class FileHandle implements SilentlyCloseable {
         this.file = file;
     }
 
-    public synchronized void setOnForceClose(CheckedRunnable<?> onForceClose) {
+    public void setOnForceClose(CheckedRunnable<?> onForceClose) {
         this.onForceClose = onForceClose;
     }
 
@@ -86,13 +86,18 @@ public abstract class FileHandle implements SilentlyCloseable {
     protected void closeImpl() throws Exception {
     }
 
-    synchronized void close(boolean force) {
+    void close(boolean force) {
         if (closed) {
             return;
         }
 
-        closed = true;
-        synchronized (file.getContainer()) {
+        Container container = file.getContainer();
+        container.lock();
+        try {
+            if (closed) {
+                return;
+            }
+            closed = true;
             LOGGER.info("Close handle " + this);
 
             if (force && onForceClose != null) {
@@ -109,15 +114,17 @@ public abstract class FileHandle implements SilentlyCloseable {
                 LOGGER.log(Level.WARNING, "Failed to close " + this, e);
             }
 
-            if (file.getContainer().fileHandles.remove(file) != this) {
+            if (container.fileHandles.remove(file) != this) {
                 throw new AssertionError();
             }
-            file.getContainer().checkStatus();
+            container.checkStatus();
+        } finally {
+            container.unlock();
         }
     }
 
     @Override
-    public final synchronized void close() {
+    public final void close() {
         close(false);
     }
 

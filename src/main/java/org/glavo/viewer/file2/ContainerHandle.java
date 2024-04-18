@@ -28,10 +28,16 @@ public final class ContainerHandle implements SilentlyCloseable {
     private final Container container;
     private CheckedRunnable<?> onForceClose;
 
+    private volatile boolean closed = false;
+
     public ContainerHandle(Container container) {
         this.container = container;
-        synchronized (container) {
+
+        container.lock();
+        try {
             container.containerHandles.add(this);
+        } finally {
+            container.unlock();
         }
     }
 
@@ -39,16 +45,15 @@ public final class ContainerHandle implements SilentlyCloseable {
         return container;
     }
 
-    public synchronized void setOnForceClose(CheckedRunnable<?> onForceClose) {
+    public void setOnForceClose(CheckedRunnable<?> onForceClose) {
         this.onForceClose = onForceClose;
     }
 
-    private volatile boolean closed = false;
-
-    synchronized void close(boolean force) {
+    void close(boolean force) {
         if (closed) return;
 
-        synchronized (container) {
+        container.lock();
+        try {
             if (closed) return;
             closed = true;
 
@@ -71,6 +76,8 @@ public final class ContainerHandle implements SilentlyCloseable {
             }
 
             container.checkStatus();
+        } finally {
+            container.unlock();
         }
     }
 

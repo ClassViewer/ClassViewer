@@ -18,8 +18,10 @@ package org.glavo.viewer.file2.types;
 import javafx.scene.image.Image;
 import org.glavo.viewer.resources.Images;
 
-public class UnknownFileType extends BinaryFileType {
+public final class UnknownFileType extends BinaryFileType {
     public static final Image image = Images.loadImage("fileTypes/file-unknown.png");
+
+    public static final UnknownFileType TYPE = new UnknownFileType("unknown");
 
     public UnknownFileType(String name) {
         super(name, image);

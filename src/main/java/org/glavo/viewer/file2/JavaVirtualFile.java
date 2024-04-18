@@ -94,9 +94,12 @@ public abstract class JavaVirtualFile extends VirtualFile {
 
     @Override
     public List<VirtualFile> listFiles() throws IOException {
-        synchronized (container) {
+        container.lock();
+        try {
             container.ensureOpen();
             return listFilesNoSync();
+        } finally {
+            container.unlock();
         }
     }
 

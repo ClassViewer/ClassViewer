@@ -17,11 +17,11 @@
  */
 package org.glavo.viewer.file2;
 
-import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.util.ForceCloseable;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 import static org.glavo.viewer.util.Logging.LOGGER;
@@ -29,6 +29,8 @@ import static org.glavo.viewer.util.Logging.LOGGER;
 public abstract class Container implements ForceCloseable {
 
     private final FileHandle handle;
+    private final ReentrantLock lock = new ReentrantLock();
+    private volatile boolean closed = false;
 
     final Set<ContainerHandle> containerHandles = new HashSet<>();
     final Map<VirtualFile, FileHandle> fileHandles = new HashMap<>();
@@ -44,6 +46,14 @@ public abstract class Container implements ForceCloseable {
         }
     }
 
+    public void lock() {
+        lock.lock();
+    }
+
+    public void unlock() {
+        lock.unlock();
+    }
+
     public VirtualFile getPath() {
         return handle.getFile();
     }
@@ -52,49 +62,60 @@ public abstract class Container implements ForceCloseable {
         return handle;
     }
 
-    public final synchronized FileHandle openFile(VirtualFile file) throws IOException {
-        ensureOpen();
+    public final FileHandle openFile(VirtualFile file) throws IOException {
+        lock();
+        try {
+            ensureOpen();
 
-        if (file.getContainer() != this)
-            throw new IOException("Container mismatch");
+            if (file.getContainer() != this)
+                throw new IOException("Container mismatch");
 
-        if (fileHandles.containsKey(file)) {
-            throw new IOException("File " + file + " is already open");
+            if (fileHandles.containsKey(file)) {
+                throw new IOException("File " + file + " is already open");
+            }
+
+            FileHandle handle = openFileImpl(file);
+            fileHandles.put(file, handle);
+            return handle;
+        } finally {
+            unlock();
         }
-
-        FileHandle handle = openFileImpl(file);
-        fileHandles.put(file, handle);
-        return handle;
     }
 
     protected abstract FileHandle openFileImpl(VirtualFile file) throws IOException;
 
-    public final synchronized Container getSubContainer(VirtualFile file) throws IOException {
-        ensureOpen();
-        Container subContainer = subContainers.get(file);
-        if (subContainer != null) {
-            return subContainer;
-        }
+    public final Container getSubContainer(VirtualFile file) throws IOException {
+        lock();
 
-        if (fileHandles.containsKey(file)) {
-            throw new IOException("File " + file + " is already open");
-        }
-
-        if (file.isDirectory())
-            throw new IOException("File " + file + " is a directory");
-
-        FileType type = FileType.detectFileType(file);
-        if (!(type instanceof ContainerFileType containerFileType))
-            throw new IOException("File " + file + " is not a container");
-
-        FileHandle fileHandle = openFile(file);
         try {
-            subContainer = containerFileType.openContainerImpl(fileHandle);
-            subContainers.put(file, subContainer);
-            return subContainer;
-        } catch (Throwable e) {
-            fileHandle.close();
-            throw e;
+            ensureOpen();
+            Container subContainer = subContainers.get(file);
+            if (subContainer != null) {
+                return subContainer;
+            }
+
+            if (fileHandles.containsKey(file)) {
+                throw new IOException("File " + file + " is already open");
+            }
+
+            if (file.isDirectory())
+                throw new IOException("File " + file + " is a directory");
+
+            FileType type = FileType.detectFileType(file);
+            if (!(type instanceof ContainerFileType containerFileType))
+                throw new IOException("File " + file + " is not a container");
+
+            FileHandle fileHandle = openFile(file);
+            try {
+                subContainer = containerFileType.openContainerImpl(fileHandle);
+                subContainers.put(file, subContainer);
+                return subContainer;
+            } catch (Throwable e) {
+                fileHandle.close();
+                throw e;
+            }
+        } finally {
+            unlock();
         }
     }
 
@@ -105,57 +126,68 @@ public abstract class Container implements ForceCloseable {
     protected void closeImpl() throws Exception {
     }
 
-    synchronized void checkStatus() {
-        if (fileHandles.isEmpty() && containerHandles.isEmpty()) {
-            forceClose();
+    void checkStatus() {
+        lock();
+        try {
+            if (fileHandles.isEmpty() && containerHandles.isEmpty()) {
+                forceClose();
+            }
+        } finally {
+            unlock();
         }
     }
 
-    private volatile boolean closed = false;
+    public void forceClose() {
+        lock();
+        try {
+            if (closed) {
+                return;
+            }
+            closed = true;
 
-    public synchronized void forceClose() {
-        if (closed) {
-            return;
-        }
-        closed = true;
+            LOGGER.info("Close container " + this);
 
-        LOGGER.info("Close container " + this);
-
-        if (handle != null) {
-            Container parent = handle.getFile().getContainer();
-            synchronized (parent) {
-                if (parent.subContainers.remove(handle.getFile()) != this) {
-                    throw new AssertionError();
+            if (handle != null) {
+                Container parent = handle.getFile().getContainer();
+                parent.lock();
+                try {
+                    if (parent.subContainers.remove(handle.getFile()) != this) {
+                        throw new AssertionError();
+                    }
+                } finally {
+                    parent.unlock();
                 }
             }
-        }
 
-        for (Container subContainer : subContainers.values().toArray(Container[]::new)) {
-            subContainer.forceClose();
-        }
-
-        assert subContainers.isEmpty();
-
-        for (FileHandle handle : this.fileHandles.values().toArray(FileHandle[]::new)) {
-            handle.close(true);
-        }
-
-        assert fileHandles.isEmpty();
-
-        for (ContainerHandle handle : this.containerHandles.toArray(ContainerHandle[]::new)) {
-            handle.close(true);
-        }
-
-        assert containerHandles.isEmpty();
-
-        try {
-            this.closeImpl();
-        } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, "Failed to close " + this, e);
-        } finally {
-            if (handle != null) {
-                handle.close();
+            for (Container subContainer : subContainers.values().toArray(Container[]::new)) {
+                subContainer.forceClose();
             }
+
+            assert subContainers.isEmpty();
+
+            for (FileHandle handle : this.fileHandles.values().toArray(FileHandle[]::new)) {
+                handle.close(true);
+            }
+
+            assert fileHandles.isEmpty();
+
+            for (ContainerHandle handle : this.containerHandles.toArray(ContainerHandle[]::new)) {
+                handle.close(true);
+            }
+
+            assert containerHandles.isEmpty();
+
+            try {
+                this.closeImpl();
+            } catch (Throwable e) {
+                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+            } finally {
+                if (handle != null) {
+                    handle.close();
+                }
+            }
+        } finally {
+            unlock();
         }
     }
 

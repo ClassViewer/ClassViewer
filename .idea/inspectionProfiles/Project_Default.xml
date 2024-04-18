@@ -13,6 +13,7 @@
         </list>
       </option>
     </inspection_tool>
+    <inspection_tool class="SameParameterValue" enabled="true" level="INFORMATION" enabled_by_default="true" editorAttributes="INFORMATION_ATTRIBUTES" />
     <inspection_tool class="SynchronizationOnLocalVariableOrMethodParameter" enabled="true" level="INFORMATION" enabled_by_default="true">
       <option name="reportLocalVariables" value="true" />
       <option name="reportMethodParameters" value="true" />
@@ -29,6 +30,7 @@
       <option name="ADD_APPLET_TO_ENTRIES" value="true" />
       <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
       <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
+      <option name="selected" value="true" />
     </inspection_tool>
   </profile>
 </component>
