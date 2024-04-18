@@ -21,7 +21,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
-import kala.function.CheckedFunction;
+import kala.function.CheckedSupplier;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file2.*;
 import org.glavo.viewer.resources.Images;
@@ -37,11 +37,7 @@ public final class FileTree extends TreeItem<String> {
 
     private static FileTree createFileTree(TypedVirtualFile file) {
         FileTree root = new FileTree(file, file.getFileName());
-        if (file.isDirectory()) {
-            root.loadAction = LOAD_DIRECTORY;
-        } else if (file.isContainer()) {
-            root.loadAction = LOAD_CONTAINER;
-        }
+        root.needLoad = file.isDirectory() || file.isContainer();
         return root;
     }
 
@@ -58,11 +54,55 @@ public final class FileTree extends TreeItem<String> {
                 .toList();
     }
 
-    private static final CheckedFunction<FileTree, Runnable, IOException> LOAD_DIRECTORY = root -> {
-        TypedVirtualFile file = root.getFile();
+    private final TypedVirtualFile file;
+
+    private ContainerHandle containerHandle;
+
+    private boolean isRootNode = false;
+
+    @FXThread
+    private boolean needLoad;
+
+    @FXThread
+    private boolean isLoading = false;
+
+    private final ImageView imageView = new ImageView();
+
+    private FileTree(TypedVirtualFile file, String name) {
+        this.file = file;
+        this.setValue(name);
+        this.setGraphic(imageView);
+        imageView.setImage(file.type().getImage());
+    }
+
+    public TypedVirtualFile getFile() {
+        return file;
+    }
+
+    private ObservableList<TreeItem<String>> getRawChildren() {
+        return super.getChildren();
+    }
+
+    @Override
+    public ObservableList<TreeItem<String>> getChildren() {
+        if (needLoad) {
+            needLoad = false;
+            load();
+        }
+
+        return getRawChildren();
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return !needLoad && getRawChildren().isEmpty();
+    }
+
+    private Runnable loadDirectory() throws IOException {
+        TypedVirtualFile file = this.getFile();
 
         List<TypedVirtualFile> files = file.listFiles();
-        if (!root.isRootNode && files.size() == 1 && files.getFirst().isDirectory()) {
+        if (!this.isRootNode && files.size() == 1 && files.getFirst().isDirectory()) {
             var nameList = new ArrayList<String>(10);
 
             TypedVirtualFile current = file;
@@ -76,81 +116,39 @@ public final class FileTree extends TreeItem<String> {
 
             FileTree currentTree = new FileTree(current, String.join("/", nameList));
             currentTree.getChildren().setAll(createNodes(currentFiles));
-            currentTree.setExpanded(root.isExpanded());
+            currentTree.setExpanded(this.isExpanded());
 
             return () -> {
-                var parentChildren = root.getParent().getChildren();
+                var parentChildren = this.getParent().getChildren();
 
-                int idx = parentChildren.indexOf(root);
+                int idx = parentChildren.indexOf(this);
                 if (idx >= 0) {
                     parentChildren.set(idx, currentTree);
                 }
             };
         }
 
-        root.getChildren().setAll(createNodes(files));
-        return () -> root.setGraphic(new ImageView(root.file.type().getImage()));
-    };
-
-    private static final CheckedFunction<FileTree, Runnable, IOException> LOAD_CONTAINER = root -> {
-        throw new IOException("TODO: LOAD_CONTAINER");
-    };
-
-    private final TypedVirtualFile file;
-
-    private ContainerHandle containerHandle;
-
-    private boolean isRootNode = false;
-
-    @FXThread
-    private CheckedFunction<FileTree, Runnable, IOException> loadAction;
-
-    @FXThread
-    private boolean isLoading = false;
-
-    private FileTree(TypedVirtualFile file, String name) {
-        this.file = file;
-        this.setValue(name);
-        this.setGraphic(new ImageView(file.type().getImage()));
+        this.getChildren().setAll(createNodes(files));
+        return () -> this.setGraphic(imageView);
     }
 
-    public TypedVirtualFile getFile() {
-        return file;
-    }
-
-    private ObservableList<TreeItem<String>> getRawChildren() {
-        return super.getChildren();
-    }
-
-    @Override
-    public ObservableList<TreeItem<String>> getChildren() {
-        if (loadAction != null) {
-            load();
-        }
-
-        return getRawChildren();
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return loadAction == null && getRawChildren().isEmpty();
+    private Runnable loadContainer() throws IOException {
+        throw new IOException("TODO: loadContainer");
     }
 
     @FXThread
     private void load() {
-        var loadAction = this.loadAction;
-        if (loadAction == null || isLoading) {
+        if (isLoading) {
             return;
         }
-
-        this.loadAction = null;
         isLoading = true;
 
         var progressIndicator = new ProgressIndicator();
         progressIndicator.setPrefSize(16, 16);
         this.setGraphic(progressIndicator);
 
-        CompletableFuture.supplyAsync(() -> loadAction.apply(this), Schedulers.virtualThread())
+        CompletableFuture.supplyAsync((CheckedSupplier<Runnable, IOException>)
+                        () -> file.isDirectory() ? loadDirectory() : loadContainer(), Schedulers.virtualThread())
                 .whenCompleteAsync((action, exception) -> {
                     isLoading = false;
                     if (exception == null) {
