@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file2;
+package org.glavo.viewer.file2.types;
 
 import javafx.scene.image.Image;
-import org.glavo.viewer.ui.FileTab2;
+import org.glavo.viewer.resources.Images;
 
-public abstract non-sealed class CustomFileType extends FileType {
-    protected CustomFileType(String name) {
-        super(name);
-    }
+public class UnknownFileType extends BinaryFileType {
+    public static final Image image = Images.loadImage("fileTypes/file-unknown.png");
 
-    protected CustomFileType(String name, Image image) {
+    public UnknownFileType(String name) {
         super(name, image);
-    }
-
-    public FileTab2 openTab(FileHandle handle) {
-        throw new UnsupportedOperationException("CustomFileType::openTab");
     }
 }

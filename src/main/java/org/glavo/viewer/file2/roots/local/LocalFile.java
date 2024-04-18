@@ -18,15 +18,23 @@
 package org.glavo.viewer.file2.roots.local;
 
 import org.glavo.viewer.file2.JavaVirtualFile;
+import org.glavo.viewer.file2.VirtualFile;
 
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.List;
 
 public final class LocalFile extends JavaVirtualFile {
     public LocalFile(Path path) {
         super(LocalRootContainer.CONTAINER, path);
         if (path.getFileSystem() == FileSystems.getDefault())
             throw new IllegalArgumentException(path + " is not a local file");
+    }
+
+    @Override
+    public List<VirtualFile> listFiles() throws IOException {
+        return super.listFilesNoSync();
     }
 
     @Override

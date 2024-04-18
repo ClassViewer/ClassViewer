@@ -38,7 +38,7 @@ public abstract class Container implements ForceCloseable {
         this.handle = handle;
     }
 
-    protected final void ensureOpen() throws IOException {
+    public final void ensureOpen() throws IOException {
         if (closed) {
             throw new IOException("Container is already closed");
         }

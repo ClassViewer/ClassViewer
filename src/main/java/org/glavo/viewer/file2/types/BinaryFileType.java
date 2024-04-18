@@ -13,21 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file2;
+package org.glavo.viewer.file2.types;
 
 import javafx.scene.image.Image;
-import org.glavo.viewer.ui.FileTab2;
+import org.glavo.viewer.file2.CustomFileType;
+import org.glavo.viewer.file2.FileHandle;
+import org.glavo.viewer.file2.VirtualFile;
+import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.ui.*;
 
-public abstract non-sealed class CustomFileType extends FileType {
-    protected CustomFileType(String name) {
+public class BinaryFileType extends CustomFileType {
+    public static final BinaryFileType TYPE = new BinaryFileType();
+
+    private BinaryFileType() {
+        super("binary", Images.file);
+    }
+
+    protected BinaryFileType(String name) {
         super(name);
     }
 
-    protected CustomFileType(String name, Image image) {
+    protected BinaryFileType(String name, Image image) {
         super(name, image);
     }
 
+    @Override
+    public boolean check(VirtualFile path) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public FileTab2 openTab(FileHandle handle) {
-        throw new UnsupportedOperationException("CustomFileType::openTab");
+        throw new UnsupportedOperationException(); // TODO
     }
 }

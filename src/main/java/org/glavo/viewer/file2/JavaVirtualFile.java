@@ -86,10 +86,17 @@ public abstract class JavaVirtualFile extends VirtualFile {
         return Files.isDirectory(path);
     }
 
-    @Override
-    public List<VirtualFile> listFiles() throws IOException {
+    protected final List<VirtualFile> listFilesNoSync() throws IOException {
         try (Stream<Path> stream = Files.list(path)) {
             return stream.<VirtualFile>map(path -> ((JavaFileSystemContainer) container).createVirtualFile(path)).toList();
+        }
+    }
+
+    @Override
+    public List<VirtualFile> listFiles() throws IOException {
+        synchronized (container) {
+            container.ensureOpen();
+            return listFilesNoSync();
         }
     }
 
