@@ -61,7 +61,7 @@ public final class FileTree extends TreeItem<String> {
     private boolean isRootNode = false;
 
     @FXThread
-    private boolean needLoad;
+    private boolean needLoad = false;
 
     @FXThread
     private boolean isLoading = false;
@@ -103,7 +103,7 @@ public final class FileTree extends TreeItem<String> {
 
         List<TypedVirtualFile> files = file.listFiles();
         if (!this.isRootNode && files.size() == 1 && files.getFirst().isDirectory()) {
-            var nameList = new ArrayList<String>(10);
+            var nameList = new ArrayList<String>();
 
             TypedVirtualFile current = file;
             List<TypedVirtualFile> currentFiles = files;
@@ -128,8 +128,11 @@ public final class FileTree extends TreeItem<String> {
             };
         }
 
-        this.getChildren().setAll(createNodes(files));
-        return () -> this.setGraphic(imageView);
+        List<FileTree> subNodes = createNodes(files);
+        return () -> {
+            this.getChildren().setAll(createNodes(files));
+            this.setGraphic(imageView);
+        };
     }
 
     private Runnable loadContainer() throws IOException {
@@ -157,7 +160,8 @@ public final class FileTree extends TreeItem<String> {
                         }
                     } else {
                         LOG.warning("Failed to load file: " + file, exception);
-                        setGraphic(new ImageView(Images.failed));
+                        imageView.setImage(Images.failed);
+                        setGraphic(imageView);
                     }
                 }, Schedulers.javafx());
     }
