@@ -4,9 +4,7 @@ import kala.function.CheckedRunnable;
 import org.glavo.viewer.util.ForceCloseable;
 import org.glavo.viewer.util.SilentlyCloseable;
 
-import java.util.logging.Level;
-
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class ContainerHandle implements SilentlyCloseable, ForceCloseable {
     private final Container container;
@@ -47,7 +45,7 @@ public final class ContainerHandle implements SilentlyCloseable, ForceCloseable 
                     try {
                         onForceClose.runChecked();
                     } catch (Throwable e) {
-                        LOGGER.log(Level.WARNING, "Failed to close " + this);
+                        LOGGER.warning("Failed to close " + this);
                     }
                 }
             } else {

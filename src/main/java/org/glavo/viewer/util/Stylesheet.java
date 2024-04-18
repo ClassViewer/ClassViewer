@@ -10,9 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Stylesheet {
     private static final String STYLE_TEMPLATE = "stylesheet/style.css";
@@ -58,10 +57,10 @@ public final class Stylesheet {
             }
             if ((textFontSize = config.getTextFontSize()) <= 0) textFontSize = Double.max(16, uiFontSize);
 
-            LOGGER.config("UI Font Family: " + uiFontFamily);
-            LOGGER.config("UI Font Size: " + uiFontSize);
-            LOGGER.config("Text Font Family: " + textFontFamily);
-            LOGGER.config("Text Font Size: " + textFontSize);
+            LOGGER.trace("UI Font Family: " + uiFontFamily);
+            LOGGER.trace("UI Font Size: " + uiFontSize);
+            LOGGER.trace("Text Font Family: " + textFontFamily);
+            LOGGER.trace("Text Font Size: " + textFontSize);
 
             table.put("ui-font-family", uiFontFamily);
             table.put("ui-font-size", uiFontSize);
@@ -78,7 +77,7 @@ public final class Stylesheet {
             LOGGER.info("Stylesheet File: " + cssFile);
             return new String[]{cssFile.toURI().toString()};
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Failed to initialize stylesheet", e);
+            LOGGER.warning("Failed to initialize stylesheet", e);
             return StringUtils.EMPTY_ARRAY;
         }
 

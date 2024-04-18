@@ -39,9 +39,8 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
@@ -148,7 +147,7 @@ public class TextFileType extends CustomFileType {
                         if (t.isSuccess()) {
                             return Optional.of(t.get());
                         } else {
-                            LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
+                            LOGGER.warning("Highlight task failed", t.getFailure());
                             return Optional.empty();
                         }
                     })

@@ -16,6 +16,7 @@ import org.glavo.viewer.file.ContainerFileType;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.types.folder.FolderType;
 import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.util.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Queue;
@@ -23,7 +24,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public class FileTreeView extends TreeView<String> {
     public static TreeItem<String> fromTree(OldFileTree node, ContainerHandle handle) {
@@ -151,7 +152,7 @@ public class FileTreeView extends TreeView<String> {
                     OldFileTree.buildFileTree(container, node);
                     updateSubTree(this);
                 } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to open container", e);
+                    LOGGER.warning("Failed to open container", e);
                 }
             }
             return super.getChildren();

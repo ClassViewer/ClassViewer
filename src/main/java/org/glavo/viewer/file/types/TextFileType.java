@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public class TextFileType extends CustomFileType {
     public static final TextFileType TYPE = new TextFileType();
@@ -142,7 +142,7 @@ public class TextFileType extends CustomFileType {
                         if (t.isSuccess()) {
                             return Optional.of(t.get());
                         } else {
-                            LOGGER.log(Level.WARNING, "Highlight task failed", t.getFailure());
+                            LOGGER.warning("Highlight task failed", t.getFailure());
                             return Optional.empty();
                         }
                     })
@@ -190,7 +190,7 @@ public class TextFileType extends CustomFileType {
 
             @Override
             protected void failed() {
-                LOGGER.log(Level.WARNING, "Failed to open file", getException());
+                LOGGER.warning("Failed to open file", getException());
                 res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
                 handle.close();
             }

@@ -1,7 +1,6 @@
 package org.glavo.viewer;
 
 import kala.platform.Platform;
-import org.glavo.viewer.util.Logging;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -9,7 +8,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
+
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Options {
     private static Options options;
@@ -50,7 +50,7 @@ public final class Options {
             try {
                 home = Paths.get(homeDir);
             } catch (InvalidPathException e) {
-                Logging.LOGGER.log(Level.WARNING, "home folder path is invalid", e);
+                LOGGER.warning("home folder path is invalid", e);
                 System.exit(1);
             }
         }

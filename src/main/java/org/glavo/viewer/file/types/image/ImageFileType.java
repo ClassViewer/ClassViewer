@@ -19,9 +19,8 @@ import org.glavo.viewer.util.TaskUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.logging.Level;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public class ImageFileType extends CustomFileType {
 
@@ -61,7 +60,7 @@ public class ImageFileType extends CustomFileType {
                 try {
                     infoTable = new ImageInfoTable(Imaging.getImageInfo(bytes));
                 } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to read image information", e);
+                    LOGGER.warning("Failed to read image information", e);
                 }
                 Image image = new Image(new ByteArrayInputStream(bytes));
                 if (image.isError()) {
@@ -81,7 +80,7 @@ public class ImageFileType extends CustomFileType {
 
             @Override
             protected void failed() {
-                LOGGER.log(Level.WARNING, "Failed to read image", getException());
+                LOGGER.warning("Failed to read image", getException());
                 res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
                 res.setSideBar(infoTable);
             }

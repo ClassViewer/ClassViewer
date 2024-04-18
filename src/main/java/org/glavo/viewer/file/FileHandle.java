@@ -9,9 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
-import java.util.logging.Level;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
 
@@ -84,14 +83,14 @@ public abstract class FileHandle implements SilentlyCloseable, ForceCloseable {
                 try {
                     onForceClose.runChecked();
                 } catch (Throwable e) {
-                    LOGGER.log(Level.WARNING, "Failed to force close " + this, e);
+                    LOGGER.warning("Failed to force close " + this, e);
                 }
             }
 
             try {
                 this.closeImpl();
             } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+                LOGGER.warning("Failed to close " + this, e);
             }
 
             FileHandle h;

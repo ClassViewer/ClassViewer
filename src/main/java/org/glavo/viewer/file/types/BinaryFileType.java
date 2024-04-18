@@ -16,9 +16,7 @@ import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
 import org.glavo.viewer.util.TaskUtils;
 
-import java.util.logging.Level;
-
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public class BinaryFileType extends CustomFileType {
     public static final BinaryFileType TYPE = new BinaryFileType();
@@ -89,7 +87,7 @@ public class BinaryFileType extends CustomFileType {
 
                     @Override
                     protected void failed() {
-                        LOGGER.log(Level.WARNING, "Failed to create hex pane", getException());
+                        LOGGER.warning("Failed to create hex pane", getException());
                         res.setContent(new EmptyHexPane(bytes));
                     }
                 });
@@ -99,7 +97,7 @@ public class BinaryFileType extends CustomFileType {
 
             @Override
             protected void failed() {
-                LOGGER.log(Level.WARNING, "Failed to read values", getException());
+                LOGGER.warning("Failed to read values", getException());
                 res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
                 handle.close();
             }

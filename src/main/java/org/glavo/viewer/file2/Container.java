@@ -22,9 +22,8 @@ import org.glavo.viewer.util.ForceCloseable;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public abstract class Container implements ForceCloseable {
 
@@ -180,7 +179,7 @@ public abstract class Container implements ForceCloseable {
             try {
                 this.closeImpl();
             } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, "Failed to close " + this, e);
+                LOGGER.warning("Failed to close " + this, e);
             } finally {
                 if (handle != null) {
                     handle.close();

@@ -1,9 +1,24 @@
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.glavo.viewer.util.logging;
 
-import kala.tuple.Tuple;
 import kala.tuple.Tuple2;
 
 import java.io.*;
+import java.lang.System.Logger.Level;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -26,25 +41,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
  * @author Glavo
  */
 public final class Logger {
-    public static final Logger LOG = new Logger();
-
-    private static volatile String[] accessTokens = new String[0];
-
-    public static synchronized void registerAccessToken(String token) {
-        final String[] oldAccessTokens = accessTokens;
-        final String[] newAccessTokens = Arrays.copyOf(oldAccessTokens, oldAccessTokens.length + 1);
-
-        newAccessTokens[oldAccessTokens.length] = token;
-
-        accessTokens = newAccessTokens;
-    }
-
-    public static String filterForbiddenToken(String message) {
-        for (String token : accessTokens)
-            message = message.replace(token, "<access token>");
-        return message;
-    }
-
+    public static final Logger LOGGER = new Logger();
 
     static final String CLASS_NAME = Logger.class.getName();
 
@@ -76,7 +73,7 @@ public final class Logger {
                 .append('/')
                 .append(event.level)
                 .append("] ")
-                .append(filterForbiddenToken(event.message));
+                .append(event.message);
         return builder.toString();
     }
 
@@ -198,6 +195,7 @@ public final class Logger {
         if (logFolder != null) {
             String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss"));
             try {
+                Files.createDirectories(logFolder);
                 for (int n = 0; ; n++) {
                     Path file = logFolder.resolve(time + (n == 0 ? "" : "." + n) + ".log").toAbsolutePath().normalize();
                     try {
@@ -237,11 +235,11 @@ public final class Logger {
                 throw new AssertionError("This thread cannot be interrupted", e);
             }
         });
-        loggerThread.setName("HMCL Logger Thread");
+        loggerThread.setName("ClassViewer Logger Thread");
         loggerThread.start();
 
         Thread cleanerThread = new Thread(this::onShutdown);
-        cleanerThread.setName("HMCL Logger Shutdown Hook");
+        cleanerThread.setName("ClassViewer Logger Shutdown Hook");
         Runtime.getRuntime().addShutdownHook(cleanerThread);
     }
 

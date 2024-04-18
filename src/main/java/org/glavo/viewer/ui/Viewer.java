@@ -28,7 +28,7 @@ import org.glavo.viewer.util.WindowDimension;
 import java.io.File;
 import java.util.logging.Level;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Viewer {
     private static final ObservableList<Viewer> viewers = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
@@ -205,7 +205,7 @@ public final class Viewer {
 
                         @Override
                         protected void failed() {
-                            LOGGER.log(Level.WARNING, "Failed to open container", getException());
+                            LOGGER.warning("Failed to open container", getException());
                             int idx = treeItems.indexOf(loadingItem);
                             assert idx >= 0;
                             treeItems.set(idx, new FileTreeView.FailedItem(path.toString()));
@@ -227,7 +227,7 @@ public final class Viewer {
 
             Config.getConfig().addRecentFile(path);
         } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, "Failed to open file " + path, e);
+            LOGGER.warning("Failed to open file " + path, e);
             if (resource != null) {
                 resource.close();
             }

@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 
-import static org.glavo.viewer.util.Logging.LOGGER;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Config {
     public static final int RECENT_FILES_LIMIT = 20;
@@ -76,7 +76,7 @@ public final class Config {
             res.init(path);
             return res;
         } catch (Throwable ex) {
-            LOGGER.log(Level.WARNING, "Failed to read configuration", ex);
+            LOGGER.warning("Failed to read configuration", ex);
             return new Config(null);
         }
     }
@@ -112,7 +112,7 @@ public final class Config {
                 Thread.sleep(10);
             }
         } catch (Throwable ex) {
-            LOGGER.log(Level.WARNING, "Failed when trying to lock the configuration file", ex);
+            LOGGER.warning("Failed when trying to lock the configuration file", ex);
             if (channel != null) {
                 try {
                     channel.close();
@@ -159,7 +159,7 @@ public final class Config {
                         LOGGER.info("Save config");
                     });
                 } catch (IOException ex) {
-                    LOGGER.log(Level.WARNING, "Failed to save config", ex);
+                    LOGGER.warning("Failed to save config", ex);
                 }
             });
         }

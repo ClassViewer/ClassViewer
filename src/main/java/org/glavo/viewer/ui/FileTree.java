@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
-import static org.glavo.viewer.util.logging.Logger.LOG;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class FileTree extends TreeItem<String> {
 
@@ -159,7 +159,7 @@ public final class FileTree extends TreeItem<String> {
                             action.run();
                         }
                     } else {
-                        LOG.warning("Failed to load file: " + file, exception);
+                        LOGGER.warning("Failed to load file: " + file, exception);
                         imageView.setImage(Images.failed);
                         setGraphic(imageView);
                     }
