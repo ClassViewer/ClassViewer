@@ -16,12 +16,10 @@ import org.glavo.viewer.file.ContainerFileType;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.types.folder.FolderType;
 import org.glavo.viewer.resources.Images;
-import org.glavo.viewer.util.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;

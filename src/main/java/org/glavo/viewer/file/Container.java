@@ -8,7 +8,6 @@ import org.glavo.viewer.util.ForceCloseable;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.*;
-import java.util.logging.Level;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 

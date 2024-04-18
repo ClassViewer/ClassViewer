@@ -10,9 +10,8 @@ import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
-import org.glavo.viewer.util.logging.Logger;
 
-import java.util.concurrent.Executor;
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Main extends Application {
 
@@ -67,7 +66,7 @@ public final class Main extends Application {
         TaskUtils.taskPool.shutdown();
         TextFileType.highlightPool.shutdown();
         Schedulers.shutdown();
-        Logger.LOGGER.shutdown();
+        LOGGER.shutdown();
         app = null;
     }
 }

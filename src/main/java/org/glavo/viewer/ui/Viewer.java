@@ -26,7 +26,6 @@ import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
-import java.util.logging.Level;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 

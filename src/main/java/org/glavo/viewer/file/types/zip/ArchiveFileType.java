@@ -7,13 +7,14 @@ import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FilePath;
 import org.glavo.viewer.file.ContainerFileType;
 import org.glavo.viewer.util.ZipUtils;
-import org.glavo.viewer.util.logging.Logger;
 
 import java.io.File;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipFile;
+
+import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class ArchiveFileType extends ContainerFileType {
     public static final ArchiveFileType TYPE = new ArchiveFileType();
@@ -57,7 +58,7 @@ public final class ArchiveFileType extends ContainerFileType {
                         }
                     }
                 } catch (Throwable e) {
-                    Logger.LOGGER.warning("Failed to open FallbackArchiveContainer", e);
+                    LOGGER.warning("Failed to open FallbackArchiveContainer", e);
                 }
                 IOUtils.closeQuietly(zf);
             }
