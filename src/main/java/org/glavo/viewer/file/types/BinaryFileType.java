@@ -76,7 +76,7 @@ public class BinaryFileType extends CustomFileType {
                         Label statusLabel = new Label(" ");
                         statusBar.setLeft(statusLabel);
 
-                        HexPane.BytesBar bytesBar = new HexPane.BytesBar(bytes.size());
+                        BytesBar bytesBar = new BytesBar(bytes.size());
                         bytesBar.setMaxHeight(statusLabel.getMaxHeight());
                         bytesBar.setPrefWidth(200);
                         statusBar.setRight(bytesBar);

@@ -21,6 +21,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.annotation.NotFXThread;
 import org.glavo.viewer.file2.FileHandle;
 import org.glavo.viewer.file2.FileType;
 import org.glavo.viewer.file2.VirtualFile;
@@ -46,6 +47,17 @@ public final class FileTab2 extends Tab {
         this.setText(file.getFileName());
         this.setTooltip(new Tooltip(file.toString()));
         this.setContextMenu(new TabMenu());
+        this.setOnClosed(event -> Schedulers.virtualThread().execute(() -> {
+            file.getContainer().lock();
+            try {
+                FileHandle fileHandle = this.fileHandle;
+                if (fileHandle != null) {
+                    fileHandle.close();
+                }
+            } finally {
+                file.getContainer().unlock();
+            }
+        }));
     }
 
     public FileType getType() {
@@ -56,12 +68,22 @@ public final class FileTab2 extends Tab {
         return file;
     }
 
+    @NotFXThread
     public void setFileHandle(FileHandle fileHandle) {
-        this.fileHandle = fileHandle;
-    }
+        file.getContainer().lock();
+        try {
+            FileHandle oldFileHandle = this.fileHandle;
+            if (oldFileHandle != null) {
+                oldFileHandle.setOnForceClose(null);
+            }
 
-    public FileHandle getFileHandle() {
-        return fileHandle;
+            this.fileHandle = fileHandle;
+            if (fileHandle != null) {
+                fileHandle.setOnForceClose(() -> FXUtils.runInFx(() -> FXUtils.closeTab(this)));
+            }
+        } finally {
+            file.getContainer().unlock();
+        }
     }
 
     public ObjectProperty<Node> sideBarProperty() {

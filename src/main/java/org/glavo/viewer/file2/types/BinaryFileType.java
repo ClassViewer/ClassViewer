@@ -27,9 +27,7 @@ import org.glavo.viewer.file2.FileHandle;
 import org.glavo.viewer.file2.VirtualFile;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
-import org.glavo.viewer.util.FXUtils;
 
-import java.lang.ref.WeakReference;
 import java.util.concurrent.CompletableFuture;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
@@ -64,16 +62,10 @@ public class BinaryFileType extends CustomFileType {
         CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
                     Container container = file.getContainer();
                     container.lock();
+                    FileHandle fileHandle = null;
                     try {
-                        FileHandle fileHandle = container.openFile(file);
-
+                        fileHandle = container.openFile(file);
                         tab.setFileHandle(fileHandle);
-
-                        WeakReference<FileTab2> tabRef = new WeakReference<>(tab);
-                        fileHandle.setOnForceClose(() -> FXUtils.runInFx(() -> {
-                            tab.setFileHandle(null);
-                            tab.getTabPane().getTabs().remove(tab);
-                        }));
 
                         ByteSeq bytes = ImmutableByteArray.Unsafe.wrap(fileHandle.readAllBytes());
                         if (bytes.size() < 200 * 1024) { // 200 KiB
@@ -81,20 +73,22 @@ public class BinaryFileType extends CustomFileType {
                         } else {
                             return new FallbackHexPane(bytes);
                         }
+                    } catch (Throwable e) {
+                        tab.setFileHandle(null);
+                        if (fileHandle != null) {
+                            fileHandle.close();
+                        }
+                        throw e;
                     } finally {
                         container.unlock();
                     }
                 }), Schedulers.virtualThread())
                 .whenCompleteAsync((result, exception) -> {
                     if (exception == null) {
-                        tab.setOnClosed(event -> {
-                            FileHandle fileHandle = tab.getFileHandle();
-                            if (fileHandle != null) {
-                                fileHandle.close();
-                            }
-                        });
+                        tab.setContent(result.getNode());
+                        tab.setStatusBar(result.createBytesBar());
                     } else {
-                        LOGGER.warning("", exception);
+                        LOGGER.warning("Failed to open file", exception);
                     }
                 }, Schedulers.javafx());
 

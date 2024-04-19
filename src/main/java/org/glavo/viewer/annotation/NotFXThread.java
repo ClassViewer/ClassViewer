@@ -17,9 +17,12 @@ package org.glavo.viewer.annotation;
 
 import java.lang.annotation.*;
 
+/**
+ * Marks a method as potentially blocking and should not be called on the JavaFX Application Thread.
+ */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.METHOD, ElementType.FIELD})
-public @interface FXThread {
+@Target(ElementType.METHOD)
+public @interface NotFXThread {
 }

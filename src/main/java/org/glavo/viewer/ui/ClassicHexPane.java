@@ -2,6 +2,7 @@ package org.glavo.viewer.ui;
 
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import kala.collection.primitive.ByteSeq;
 import kala.tuple.primitive.IntTuple2;
@@ -11,6 +12,8 @@ import java.util.function.Consumer;
 
 public class ClassicHexPane extends ScrollPane implements HexPane {
 
+    private final long size;
+
     private final HexText hex;
     private final TextArea textArea1;
     private final TextArea textArea2;
@@ -19,6 +22,7 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
 
     public ClassicHexPane(ByteSeq seq) {
         this.hex = new HexText(seq);
+        this.size = seq.size();
         textArea1 = new TextArea(hex.rowHeaderText);
         textArea2 = new TextArea(hex.bytesText);
         textArea3 = new TextArea(hex.asciiString);
@@ -115,4 +119,20 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
         area.setContextMenu(menu);
     }
 
+    @Override
+    public Node createBytesBar() {
+        BorderPane statusBar = new BorderPane();
+
+        Label statusLabel = new Label(" ");
+        statusBar.setLeft(statusLabel);
+
+        BytesBar bytesBar = new BytesBar((int) size);
+        bytesBar.setMaxHeight(statusLabel.getMaxHeight());
+        bytesBar.setPrefWidth(200);
+        statusBar.setRight(bytesBar);
+
+        this.setOnSelect(tuple -> bytesBar.select(tuple.component1(), tuple.component2()));
+
+        return statusBar;
+    }
 }
