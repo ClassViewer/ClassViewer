@@ -29,7 +29,7 @@ import java.nio.channels.SeekableByteChannel;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
-public abstract class FileHandle implements SilentlyCloseable {
+public abstract class FileHandle implements Runnable {
 
     protected final VirtualFile file;
 
@@ -123,8 +123,12 @@ public abstract class FileHandle implements SilentlyCloseable {
     }
 
     @Override
-    public final void close() {
+    public final void run() {
         close(false);
+    }
+
+    public final void close() {
+        run();
     }
 
     @Override

@@ -16,6 +16,7 @@
 package org.glavo.viewer.file2;
 
 import javafx.scene.image.Image;
+import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.ui.FileTab2;
 
 public abstract non-sealed class CustomFileType extends FileType {
@@ -27,6 +28,7 @@ public abstract non-sealed class CustomFileType extends FileType {
         super(name, image);
     }
 
+    @FXThread
     public FileTab2 openTab(VirtualFile file) {
         throw new UnsupportedOperationException("CustomFileType::openTab");
     }

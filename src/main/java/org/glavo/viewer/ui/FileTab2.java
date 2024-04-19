@@ -17,12 +17,17 @@ package org.glavo.viewer.ui;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.file2.FileHandle;
 import org.glavo.viewer.file2.FileType;
 import org.glavo.viewer.file2.VirtualFile;
 import org.glavo.viewer.resources.I18N;
+import org.glavo.viewer.util.FXUtils;
+
+import java.util.ArrayList;
 
 public final class FileTab2 extends Tab {
     private final FileType type;
@@ -31,7 +36,9 @@ public final class FileTab2 extends Tab {
     private final ObjectProperty<Node> sideBar = new SimpleObjectProperty<>();
     private final ObjectProperty<Node> statusBar = new SimpleObjectProperty<>();
 
-    public FileTab2(FileType type, VirtualFile file) {
+    private volatile FileHandle fileHandle;
+
+    public FileTab2(VirtualFile file, FileType type) {
         this.type = type;
         this.file = file;
 
@@ -47,6 +54,14 @@ public final class FileTab2 extends Tab {
 
     public VirtualFile getFile() {
         return file;
+    }
+
+    public void setFileHandle(FileHandle fileHandle) {
+        this.fileHandle = fileHandle;
+    }
+
+    public FileHandle getFileHandle() {
+        return fileHandle;
     }
 
     public ObjectProperty<Node> sideBarProperty() {
@@ -87,9 +102,15 @@ public final class FileTab2 extends Tab {
             MenuItem closeTabsToTheLeft = new MenuItem(I18N.getString("filesTabPane.menu.closeTabsToTheLeft"));
             closeTabsToTheLeft.setOnAction(event -> {
                 TabPane tabPane = getTabPane();
-                int idx = tabPane.getTabs().indexOf(FileTab2.this);
+                ObservableList<Tab> tabs = tabPane.getTabs();
+                int idx = tabs.indexOf(FileTab2.this);
                 if (idx > 0) {
-                    tabPane.getTabs().remove(0, idx);
+                    var tabsToBeClosed = new ArrayList<Tab>(idx);
+                    for (int i = 0; i < idx; i++) {
+                        tabsToBeClosed.add(tabs.get(i));
+                    }
+                    tabs.remove(0, idx);
+                    tabsToBeClosed.forEach(FXUtils::closeTab);
                 }
 
                 getTabPane().getSelectionModel().select(FileTab2.this);
@@ -98,9 +119,14 @@ public final class FileTab2 extends Tab {
             MenuItem closeTabsToTheRight = new MenuItem(I18N.getString("filesTabPane.menu.closeTabsToTheRight"));
             closeTabsToTheRight.setOnAction(event -> {
                 TabPane tabPane = getTabPane();
-                int idx = tabPane.getTabs().indexOf(FileTab2.this);
-                if (idx >= 0 && idx < tabPane.getTabs().size() - 1) {
-                    tabPane.getTabs().remove(idx + 1, tabPane.getTabs().size());
+                ObservableList<Tab> tabs = tabPane.getTabs();
+                int idx = tabs.indexOf(FileTab2.this);
+                if (idx >= 0 && idx < tabs.size() - 1) {
+                    var tabsToBeClosed = new ArrayList<Tab>();
+                    for (int i = idx + 1; i < tabs.size(); i++) {
+                        tabsToBeClosed.add(tabs.get(i));
+                    }
+                    tabsToBeClosed.forEach(FXUtils::closeTab);
                 }
                 getTabPane().getSelectionModel().select(FileTab2.this);
             });
