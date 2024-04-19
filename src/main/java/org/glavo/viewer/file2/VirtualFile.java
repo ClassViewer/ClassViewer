@@ -17,12 +17,28 @@
  */
 package org.glavo.viewer.file2;
 
+import org.glavo.viewer.file2.roots.local.LocalFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.List;
 
 public abstract non-sealed class VirtualFile extends VirtualPath {
+
+    public static VirtualFile of(File file) {
+        return new LocalFile(file.toPath());
+    }
+
+    public static VirtualFile of(Path path) {
+        if (path.getFileSystem() == FileSystems.getDefault()) {
+            return new LocalFile(path);
+        } else {
+            throw new IllegalArgumentException("Unsupported path: " + path);
+        }
+    }
 
     protected final Container container;
 

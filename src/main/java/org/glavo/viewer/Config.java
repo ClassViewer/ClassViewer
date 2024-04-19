@@ -8,7 +8,8 @@ import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file2.TypedVirtualFile;
+import org.glavo.viewer.ui.Schedulers;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.JsonUtils;
 import org.glavo.viewer.util.WindowDimension;
@@ -41,7 +42,7 @@ public final class Config {
     private final StringProperty textFontFamily = new SimpleStringProperty();
     private final DoubleProperty textFontSize = new SimpleDoubleProperty();
 
-    private final ObservableList<FilePath> recentFiles = FXCollections.observableList(new LinkedList<>());
+    private final ObservableList<TypedVirtualFile> recentFiles = FXCollections.observableList(new LinkedList<>());
 
     private static Config config;
 
@@ -151,7 +152,7 @@ public final class Config {
 
     public void save() {
         if (path != null) {
-            FileUtils.ioThread.submit(() -> {
+            Schedulers.virtualThread().execute(() -> {
                 try {
                     FileUtils.save(path, writer -> {
                         JsonUtils.MAPPER.writeValue(writer, Config.this);
@@ -247,23 +248,20 @@ public final class Config {
         this.textFontSize.set(textFontSizeProperty);
     }
 
-    public ObservableList<FilePath> getRecentFiles() {
+    public ObservableList<TypedVirtualFile> getRecentFiles() {
         return recentFiles;
     }
 
-    public void setRecentFiles(List<FilePath> paths) {
-        getRecentFiles().setAll(paths);
+    public void setRecentFiles(List<TypedVirtualFile> files) {
+        getRecentFiles().setAll(files);
     }
 
-    public void addRecentFile(FilePath path) {
-        ObservableList<FilePath> files = getRecentFiles();
-        synchronized (files) {
-            files.remove(path);
-            if (files.size() == RECENT_FILES_LIMIT) {
-                files.remove(files.size() - 1);
-            }
-
-            files.add(0, path);
+    public void addRecentFile(TypedVirtualFile path) {
+        ObservableList<TypedVirtualFile> files = getRecentFiles();
+        files.remove(path);
+        if (files.size() == RECENT_FILES_LIMIT) {
+            files.removeLast();
         }
+        files.addFirst(path);
     }
 }

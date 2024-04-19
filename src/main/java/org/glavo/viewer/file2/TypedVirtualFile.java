@@ -15,12 +15,18 @@
  */
 package org.glavo.viewer.file2;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public record TypedVirtualFile(VirtualFile file, FileType type) {
     public static TypedVirtualFile of(VirtualFile file) {
         return new TypedVirtualFile(file, FileType.detectFileType(file));
+    }
+
+    public static TypedVirtualFile of(File file) {
+        VirtualFile virtualFile = VirtualFile.of(file);
+        return new TypedVirtualFile(virtualFile, FileType.detectFileType(virtualFile));
     }
 
     public String getFileName() {

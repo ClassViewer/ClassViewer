@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.glavo.viewer.ui;
 
 import javafx.beans.binding.Bindings;
@@ -7,22 +22,19 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
-import org.glavo.viewer.file.*;
+import org.glavo.viewer.file2.*;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.SilentlyCloseable;
 import org.glavo.viewer.util.Stylesheet;
-import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
@@ -30,7 +42,7 @@ import java.io.File;
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Viewer {
-    private static final ObservableList<Viewer> viewers = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+    private static final ObservableList<Viewer> viewers = FXCollections.observableArrayList();
 
     private final Stage stage;
     private final boolean isPrimary;
@@ -76,7 +88,7 @@ public final class Viewer {
                 success = true;
                 for (File file : db.getFiles()) {
                     if (file.exists()) {
-                        open(FilePath.ofJavaPath(file.toPath(), file.isDirectory()));
+                        open(TypedVirtualFile.of(file));
                     }
                 }
             }
@@ -153,80 +165,80 @@ public final class Viewer {
     public void openFile() {
         File file = showFileChooser();
         if (file != null) {
-            open(FilePath.ofJavaPath(file.toPath()));
+            open(TypedVirtualFile.of(file));
         }
     }
 
     public void openFolder() {
         File file = showDirectoryChooser();
         if (file != null) {
-            open(FilePath.ofJavaPath(file.toPath(), true));
+            open(TypedVirtualFile.of(file));
         }
     }
 
-    public void open(FilePath path) {
-        if (path.isDirectory()) {
-            LOGGER.info("Open folder " + path);
+    public void open(TypedVirtualFile file) {
+        if (file.isDirectory()) {
+            LOGGER.info("Open folder " + file);
         } else {
-            LOGGER.info("Open file " + path);
+            LOGGER.info("Open file " + file);
         }
-
-        FileType type = FileType.detectFileType(path);
 
         SilentlyCloseable resource = null;
         try {
-            switch (type) {
+            switch (file.type()) {
                 case ContainerFileType containerFileType -> {
-                    //noinspection resource
-                    ContainerHandle handle = new ContainerHandle(Container.getContainer(path));
-                    resource = handle;
-
-                    ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
-
-                    FileTreeView.LoadingItem loadingItem = new FileTreeView.LoadingItem(path.toString());
-                    treeItems.add(loadingItem);
-
-                    TaskUtils.submit(new Task<TreeItem<String>>() {
-                        @Override
-                        protected TreeItem<String> call() throws Exception {
-                            OldFileTree.RootNode root = new OldFileTree.RootNode(type, path);
-                            OldFileTree.buildFileTree(handle.getContainer(), root);
-                            return FileTreeView.fromTree(root, handle);
-                        }
-
-                        @Override
-                        protected void succeeded() {
-                            int idx = treeItems.indexOf(loadingItem);
-                            assert idx >= 0;
-
-                            treeItems.set(idx, getValue());
-                        }
-
-                        @Override
-                        protected void failed() {
-                            LOGGER.warning("Failed to open container", getException());
-                            int idx = treeItems.indexOf(loadingItem);
-                            assert idx >= 0;
-                            treeItems.set(idx, new FileTreeView.FailedItem(path.toString()));
-                            handle.close();
-                        }
-                    });
+                    // TODO
+//                    //noinspection resource
+//                    ContainerHandle handle = new ContainerHandle(Container.getContainer(file));
+//                    resource = handle;
+//
+//                    ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
+//
+//                    FileTreeView.LoadingItem loadingItem = new FileTreeView.LoadingItem(file.toString());
+//                    treeItems.add(loadingItem);
+//
+//                    TaskUtils.submit(new Task<TreeItem<String>>() {
+//                        @Override
+//                        protected TreeItem<String> call() throws Exception {
+//                            OldFileTree.RootNode root = new OldFileTree.RootNode(type, file);
+//                            OldFileTree.buildFileTree(handle.getContainer(), root);
+//                            return FileTreeView.fromTree(root, handle);
+//                        }
+//
+//                        @Override
+//                        protected void succeeded() {
+//                            int idx = treeItems.indexOf(loadingItem);
+//                            assert idx >= 0;
+//
+//                            treeItems.set(idx, getValue());
+//                        }
+//
+//                        @Override
+//                        protected void failed() {
+//                            LOGGER.warning("Failed to open container", getException());
+//                            int idx = treeItems.indexOf(loadingItem);
+//                            assert idx >= 0;
+//                            treeItems.set(idx, new FileTreeView.FailedItem(file.toString()));
+//                            handle.close();
+//                        }
+//                    });
                 }
                 case CustomFileType customFileType -> {
-                    try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(path.getParent()))) {
-                        FileHandle handle = containerHandle.getContainer().openFile(path);
-                        resource = handle;
-
-                        FileTab tab = ((CustomFileType) type).openTab(handle);
-                        getPane().addFileTab(tab);
-                    }
+                    // TODO
+//                    try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(file.getParent()))) {
+//                        FileHandle handle = containerHandle.getContainer().openFile(file);
+//                        resource = handle;
+//
+//                        FileTab tab = ((CustomFileType) type).openTab(handle);
+//                        getPane().addFileTab(tab);
+//                    }
                 }
-                default -> throw new AssertionError("Unhandled type: " + type);
+                case null, default -> throw new AssertionError("Unhandled type: " + file.type());
             }
 
-            Config.getConfig().addRecentFile(path);
+            // TODO: Config.getConfig().addRecentFile(file);
         } catch (Throwable e) {
-            LOGGER.warning("Failed to open file " + path, e);
+            LOGGER.warning("Failed to open file " + file, e);
             if (resource != null) {
                 resource.close();
             }

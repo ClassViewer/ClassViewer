@@ -14,7 +14,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import org.glavo.viewer.Config;
-import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.MappedList;
@@ -128,9 +127,9 @@ public final class ViewerPane extends BorderPane {
             Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
             openRecentMenu.setMnemonicParsing(true);
             Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
-                    path -> {
-                        MenuItem item = new MenuItem(path.toString(), new ImageView(FileType.detectFileType(path).getImage()));
-                        item.setOnAction(event -> viewer.open(path));
+                    file -> {
+                        MenuItem item = new MenuItem(file.toString(), new ImageView(file.type().getImage()));
+                        item.setOnAction(event -> viewer.open(file));
                         return item;
                     }));
 
