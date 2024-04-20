@@ -86,7 +86,7 @@ public class BinaryFileType extends CustomFileType {
                 .whenCompleteAsync((result, exception) -> {
                     if (exception == null) {
                         tab.setContent(result.getNode());
-                        tab.setStatusBar(result.createBytesBar());
+                        tab.setStatusBar(result.getStatusBar());
                     } else {
                         LOGGER.warning("Failed to open file", exception);
                     }

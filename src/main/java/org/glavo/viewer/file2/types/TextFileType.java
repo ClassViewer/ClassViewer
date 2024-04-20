@@ -15,15 +15,24 @@
  */
 package org.glavo.viewer.file2.types;
 
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import kala.compress.utils.Charsets;
+import kala.function.CheckedSupplier;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.PlainTextChange;
 import org.glavo.viewer.file2.CustomFileType;
+import org.glavo.viewer.file2.FileHandle;
 import org.glavo.viewer.file2.VirtualFile;
 import org.glavo.viewer.highlighter.Highlighter;
+import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
-import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.ui.FileTab2;
 import org.glavo.viewer.util.DaemonThreadFactory;
 import org.glavo.viewer.util.FileUtils;
@@ -36,6 +45,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,20 +85,20 @@ public class TextFileType extends CustomFileType {
     public boolean check(VirtualFile path) {
         switch (path.getFileName()) { // TODO: ext
             case "txt", "md", "asm",
-                    "c", "cc", "cpp", "cxx", "cs", "clj",
-                    "f", "for", "f90", "f95", "fs",
-                    "go", "gradle", "groovy",
-                    "h", "hpp", "hs",
-                    "java", "js", "jl",
-                    "kt", "kts",
-                    "m", "mm", "ml", "mli",
-                    "py", "pl",
-                    "ruby", "rs",
-                    "swift",
-                    "vala", "vapi",
-                    "zig",
-                    "sh", "bat", "ps1",
-                    "csv", "inf", "toml", "log" -> {
+                 "c", "cc", "cpp", "cxx", "cs", "clj",
+                 "f", "for", "f90", "f95", "fs",
+                 "go", "gradle", "groovy",
+                 "h", "hpp", "hs",
+                 "java", "js", "jl",
+                 "kt", "kts",
+                 "m", "mm", "ml", "mli",
+                 "py", "pl",
+                 "ruby", "rs",
+                 "swift",
+                 "vala", "vapi",
+                 "zig",
+                 "sh", "bat", "ps1",
+                 "csv", "inf", "toml", "log" -> {
                 return true;
             }
         }
@@ -112,7 +122,7 @@ public class TextFileType extends CustomFileType {
         return charset == StandardCharsets.US_ASCII ? StandardCharsets.UTF_8 : charset;
     }
 
-    protected void applyHighlighter(FileTab tab, CodeArea area) {
+    protected void applyHighlighter(FileTab2 tab, CodeArea area) {
         if (highlighter != null) {
             area.getStylesheets().add(codeStylesheet);
             area.setStyleSpans(0, getHighlighter().computeHighlighting(area.getText()));
@@ -127,7 +137,7 @@ public class TextFileType extends CustomFileType {
                 pool = Executors.newSingleThreadExecutor(r -> {
                     Thread t = new Thread(r, "highlighter-" + count.getAndIncrement());
                     t.setDaemon(true);
-                    LOGGER.info(String.format("Start thread %s to highlight file %s", t.getName(), tab.getPath()));
+                    LOGGER.info(String.format("Start thread %s to highlight file %s", t.getName(), tab.getFile()));
                     return t;
                 });
 
@@ -159,51 +169,56 @@ public class TextFileType extends CustomFileType {
 
     @Override
     public FileTab2 openTab(VirtualFile file) {
-//        FileTab res = new FileTab(this, handle.getPath());
-//        res.setContent(new StackPane(new ProgressIndicator()));
-//
-//        HBox statusBar = new HBox();
-//        statusBar.setAlignment(Pos.CENTER_RIGHT);
-//        res.setStatusBar(statusBar);
-//
-//        Task<CodeArea> task = new Task<>() {
-//            Charset charset;
-//
-//            @Override
-//            protected CodeArea call() throws Exception {
-//                byte[] bytes = handle.readAllBytes();
-//
-//                charset = detectFileEncoding(bytes);
-//
-//                CodeArea area = new CodeArea();
-//                area.getStylesheets().clear();
-//                area.setParagraphGraphicFactory(LineNumberFactory.get(area));
-//                //area.setEditable(false);
-//                area.replaceText(new String(bytes, charset));
-//                applyHighlighter(res, area);
-//                area.scrollToPixel(0, 0);
-//
-//                return area;
-//            }
-//
-//            @Override
-//            protected void succeeded() {
-//                res.setContent(new VirtualizedScrollPane<>(this.getValue()));
-//                statusBar.getChildren().add(new Label(charset.toString()));
-//                handle.close();
-//            }
-//
-//            @Override
-//            protected void failed() {
-//                LOGGER.log(Level.WARNING, "Failed to open file", getException());
-//                res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
-//                handle.close();
-//            }
-//        };
-//
-//        TaskUtils.submit(task);
-//
-//        return res;
-        throw new UnsupportedOperationException("TODO");
+        FileTab2 tab = new FileTab2(file, this);
+
+        tab.setContent(new StackPane(new ProgressIndicator()));
+
+        HBox statusBar = new HBox();
+        statusBar.setAlignment(Pos.CENTER_RIGHT);
+        tab.setStatusBar(statusBar);
+
+        CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
+            record Result(CodeArea area, Charset charset) {
+            }
+
+            file.getContainer().lock();
+            FileHandle fileHandle = null;
+            try {
+                fileHandle = file.getContainer().openFile(file);
+                tab.setFileHandle(fileHandle);
+
+                byte[] bytes = fileHandle.readAllBytes();
+                Charset charset = detectFileEncoding(bytes);
+
+                CodeArea area = new CodeArea();
+                area.getStylesheets().clear();
+                area.setParagraphGraphicFactory(LineNumberFactory.get(area));
+                area.setEditable(false);
+                area.replaceText(new String(bytes, charset));
+                applyHighlighter(tab, area);
+
+                return new Result(area, charset);
+            } catch (Throwable e) {
+                tab.setFileHandle(null);
+                if (fileHandle != null) {
+                    fileHandle.close();
+                }
+                throw e;
+            } finally {
+                file.getContainer().unlock();
+            }
+        })).whenCompleteAsync((result, exception) -> {
+            if (exception == null) {
+                result.area().scrollToPixel(0, 0);
+                tab.setContent(new VirtualizedScrollPane<>(result.area()));
+                statusBar.getChildren().add(new Label(result.charset().toString()));
+            } else {
+                LOGGER.warning("Failed to open file", exception);
+                tab.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
+            }
+        });
+
+
+        return tab;
     }
 }
