@@ -16,6 +16,7 @@
 package org.glavo.viewer.file;
 
 import javafx.scene.image.Image;
+import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.xml.XMLFileType;
 import org.glavo.viewer.file.types.yaml.YAMLFileType;
 import org.glavo.viewer.resources.Images;
@@ -81,7 +82,17 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType,
             return DirectoryFileType.TYPE;
         }
 
-        return null; // TODO
+        String fileName = file.getFileName();
+        int idx = fileName.lastIndexOf('.');
+        String extension = idx > 0 ? fileName.substring(idx + 1) : "";
+
+        for (FileType extType : Holder.extTypes) {
+            if (extType.check(file, extension)) {
+                return extType;
+            }
+        }
+
+        return BinaryFileType.TYPE;
     }
 
     private static final class Holder {

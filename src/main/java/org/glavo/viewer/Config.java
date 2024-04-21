@@ -1,9 +1,22 @@
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.glavo.viewer;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -11,46 +24,67 @@ import javafx.collections.ObservableList;
 import org.glavo.viewer.file.TypedVirtualFile;
 import org.glavo.viewer.ui.Schedulers;
 import org.glavo.viewer.util.FileUtils;
-import org.glavo.viewer.util.JsonUtils;
 import org.glavo.viewer.util.WindowDimension;
+import org.hildan.fxgson.FxGson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Config {
+    private static final Gson GSON = FxGson.coreBuilder()
+            .setPrettyPrinting()
+            .create();
+
     public static final int RECENT_FILES_LIMIT = 20;
 
-    private Path path = null;
-    private FileLock lock;
+    private transient Path path = null;
+    @SuppressWarnings("FieldCanBeLocal")
+    private transient FileLock lock;
 
-    private boolean needToSaveOnExit = false;
-    private boolean hasUnknownProperties = false;
+    private transient boolean needToSaveOnExit = false;
+    private transient boolean hasUnknownProperties = false;
 
+    @SaveOnExit
+    @SerializedName("windowSize")
     private final ObjectProperty<WindowDimension> windowSize = new SimpleObjectProperty<>();
+
+    @SaveOnExit
+    @SerializedName("dividerPosition")
     private final DoubleProperty dividerPosition = new SimpleDoubleProperty();
+
+    @SerializedName("uiFontFamily")
     private final StringProperty uiFontFamily = new SimpleStringProperty();
+
+    @SerializedName("uiFontSize")
     private final DoubleProperty uiFontSize = new SimpleDoubleProperty();
+
+    @SerializedName("textFontFamily")
     private final StringProperty textFontFamily = new SimpleStringProperty();
+
+    @SerializedName("textFontSize")
     private final DoubleProperty textFontSize = new SimpleDoubleProperty();
 
-    private final ObservableList<TypedVirtualFile> recentFiles = FXCollections.observableList(new LinkedList<>());
+    @SaveOnExit
+    @SerializedName("recentFiles")
+    private transient final ObservableList<TypedVirtualFile> recentFiles = FXCollections.observableArrayList(); // TODO: transient
 
     private static Config config;
 
     public Config() {
-    }
-
-    public Config(Path path) {
-        init(path);
     }
 
     public static void load() {
@@ -64,24 +98,26 @@ public final class Config {
     private static Config loadFrom(Path path) {
         if (Files.notExists(path)) {
             LOGGER.info("Config file does not exist");
-            return new Config(path);
+            Config config = new Config();
+            config.associationTo(path);
+            return config;
         }
         LOGGER.info("Load config from '" + path + "'");
 
         try (BufferedReader reader = Files.newBufferedReader(path)) {
-            Config res = JsonUtils.MAPPER.readValue(reader, Config.class);
+            Config res = GSON.fromJson(reader, Config.class);
             if (res.hasUnknownProperties) {
                 LOGGER.warning("Open configuration file in read-only mode due to unknown keys");
             }
-            res.init(path);
+            res.associationTo(path);
             return res;
         } catch (Throwable ex) {
             LOGGER.warning("Failed to read configuration", ex);
-            return new Config(null);
+            return new Config();
         }
     }
 
-    private void init(Path path) {
+    private void associationTo(Path path) {
         this.path = path;
         if (path == null || this.hasUnknownProperties) {
             return;
@@ -94,22 +130,14 @@ public final class Config {
         try {
             channel = FileChannel.open(lockFile, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
 
-            int retry = 0;
-
-            while (true) {
+            for (int retry = 0; retry < 5; retry++) {
                 lock = channel.tryLock();
 
                 if (lock != null) {
                     break;
                 }
 
-                if (retry++ > 5) {
-                    LOGGER.info("Failed to acquire file lock on configuration file, open it in read-only mode");
-                    break;
-                }
-
-                //noinspection BusyWait
-                Thread.sleep(10);
+                Thread.sleep(50);
             }
         } catch (Throwable ex) {
             LOGGER.warning("Failed when trying to lock the configuration file", ex);
@@ -127,24 +155,29 @@ public final class Config {
 
         this.lock = lock;
 
-        needToSaveOnExit(recentFiles);
-        needToSaveOnExit(windowSize);
-        needToSaveOnExit(dividerPosition);
-        needToSave(uiFontFamily);
-        needToSave(uiFontSize);
-        needToSave(textFontFamily);
-        needToSave(textFontSize);
+        for (Field field : this.getClass().getFields()) {
+            int modifiers = field.getModifiers();
+            if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            try {
+                if (!(field.get(this) instanceof Observable observable)) {
+                    throw new AssertionError("Field " + field + " not observable");
+                }
+
+                if (field.getAnnotation(SaveOnExit.class) != null) {
+                    observable.addListener(o -> needToSaveOnExit = true);
+                } else {
+                    observable.addListener(o -> save());
+                }
+            } catch (IllegalAccessException e) {
+                throw new AssertionError(e);
+            }
+        }
     }
 
-    private void needToSave(Observable value) {
-        value.addListener(o -> save());
-    }
-
-    private void needToSaveOnExit(Observable value) {
-        value.addListener(o -> needToSaveOnExit = true);
-    }
-
-    @JsonAnySetter
     public void ignored(String key, Object value) {
         LOGGER.warning("Unknown key '" + key + "' in the configuration file");
         hasUnknownProperties = true;
@@ -155,7 +188,7 @@ public final class Config {
             Schedulers.virtualThread().execute(() -> {
                 try {
                     FileUtils.save(path, writer -> {
-                        JsonUtils.MAPPER.writeValue(writer, Config.this);
+                        GSON.toJson(Config.this, writer);
                         LOGGER.info("Save config");
                     });
                 } catch (IOException ex) {
@@ -165,7 +198,6 @@ public final class Config {
         }
     }
 
-    @JsonIgnore
     public boolean isNeedToSaveOnExit() {
         return needToSaveOnExit;
     }
@@ -198,8 +230,7 @@ public final class Config {
         return uiFontFamily;
     }
 
-    @JsonProperty("uiFontFamily")
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    @SerializedName("uiFontFamily")
     public String getUIFontFamily() {
         return uiFontFamily.get();
     }
@@ -212,8 +243,7 @@ public final class Config {
         return uiFontSize;
     }
 
-    @JsonProperty("uiFontSize")
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    @SerializedName("uiFontSize")
     public double getUIFontSize() {
         return uiFontSize.get();
     }
@@ -226,7 +256,6 @@ public final class Config {
         return textFontFamily;
     }
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public String getTextFontFamily() {
         return textFontFamily.get();
     }
@@ -239,7 +268,6 @@ public final class Config {
         return textFontSize;
     }
 
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public double getTextFontSize() {
         return textFontSize.get();
     }
@@ -263,5 +291,10 @@ public final class Config {
             files.removeLast();
         }
         files.addFirst(path);
+    }
+
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface SaveOnExit {
     }
 }

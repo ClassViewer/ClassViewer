@@ -28,7 +28,7 @@ import java.util.List;
 public final class LocalFile extends JavaVirtualFile {
     public LocalFile(Path path) {
         super(LocalRootContainer.CONTAINER, path);
-        if (path.getFileSystem() == FileSystems.getDefault())
+        if (path.getFileSystem() != FileSystems.getDefault())
             throw new IllegalArgumentException(path + " is not a local file");
     }
 

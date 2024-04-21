@@ -51,11 +51,11 @@ dependencies {
 
     implementation("org.glavo:jimage:1.0.0")
 
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
-
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // https://mvnrepository.com/artifact/org.hildan.fxgson/fx-gson
+    implementation("org.hildan.fxgson:fx-gson:5.0.0")
 
     // https://mvnrepository.com/artifact/org.fxmisc.richtext/richtextfx
     implementation("org.fxmisc.richtext:richtextfx:0.11.2")
