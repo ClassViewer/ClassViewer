@@ -195,7 +195,7 @@ public final class ViewerPane extends BorderPane {
         TabPane tabPane = new TabPane();
         tabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
             if (newValue instanceof FileTab) {
-                viewer.setTitleMessage(((FileTab) newValue).getPath().toString());
+                viewer.setTitleMessage(((FileTab) newValue).getFile().toString());
             } else {
                 viewer.setTitleMessage(null);
             }

@@ -30,7 +30,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
-import org.glavo.viewer.file2.*;
+import org.glavo.viewer.file.*;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.SilentlyCloseable;

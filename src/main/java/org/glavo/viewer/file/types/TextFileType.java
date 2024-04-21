@@ -1,6 +1,20 @@
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.glavo.viewer.file.types;
 
-import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -8,13 +22,14 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import kala.compress.utils.Charsets;
+import kala.function.CheckedSupplier;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.PlainTextChange;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.VirtualFile;
 import org.glavo.viewer.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
@@ -30,6 +45,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,16 +66,32 @@ public class TextFileType extends CustomFileType {
     protected long realtimeHighlightThreshold = 1024 * 1024; // 1 MiB
     protected long sharedThreadPoolThreshold = FileUtils.SMALL_FILE_LIMIT;
 
-    protected TextFileType() {
-        super("text");
+    private TextFileType() {
+        super("text", Set.of(
+                "txt", "md", "asm",
+                "c", "cc", "cpp", "cxx", "cs", "clj",
+                "f", "for", "f90", "f95", "fs",
+                "go", "gradle", "groovy",
+                "h", "hpp", "hs",
+                "java", "js", "jl",
+                "kt", "kts",
+                "m", "mm", "ml", "mli",
+                "py", "pl",
+                "ruby", "rs",
+                "swift",
+                "vala", "vapi",
+                "zig",
+                "sh", "bat", "ps1",
+                "csv", "inf", "toml", "log"
+        ));
     }
 
-    protected TextFileType(String name) {
-        super(name);
+    protected TextFileType(String name, Set<String> extensions) {
+        super(name, extensions);
     }
 
-    protected TextFileType(String name, Image image) {
-        super(name, image);
+    protected TextFileType(String name, Image image, Set<String> extensions) {
+        super(name, image, extensions);
     }
 
     public Highlighter getHighlighter() {
@@ -66,28 +99,12 @@ public class TextFileType extends CustomFileType {
     }
 
     @Override
-    public boolean check(FilePath path) {
-        switch (path.getFileNameExtension()) {
-            case "txt", "md", "asm",
-                    "c", "cc", "cpp", "cxx", "cs", "clj",
-                    "f", "for", "f90", "f95", "fs",
-                    "go", "gradle", "groovy",
-                    "h", "hpp", "hs",
-                    "java", "js", "jl",
-                    "kt", "kts",
-                    "m", "mm", "ml", "mli",
-                    "py", "pl",
-                    "ruby", "rs",
-                    "swift",
-                    "vala", "vapi",
-                    "zig",
-                    "sh", "bat", "ps1",
-                    "csv", "inf", "toml", "log" -> {
-                return true;
-            }
+    public boolean check(VirtualFile file, String ext) {
+        if (super.check(file, ext)) {
+            return true;
         }
 
-        return switch (path.getFileName()) {
+        return switch (file.getFileName()) {
             case ".bashrc", ".zshrc", ".gitignore", "gradlew", "LICENSE" -> true;
             default -> false;
         };
@@ -121,7 +138,7 @@ public class TextFileType extends CustomFileType {
                 pool = Executors.newSingleThreadExecutor(r -> {
                     Thread t = new Thread(r, "highlighter-" + count.getAndIncrement());
                     t.setDaemon(true);
-                    LOGGER.info(String.format("Start thread %s to highlight file %s", t.getName(), tab.getPath()));
+                    LOGGER.info(String.format("Start thread %s to highlight file %s", t.getName(), tab.getFile()));
                     return t;
                 });
 
@@ -152,51 +169,57 @@ public class TextFileType extends CustomFileType {
     private static final ThreadLocal<UniversalDetector> detector = ThreadLocal.withInitial(UniversalDetector::new);
 
     @Override
-    public FileTab openTab(FileHandle handle) {
-        FileTab res = new FileTab(this, handle.getPath());
-        res.setContent(new StackPane(new ProgressIndicator()));
+    public FileTab openTab(VirtualFile file) {
+        FileTab tab = new FileTab(file, this);
+
+        tab.setContent(new StackPane(new ProgressIndicator()));
 
         HBox statusBar = new HBox();
         statusBar.setAlignment(Pos.CENTER_RIGHT);
-        res.setStatusBar(statusBar);
+        tab.setStatusBar(statusBar);
 
-        Task<CodeArea> task = new Task<>() {
-            Charset charset;
+        CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
+            record Result(CodeArea area, Charset charset) {
+            }
+            byte[] bytes;
 
-            @Override
-            protected CodeArea call() throws Exception {
-                byte[] bytes = handle.readAllBytes();
+            file.getContainer().lock();
+            FileHandle fileHandle = null;
+            try {
+                fileHandle = file.getContainer().openFile(file);
+                tab.setFileHandle(fileHandle);
 
-                charset = detectFileEncoding(bytes);
-
-                CodeArea area = new CodeArea();
-                area.getStylesheets().clear();
-                area.setParagraphGraphicFactory(LineNumberFactory.get(area));
-                //area.setEditable(false);
-                area.replaceText(new String(bytes, charset));
-                applyHighlighter(res, area);
-                area.scrollToPixel(0, 0);
-
-                return area;
+                bytes = fileHandle.readAllBytes();
+            } catch (Throwable e) {
+                tab.setFileHandle(null);
+                if (fileHandle != null) {
+                    fileHandle.close();
+                }
+                throw e;
+            } finally {
+                file.getContainer().unlock();
             }
 
-            @Override
-            protected void succeeded() {
-                res.setContent(new VirtualizedScrollPane<>(this.getValue()));
-                statusBar.getChildren().add(new Label(charset.toString()));
-                handle.close();
+            Charset charset = detectFileEncoding(bytes);
+            CodeArea area = new CodeArea();
+            area.getStylesheets().clear();
+            area.setParagraphGraphicFactory(LineNumberFactory.get(area));
+            area.setEditable(false);
+            area.replaceText(new String(bytes, charset));
+            applyHighlighter(tab, area);
+            return new Result(area, charset);
+        })).whenCompleteAsync((result, exception) -> {
+            if (exception == null) {
+                result.area().scrollToPixel(0, 0);
+                tab.setContent(new VirtualizedScrollPane<>(result.area()));
+                statusBar.getChildren().add(new Label(result.charset().toString()));
+            } else {
+                LOGGER.warning("Failed to open file", exception);
+                tab.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
             }
+        });
 
-            @Override
-            protected void failed() {
-                LOGGER.warning("Failed to open file", getException());
-                res.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
-                handle.close();
-            }
-        };
 
-        TaskUtils.submit(task);
-
-        return res;
+        return tab;
     }
 }

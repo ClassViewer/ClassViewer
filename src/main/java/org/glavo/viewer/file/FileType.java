@@ -1,43 +1,47 @@
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.glavo.viewer.file;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import javafx.scene.image.Image;
-import org.glavo.viewer.file.types.*;
-import org.glavo.viewer.file.types.aya.AyaSourceFileType;
-import org.glavo.viewer.file.types.css.CSSFileType;
-import org.glavo.viewer.file.types.folder.FolderType;
-import org.glavo.viewer.file.types.html.HTMLFileType;
-import org.glavo.viewer.file.types.image.ImageFileType;
-import org.glavo.viewer.file.types.java.*;
-import org.glavo.viewer.file.types.json.JsonFileType;
-import org.glavo.viewer.file.types.markdown.MarkdownFileType;
-import org.glavo.viewer.file.types.tar.TarFileType;
 import org.glavo.viewer.file.types.xml.XMLFileType;
 import org.glavo.viewer.file.types.yaml.YAMLFileType;
-import org.glavo.viewer.file.types.zip.ArchiveFileType;
 import org.glavo.viewer.resources.Images;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-public abstract sealed class FileType permits ContainerFileType, CustomFileType {
+public abstract sealed class FileType permits ContainerFileType, CustomFileType, DirectoryFileType {
     private final String name;
     private final Image image;
+    private final Set<String> extensions;
 
     protected FileType(String name) {
-        this(name, Images.loadImage("fileTypes/file-" + name + ".png"));
+        this(name, Set.of());
     }
 
-    protected FileType(String name, Image image) {
+    protected FileType(String name, Set<String> extensions) {
+        this(name, Images.loadImage("fileTypes/file-" + name + ".png"), extensions);
+    }
+
+    protected FileType(String name, Image image, Set<String> extensions) {
         this.name = name;
         this.image = image;
+        this.extensions = extensions;
     }
 
-    public boolean isContainer() {
-        return this instanceof ContainerFileType;
-    }
-
-    @JsonValue
     public String getName() {
         return name;
     }
@@ -46,7 +50,9 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType 
         return image;
     }
 
-    public abstract boolean check(FilePath path);
+    public boolean check(VirtualFile file, String ext) {
+        return extensions.contains(ext);
+    }
 
     @Override
     public int hashCode() {
@@ -70,67 +76,18 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType 
         return name;
     }
 
-    public static List<FileType> getTypes() {
-        return Hole.types;
-    }
-
-    public static FileType detectFileType(FilePath path) {
-        if (path.isDirectory()) {
-            return FolderType.TYPE;
+    public static FileType detectFileType(VirtualFile file) {
+        if (file.isDirectory()) {
+            return DirectoryFileType.TYPE;
         }
 
-        for (FileType type : Hole.extTypes) {
-            if (type.check(path)) {
-                return type;
-            }
-        }
-
-        return TextFileType.TYPE.check(path) ? TextFileType.TYPE : BinaryFileType.TYPE;
-
+        return null; // TODO
     }
 
-    @JsonCreator
-    public static FileType ofName(String name) {
-        for (FileType type : getTypes()) {
-            if (name.equals(type.name)) {
-                return type;
-            }
-        }
-
-        return new UnknownFileType(name);
-    }
-
-    private static final class Hole {
+    private static final class Holder {
         static final List<FileType> extTypes = List.of(
-                JImageFileType.TYPE,
-                ArchiveFileType.TYPE,
-                TarFileType.TYPE,
-
-                ManifestFileType.TYPE,
-                PropertiesFileType.TYPE,
                 XMLFileType.TYPE,
-                YAMLFileType.TYPE,
-                CSSFileType.TYPE,
-                HTMLFileType.TYPE,
-                JsonFileType.TYPE,
-                AyaSourceFileType.TYPE,
-                JavaSourceFileType.TYPE,
-                JavaModuleInfoFileType.TYPE,
-                MarkdownFileType.TYPE,
-
-                JavaClassFileType.TYPE,
-
-                ImageFileType.TYPE
+                YAMLFileType.TYPE
         );
-
-        static final List<FileType> types;
-
-        static {
-            ArrayList<FileType> list = new ArrayList<>(extTypes);
-            list.add(BinaryFileType.TYPE);
-            list.add(FolderType.TYPE);
-            list.add(TextFileType.TYPE);
-            types = List.copyOf(list);
-        }
     }
 }

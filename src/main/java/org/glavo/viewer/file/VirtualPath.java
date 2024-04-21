@@ -15,12 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.glavo.viewer.file2.roots.local;
+package org.glavo.viewer.file;
 
-import org.glavo.viewer.file2.JavaVirtualFileHandle;
-
-public final class LocalFileHandle extends JavaVirtualFileHandle {
-    public LocalFileHandle(LocalFile file) {
-        super(file);
-    }
+public sealed abstract class VirtualPath permits VirtualFile, VirtualRoot {
 }

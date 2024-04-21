@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.glavo.viewer.file2.roots.local;
+package org.glavo.viewer.file.roots.local;
 
-import org.glavo.viewer.file2.VirtualRoot;
+import org.glavo.viewer.file.VirtualRoot;
 
 public final class LocalRoot extends VirtualRoot {
     public static final LocalRoot ROOT = new LocalRoot();

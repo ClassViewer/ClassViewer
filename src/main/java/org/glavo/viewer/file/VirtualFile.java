@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.glavo.viewer.file2;
+package org.glavo.viewer.file;
 
-import org.glavo.viewer.file2.roots.local.LocalFile;
+import org.glavo.viewer.file.roots.local.LocalFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

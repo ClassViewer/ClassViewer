@@ -1,51 +1,26 @@
+/*
+ * Copyright (C) 2024 Glavo. All rights reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.glavo.viewer.file.roots.local;
 
-import org.glavo.viewer.file.FileHandle;
-import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.file.JavaVirtualFileHandle;
 
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-
-public class LocalFileHandle extends FileHandle {
-    private final Path file;
-
-    public LocalFileHandle(FilePath path) {
-        this(path, Paths.get(path.getPath()));
-    }
-
-    public LocalFileHandle(FilePath path, Path file) {
-        super(LocalRootContainer.CONTAINER, path);
-        this.file = file;
-
-        assert path.isLocalFile();
-    }
-
-    @Override
-    public boolean exists() {
-        return Files.exists(file);
-    }
-
-    public Path getFile() {
-        return file;
-    }
-
-    @Override
-    public boolean isReadonly() {
-        return exists() && !Files.isWritable(file);
-    }
-
-    @Override
-    public SeekableByteChannel openChannel() throws IOException {
-        return FileChannel.open(file);
-    }
-
-    @Override
-    public SeekableByteChannel openWritableChannel() throws IOException {
-        return FileChannel.open(file, StandardOpenOption.WRITE);
+public final class LocalFileHandle extends JavaVirtualFileHandle {
+    public LocalFileHandle(LocalFile file) {
+        super(file);
     }
 }

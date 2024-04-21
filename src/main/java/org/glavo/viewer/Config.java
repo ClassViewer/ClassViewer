@@ -8,7 +8,7 @@ import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.glavo.viewer.file2.TypedVirtualFile;
+import org.glavo.viewer.file.TypedVirtualFile;
 import org.glavo.viewer.ui.Schedulers;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.JsonUtils;

@@ -23,7 +23,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import kala.function.CheckedSupplier;
 import org.glavo.viewer.annotation.FXThread;
-import org.glavo.viewer.file2.*;
+import org.glavo.viewer.file.*;
 import org.glavo.viewer.resources.Images;
 
 import java.io.IOException;

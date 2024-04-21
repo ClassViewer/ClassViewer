@@ -15,7 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.glavo.viewer.file2;
+package org.glavo.viewer.file.roots.local;
 
-public sealed abstract class VirtualPath permits VirtualFile, VirtualRoot {
+import org.glavo.viewer.file.JavaVirtualFile;
+import org.glavo.viewer.file.VirtualFile;
+
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.List;
+
+public final class LocalFile extends JavaVirtualFile {
+    public LocalFile(Path path) {
+        super(LocalRootContainer.CONTAINER, path);
+        if (path.getFileSystem() == FileSystems.getDefault())
+            throw new IllegalArgumentException(path + " is not a local file");
+    }
+
+    @Override
+    public List<VirtualFile> listFiles() throws IOException {
+        return super.listFilesNoSync();
+    }
+
+    @Override
+    public String toString() {
+        return "LocalFile[" + path + "]";
+    }
 }

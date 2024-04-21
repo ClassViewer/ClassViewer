@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file2;
+package org.glavo.viewer.file;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

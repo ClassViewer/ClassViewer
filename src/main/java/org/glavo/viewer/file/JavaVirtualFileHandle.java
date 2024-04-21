@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file2;
+package org.glavo.viewer.file;
 
-import org.glavo.viewer.file2.roots.local.LocalFile;
+import org.glavo.viewer.file.roots.local.LocalFile;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;

@@ -1,37 +1,89 @@
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.glavo.viewer.ui;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import org.glavo.viewer.file.FilePath;
+import org.glavo.viewer.annotation.NotFXThread;
+import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.FileType;
+import org.glavo.viewer.file.VirtualFile;
 import org.glavo.viewer.resources.I18N;
+import org.glavo.viewer.util.FXUtils;
 
-public class FileTab extends Tab {
+import java.util.ArrayList;
+
+public final class FileTab extends Tab {
     private final FileType type;
-    private final FilePath path;
+    private final VirtualFile file;
 
     private final ObjectProperty<Node> sideBar = new SimpleObjectProperty<>();
     private final ObjectProperty<Node> statusBar = new SimpleObjectProperty<>();
 
-    public FileTab(FileType type, FilePath path) {
+    private volatile FileHandle fileHandle;
+
+    public FileTab(VirtualFile file, FileType type) {
         this.type = type;
-        this.path = path;
+        this.file = file;
 
         this.setGraphic(new ImageView(type.getImage()));
-        this.setText(path.getFileName());
-        this.setTooltip(new Tooltip(path.toString()));
+        this.setText(file.getFileName());
+        this.setTooltip(new Tooltip(file.toString()));
         this.setContextMenu(new TabMenu());
+        this.setOnClosed(event -> Schedulers.virtualThread().execute(() -> {
+            file.getContainer().lock();
+            try {
+                FileHandle fileHandle = this.fileHandle;
+                if (fileHandle != null) {
+                    fileHandle.close();
+                }
+            } finally {
+                file.getContainer().unlock();
+            }
+        }));
     }
 
     public FileType getType() {
         return type;
     }
 
-    public FilePath getPath() {
-        return path;
+    public VirtualFile getFile() {
+        return file;
+    }
+
+    @NotFXThread
+    public void setFileHandle(FileHandle fileHandle) {
+        file.getContainer().lock();
+        try {
+            FileHandle oldFileHandle = this.fileHandle;
+            if (oldFileHandle != null) {
+                oldFileHandle.setOnForceClose(null);
+            }
+
+            this.fileHandle = fileHandle;
+            if (fileHandle != null) {
+                fileHandle.setOnForceClose(() -> FXUtils.runInFx(() -> FXUtils.closeTab(this)));
+            }
+        } finally {
+            file.getContainer().unlock();
+        }
     }
 
     public ObjectProperty<Node> sideBarProperty() {
@@ -72,9 +124,15 @@ public class FileTab extends Tab {
             MenuItem closeTabsToTheLeft = new MenuItem(I18N.getString("filesTabPane.menu.closeTabsToTheLeft"));
             closeTabsToTheLeft.setOnAction(event -> {
                 TabPane tabPane = getTabPane();
-                int idx = tabPane.getTabs().indexOf(FileTab.this);
+                ObservableList<Tab> tabs = tabPane.getTabs();
+                int idx = tabs.indexOf(FileTab.this);
                 if (idx > 0) {
-                    tabPane.getTabs().remove(0, idx);
+                    var tabsToBeClosed = new ArrayList<Tab>(idx);
+                    for (int i = 0; i < idx; i++) {
+                        tabsToBeClosed.add(tabs.get(i));
+                    }
+                    tabs.remove(0, idx);
+                    tabsToBeClosed.forEach(FXUtils::closeTab);
                 }
 
                 getTabPane().getSelectionModel().select(FileTab.this);
@@ -83,9 +141,14 @@ public class FileTab extends Tab {
             MenuItem closeTabsToTheRight = new MenuItem(I18N.getString("filesTabPane.menu.closeTabsToTheRight"));
             closeTabsToTheRight.setOnAction(event -> {
                 TabPane tabPane = getTabPane();
-                int idx = tabPane.getTabs().indexOf(FileTab.this);
-                if (idx >= 0 && idx < tabPane.getTabs().size() - 1) {
-                    tabPane.getTabs().remove(idx + 1, tabPane.getTabs().size());
+                ObservableList<Tab> tabs = tabPane.getTabs();
+                int idx = tabs.indexOf(FileTab.this);
+                if (idx >= 0 && idx < tabs.size() - 1) {
+                    var tabsToBeClosed = new ArrayList<Tab>();
+                    for (int i = idx + 1; i < tabs.size(); i++) {
+                        tabsToBeClosed.add(tabs.get(i));
+                    }
+                    tabsToBeClosed.forEach(FXUtils::closeTab);
                 }
                 getTabPane().getSelectionModel().select(FileTab.this);
             });

@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file2;
+package org.glavo.viewer.file;
 
-import javafx.scene.image.Image;
+import org.glavo.viewer.resources.Images;
 
-import java.io.IOException;
+import java.util.Set;
 
-public abstract non-sealed class ContainerFileType extends FileType {
+public final class DirectoryFileType extends FileType {
 
-    protected ContainerFileType(String name) {
-        super(name);
+    public static final DirectoryFileType TYPE = new DirectoryFileType();
+
+    private DirectoryFileType() {
+        super("directory", Images.folder, Set.of());
     }
 
-    protected ContainerFileType(String name, Image image) {
-        super(name, image);
+    @Override
+    public boolean check(VirtualFile file, String ext) {
+        return file.isDirectory();
     }
-
-    public abstract Container openContainerImpl(FileHandle handle) throws IOException;
 }

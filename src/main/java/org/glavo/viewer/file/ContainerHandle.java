@@ -1,19 +1,41 @@
+/*
+ * Copyright (C) 2024 Glavo. All rights reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.glavo.viewer.file;
 
 import kala.function.CheckedRunnable;
-import org.glavo.viewer.util.ForceCloseable;
 import org.glavo.viewer.util.SilentlyCloseable;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
-public final class ContainerHandle implements SilentlyCloseable, ForceCloseable {
+public final class ContainerHandle implements SilentlyCloseable {
     private final Container container;
     private CheckedRunnable<?> onForceClose;
 
+    private volatile boolean closed = false;
+
     public ContainerHandle(Container container) {
         this.container = container;
-        synchronized (container) {
+
+        container.lock();
+        try {
             container.containerHandles.add(this);
+        } finally {
+            container.unlock();
         }
     }
 
@@ -21,16 +43,15 @@ public final class ContainerHandle implements SilentlyCloseable, ForceCloseable 
         return container;
     }
 
-    public synchronized void setOnForceClose(CheckedRunnable<?> onForceClose) {
+    public void setOnForceClose(CheckedRunnable<?> onForceClose) {
         this.onForceClose = onForceClose;
     }
 
-    private volatile boolean closed = false;
-
-    private synchronized void close(boolean force) {
+    void close(boolean force) {
         if (closed) return;
 
-        synchronized (container) {
+        container.lock();
+        try {
             if (closed) return;
             closed = true;
 
@@ -53,17 +74,14 @@ public final class ContainerHandle implements SilentlyCloseable, ForceCloseable 
             }
 
             container.checkStatus();
+        } finally {
+            container.unlock();
         }
     }
 
     @Override
-    public synchronized void close() {
+    public void close() {
         close(false);
-    }
-
-    @Override
-    public void forceClose() {
-        close(true);
     }
 
     @Override
