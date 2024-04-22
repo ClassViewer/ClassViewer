@@ -54,9 +54,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
-public class TextFileType extends CustomFileType {
-    public static final TextFileType TYPE = new TextFileType();
-
+public abstract class TextFileType extends CustomFileType {
     public static String codeStylesheet = Resources.class.getResource("stylesheet/code.css").toExternalForm();
 
     public static final ExecutorService highlightPool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("highlighter-common"));
@@ -66,26 +64,6 @@ public class TextFileType extends CustomFileType {
     protected boolean forceUTF8 = false;
     protected long realtimeHighlightThreshold = 1024 * 1024; // 1 MiB
     protected long sharedThreadPoolThreshold = FileUtils.SMALL_FILE_LIMIT;
-
-    private TextFileType() {
-        super("text", Set.of(
-                "txt", "md", "asm",
-                "c", "cc", "cpp", "cxx", "cs", "clj",
-                "f", "for", "f90", "f95", "fs",
-                "go", "gradle", "groovy",
-                "h", "hpp", "hs",
-                "java", "js", "jl",
-                "kt", "kts",
-                "m", "mm", "ml", "mli",
-                "py", "pl",
-                "ruby", "rs",
-                "swift",
-                "vala", "vapi",
-                "zig",
-                "sh", "bat", "ps1",
-                "csv", "inf", "toml", "log"
-        ));
-    }
 
     protected TextFileType(String name, Set<String> extensions) {
         super(name, extensions);
@@ -97,18 +75,6 @@ public class TextFileType extends CustomFileType {
 
     public Highlighter getHighlighter() {
         return highlighter;
-    }
-
-    @Override
-    public boolean check(VirtualFile file, String ext) {
-        if (super.check(file, ext)) {
-            return true;
-        }
-
-        return switch (file.getFileName()) {
-            case ".bashrc", ".zshrc", ".gitignore", "gradlew", "LICENSE" -> true;
-            default -> false;
-        };
     }
 
     protected Charset detectFileEncoding(byte[] bytes) {

@@ -20,11 +20,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import kala.collection.primitive.ByteSeq;
-import kala.tuple.primitive.IntTuple2;
 import org.glavo.viewer.util.HexText;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class ClassicHexPane extends ScrollPane implements HexPane {
 
@@ -34,10 +32,11 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
     private final TextArea textArea1;
     private final TextArea textArea2;
     private final TextArea textArea3;
-    private Consumer<IntTuple2> onSelect;
 
     private final BorderPane statusBar;
     private final Label statusLabel;
+
+    private final BytesBar bytesBar;
 
     public ClassicHexPane(ByteSeq seq) {
         this.hex = new HexText(seq);
@@ -70,12 +69,10 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
         statusLabel = new Label(" ");
         statusBar.setLeft(statusLabel);
 
-        BytesBar bytesBar = new BytesBar((int) size);
+        bytesBar = new BytesBar((int) size);
         bytesBar.setMaxHeight(statusLabel.getMaxHeight());
         bytesBar.setPrefWidth(200);
         statusBar.setRight(bytesBar);
-
-        this.setOnSelect(tuple -> bytesBar.select(tuple.component1(), tuple.component2()));
     }
 
     @Override
@@ -104,14 +101,7 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
             }
         }
 
-        if (onSelect != null) {
-            onSelect.accept(IntTuple2.of(offset, length));
-        }
-    }
-
-    @Override
-    public void setOnSelect(Consumer<IntTuple2> consumer) {
-        onSelect = consumer;
+        bytesBar.select(offset, length);
     }
 
     private void initTextArea() {

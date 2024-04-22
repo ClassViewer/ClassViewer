@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.ui;
+package org.glavo.viewer.file.types.raw;
 
-import javafx.scene.Node;
+import org.glavo.viewer.file.VirtualFile;
+import org.glavo.viewer.file.types.BinaryFileType;
+import org.glavo.viewer.resources.Images;
 
-public interface HexPane {
-    default Node getNode() {
-        return (Node) this;
+import java.util.Set;
+
+public final class RawBinaryFileType extends BinaryFileType {
+    public static final RawBinaryFileType TYPE = new RawBinaryFileType();
+
+    private RawBinaryFileType() {
+        super("raw", Images.file, Set.of());
     }
 
-    void select(int offset, int length);
-
-    default Node getStatusBar() {
-        return null;
-    }
-
-    default void setStatus(String status) {
-
+    @Override
+    public boolean check(VirtualFile file, String ext) {
+        return !file.isDirectory();
     }
 }

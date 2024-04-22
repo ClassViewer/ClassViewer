@@ -26,7 +26,6 @@ import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.VirtualFile;
-import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
 
 import java.util.Set;
@@ -34,12 +33,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
-public class BinaryFileType extends CustomFileType {
-    public static final BinaryFileType TYPE = new BinaryFileType();
-
-    private BinaryFileType() {
-        this("binary", Images.file, Set.of());
-    }
+public abstract class BinaryFileType extends CustomFileType {
 
     protected BinaryFileType(String name, Set<String> extensions) {
         super(name, extensions);

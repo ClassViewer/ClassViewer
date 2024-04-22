@@ -17,7 +17,6 @@ package org.glavo.viewer.file.types.java;
 
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
-import org.glavo.viewer.file.FileComponent;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.java.classfile.ClassFile;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;

@@ -1,5 +1,6 @@
 package org.glavo.viewer.ui;
 
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -13,7 +14,6 @@ import java.util.function.Consumer;
 
 public class FallbackHexPane extends StackPane implements HexPane {
     private final CodeArea area;
-    private Consumer<IntTuple2> onSelect;
 
     public FallbackHexPane(ByteSeq seq) {
         area = new CodeArea();
@@ -37,13 +37,10 @@ public class FallbackHexPane extends StackPane implements HexPane {
     @Override
     public void select(int offset, int length) {
         area.selectRange(HexText.calcBytesTextPosition(offset), HexText.calcBytesTextPosition(offset + length) - 1);
-        if (onSelect != null) {
-            onSelect.accept(IntTuple2.of(offset, length));
-        }
     }
 
     @Override
-    public void setOnSelect(Consumer<IntTuple2> consumer) {
-        onSelect = consumer;
+    public Node getStatusBar() {
+        return HexPane.super.getStatusBar();
     }
 }
