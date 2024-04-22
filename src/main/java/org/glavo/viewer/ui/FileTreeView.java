@@ -15,8 +15,16 @@
  */
 package org.glavo.viewer.ui;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.WeakInvalidationListener;
+import javafx.scene.Node;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseButton;
+
+import java.lang.ref.WeakReference;
 
 public final class FileTreeView extends TreeView<String> {
     private final Viewer viewer;
@@ -25,5 +33,64 @@ public final class FileTreeView extends TreeView<String> {
         this.viewer = viewer;
         this.setRoot(new TreeItem<>());
         this.setShowRoot(false);
+        this.setCellFactory(tree -> new Cell());
+    }
+
+    @SuppressWarnings("FieldCanBeLocal")
+    private static final class Cell extends TreeCell<String> {
+        private WeakReference<TreeItem<String>> treeItemRef;
+
+        private final InvalidationListener treeItemGraphicListener = observable -> updateDisplay(getItem(), isEmpty());
+        private final InvalidationListener treeItemListener = new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                TreeItem<String> oldTreeItem = treeItemRef == null ? null : treeItemRef.get();
+                if (oldTreeItem != null) {
+                    oldTreeItem.graphicProperty().removeListener(weakTreeItemGraphicListener);
+                }
+
+                TreeItem<String> newTreeItem = getTreeItem();
+                if (newTreeItem != null) {
+                    newTreeItem.graphicProperty().addListener(weakTreeItemGraphicListener);
+                    treeItemRef = new WeakReference<>(newTreeItem);
+                }
+            }
+        };
+
+        private final WeakInvalidationListener weakTreeItemGraphicListener = new WeakInvalidationListener(treeItemGraphicListener);
+        private final WeakInvalidationListener weakTreeItemListener = new WeakInvalidationListener(treeItemListener);
+
+        public Cell() {
+            treeItemProperty().addListener(weakTreeItemListener);
+
+            if (getTreeItem() != null) {
+                getTreeItem().graphicProperty().addListener(weakTreeItemGraphicListener);
+            }
+
+            this.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 && getTreeItem() instanceof FileTree fileTree) {
+                    fileTree.onClick(((FileTreeView) getTreeView()).viewer);
+                }
+            });
+        }
+
+        private void updateDisplay(String item, boolean empty) {
+            if (item == null || empty) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                // update the graphic if one is set in the TreeItem
+                TreeItem<String> treeItem = getTreeItem();
+                Node graphic = treeItem == null ? null : treeItem.getGraphic();
+                setText(item);
+                setGraphic(graphic);
+            }
+        }
+
+        @Override
+        public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            updateDisplay(item, empty);
+        }
     }
 }

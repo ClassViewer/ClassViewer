@@ -35,22 +35,14 @@ import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class FileTree extends TreeItem<String> {
 
-    public static FileTree createRoot(TypedVirtualFile file) {
-        FileTree root = createFileTree(file);
-        root.isRootNode = true;
-        return root;
-    }
-
-    private static FileTree createFileTree(TypedVirtualFile file) {
-        FileTree root = new FileTree(file, file.getFileName());
-        root.needLoad = file.isDirectory() || file.isContainer();
-        return root;
+    public static FileTree createFileTree(TypedVirtualFile file, boolean isRootNode) {
+        return new FileTree(file, file.getFileName(), isRootNode);
     }
 
     private static List<FileTree> createNodes(List<TypedVirtualFile> files) {
         return files.stream()
                 .sorted(Comparator.comparing(TypedVirtualFile::isDirectory).reversed().thenComparing(TypedVirtualFile::getFileName))
-                .map(FileTree::createFileTree)
+                .map(file -> createFileTree(file, false))
                 .toList();
     }
 
@@ -58,21 +50,23 @@ public final class FileTree extends TreeItem<String> {
 
     private ContainerHandle containerHandle;
 
-    private boolean isRootNode = false;
+    private final boolean isRootNode;
 
     @FXThread
-    private boolean needLoad = false;
+    private boolean needLoad;
 
     @FXThread
     private boolean isLoading = false;
 
     private final ImageView imageView = new ImageView();
 
-    private FileTree(TypedVirtualFile file, String name) {
+    private FileTree(TypedVirtualFile file, String name, boolean isRootNode) {
         this.file = file;
+        this.isRootNode = isRootNode;
         this.setValue(name);
         this.setGraphic(imageView);
         imageView.setImage(file.type().getImage());
+        this.needLoad = file.isDirectory() || file.isContainer();
     }
 
     public TypedVirtualFile getFile() {
@@ -98,6 +92,12 @@ public final class FileTree extends TreeItem<String> {
         return !needLoad && getRawChildren().isEmpty();
     }
 
+    void onClick(Viewer viewer) {
+        if (!isRootNode && file.type() instanceof CustomFileType) {
+            viewer.open(file);
+        }
+    }
+
     private Runnable loadDirectory() throws IOException {
         TypedVirtualFile file = this.getFile();
 
@@ -114,7 +114,7 @@ public final class FileTree extends TreeItem<String> {
                 nameList.add(current.getFileName());
             }
 
-            FileTree currentTree = new FileTree(current, String.join("/", nameList));
+            FileTree currentTree = new FileTree(current, String.join("/", nameList), false);
             currentTree.getChildren().setAll(createNodes(currentFiles));
             currentTree.setExpanded(this.isExpanded());
 

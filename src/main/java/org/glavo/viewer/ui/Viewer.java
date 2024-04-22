@@ -28,14 +28,16 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.glavo.viewer.Config;
+import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.*;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
-import org.glavo.viewer.util.SilentlyCloseable;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
@@ -137,6 +139,7 @@ public final class Viewer {
         getStage().show();
     }
 
+    @FXThread
     public File showFileChooser() {
         if (fileChooser == null) {
             fileChooser = new FileChooser();
@@ -146,6 +149,7 @@ public final class Viewer {
         return fileChooser.showOpenDialog(getStage());
     }
 
+    @FXThread
     public File showDirectoryChooser() {
         if (directoryChooser == null) {
             directoryChooser = new DirectoryChooser();
@@ -155,6 +159,7 @@ public final class Viewer {
         return directoryChooser.showDialog(getStage());
     }
 
+    @FXThread
     public void openFile() {
         File file = showFileChooser();
         if (file != null) {
@@ -162,6 +167,7 @@ public final class Viewer {
         }
     }
 
+    @FXThread
     public void openFolder() {
         File file = showDirectoryChooser();
         if (file != null) {
@@ -169,6 +175,7 @@ public final class Viewer {
         }
     }
 
+    @FXThread
     public void open(TypedVirtualFile file) {
         if (file.isDirectory()) {
             LOGGER.info("Open folder " + file);
@@ -176,29 +183,21 @@ public final class Viewer {
             LOGGER.info("Open file " + file);
         }
 
-        SilentlyCloseable resource = null;
         try {
-            switch (file.type()) {
-                case ContainerFileType containerFileType -> {
-
-                    FileTree root = FileTree.createRoot(file);
-
-
-                }
-                case CustomFileType customFileType -> {
-                    FileTab fileTab = customFileType.openTab(file.file());
-                    getPane().addFileTab(fileTab);
-                }
-                case null, default -> throw new AssertionError("Unhandled type: " + file.type());
+            if (file.type() instanceof CustomFileType customFileType) {
+                FileTab fileTab = customFileType.openTab(file.file());
+                getPane().addFileTab(fileTab);
+            } else if (file.type() instanceof DirectoryFileType || file.type() instanceof ContainerFileType) {
+                FileTree root = FileTree.createFileTree(file, true);
+                root.setExpanded(true);
+                getPane().getFileTreeView().getRoot().getChildren().add(root);
+            } else {
+                throw new AssertionError("Unsupported file type " + file.type());
             }
 
             // TODO: Config.getConfig().addRecentFile(file);
         } catch (Throwable e) {
             LOGGER.warning("Failed to open file " + file, e);
-            if (resource != null) {
-                resource.close();
-            }
         }
-
     }
 }
