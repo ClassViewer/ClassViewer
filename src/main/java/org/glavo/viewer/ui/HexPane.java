@@ -35,4 +35,8 @@ public interface HexPane {
     default Node getStatusBar() {
         return null;
     }
+
+    default void setStatus(String status) {
+
+    }
 }

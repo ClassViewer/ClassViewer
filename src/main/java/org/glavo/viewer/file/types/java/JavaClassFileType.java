@@ -17,15 +17,16 @@ package org.glavo.viewer.file.types.java;
 
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
-import kala.collection.primitive.ByteSeq;
+import org.glavo.viewer.file.FileComponent;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.java.classfile.ClassFile;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.java.classfile.ClassFileReader;
 import org.glavo.viewer.file.types.java.classfile.ClassFileTreeView;
 import org.glavo.viewer.ui.FileTab;
-import org.glavo.viewer.util.ByteSeqInputStream;
+import org.glavo.viewer.ui.HexPane;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Set;
 
@@ -42,17 +43,27 @@ public final class JavaClassFileType extends BinaryFileType {
     }
 
     @Override
-    protected Node openSideBar(FileTab tab, ByteSeq bytes) throws Throwable {
+    protected Node openSideBar(FileTab tab, HexPane hexPane, byte[] bytes) throws Throwable {
         ClassFileTreeView view = new ClassFileTreeView(tab);
         ClassFile file;
-        try (InputStream input = new ByteSeqInputStream(bytes)) {
+        try (InputStream input = new ByteArrayInputStream(bytes)) {
             ClassFileReader reader = new ClassFileReader(input);
             file = ClassFile.readFrom(view, reader);
         }
 
         loadDesc(view, file);
+        view.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && newValue.getParent() != null) {
+                ClassFileComponent cc = newValue.getValue();
+                hexPane.setStatus(cc.toString());
+                if (cc.getLength() > 0) {
+                    hexPane.select(cc.getOffset(), cc.getLength());
+                }
+            }
+        });
         return view;
     }
+
     private static void loadDesc(ClassFileTreeView view, ClassFileComponent component) {
         component.loadDesc(view);
         for (TreeItem<ClassFileComponent> child : component.getChildren()) {

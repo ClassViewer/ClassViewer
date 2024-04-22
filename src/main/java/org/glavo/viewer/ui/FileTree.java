@@ -109,9 +109,9 @@ public final class FileTree extends TreeItem<String> {
             List<TypedVirtualFile> currentFiles = files;
 
             while (currentFiles.size() == 1 && currentFiles.getFirst().isDirectory()) {
-                current = files.getFirst();
-                currentFiles = current.listFiles();
                 nameList.add(current.getFileName());
+                current = currentFiles.getFirst();
+                currentFiles = current.listFiles();
             }
 
             FileTree currentTree = new FileTree(current, String.join("/", nameList), false);

@@ -23,6 +23,7 @@ import kala.collection.primitive.ByteSeq;
 import kala.tuple.primitive.IntTuple2;
 import org.glavo.viewer.util.HexText;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ClassicHexPane extends ScrollPane implements HexPane {
@@ -34,6 +35,9 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
     private final TextArea textArea2;
     private final TextArea textArea3;
     private Consumer<IntTuple2> onSelect;
+
+    private final BorderPane statusBar;
+    private final Label statusLabel;
 
     public ClassicHexPane(ByteSeq seq) {
         this.hex = new HexText(seq);
@@ -60,6 +64,18 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
         }
 
         setContent(hbox);
+
+        statusBar = new BorderPane();
+
+        statusLabel = new Label(" ");
+        statusBar.setLeft(statusLabel);
+
+        BytesBar bytesBar = new BytesBar((int) size);
+        bytesBar.setMaxHeight(statusLabel.getMaxHeight());
+        bytesBar.setPrefWidth(200);
+        statusBar.setRight(bytesBar);
+
+        this.setOnSelect(tuple -> bytesBar.select(tuple.component1(), tuple.component2()));
     }
 
     @Override
@@ -135,19 +151,12 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
     }
 
     @Override
+    public void setStatus(String status) {
+        this.statusLabel.setText(Objects.requireNonNullElse(status, " "));
+    }
+
+    @Override
     public Node getStatusBar() {
-        BorderPane statusBar = new BorderPane();
-
-        Label statusLabel = new Label(" ");
-        statusBar.setLeft(statusLabel);
-
-        BytesBar bytesBar = new BytesBar((int) size);
-        bytesBar.setMaxHeight(statusLabel.getMaxHeight());
-        bytesBar.setPrefWidth(200);
-        statusBar.setRight(bytesBar);
-
-        this.setOnSelect(tuple -> bytesBar.select(tuple.component1(), tuple.component2()));
-
         return statusBar;
     }
 }

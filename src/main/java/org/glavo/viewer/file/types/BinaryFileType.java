@@ -20,7 +20,6 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import kala.collection.immutable.primitive.ImmutableByteArray;
-import kala.collection.primitive.ByteSeq;
 import kala.function.CheckedSupplier;
 import kala.tuple.Tuple2;
 import org.glavo.viewer.file.Container;
@@ -50,7 +49,7 @@ public class BinaryFileType extends CustomFileType {
         super(name, image, extensions);
     }
 
-    protected Node openSideBar(FileTab tab, ByteSeq bytes) throws Throwable {
+    protected Node openSideBar(FileTab tab, HexPane hexPane, byte[] bytes) throws Throwable {
         return null;
     }
 
@@ -65,12 +64,12 @@ public class BinaryFileType extends CustomFileType {
                     Container container = file.getContainer();
                     container.lock();
                     FileHandle fileHandle = null;
-                    ByteSeq bytes;
+                    byte[] bytes;
                     try {
                         fileHandle = container.openFile(file);
                         tab.setFileHandle(fileHandle);
 
-                        bytes = ImmutableByteArray.Unsafe.wrap(fileHandle.readAllBytes());
+                        bytes = fileHandle.readAllBytes();
                     } catch (Throwable e) {
                         tab.setFileHandle(null);
                         if (fileHandle != null) {
@@ -81,20 +80,23 @@ public class BinaryFileType extends CustomFileType {
                         container.unlock();
                     }
 
+                    HexPane hexPane;
+                    if (bytes.length < 200 * 1024) { // 200 KiB
+                        hexPane = new ClassicHexPane(ImmutableByteArray.Unsafe.wrap(bytes));
+                    } else {
+                        hexPane = new FallbackHexPane(ImmutableByteArray.Unsafe.wrap(bytes));
+                    }
+
                     Node sideBar;
 
                     try {
-                        sideBar = openSideBar(tab, bytes);
+                        sideBar = openSideBar(tab, hexPane, bytes);
                     } catch (Throwable e) {
                         LOGGER.warning("Failed to open side bar", e);
                         sideBar = null;
                     }
 
-                    if (bytes.size() < 200 * 1024) { // 200 KiB
-                        return new Tuple2<>(new ClassicHexPane(bytes), sideBar);
-                    } else {
-                        return new Tuple2<>(new FallbackHexPane(bytes), sideBar);
-                    }
+                    return new Tuple2<>(hexPane, sideBar);
                 }), Schedulers.virtualThread())
                 .whenCompleteAsync((result, exception) -> {
                     if (exception == null) {
