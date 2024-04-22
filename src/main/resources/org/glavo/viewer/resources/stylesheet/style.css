@@ -17,3 +17,13 @@
     -fx-border-color: transparent;
     -fx-underline: false;
 }
+
+.scroll-bar:vertical {
+    -fx-pref-width: 20;
+    /*-fx-padding: 3;*/
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 20;
+    /*-fx-padding: 3;*/
+}

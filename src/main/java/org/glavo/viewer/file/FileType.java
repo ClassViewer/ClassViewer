@@ -17,6 +17,7 @@ package org.glavo.viewer.file;
 
 import javafx.scene.image.Image;
 import org.glavo.viewer.file.types.BinaryFileType;
+import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.file.types.xml.XMLFileType;
 import org.glavo.viewer.file.types.yaml.YAMLFileType;
 import org.glavo.viewer.resources.Images;
@@ -92,7 +93,7 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType,
             }
         }
 
-        return BinaryFileType.TYPE;
+        return TextFileType.TYPE.check(file, extension) ? TextFileType.TYPE : BinaryFileType.TYPE;
     }
 
     private static final class Holder {

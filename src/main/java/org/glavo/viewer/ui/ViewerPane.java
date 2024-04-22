@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.glavo.viewer.ui;
 
 import javafx.beans.InvalidationListener;
@@ -27,7 +42,10 @@ public final class ViewerPane extends BorderPane {
 
     private final SplitPane mainPane;
     private final TabPane filesTabPane;
+
     private final TabPane sideBar;
+    private final Tab treeTab;
+    private final Tab infoTab;
 
     private final FileTreeView fileTreeView;
 
@@ -37,8 +55,46 @@ public final class ViewerPane extends BorderPane {
 
         this.menuBar = createMenuBar();
 
-        this.filesTabPane = createFilesTabPane();
-        this.sideBar = createSideBar();
+        this.filesTabPane = new TabPane();
+        filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
+            if (newValue instanceof FileTab) {
+                viewer.setTitleMessage(((FileTab) newValue).getFile().toString());
+            } else {
+                viewer.setTitleMessage(null);
+            }
+        });
+        filesTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+        filesTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
+
+        this.sideBar = new TabPane();
+        {
+            sideBar.setSide(Side.LEFT);
+            sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+            sideBar.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
+            SplitPane.setResizableWithParent(sideBar, false);
+
+            this.treeTab = new Tab(I18N.getString("sideBar.fileList"));
+            treeTab.setGraphic(new ImageView(Images.folder));
+            treeTab.setContent(fileTreeView);
+
+            this.infoTab = new Tab(I18N.getString("sideBar.fileInfo"));
+            infoTab.setGraphic(new ImageView(Images.fileStructure));
+            StackPane emptyLabel = new StackPane(new Label(I18N.getString("sideBar.fileInfo.empty")));
+
+            infoTab.setContent(emptyLabel);
+            filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
+                if (newValue instanceof FileTab fileTab) {
+                    infoTab.contentProperty().bind(Bindings.createObjectBinding(() -> {
+                        Node bar = ((FileTab) newValue).getSideBar();
+                        return bar == null ? emptyLabel : bar;
+                    }, fileTab.sideBarProperty()));
+                } else {
+                    infoTab.contentProperty().unbind();
+                    infoTab.setContent(null);
+                }
+            });
+            sideBar.getTabs().setAll(treeTab, infoTab);
+        }
 
         this.mainPane = new SplitPane(sideBar, filesTabPane);
         {
@@ -46,7 +102,8 @@ public final class ViewerPane extends BorderPane {
             if (dp <= 0 || dp >= 1) {
                 dp = 0.25;
             }
-            SplitPane.Divider divider = mainPane.getDividers().get(0);
+
+            SplitPane.Divider divider = mainPane.getDividers().getFirst();
             divider.setPosition(dp);
 
             if (viewer.isPrimary()) {
@@ -160,52 +217,6 @@ public final class ViewerPane extends BorderPane {
         return menuBar;
     }
 
-    private TabPane createSideBar() {
-        TabPane sideBar = new TabPane();
-        sideBar.setSide(Side.LEFT);
-        sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        sideBar.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
-        SplitPane.setResizableWithParent(sideBar, false);
-
-        Tab treeTab = new Tab(I18N.getString("sideBar.fileList"));
-        treeTab.setGraphic(new ImageView(Images.folder));
-        treeTab.setContent(fileTreeView);
-
-        Tab infoTab = new Tab(I18N.getString("sideBar.fileInfo"));
-        infoTab.setGraphic(new ImageView(Images.fileStructure));
-        StackPane emptyLabel = new StackPane(new Label(I18N.getString("sideBar.fileInfo.empty")));
-        infoTab.setContent(emptyLabel);
-        filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
-            if (newValue instanceof FileTab) {
-                infoTab.contentProperty().bind(Bindings.createObjectBinding(() -> {
-                    Node bar = ((FileTab) newValue).getSideBar();
-                    return bar == null ? emptyLabel : bar;
-                }, ((FileTab) newValue).sideBarProperty()));
-            } else {
-                infoTab.contentProperty().unbind();
-                infoTab.setContent(null);
-            }
-        });
-
-        sideBar.getTabs().setAll(treeTab, infoTab);
-        return sideBar;
-    }
-
-    private TabPane createFilesTabPane() {
-        TabPane tabPane = new TabPane();
-        tabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
-            if (newValue instanceof FileTab) {
-                viewer.setTitleMessage(((FileTab) newValue).getFile().toString());
-            } else {
-                viewer.setTitleMessage(null);
-            }
-        });
-        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-        tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
-
-        return tabPane;
-    }
-
     public TabPane getFilesTabPane() {
         return filesTabPane;
     }
@@ -215,7 +226,7 @@ public final class ViewerPane extends BorderPane {
     }
 
     public void selectFileInfoTab() {
-        sideBar.getSelectionModel().select(1);
+        sideBar.getSelectionModel().select(infoTab);
     }
 
     public void addFileTab(FileTab tab) {

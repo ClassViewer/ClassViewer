@@ -224,14 +224,8 @@ public final class Viewer {
 //                    });
                 }
                 case CustomFileType customFileType -> {
-                    // TODO
-//                    try (ContainerHandle containerHandle = new ContainerHandle(Container.getContainer(file.getParent()))) {
-//                        FileHandle handle = containerHandle.getContainer().openFile(file);
-//                        resource = handle;
-//
-//                        FileTab tab = ((CustomFileType) type).openTab(handle);
-//                        getPane().addFileTab(tab);
-//                    }
+                    FileTab fileTab = customFileType.openTab(file.file());
+                    getPane().addFileTab(fileTab);
                 }
                 case null, default -> throw new AssertionError("Unhandled type: " + file.type());
             }

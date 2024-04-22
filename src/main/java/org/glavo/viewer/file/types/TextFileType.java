@@ -34,6 +34,7 @@ import org.glavo.viewer.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
+import org.glavo.viewer.ui.Schedulers;
 import org.glavo.viewer.util.DaemonThreadFactory;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.TaskUtils;
@@ -217,7 +218,7 @@ public class TextFileType extends CustomFileType {
                 LOGGER.warning("Failed to open file", exception);
                 tab.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
             }
-        });
+        }, Schedulers.javafx());
 
 
         return tab;
