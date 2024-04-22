@@ -100,7 +100,7 @@ public final class ViewerPane extends BorderPane {
         {
             double dp = Config.getConfig().getDividerPosition();
             if (dp <= 0 || dp >= 1) {
-                dp = 0.25;
+                dp = DEFAULT_DIVIDER_POSITION;
             }
 
             SplitPane.Divider divider = mainPane.getDividers().getFirst();

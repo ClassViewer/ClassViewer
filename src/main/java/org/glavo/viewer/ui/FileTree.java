@@ -35,15 +35,15 @@ import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class FileTree extends TreeItem<String> {
 
-    private static FileTree createFileTree(TypedVirtualFile file) {
-        FileTree root = new FileTree(file, file.getFileName());
-        root.needLoad = file.isDirectory() || file.isContainer();
-        return root;
-    }
-
     public static FileTree createRoot(TypedVirtualFile file) {
         FileTree root = createFileTree(file);
         root.isRootNode = true;
+        return root;
+    }
+
+    private static FileTree createFileTree(TypedVirtualFile file) {
+        FileTree root = new FileTree(file, file.getFileName());
+        root.needLoad = file.isDirectory() || file.isContainer();
         return root;
     }
 

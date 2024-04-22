@@ -20,8 +20,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.Dragboard;
@@ -42,8 +40,6 @@ import java.io.File;
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Viewer {
-    private static final ObservableList<Viewer> viewers = FXCollections.observableArrayList();
-
     private final Stage stage;
     private final boolean isPrimary;
 
@@ -104,15 +100,12 @@ public final class Viewer {
         }, titleMessage));
         stage.show();
 
-        viewers.add(this);
         stage.setOnCloseRequest(e -> {
             if (isPrimary) {
                 config.setWindowSize(stage.isMaximized()
                         ? new WindowDimension(true, config.getWindowSize().width(), config.getWindowSize().height())
                         : new WindowDimension(false, stage.getWidth(), stage.getHeight()));
             }
-
-            viewers.remove(this);
         });
     }
 
@@ -187,41 +180,10 @@ public final class Viewer {
         try {
             switch (file.type()) {
                 case ContainerFileType containerFileType -> {
-                    // TODO
-//                    //noinspection resource
-//                    ContainerHandle handle = new ContainerHandle(Container.getContainer(file));
-//                    resource = handle;
-//
-//                    ObservableList<TreeItem<String>> treeItems = pane.getFileTreeView().getRoot().getChildren();
-//
-//                    FileTreeView.LoadingItem loadingItem = new FileTreeView.LoadingItem(file.toString());
-//                    treeItems.add(loadingItem);
-//
-//                    TaskUtils.submit(new Task<TreeItem<String>>() {
-//                        @Override
-//                        protected TreeItem<String> call() throws Exception {
-//                            OldFileTree.RootNode root = new OldFileTree.RootNode(type, file);
-//                            OldFileTree.buildFileTree(handle.getContainer(), root);
-//                            return FileTreeView.fromTree(root, handle);
-//                        }
-//
-//                        @Override
-//                        protected void succeeded() {
-//                            int idx = treeItems.indexOf(loadingItem);
-//                            assert idx >= 0;
-//
-//                            treeItems.set(idx, getValue());
-//                        }
-//
-//                        @Override
-//                        protected void failed() {
-//                            LOGGER.warning("Failed to open container", getException());
-//                            int idx = treeItems.indexOf(loadingItem);
-//                            assert idx >= 0;
-//                            treeItems.set(idx, new FileTreeView.FailedItem(file.toString()));
-//                            handle.close();
-//                        }
-//                    });
+
+                    FileTree root = FileTree.createRoot(file);
+
+
                 }
                 case CustomFileType customFileType -> {
                     FileTab fileTab = customFileType.openTab(file.file());
