@@ -15,12 +15,14 @@
  */
 package org.glavo.viewer.file.types;
 
+import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import kala.collection.immutable.primitive.ImmutableByteArray;
 import kala.collection.primitive.ByteSeq;
 import kala.function.CheckedSupplier;
+import kala.tuple.Tuple2;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.FileHandle;
@@ -48,6 +50,10 @@ public class BinaryFileType extends CustomFileType {
         super(name, image, extensions);
     }
 
+    protected Node openSideBar(FileTab tab, ByteSeq bytes) throws Throwable {
+        return null;
+    }
+
     @Override
     public FileTab openTab(VirtualFile file) {
         var tab = new FileTab(file, this);
@@ -59,16 +65,12 @@ public class BinaryFileType extends CustomFileType {
                     Container container = file.getContainer();
                     container.lock();
                     FileHandle fileHandle = null;
+                    ByteSeq bytes;
                     try {
                         fileHandle = container.openFile(file);
                         tab.setFileHandle(fileHandle);
 
-                        ByteSeq bytes = ImmutableByteArray.Unsafe.wrap(fileHandle.readAllBytes());
-                        if (bytes.size() < 200 * 1024) { // 200 KiB
-                            return new ClassicHexPane(bytes);
-                        } else {
-                            return new FallbackHexPane(bytes);
-                        }
+                        bytes = ImmutableByteArray.Unsafe.wrap(fileHandle.readAllBytes());
                     } catch (Throwable e) {
                         tab.setFileHandle(null);
                         if (fileHandle != null) {
@@ -78,11 +80,27 @@ public class BinaryFileType extends CustomFileType {
                     } finally {
                         container.unlock();
                     }
+
+                    Node sideBar;
+
+                    try {
+                        sideBar = openSideBar(tab, bytes);
+                    } catch (Throwable e) {
+                        LOGGER.warning("Failed to open side bar", e);
+                        sideBar = null;
+                    }
+
+                    if (bytes.size() < 200 * 1024) { // 200 KiB
+                        return new Tuple2<>(new ClassicHexPane(bytes), sideBar);
+                    } else {
+                        return new Tuple2<>(new FallbackHexPane(bytes), sideBar);
+                    }
                 }), Schedulers.virtualThread())
                 .whenCompleteAsync((result, exception) -> {
                     if (exception == null) {
-                        tab.setContent(result.getNode());
-                        tab.setStatusBar(result.getStatusBar());
+                        tab.setContent(result.component1().getNode());
+                        tab.setStatusBar(result.component1().getStatusBar());
+                        tab.setSideBar(result.component2());
                     } else {
                         LOGGER.warning("Failed to open file", exception);
                     }

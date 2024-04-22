@@ -18,6 +18,12 @@ package org.glavo.viewer.file;
 import javafx.scene.image.Image;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.TextFileType;
+import org.glavo.viewer.file.types.aya.AyaSourceFileType;
+import org.glavo.viewer.file.types.css.CSSFileType;
+import org.glavo.viewer.file.types.html.HTMLFileType;
+import org.glavo.viewer.file.types.image.ImageFileType;
+import org.glavo.viewer.file.types.java.*;
+import org.glavo.viewer.file.types.json.JsonFileType;
 import org.glavo.viewer.file.types.xml.XMLFileType;
 import org.glavo.viewer.file.types.yaml.YAMLFileType;
 import org.glavo.viewer.resources.Images;
@@ -98,8 +104,25 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType,
 
     private static final class Holder {
         static final List<FileType> extTypes = List.of(
+                // JImageFileType.TYPE,
+                // ArchiveFileType.TYPE,
+                // TarFileType.TYPE,
+
+                ManifestFileType.TYPE,
+                PropertiesFileType.TYPE,
                 XMLFileType.TYPE,
-                YAMLFileType.TYPE
+                YAMLFileType.TYPE,
+                CSSFileType.TYPE,
+                HTMLFileType.TYPE,
+                JsonFileType.TYPE,
+                AyaSourceFileType.TYPE,
+                JavaSourceFileType.TYPE,
+                JavaModuleInfoFileType.TYPE,
+                // MarkdownFileType.TYPE,
+
+                JavaClassFileType.TYPE,
+
+                ImageFileType.TYPE
         );
     }
 }

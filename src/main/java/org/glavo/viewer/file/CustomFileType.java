@@ -34,8 +34,10 @@ public abstract non-sealed class CustomFileType extends FileType {
         super(name, image, extensions);
     }
 
-    @FXThread
-    public FileTab openTab(VirtualFile file) {
-        throw new UnsupportedOperationException("CustomFileType::openTab");
+    public boolean hasSideBar() {
+        return false;
     }
+
+    @FXThread
+    public abstract FileTab openTab(VirtualFile file);
 }
