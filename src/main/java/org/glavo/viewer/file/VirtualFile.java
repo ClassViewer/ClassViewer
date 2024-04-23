@@ -40,6 +40,20 @@ public abstract non-sealed class VirtualFile extends VirtualPath {
         }
     }
 
+    protected static List<String> relativize(List<String> base, List<String> other) {
+        if (base.size() > other.size()) {
+            throw new IllegalArgumentException();
+        }
+
+        for (int i = 0; i < base.size(); i++) {
+            if (!other.get(i).equals(base.get(i))) {
+                throw new IllegalArgumentException(base + " is not prefix of " + other);
+            }
+        }
+
+        return other.subList(base.size(), other.size());
+    }
+
     protected final Container container;
 
     protected VirtualFile(Container container) {
@@ -61,9 +75,7 @@ public abstract non-sealed class VirtualFile extends VirtualPath {
 
     // ---
 
-    protected abstract FileHandle open() throws IOException;
-
     public abstract boolean isDirectory();
 
-    public abstract List<VirtualFile> listFiles() throws IOException;
+    public abstract List<? extends VirtualFile> listFiles() throws IOException;
 }

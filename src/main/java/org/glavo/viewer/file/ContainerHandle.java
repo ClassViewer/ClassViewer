@@ -18,6 +18,7 @@
 package org.glavo.viewer.file;
 
 import kala.function.CheckedRunnable;
+import org.glavo.viewer.file.roots.local.LocalRootContainer;
 import org.glavo.viewer.util.SilentlyCloseable;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
@@ -29,14 +30,10 @@ public final class ContainerHandle implements SilentlyCloseable {
     private volatile boolean closed = false;
 
     public ContainerHandle(Container container) {
-        this.container = container;
+        assert container instanceof LocalRootContainer || container.isLocked();
 
-        container.lock();
-        try {
-            container.containerHandles.add(this);
-        } finally {
-            container.unlock();
-        }
+        this.container = container;
+        container.containerHandles.add(this);
     }
 
     public Container getContainer() {

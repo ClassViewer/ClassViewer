@@ -19,6 +19,7 @@ package org.glavo.viewer.file.roots.local;
 
 import org.glavo.viewer.file.*;
 
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
@@ -35,8 +36,8 @@ public final class LocalRootContainer extends JavaFileSystemContainer {
         return new LocalFile(path);
     }
 
-    protected JavaVirtualFileHandle createVirtualFileHandle(JavaVirtualFile file) {
-        return new LocalFileHandle((LocalFile) file);
+    protected JavaVirtualFileHandle createVirtualFileHandle(JavaVirtualFile file, SeekableByteChannel channel) {
+        return new LocalFileHandle((LocalFile) file, channel);
     }
 
     @Override

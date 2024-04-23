@@ -39,6 +39,6 @@ public final class LocalFile extends JavaVirtualFile {
 
     @Override
     public String toString() {
-        return "LocalFile[" + path + "]";
+        return path.toString();
     }
 }

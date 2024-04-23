@@ -17,6 +17,7 @@ package org.glavo.viewer.file;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +44,7 @@ public abstract class JavaFileSystemContainer extends Container {
 
     protected abstract JavaVirtualFile createVirtualFile(Path path);
 
-    protected abstract JavaVirtualFileHandle createVirtualFileHandle(JavaVirtualFile file);
+    protected abstract JavaVirtualFileHandle createVirtualFileHandle(JavaVirtualFile file, SeekableByteChannel channel);
 
     @Override
     protected FileHandle openFileImpl(VirtualFile file) throws IOException {
@@ -52,10 +53,6 @@ public abstract class JavaFileSystemContainer extends Container {
             throw new FileNotFoundException(path.toString());
         }
 
-        if (!Files.isReadable(path)) {
-            throw new IOException(path + " is not readable");
-        }
-
-        return createVirtualFileHandle((JavaVirtualFile) file);
+        return createVirtualFileHandle((JavaVirtualFile) file, Files.newByteChannel(path));
     }
 }

@@ -44,12 +44,10 @@ dependencies {
     implementation("org.glavo.kala:kala-template:0.2.0")
     implementation("org.glavo.kala:kala-common:0.70.0")
 
-    val kalaCompressVersion = "1.21.0.1-beta3"
-    implementation("org.glavo.kala:kala-compress-archivers-zip:$kalaCompressVersion")
-    implementation("org.glavo.kala:kala-compress-compressors-deflate64:$kalaCompressVersion")
-    implementation("org.glavo.kala:kala-compress-compressors-bzip2:$kalaCompressVersion")
-
     implementation("org.glavo:jimage:1.0.0")
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+    implementation("org.apache.commons:commons-compress:1.26.1")
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.10.1")

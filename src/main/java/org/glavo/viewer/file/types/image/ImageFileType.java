@@ -55,7 +55,7 @@ public final class ImageFileType extends CustomFileType {
             try {
                 fileHandle = container.openFile(file);
                 tab.setFileHandle(fileHandle);
-                try (InputStream inputStream = fileHandle.openInputStream()) {
+                try (InputStream inputStream = fileHandle.getInputStream()) {
                     image = new Image(inputStream);
                 }
             } catch (Throwable e) {

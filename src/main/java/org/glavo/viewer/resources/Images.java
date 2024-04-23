@@ -13,6 +13,7 @@ public class Images {
 
     public static final Image file = loadImage("file.png");
     public static final Image folder = loadImage("folder.png");
+    public static final Image archive = loadImage("archive.png");
     public static final Image fileStructure = loadImage("fileStructure.png");
 
     public static final Image failed = loadImage("failed.png");

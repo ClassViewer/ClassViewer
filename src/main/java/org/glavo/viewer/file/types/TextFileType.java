@@ -21,7 +21,6 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import kala.compress.utils.Charsets;
 import kala.function.CheckedSupplier;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -86,7 +85,7 @@ public abstract class TextFileType extends CustomFileType {
         d.handleData(bytes, 0, Integer.min(8192, bytes.length));
         d.dataEnd();
 
-        Charset charset = Charsets.toCharset(d.getDetectedCharset(), StandardCharsets.UTF_8);
+        Charset charset = Charset.forName(d.getDetectedCharset(), StandardCharsets.UTF_8);
         return charset == StandardCharsets.US_ASCII ? StandardCharsets.UTF_8 : charset;
     }
 

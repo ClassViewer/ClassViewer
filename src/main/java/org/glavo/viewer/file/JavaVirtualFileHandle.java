@@ -18,15 +18,17 @@ package org.glavo.viewer.file;
 import org.glavo.viewer.file.roots.local.LocalFile;
 
 import java.io.IOException;
-import java.nio.channels.FileChannel;
+import java.io.InputStream;
+import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
-public class JavaVirtualFileHandle extends FileHandle {
-    protected JavaVirtualFileHandle(VirtualFile file) {
+public abstract class JavaVirtualFileHandle extends FileHandle {
+    private final SeekableByteChannel channel;
+
+    protected JavaVirtualFileHandle(VirtualFile file, SeekableByteChannel channel) {
         super(file);
+        this.channel = channel;
     }
 
     public Path getPath() {
@@ -34,22 +36,24 @@ public class JavaVirtualFileHandle extends FileHandle {
     }
 
     @Override
-    public boolean exists() {
-        return Files.exists(getPath());
+    public boolean supportRandomAccess() {
+        return true;
     }
 
     @Override
-    public boolean isReadonly() {
-        return !Files.isWritable(getPath());
+    public SeekableByteChannel getChannel() throws IOException {
+        channel.position(0);
+        return channel;
     }
 
     @Override
-    public SeekableByteChannel openChannel() throws IOException {
-        return FileChannel.open(getPath());
+    public InputStream getInputStream() throws IOException {
+        channel.position(0);
+        return Channels.newInputStream(channel);
     }
 
     @Override
-    public SeekableByteChannel openWritableChannel() throws IOException {
-        return FileChannel.open(getPath(), StandardOpenOption.WRITE);
+    protected void closeImpl() throws Exception {
+        channel.close();
     }
 }

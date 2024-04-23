@@ -47,36 +47,35 @@ public abstract class FileHandle implements Runnable {
         return file;
     }
 
-    public abstract boolean exists();
-
-    public abstract boolean isReadonly();
-
-    public boolean isDirectory() {
-        return file.isDirectory();
+    public boolean isReadonly() {
+        return true;
     }
 
-    public abstract SeekableByteChannel openChannel() throws IOException;
+    public boolean supportRandomAccess() {
+        return false;
+    }
 
-    public SeekableByteChannel openWritableChannel() throws IOException {
+    public SeekableByteChannel getChannel() throws IOException {
         throw new UnsupportedOperationException();
     }
 
-    public InputStream openInputStream() throws IOException {
-        return Channels.newInputStream(openChannel());
-    }
+    public abstract InputStream getInputStream() throws IOException;
 
     public byte[] readAllBytes() throws IOException {
-        try (InputStream in = openInputStream()) {
+        try (InputStream in = getInputStream()) {
             return in.readAllBytes();
         }
     }
 
-    public OutputStream openOutputStream() throws IOException {
-        return Channels.newOutputStream(openWritableChannel());
+    public OutputStream getOutputStream() throws IOException {
+        if (isReadonly()) {
+            throw new IOException("File is readonly");
+        }
+        return Channels.newOutputStream(getChannel());
     }
 
     public void write(byte[] bytes) throws IOException {
-        try (OutputStream out = openOutputStream()) {
+        try (OutputStream out = getOutputStream()) {
             out.write(bytes);
         }
     }

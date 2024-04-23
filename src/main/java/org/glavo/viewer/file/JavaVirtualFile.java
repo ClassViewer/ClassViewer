@@ -17,7 +17,6 @@
  */
 package org.glavo.viewer.file;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,18 +38,24 @@ public abstract class JavaVirtualFile extends VirtualFile {
 
     @Override
     public List<String> relativize(VirtualFile other) {
-        if (other instanceof JavaVirtualFile file && this.getContainer().equals(file.getContainer())) {
-            Path relativized = this.path.relativize(file.path);
-            if (relativized.getNameCount() == 1) {
-                return List.of(relativized.getName(0).toString());
-            }
-            String[] paths = new String[relativized.getNameCount()];
-            for (int i = 0; i < paths.length; i++) {
-                paths[i] = relativized.getName(i).toString();
-            }
-            return List.of(paths);
+        if (!(other instanceof JavaVirtualFile file) || !this.getContainer().equals(file.getContainer())) {
+            throw new IllegalArgumentException("Cannot relativize files of different containers");
         }
-        throw new IllegalArgumentException();
+
+        Path relativized = this.path.relativize(file.path);
+        if (relativized.getNameCount() == 1 && relativized.getName(0).toString().isEmpty()) {
+            return List.of();
+        }
+
+        String[] paths = new String[relativized.getNameCount()];
+        for (int i = 0; i < paths.length; i++) {
+            String element = relativized.getName(i).toString();
+            if (element.equals("..") || element.isEmpty()) {
+                throw new IllegalArgumentException("this=%s, other=%s".formatted(this.path, file.path));
+            }
+            paths[i] = element;
+        }
+        return List.of(paths);
     }
 
     @Override
@@ -62,23 +67,6 @@ public abstract class JavaVirtualFile extends VirtualFile {
     public VirtualFile getParent() {
         Path parent = path.getParent();
         return parent != null ? ((JavaFileSystemContainer) container).createVirtualFile(parent) : null;
-    }
-
-    @Override
-    protected FileHandle open() throws IOException {
-        if (!Files.exists(path)) {
-            throw new FileNotFoundException(path.toString());
-        }
-
-        if (!Files.isRegularFile(path)) {
-            throw new IOException(path + " is not a regular file");
-        }
-
-        if (!Files.isReadable(path)) {
-            throw new IOException(path + " is not readable");
-        }
-
-        return ((JavaFileSystemContainer) container).createVirtualFileHandle(this);
     }
 
     @Override

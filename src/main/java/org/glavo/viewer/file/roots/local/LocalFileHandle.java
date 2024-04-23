@@ -19,8 +19,10 @@ package org.glavo.viewer.file.roots.local;
 
 import org.glavo.viewer.file.JavaVirtualFileHandle;
 
+import java.nio.channels.SeekableByteChannel;
+
 public final class LocalFileHandle extends JavaVirtualFileHandle {
-    public LocalFileHandle(LocalFile file) {
-        super(file);
+    public LocalFileHandle(LocalFile file, SeekableByteChannel channel) {
+        super(file, channel);
     }
 }

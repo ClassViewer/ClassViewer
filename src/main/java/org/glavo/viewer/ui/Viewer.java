@@ -36,8 +36,6 @@ import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 

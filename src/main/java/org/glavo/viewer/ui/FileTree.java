@@ -25,6 +25,7 @@ import kala.function.CheckedSupplier;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.*;
 import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.util.FXUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -136,6 +137,17 @@ public final class FileTree extends TreeItem<String> {
     }
 
     private Runnable loadContainer() throws IOException {
+        Container container = file.file().getContainer();
+
+        container.lock();
+        try {
+            Container subContainer = container.getSubContainer(file);
+            containerHandle = new ContainerHandle(subContainer);
+            containerHandle.setOnForceClose(() -> FXUtils.runInFx(() -> this.getRawChildren().clear()));
+        } finally {
+            container.unlock();
+        }
+
         throw new IOException("TODO: loadContainer");
     }
 
