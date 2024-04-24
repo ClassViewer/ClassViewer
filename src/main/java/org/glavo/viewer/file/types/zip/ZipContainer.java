@@ -22,13 +22,14 @@ import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.VirtualFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
 public final class ZipContainer extends Container {
 
-    private static void add(ZipVirtualFile root, ZipArchiveEntry entry) {
+    private void add(ZipArchiveEntry entry) {
         String[] split = entry.getName().split("/");
         if (split.length == 0) {
             return;
@@ -40,38 +41,45 @@ public final class ZipContainer extends Container {
             }
         }
 
+        ZipVirtualFile current = root;
+        for (int i = 0; i < split.length; i++) {
+            String element = split[i];
+            if (current.children == null) {
+                current.children = new HashMap<>();
+            }
 
-        // TODO
-//
-//        ZipVirtualFile current = root;
-//        for (int i = 0; i < name.size(); i++) {
-//            String element = name.get(i);
-//            if (current.children == null) {
-//                current.children = new HashMap<>();
-//            }
-//
-//            ZipVirtualFile f = current.children.get(element);
-//            if (f == null) {
-//
-//            } else {
-//
-//            }
-//        }
+            ZipVirtualFile f = current.children.get(element);
+            if (f == null) {
+                f = new ZipVirtualFile(this, Arrays.asList(split).subList(0, i));
+                f.parent = current;
+                current.children.put(element, f);
+            }
+
+            if (i == split.length - 1) {
+                f.entry = entry;
+            }
+
+            current = f;
+        }
     }
 
     final ZipFile zipFile;
+    final ZipVirtualFile root;
 
     ZipContainer(FileHandle handle, ZipFile zipFile) {
         super(handle);
         this.zipFile = zipFile;
-
-        ZipVirtualFile root = new ZipVirtualFile(this, List.of());
+        this.root = new ZipVirtualFile(this, List.of());
 
         Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
         while (entries.hasMoreElements()) {
-            ZipArchiveEntry entry = entries.nextElement();
-            add(root, entry);
+            add(entries.nextElement());
         }
+    }
+
+    @Override
+    public VirtualFile getRootDirectory() {
+        return root;
     }
 
     @Override

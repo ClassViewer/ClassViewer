@@ -21,6 +21,8 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class JavaFileSystemContainer extends Container {
 
@@ -45,6 +47,25 @@ public abstract class JavaFileSystemContainer extends Container {
     protected abstract JavaVirtualFile createVirtualFile(Path path);
 
     protected abstract JavaVirtualFileHandle createVirtualFileHandle(JavaVirtualFile file, SeekableByteChannel channel);
+
+    @Override
+    public boolean hasMultiRoots() {
+        return true;
+    }
+
+    @Override
+    public VirtualFile getRootDirectory() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<VirtualFile> getRootDirectories() {
+        ArrayList<VirtualFile> res = new ArrayList<>(1);
+        for (Path rootDirectory : fileSystem.getRootDirectories()) {
+            res.add(createVirtualFile(rootDirectory));
+        }
+        return res;
+    }
 
     @Override
     protected FileHandle openFileImpl(VirtualFile file) throws IOException {

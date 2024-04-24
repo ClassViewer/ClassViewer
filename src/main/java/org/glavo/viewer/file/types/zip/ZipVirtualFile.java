@@ -19,7 +19,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.glavo.viewer.file.VirtualFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,10 +36,6 @@ public final class ZipVirtualFile extends VirtualFile {
 
     public ZipArchiveEntry getEntry() {
         return entry;
-    }
-
-    public boolean isRoot() {
-        return name.isEmpty();
     }
 
     @Override
@@ -71,6 +66,6 @@ public final class ZipVirtualFile extends VirtualFile {
         if (!isDirectory()) {
             throw new IOException(this + " is not a directory");
         }
-        return children != null ? new ArrayList<>(children.values()) : null;
+        return children != null ? List.copyOf(children.values()) : null;
     }
 }

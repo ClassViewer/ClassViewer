@@ -67,6 +67,20 @@ public abstract class Container {
         lock.unlock();
     }
 
+    public boolean hasMultiRoots() {
+        return false;
+    }
+
+    public abstract VirtualFile getRootDirectory();
+
+    public List<VirtualFile> getRootDirectories() {
+        if (hasMultiRoots()) {
+            throw new UnsupportedOperationException("Must be overridden");
+        }
+
+        return List.of(getRootDirectory());
+    }
+
     public @Nullable Container getParent() {
         return handle != null ? handle.getFile().getContainer() : null;
     }
