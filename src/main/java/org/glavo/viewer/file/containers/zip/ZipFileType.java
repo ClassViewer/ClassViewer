@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file.types.zip;
+package org.glavo.viewer.file.containers.zip;
 
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.glavo.viewer.file.ContainerFileType;

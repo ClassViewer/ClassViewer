@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file.types.zip;
+package org.glavo.viewer.file.containers.zip;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -50,8 +50,7 @@ public final class ZipContainer extends Container {
 
             ZipVirtualFile f = current.children.get(element);
             if (f == null) {
-                f = new ZipVirtualFile(this, Arrays.asList(split).subList(0, i + 1));
-                f.parent = current;
+                f = new ZipVirtualFile(this, current, Arrays.asList(split).subList(0, i + 1));
                 current.children.put(element, f);
             }
 
@@ -69,7 +68,7 @@ public final class ZipContainer extends Container {
     ZipContainer(FileHandle handle, ZipFile zipFile) {
         super(handle);
         this.zipFile = zipFile;
-        this.root = new ZipVirtualFile(this, List.of());
+        this.root = new ZipVirtualFile(this, null, List.of());
 
         Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
         while (entries.hasMoreElements()) {

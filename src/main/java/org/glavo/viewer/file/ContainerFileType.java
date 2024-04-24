@@ -22,6 +22,10 @@ import java.util.Set;
 
 public abstract non-sealed class ContainerFileType extends FileType {
 
+    public ContainerFileType(String name, Set<String> extensions) {
+        super(name, extensions);
+    }
+
     protected ContainerFileType(String name, Image image, Set<String> extensions) {
         super(name, image, extensions);
     }

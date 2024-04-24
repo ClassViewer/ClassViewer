@@ -13,47 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file.types.zip;
+package org.glavo.viewer.file.containers.zip;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.glavo.viewer.file.VirtualFile;
+import org.glavo.viewer.file.AbstractVirtualFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public final class ZipVirtualFile extends VirtualFile {
-    final List<String> name;
+public final class ZipVirtualFile extends AbstractVirtualFile<ZipVirtualFile> {
     ZipArchiveEntry entry;
-
-    ZipVirtualFile parent;
     Map<String, ZipVirtualFile> children;
 
-    ZipVirtualFile(ZipContainer container, List<String> name) {
-        super(container);
-        this.name = name;
+    ZipVirtualFile(ZipContainer container, ZipVirtualFile parent, List<String> name) {
+        super(container, parent, name);
     }
 
     public ZipArchiveEntry getEntry() {
         return entry;
-    }
-
-    @Override
-    public List<String> relativize(VirtualFile other) {
-        if (!(other instanceof ZipVirtualFile otherZipVirtualFile) || this.container != otherZipVirtualFile.container) {
-            throw new IllegalArgumentException();
-        }
-        return relativize(this.name, otherZipVirtualFile.name);
-    }
-
-    @Override
-    public String getFileName() {
-        return name.isEmpty() ? "" : name.getLast();
-    }
-
-    @Override
-    public VirtualFile getParent() {
-        return parent;
     }
 
     @Override

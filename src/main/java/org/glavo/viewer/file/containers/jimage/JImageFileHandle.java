@@ -13,35 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.file.types.zip;
+package org.glavo.viewer.file.containers.jimage;
 
+import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
+import org.glavo.jimage.ImageReader;
 import org.glavo.viewer.file.FileHandle;
+import org.glavo.viewer.file.VirtualFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.SeekableByteChannel;
 
-public final class ZipFileHandle extends FileHandle {
-
-    ZipFileHandle(ZipVirtualFile file) {
+public final class JImageFileHandle extends FileHandle {
+    JImageFileHandle(VirtualFile file) {
         super(file);
     }
 
     @Override
-    public boolean isReadonly() {
+    public boolean supportRandomAccess() {
         return true;
+    }
+
+    private ImageReader getReader() {
+        return ((JImageContainer) file.getContainer()).getReader();
+    }
+
+    private ImageReader.Node getNode() {
+        return ((JImageVirtualFile) file).getNode();
+    }
+
+    @Override
+    public SeekableByteChannel getChannel() throws IOException {
+        return new SeekableInMemoryByteChannel(getReader().getResource(getNode()));
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        var file = (ZipVirtualFile) this.file;
-        var container = (ZipContainer) file.getContainer();
-
-        container.lock();
-        try {
-            container.ensureOpen();
-            return container.zipFile.getInputStream(file.getEntry());
-        } finally {
-            container.unlock();
-        }
+        return getReader().getResourceStream(getNode().getLocation());
     }
 }
