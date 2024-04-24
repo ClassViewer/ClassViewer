@@ -42,7 +42,7 @@ public record TypedVirtualFile(VirtualFile file, FileType type) {
     }
 
     public List<TypedVirtualFile> listFiles() throws IOException {
-        List<VirtualFile> list = file.listFiles();
+        var list = file.listFiles();
         TypedVirtualFile[] result = new TypedVirtualFile[list.size()];
         for (int i = 0; i < list.size(); i++) {
             result[i] = of(list.get(i));

@@ -99,9 +99,7 @@ public final class FileTree extends TreeItem<String> {
         }
     }
 
-    private Runnable loadDirectory() throws IOException {
-        TypedVirtualFile file = this.getFile();
-
+    private Runnable loadDirectory(TypedVirtualFile file) throws IOException {
         List<TypedVirtualFile> files = file.listFiles();
         if (!this.isRootNode && files.size() == 1 && files.getFirst().isDirectory()) {
             var nameList = new ArrayList<String>();
@@ -138,17 +136,25 @@ public final class FileTree extends TreeItem<String> {
 
     private Runnable loadContainer() throws IOException {
         Container container = file.file().getContainer();
-
         container.lock();
         try {
             Container subContainer = container.getSubContainer(file);
             containerHandle = new ContainerHandle(subContainer);
             containerHandle.setOnForceClose(() -> FXUtils.runInFx(() -> this.getRawChildren().clear()));
+            if (subContainer.hasMultiRoots()) {
+                var files = subContainer.getRootDirectories().stream()
+                        .map(TypedVirtualFile::of)
+                        .toList();
+                return () -> {
+                    this.getChildren().setAll(createNodes(files));
+                    this.setGraphic(imageView);
+                };
+            } else {
+                return loadDirectory(TypedVirtualFile.of(subContainer.getRootDirectory()));
+            }
         } finally {
             container.unlock();
         }
-
-        throw new IOException("TODO: loadContainer");
     }
 
     @FXThread
@@ -163,7 +169,7 @@ public final class FileTree extends TreeItem<String> {
         this.setGraphic(progressIndicator);
 
         CompletableFuture.supplyAsync((CheckedSupplier<Runnable, IOException>)
-                        () -> file.isDirectory() ? loadDirectory() : loadContainer(), Schedulers.virtualThread())
+                        () -> file.isDirectory() ? loadDirectory(this.getFile()) : loadContainer(), Schedulers.virtualThread())
                 .whenCompleteAsync((action, exception) -> {
                     isLoading = false;
                     if (exception == null) {

@@ -50,7 +50,7 @@ public final class ZipContainer extends Container {
 
             ZipVirtualFile f = current.children.get(element);
             if (f == null) {
-                f = new ZipVirtualFile(this, Arrays.asList(split).subList(0, i));
+                f = new ZipVirtualFile(this, Arrays.asList(split).subList(0, i + 1));
                 f.parent = current;
                 current.children.put(element, f);
             }
