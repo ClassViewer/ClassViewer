@@ -45,7 +45,8 @@ public final class ImageFileType extends CustomFileType {
     @Override
     public FileTab openTab(VirtualFile file) {
         FileTab tab = new FileTab(file, this);
-        tab.setContent(new StackPane(new ProgressIndicator()));
+        StackPane mainPane = new StackPane(new ProgressIndicator());
+        tab.setContent(mainPane);
 
         CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
             Container container = file.getContainer();
@@ -71,10 +72,10 @@ public final class ImageFileType extends CustomFileType {
             return image;
         }), Schedulers.virtualThread()).whenCompleteAsync((result, exception) -> {
             if (exception == null) {
-                tab.setContent(new ImageView(result));
+                mainPane.getChildren().setAll(new ImageView(result));
             } else {
                 LOGGER.warning("Failed to read image file " + file, exception);
-                tab.setContent(new StackPane(new Label(I18N.getString("file.wrongFormat"))));
+                mainPane.getChildren().setAll(new Label(I18N.getString("file.wrongFormat")));
             }
         }, Schedulers.javafx());
 
