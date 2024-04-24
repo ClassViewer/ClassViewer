@@ -23,8 +23,6 @@ import org.glavo.viewer.file.VirtualFile;
 import java.io.IOException;
 
 public final class JImageContainer extends Container {
-    private static final int offset = "/modules/".length();
-
     private final ImageReader reader;
 
     private final JImageVirtualFile root;

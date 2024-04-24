@@ -23,6 +23,7 @@ import org.glavo.viewer.file.types.html.HTMLFileType;
 import org.glavo.viewer.file.types.image.ImageFileType;
 import org.glavo.viewer.file.types.java.*;
 import org.glavo.viewer.file.types.json.JsonFileType;
+import org.glavo.viewer.file.types.markdown.MarkdownFileType;
 import org.glavo.viewer.file.types.plain.PlainTextFileType;
 import org.glavo.viewer.file.types.raw.RawBinaryFileType;
 import org.glavo.viewer.file.types.xml.XMLFileType;
@@ -120,7 +121,7 @@ public abstract sealed class FileType permits ContainerFileType, CustomFileType,
                 AyaSourceFileType.TYPE,
                 JavaSourceFileType.TYPE,
                 JavaModuleInfoFileType.TYPE,
-                // MarkdownFileType.TYPE,
+                MarkdownFileType.TYPE,
 
                 JavaClassFileType.TYPE,
 
