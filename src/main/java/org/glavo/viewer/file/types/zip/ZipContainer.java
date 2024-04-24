@@ -84,8 +84,11 @@ public final class ZipContainer extends Container {
 
     @Override
     protected FileHandle openFileImpl(VirtualFile file) throws IOException {
+        if (!(file instanceof ZipVirtualFile zipVirtualFile)) {
+            throw new IllegalArgumentException("File: " + file);
+        }
 
-        return null;
+        return new ZipFileHandle(zipVirtualFile);
     }
 
     @Override
