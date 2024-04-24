@@ -15,6 +15,7 @@
  */
 package org.glavo.viewer.file.types;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -176,8 +177,11 @@ public abstract class TextFileType extends CustomFileType {
             return new Result(area, charset);
         })).whenCompleteAsync((result, exception) -> {
             if (exception == null) {
-                result.area().scrollToPixel(0, 0);
-                tab.setContent(new VirtualizedScrollPane<>(result.area()));
+                CodeArea area = result.area();
+
+                //TODO: https://github.com/FXMisc/RichTextFX/issues/1110
+                area.scrollToPixel(0, 0);
+                tab.setContent(new VirtualizedScrollPane<>(area));
                 statusBar.getChildren().add(new Label(result.charset().toString()));
             } else {
                 LOGGER.warning("Failed to open file", exception);

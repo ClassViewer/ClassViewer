@@ -169,7 +169,7 @@ public final class FileTree extends TreeItem<String> {
         this.setGraphic(progressIndicator);
 
         CompletableFuture.supplyAsync((CheckedSupplier<Runnable, IOException>)
-                        () -> file.isDirectory() ? loadDirectory(this.getFile()) : loadContainer(), Schedulers.virtualThread())
+                        () -> file.isDirectory() ? loadDirectory(this.getFile()) : loadContainer(), Schedulers.io())
                 .whenCompleteAsync((action, exception) -> {
                     isLoading = false;
                     if (exception == null) {

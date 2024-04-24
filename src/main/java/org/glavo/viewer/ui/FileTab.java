@@ -47,7 +47,7 @@ public final class FileTab extends Tab {
         this.setText(file.getFileName());
         this.setTooltip(new Tooltip(file.toString()));
         this.setContextMenu(new TabMenu());
-        this.setOnClosed(event -> Schedulers.virtualThread().execute(() -> {
+        this.setOnClosed(event -> Schedulers.io().execute(() -> {
             file.getContainer().lock();
             try {
                 FileHandle fileHandle = this.fileHandle;

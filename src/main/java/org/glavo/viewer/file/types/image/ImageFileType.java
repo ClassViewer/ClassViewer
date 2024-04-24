@@ -76,7 +76,7 @@ public final class ImageFileType extends CustomFileType {
             }
 
             return image;
-        }), Schedulers.virtualThread()).whenCompleteAsync((result, exception) -> {
+        }), Schedulers.io()).whenCompleteAsync((result, exception) -> {
             if (exception == null) {
                 mainPane.getChildren().setAll(new ImageView(result));
             } else {

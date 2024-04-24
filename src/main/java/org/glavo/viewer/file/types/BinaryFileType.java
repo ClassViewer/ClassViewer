@@ -91,7 +91,7 @@ public abstract class BinaryFileType extends CustomFileType {
                     }
 
                     return new Tuple2<>(hexPane, sideBar);
-                }), Schedulers.virtualThread())
+                }), Schedulers.io())
                 .whenCompleteAsync((result, exception) -> {
                     if (exception == null) {
                         tab.setContent(result.component1().getNode());

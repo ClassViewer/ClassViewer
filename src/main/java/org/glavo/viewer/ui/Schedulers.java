@@ -20,12 +20,17 @@ import javafx.application.Platform;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 public final class Schedulers {
     private static final ExecutorService io = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().factory());
     private static final Executor javafx = Platform::runLater;
 
-    public static Executor virtualThread() {
+    public static Executor common() {
+        return ForkJoinPool.commonPool();
+    }
+
+    public static Executor io() {
         return io;
     }
 

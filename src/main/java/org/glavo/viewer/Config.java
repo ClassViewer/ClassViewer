@@ -185,7 +185,7 @@ public final class Config {
 
     public void save() {
         if (path != null) {
-            Schedulers.virtualThread().execute(() -> {
+            Schedulers.io().execute(() -> {
                 try {
                     FileUtils.save(path, writer -> {
                         GSON.toJson(Config.this, writer);
