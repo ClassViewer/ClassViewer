@@ -21,7 +21,7 @@ import org.glavo.viewer.highlighter.LookNextAntlrLexerHighlighter;
 import org.glavo.viewer.util.Stylesheet;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public final class JsonFileType extends TextFileType {
@@ -33,29 +33,17 @@ public final class JsonFileType extends TextFileType {
         this.highlighter = new LookNextAntlrLexerHighlighter(Json5Lexer::new) {
             @Override
             protected Collection<String> getStyleClass(Token token, Token nextToken) {
-                switch (token.getType()) {
-                    case Json5Lexer.DELIMITER:
-                        return Stylesheet.CODE_DELIMITER_CLASSES;
-                    case Json5Lexer.BRACKETS:
-                        return Stylesheet.CODE_BRACKETS_CLASSES;
-                    case Json5Lexer.NUMBER:
-                        return Stylesheet.CODE_NUMBER_CLASSES;
-                    case Json5Lexer.LITERAL:
-                        return Stylesheet.CODE_KEYWORD_CLASSES;
-                    case Json5Lexer.STRING:
-                    case Json5Lexer.IDENTIFIER:
-                        if (nextToken.getType() == Json5Lexer.DELIMITER) {
-                            return Stylesheet.CODE_PROPERTY_KEY;
-                        } else {
-                            return Stylesheet.CODE_STRING_CLASSES;
-                        }
-                    case Json5Lexer.SINGLE_LINE_COMMENT:
-                    case Json5Lexer.MULTI_LINE_COMMENT:
-                        return Stylesheet.CODE_COMMENT_CLASSES;
-
-                    default:
-                        return Collections.emptyList();
-                }
+                return switch (token.getType()) {
+                    case Json5Lexer.DELIMITER -> Stylesheet.CODE_DELIMITER_CLASSES;
+                    case Json5Lexer.BRACKETS -> Stylesheet.CODE_BRACKETS_CLASSES;
+                    case Json5Lexer.NUMBER -> Stylesheet.CODE_NUMBER_CLASSES;
+                    case Json5Lexer.LITERAL -> Stylesheet.CODE_KEYWORD_CLASSES;
+                    case Json5Lexer.STRING, Json5Lexer.IDENTIFIER ->
+                            nextToken.getType() == Json5Lexer.DELIMITER ? Stylesheet.CODE_PROPERTY_KEY : Stylesheet.CODE_STRING_CLASSES;
+                    case Json5Lexer.SINGLE_LINE_COMMENT, Json5Lexer.MULTI_LINE_COMMENT ->
+                            Stylesheet.CODE_COMMENT_CLASSES;
+                    default -> List.of();
+                };
             }
         };
     }
