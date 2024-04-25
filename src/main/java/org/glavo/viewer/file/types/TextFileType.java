@@ -15,7 +15,6 @@
  */
 package org.glavo.viewer.file.types;
 
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -98,19 +97,7 @@ public abstract class TextFileType extends CustomFileType {
             int textLength = area.getText().length();
             EventStream<List<PlainTextChange>> multiPlainChanges = area.multiPlainChanges();
 
-            ExecutorService pool;
-            if (textLength <= realtimeHighlightThreshold) {
-                pool = TextFileType.highlightPool;
-            } else {
-                pool = Executors.newSingleThreadExecutor(r -> {
-                    Thread t = new Thread(r, "highlighter-" + count.getAndIncrement());
-                    t.setDaemon(true);
-                    LOGGER.info(String.format("Start thread %s to highlight file %s", t.getName(), tab.getFile()));
-                    return t;
-                });
-
-                tab.setOnClosed(event -> pool.shutdown());
-            }
+            ExecutorService pool = TextFileType.highlightPool;
 
             EventStream<List<PlainTextChange>> stream = multiPlainChanges;
             if (textLength >= realtimeHighlightThreshold) {
