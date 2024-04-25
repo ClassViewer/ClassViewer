@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 Glavo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.glavo.viewer;
 
 import kala.platform.Platform;
@@ -6,12 +21,11 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
-public final class Options {
+public record Options(Path home, List<String> files) {
     private static Options options;
 
     public static void parse(String[] args) {
@@ -37,12 +51,12 @@ public final class Options {
 
         if (i < args.length) {
             if (i == args.length - 1) {
-                files = Collections.singletonList(args[i]);
+                files = List.of(args[i]);
             } else {
                 files = Arrays.asList(Arrays.copyOfRange(args, i, args.length));
             }
         } else {
-            files = Collections.emptyList();
+            files = List.of();
         }
 
         Path home = null;
@@ -65,21 +79,5 @@ public final class Options {
     public static Options getOptions() {
         assert options != null : "Options is not initialized";
         return options;
-    }
-
-    private final Path home;
-    private final List<String> files;
-
-    public Options(Path home, List<String> files) {
-        this.home = home;
-        this.files = files;
-    }
-
-    public Path getHome() {
-        return home;
-    }
-
-    public List<String> getFiles() {
-        return files;
     }
 }

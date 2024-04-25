@@ -88,7 +88,7 @@ public final class Config {
     }
 
     public static void load() {
-        config = loadFrom(Options.getOptions().getHome().resolve("config.json"));
+        config = loadFrom(Options.getOptions().home().resolve("config.json"));
     }
 
     public static Config getConfig() {
