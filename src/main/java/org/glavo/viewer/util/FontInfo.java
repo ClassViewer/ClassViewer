@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer;
+package org.glavo.viewer.util;
 
-import org.glavo.viewer.util.FontInfo;
 import org.jetbrains.annotations.Nullable;
 
-public record Settings(@Nullable FontInfo uiFont, @Nullable FontInfo textFont) {
-
+public record FontInfo(@Nullable String family, @Nullable Double size, @Nullable String style) {
 }
