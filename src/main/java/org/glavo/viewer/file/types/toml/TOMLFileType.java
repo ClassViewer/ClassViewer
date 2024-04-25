@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.highlighter;
+package org.glavo.viewer.file.types.toml;
 
-import org.fxmisc.richtext.model.StyleSpans;
+import org.glavo.viewer.file.types.TextFileType;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
 
-@FunctionalInterface
-public interface Highlighter {
-    static Highlighter defaultHighlighter() {
-        return text -> StyleSpans.singleton(Collections.emptyList(), text.length());
+public final class TOMLFileType extends TextFileType {
+    public static final TOMLFileType TYPE = new TOMLFileType();
+
+    private TOMLFileType() {
+        super("toml", null, Set.of("toml"));
     }
-
-    StyleSpans<Collection<String>> computeHighlighting(String text);
 }

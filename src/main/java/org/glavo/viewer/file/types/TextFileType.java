@@ -15,6 +15,7 @@
  */
 package org.glavo.viewer.file.types;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -92,31 +93,33 @@ public abstract class TextFileType extends CustomFileType {
     protected void applyHighlighter(FileTab tab, CodeArea area) {
         if (highlighter != null) {
             area.getStylesheets().add(codeStylesheet);
-            area.setStyleSpans(0, getHighlighter().computeHighlighting(area.getText()));
+            area.setStyleSpans(0, highlighter.computeHighlighting(area.getText()));
 
-            int textLength = area.getText().length();
-            EventStream<List<PlainTextChange>> multiPlainChanges = area.multiPlainChanges();
+            if (area.isEditable()) {
+                int textLength = area.getText().length();
+                EventStream<List<PlainTextChange>> multiPlainChanges = area.multiPlainChanges();
 
-            ExecutorService pool = TextFileType.highlightPool;
+                ExecutorService pool = TextFileType.highlightPool;
 
-            EventStream<List<PlainTextChange>> stream = multiPlainChanges;
-            if (textLength >= realtimeHighlightThreshold) {
-                stream = stream.successionEnds(Duration.ofMillis(250));
+                EventStream<List<PlainTextChange>> stream = multiPlainChanges;
+                if (textLength >= realtimeHighlightThreshold) {
+                    stream = stream.successionEnds(Duration.ofMillis(250));
+                }
+
+                stream
+                        .retainLatestUntilLater(pool)
+                        .supplyTask(() -> TaskUtils.submit(pool, () -> highlighter.computeHighlighting(area.getText())))
+                        .awaitLatest(multiPlainChanges)
+                        .filterMap(t -> {
+                            if (t.isSuccess()) {
+                                return Optional.of(t.get());
+                            } else {
+                                LOGGER.warning("Highlight task failed", t.getFailure());
+                                return Optional.empty();
+                            }
+                        })
+                        .subscribe(h -> area.setStyleSpans(0, h));
             }
-
-            stream
-                    .retainLatestUntilLater(pool)
-                    .supplyTask(() -> TaskUtils.submit(pool, () -> getHighlighter().computeHighlighting(area.getText())))
-                    .awaitLatest(multiPlainChanges)
-                    .filterMap(t -> {
-                        if (t.isSuccess()) {
-                            return Optional.of(t.get());
-                        } else {
-                            LOGGER.warning("Highlight task failed", t.getFailure());
-                            return Optional.empty();
-                        }
-                    })
-                    .subscribe(h -> area.setStyleSpans(0, h));
         }
     }
 
@@ -165,11 +168,11 @@ public abstract class TextFileType extends CustomFileType {
         })).whenCompleteAsync((result, exception) -> {
             if (exception == null) {
                 CodeArea area = result.area();
-
-                //TODO: https://github.com/FXMisc/RichTextFX/issues/1110
-                area.scrollToPixel(0, 0);
                 tab.setContent(new VirtualizedScrollPane<>(area));
                 statusBar.getChildren().add(new Label(result.charset().toString()));
+
+                // https://github.com/FXMisc/RichTextFX/issues/1110
+                Platform.runLater(() -> area.scrollToPixel(0, 0));
             } else {
                 LOGGER.warning("Failed to open file", exception);
                 tab.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));

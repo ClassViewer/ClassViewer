@@ -70,6 +70,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark
     implementation("com.vladsch.flexmark:flexmark:0.64.8")
 
+    implementation("org.tomlj:tomlj:1.1.1")
+
     val antlrVersion = "4.13.1"
 
     // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
