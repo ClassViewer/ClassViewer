@@ -35,7 +35,6 @@ import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.ui.Schedulers;
-import org.glavo.viewer.util.DaemonThreadFactory;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.TaskUtils;
 import org.mozilla.universalchardet.UniversalDetector;
@@ -48,8 +47,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
@@ -57,7 +56,6 @@ import static org.glavo.viewer.util.logging.Logger.LOGGER;
 public abstract class TextFileType extends CustomFileType {
     public static String codeStylesheet = Resources.class.getResource("stylesheet/code.css").toExternalForm();
 
-    public static final ExecutorService highlightPool = Executors.newSingleThreadExecutor(new DaemonThreadFactory("highlighter-common"));
     private static final AtomicInteger count = new AtomicInteger();
 
     protected Highlighter highlighter;
@@ -99,8 +97,7 @@ public abstract class TextFileType extends CustomFileType {
                 int textLength = area.getText().length();
                 EventStream<List<PlainTextChange>> multiPlainChanges = area.multiPlainChanges();
 
-                ExecutorService pool = TextFileType.highlightPool;
-
+                Executor pool = Schedulers.highlight();
                 EventStream<List<PlainTextChange>> stream = multiPlainChanges;
                 if (textLength >= realtimeHighlightThreshold) {
                     stream = stream.successionEnds(Duration.ofMillis(250));

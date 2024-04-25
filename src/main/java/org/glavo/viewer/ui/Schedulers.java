@@ -16,6 +16,7 @@
 package org.glavo.viewer.ui;
 
 import javafx.application.Platform;
+import org.glavo.viewer.util.DaemonThreadFactory;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +26,7 @@ import java.util.concurrent.ForkJoinPool;
 public final class Schedulers {
     private static final ExecutorService io = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().factory());
     private static final Executor javafx = Platform::runLater;
+    private static final ExecutorService highlight = Executors.newSingleThreadExecutor(new DaemonThreadFactory("highlighter-common"));
 
     public static Executor common() {
         return ForkJoinPool.commonPool();
@@ -38,8 +40,13 @@ public final class Schedulers {
         return javafx;
     }
 
+    public static Executor highlight() {
+        return highlight;
+    }
+
     public static void shutdown() {
         io.shutdown();
+        highlight.shutdown();
     }
 
     private Schedulers() {
