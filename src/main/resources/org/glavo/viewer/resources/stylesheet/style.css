@@ -1,10 +1,10 @@
 .root {
-    -fx-font-family: ${ui-font-family};
+    -fx-font-family: "${ui-font-family}";
     -fx-font-size: ${ui-font-size};
 }
 
-.text-area, .code-area, .tooltip, .mono-font {
-    -fx-font-family: ${text-font-family};
+.text-area, .code-area, .tooltip {
+    -fx-font-family: "${text-font-family}";
     -fx-font-size: ${text-font-size};
 }
 

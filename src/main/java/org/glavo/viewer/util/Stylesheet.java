@@ -25,37 +25,38 @@ public final class Stylesheet {
             cssFile.deleteOnExit();
 
             HashMap<String, Object> table = new HashMap<>();
-            String uiFontFamily;
-            double uiFontSize;
+            String uiFontFamily = config.getUIFontFamily();
+            double uiFontSize = config.getUIFontSize();
 
-            String textFontFamily;
-            double textFontSize;
+            String textFontFamily = config.getTextFontFamily();
+            double textFontSize = config.getTextFontSize();
 
-            if ((uiFontFamily = config.getUIFontFamily()) == null) uiFontFamily = Font.getDefault().getFamily();
-            if ((uiFontSize = config.getUIFontSize()) <= 0) uiFontSize = Font.getDefault().getSize();
+            if (uiFontFamily == null) {
+                uiFontFamily = Font.getDefault().getFamily();
+            }
+            if (uiFontSize <= 0) {
+                uiFontSize = Font.getDefault().getSize();
+            }
 
-            if ((textFontFamily = config.getTextFontFamily()) == null) {
-                List<String> families = Font.getFamilies();
-
-                String[] defaultTextFontFamilies = {
-                        "Consolas",
-                        "Source Code Pro",
-                        "Fira Code",
-                        "Ubuntu Mono",
-                        "JetBrains Mono",
-                        "DejaVu Sans Mono"
-                };
-
-                for (String family : defaultTextFontFamilies) {
-                    if (families.contains(family)) {
-                        textFontFamily = family;
-                        break;
+            if (textFontFamily == null) {
+                try (InputStream inputStream = Resources.class.getResourceAsStream("fonts/JetBrainsMono-Regular.ttf")) {
+                    Font font = Font.loadFont(inputStream, 0);
+                    if (font != null) {
+                        textFontFamily = font.getFamily();
+                    } else {
+                        LOGGER.warning("Failed to load font");
                     }
+                } catch (Throwable e) {
+                    LOGGER.warning("Failed to load font", e);
                 }
 
-                if (textFontFamily == null) textFontFamily = "Monospaced";
+                if (textFontFamily == null) {
+                    textFontFamily = Font.getDefault().getFamily();
+                }
             }
-            if ((textFontSize = config.getTextFontSize()) <= 0) textFontSize = Double.max(16, uiFontSize);
+            if (textFontSize <= 0) {
+                textFontSize = Double.max(16, uiFontSize);
+            }
 
             LOGGER.trace("UI Font Family: " + uiFontFamily);
             LOGGER.trace("UI Font Size: " + uiFontSize);
