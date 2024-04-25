@@ -15,7 +15,6 @@
  */
 package org.glavo.viewer.file.types;
 
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -35,6 +34,7 @@ import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.ui.Schedulers;
+import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.TaskUtils;
 import org.mozilla.universalchardet.UniversalDetector;
@@ -169,7 +169,7 @@ public abstract class TextFileType extends CustomFileType {
                 statusBar.getChildren().add(new Label(result.charset().toString()));
 
                 // https://github.com/FXMisc/RichTextFX/issues/1110
-                Platform.runLater(() -> area.scrollToPixel(0, 0));
+                FXUtils.runLater(() -> area.scrollToPixel(0, 0));
             } else {
                 LOGGER.warning("Failed to open file", exception);
                 tab.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));

@@ -23,6 +23,10 @@ import kala.function.CheckedRunnable;
 
 public final class FXUtils {
 
+    public static void runLater(CheckedRunnable<?> action) {
+        Platform.runLater(action);
+    }
+
     public static void runInFx(CheckedRunnable<?> action) {
         if (Platform.isFxApplicationThread()) {
             action.run();
