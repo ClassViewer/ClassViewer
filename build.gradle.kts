@@ -72,6 +72,8 @@ dependencies {
 
     implementation("org.tomlj:tomlj:1.1.1")
 
+    implementation("org.controlsfx:controlsfx:11.2.1")
+
     val antlrVersion = "4.13.1"
 
     // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
