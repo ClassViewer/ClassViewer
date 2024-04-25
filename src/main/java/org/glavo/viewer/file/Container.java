@@ -17,6 +17,7 @@
  */
 package org.glavo.viewer.file;
 
+import kala.function.CheckedRunnable;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -65,6 +66,15 @@ public abstract class Container {
         }
 
         lock.unlock();
+    }
+
+    public <Ex extends Throwable> void runLocked(CheckedRunnable<Ex> action) throws Ex {
+        lock();
+        try {
+            action.runChecked();
+        } finally {
+            unlock();
+        }
     }
 
     public boolean hasMultiRoots() {

@@ -183,6 +183,7 @@ public final class ViewerPane extends BorderPane {
 
             Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
             openRecentMenu.setMnemonicParsing(true);
+
             Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
                     file -> {
                         MenuItem item = new MenuItem(file.toString(), new ImageView(file.type().getImage()));

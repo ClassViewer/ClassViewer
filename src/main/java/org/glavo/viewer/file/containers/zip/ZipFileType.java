@@ -15,17 +15,21 @@
  */
 package org.glavo.viewer.file.containers.zip;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.glavo.viewer.file.ContainerFileType;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.resources.Images;
+import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.Set;
 
 public final class ZipFileType extends ContainerFileType {
@@ -53,10 +57,45 @@ public final class ZipFileType extends ContainerFileType {
         }
 
         try {
+
+
             ZipFile zipFile = ZipFile.builder()
                     .setSeekableByteChannel(channel)
                     .setCharset(StandardCharsets.UTF_8)
                     .get();
+
+            UniversalDetector detector = null;
+            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+            while (entries.hasMoreElements()) {
+                ZipArchiveEntry entry = entries.nextElement();
+                if (entry.getGeneralPurposeBit().usesUTF8ForNames()) {
+                    continue;
+                }
+
+                if (detector == null) {
+                    detector = new UniversalDetector();
+                }
+                detector.handleData(entry.getRawName());
+                if (detector.isDone()) {
+                    break;
+                }
+            }
+
+            if (detector != null) {
+                detector.dataEnd();
+                String detectedCharsetName = detector.getDetectedCharset();
+
+                if (detectedCharsetName != null) {
+                    Charset detectedCharset = Charset.forName(detectedCharsetName, StandardCharsets.UTF_8);
+                    if (detectedCharset != StandardCharsets.UTF_8 && detectedCharset != StandardCharsets.US_ASCII) {
+                        zipFile = ZipFile.builder()
+                                .setSeekableByteChannel(channel)
+                                .setCharset(detectedCharset)
+                                .get();
+                    }
+                }
+            }
+
 
             handle.setOnForceClose(zipFile::close);
             return new ZipContainer(handle, zipFile);
