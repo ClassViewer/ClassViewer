@@ -35,7 +35,7 @@ public final class Stylesheet {
                 uiFontFamily = Font.getDefault().getFamily();
             }
             if (uiFontSize <= 0) {
-                uiFontSize = Font.getDefault().getSize();
+                uiFontSize = 14;
             }
 
             if (textFontFamily == null) {
