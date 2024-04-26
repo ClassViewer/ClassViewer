@@ -34,6 +34,10 @@ public final class SftpVirtualFile extends AbstractVirtualFile<SftpVirtualFile> 
         this.fullPath = fullPath;
     }
 
+    public String getFullPath() {
+        return fullPath;
+    }
+
     @Override
     public boolean isDirectory() {
         return isDirectory;
