@@ -64,8 +64,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-imaging
     implementation("org.apache.commons:commons-imaging:1.0.0-alpha4")
 
-    // https://mvnrepository.com/artifact/com.jcraft/jsch
-    implementation("com.jcraft:jsch:0.1.55")
+    // https://mvnrepository.com/artifact/org.apache.sshd/sshd-sftp
+    implementation("org.apache.sshd:sshd-sftp:2.12.1")
 
     // https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark
     implementation("com.vladsch.flexmark:flexmark:0.64.8")

@@ -96,7 +96,6 @@ public final class ZipFileType extends ContainerFileType {
                 }
             }
 
-
             handle.setOnForceClose(zipFile::close);
             return new ZipContainer(handle, zipFile);
         } catch (Throwable e) {

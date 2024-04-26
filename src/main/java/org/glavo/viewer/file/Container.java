@@ -40,7 +40,7 @@ public abstract class Container {
         this.handle = handle;
     }
 
-    public final void ensureOpen() throws IOException {
+    public void ensureOpen() throws IOException {
         if (closed) {
             throw new IOException("Container is already closed");
         }

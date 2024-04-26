@@ -62,7 +62,6 @@ public final class Main extends Application {
         }
 
         TaskUtils.taskPool.shutdown();
-        TextFileType.highlightPool.shutdown();
         Schedulers.shutdown();
         LOGGER.shutdown();
         app = null;
