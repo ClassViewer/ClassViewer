@@ -198,4 +198,9 @@ public final class Viewer {
             LOGGER.warning("Failed to open file " + file, e);
         }
     }
+
+    @FXThread
+    public void connect() {
+
+    }
 }

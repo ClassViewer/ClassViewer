@@ -17,6 +17,8 @@ package org.glavo.viewer.file.roots.sftp;
 
 import org.glavo.viewer.file.VirtualRoot;
 
+import java.util.Objects;
+
 public final class SftpRoot extends VirtualRoot {
     private final String host;
     private final int port;
@@ -38,5 +40,22 @@ public final class SftpRoot extends VirtualRoot {
 
     public String getUserName() {
         return userName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SftpRoot other)) return false;
+        return port == other.port && host.equals(other.host) && userName.equals(other.userName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(host, port, userName);
+    }
+
+    @Override
+    public String toString() {
+        return "SftpRoot{host=%s, port=%d, userName=%s}".formatted(host, port, userName);
     }
 }

@@ -154,9 +154,16 @@ public final class ViewerPane extends BorderPane {
         Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O");
         openFolderLink.setOnAction(event -> viewer.openFolder());
 
+
+        Text remoteText = new Text(I18N.getString("defaultText.remote"));
+        remoteText.setFill(Color.GRAY);
+        Hyperlink remoteLink = new Hyperlink(I18N.getString("defaultText.remote.connect"));
+        remoteLink.setOnAction(event -> viewer.connect());
+
         TextFlow text = new TextFlow(
                 openFileText, new Text(" "), openFileLink, new Text("\n"),
-                openFolderText, new Text(" "), openFolderLink
+                openFolderText, new Text(" "), openFolderLink, new Text("\n"),
+                remoteText, new Text(" "), remoteLink
         );
         text.setTextAlignment(TextAlignment.LEFT);
 
