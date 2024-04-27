@@ -30,7 +30,6 @@ import org.glavo.viewer.util.Stylesheet;
 public final class SftpDialog extends Dialog<SftpDialog.Result> {
 
     public record Result(SftpRoot root, String password) {
-
     }
 
     public SftpDialog() {

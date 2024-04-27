@@ -86,6 +86,6 @@ public final class SftpRootContainer extends RootContainer {
             throw new IOException("File " + file + "is a directory");
         }
 
-        return new SftpFileHandle(file, client.open(sftpVirtualFile.getFileName()));
+        return new SftpFileHandle(file, client.open(sftpVirtualFile.getFullPath()));
     }
 }
