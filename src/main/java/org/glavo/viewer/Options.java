@@ -28,7 +28,7 @@ import static org.glavo.viewer.util.logging.Logger.LOGGER;
 public record Options(Path home, List<String> files) {
     private static Options options;
 
-    public static void parse(String[] args) {
+    public static Options load(String[] args) {
         if (options != null) {
             throw new IllegalStateException("command line arguments have been initialized");
         }
@@ -73,7 +73,7 @@ public record Options(Path home, List<String> files) {
             home = Platform.CURRENT_PLATFORM.getAppDataDirectory("Glavo").resolve("ClassViewer");
         }
 
-        options = new Options(home, files);
+        return options = new Options(home, files);
     }
 
     public static Options getOptions() {
