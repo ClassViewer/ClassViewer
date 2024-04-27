@@ -17,9 +17,9 @@ package org.glavo.viewer.util;
 
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
-import kala.collection.base.GenericArrays;
 
-import java.util.ArrayList;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -43,6 +43,13 @@ public final class StringUtils {
         return res;
     }
 
+    public static String getStackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter(1024);
+        try (PrintWriter writer = new PrintWriter(sw)) {
+            throwable.printStackTrace(writer);
+        }
+        return sw.toString();
+    }
 
     private static final Pattern newLine = Pattern.compile("[\\r\\n]");
 

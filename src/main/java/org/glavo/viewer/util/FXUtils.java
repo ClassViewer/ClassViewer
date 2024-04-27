@@ -17,12 +17,10 @@ package org.glavo.viewer.util;
 
 import javafx.application.Platform;
 import javafx.event.Event;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import kala.function.CheckedRunnable;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.resources.Images;
 
@@ -62,14 +60,39 @@ public final class FXUtils {
 
     @FXThread
     public static void setLoading(TreeItem<?> item) {
-        var progressIndicator = new ProgressIndicator();
+        setLoading(item, ProgressIndicator.INDETERMINATE_PROGRESS);
+    }
+
+    @FXThread
+    public static ProgressIndicator setLoading(TreeItem<?> item, double process) {
+        var progressIndicator = new ProgressIndicator(process);
         progressIndicator.setPrefSize(16, 16);
         item.setGraphic(progressIndicator);
+        return progressIndicator;
     }
 
     @FXThread
     public static void setFailed(TreeItem<?> item, Throwable exception) {
-        item.setGraphic(new ImageView(Images.failed));
+        ImageView view = new ImageView();
+        item.setGraphic(view);
+        setFailed(view, exception);
+    }
+
+    @FXThread
+    public static void setFailed(ImageView view, Throwable exception) {
+        view.setImage(Images.failed);
+        Tooltip.install(view, new Tooltip(StringUtils.getStackTrace(exception)));
+    }
+
+    @FXThread
+    public static Hyperlink exceptionDialogLink(String message, Throwable exception) {
+        Hyperlink hyperlink = new Hyperlink(message);
+
+        hyperlink.setOnAction(event -> {
+            ExceptionDialog exceptionDialog = new ExceptionDialog(exception);
+            exceptionDialog.show();
+        });
+        return hyperlink;
     }
 
     private FXUtils() {

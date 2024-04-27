@@ -16,6 +16,7 @@
 package org.glavo.viewer.file.types;
 
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -26,7 +27,9 @@ import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.VirtualFile;
+import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.*;
+import org.glavo.viewer.util.FXUtils;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -99,6 +102,7 @@ public abstract class BinaryFileType extends CustomFileType {
                         tab.setSideBar(result.component2());
                     } else {
                         LOGGER.warning("Failed to open file", exception);
+                        tab.setContent(new StackPane(FXUtils.exceptionDialogLink(I18N.getString("failed.openFile"), exception)));
                     }
                 }, Schedulers.javafx());
 

@@ -45,6 +45,7 @@ public final class FileTree extends TreeItem<String> {
 
     private final TypedVirtualFile file;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private ContainerHandle containerHandle;
 
     private final boolean isRootNode;
@@ -140,7 +141,7 @@ public final class FileTree extends TreeItem<String> {
         try {
             Container subContainer = container.getSubContainer(file);
             containerHandle = new ContainerHandle(subContainer);
-            containerHandle.setOnForceClose(() -> FXUtils.runInFx(() -> this.getRawChildren().clear()));
+            containerHandle.setOnForceClose(() -> FXUtils.runInFx(() -> this.getParent().getChildren().remove(this)));
             if (subContainer.hasMultiRoots()) {
                 var files = subContainer.getRootDirectories().stream()
                         .map(TypedVirtualFile::of)
@@ -164,9 +165,7 @@ public final class FileTree extends TreeItem<String> {
         }
         isLoading = true;
 
-        var progressIndicator = new ProgressIndicator();
-        progressIndicator.setPrefSize(16, 16);
-        this.setGraphic(progressIndicator);
+        FXUtils.setLoading(this);
 
         CompletableFuture.supplyAsync((CheckedSupplier<Runnable, IOException>)
                         () -> file.isDirectory() ? loadDirectory(this.getFile()) : loadContainer(), Schedulers.io())
@@ -178,7 +177,8 @@ public final class FileTree extends TreeItem<String> {
                         }
                     } else {
                         LOGGER.warning("Failed to load file: " + file, exception);
-                        imageView.setImage(Images.failed);
+
+                        FXUtils.setFailed(imageView, exception);
                         setGraphic(imageView);
                     }
                 }, Schedulers.javafx());
