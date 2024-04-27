@@ -26,6 +26,7 @@ import org.glavo.viewer.util.IOUtils;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 public final class SftpRootContainer extends RootContainer {
 
@@ -71,8 +72,8 @@ public final class SftpRootContainer extends RootContainer {
     }
 
     @Override
-    public VirtualFile getRootDirectory() {
-        return null;
+    public SftpVirtualFile getRootDirectory() {
+        return new SftpVirtualFile(this, null, "/", List.of(), true);
     }
 
     @Override

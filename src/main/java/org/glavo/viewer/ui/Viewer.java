@@ -22,20 +22,26 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TreeItem;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import kala.function.CheckedSupplier;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.*;
+import org.glavo.viewer.file.roots.sftp.SftpRootContainer;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
@@ -186,7 +192,7 @@ public final class Viewer {
                 FileTab fileTab = customFileType.openTab(file.file());
                 getPane().addFileTab(fileTab);
             } else if (file.type() instanceof DirectoryFileType || file.type() instanceof ContainerFileType) {
-                FileTree root = FileTree.createFileTree(file, true);
+                FileTree root = new FileTree(file, true);
                 root.setExpanded(true);
                 getPane().getFileTreeView().getRoot().getChildren().add(root);
             } else {
@@ -201,6 +207,32 @@ public final class Viewer {
 
     @FXThread
     public void connect() {
+        SftpDialog.Result result = new SftpDialog().showAndWait().orElse(null);
+        if (result != null) {
+            TreeItem<String> node = new TreeItem<>(result.root().toString());
+            FXUtils.setLoading(node);
 
+            getPane().getFileTreeView().getRoot().getChildren().add(node);
+
+            CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
+                return SftpRootContainer.connect(result.root(), result.password());
+            })).whenCompleteAsync((container, exception) -> {
+                System.gc();
+
+                if (exception == null) {
+                    FileTree newTree = new FileTree(new TypedVirtualFile(container.getRootDirectory(), DirectoryFileType.TYPE), node.getValue(), true);
+                    int idx = getPane().getFileTreeView().getRoot().getChildren().indexOf(node);
+                    if (idx >= 0) {
+                        getPane().getFileTreeView().getRoot().getChildren().set(idx, newTree);
+                        newTree.setExpanded(true);
+                    } else {
+                        container.forceClose();
+                    }
+                } else {
+                    LOGGER.warning("Failed to connect sftp server", exception);
+                    FXUtils.setFailed(node, exception);
+                }
+            });
+        }
     }
 }

@@ -59,9 +59,16 @@ public final class SftpVirtualFile extends AbstractVirtualFile<SftpVirtualFile> 
 
             try (SftpClient.CloseableHandle closeableHandle = client.openDir(fullPath)) {
                 for (SftpClient.DirEntry entry : client.listDir(closeableHandle)) {
+                    if (entry.getFilename().equals(".") || entry.getFilename().equals("..")) {
+                        continue;
+                    }
+
                     String[] arr = this.name.toArray(new String[this.name.size() + 1]);
                     arr[arr.length - 1] = entry.getFilename();
-                    result.add(new SftpVirtualFile(container, this, entry.getLongFilename(), List.of(arr), entry.getAttributes().isDirectory()));
+
+                    String newFullPath = this.fullPath.equals("/") ? "/" + entry.getFilename() : this.fullPath + "/" + entry.getFilename();
+
+                    result.add(new SftpVirtualFile(container, this, newFullPath, List.of(arr), entry.getAttributes().isDirectory()));
                 }
             }
 
@@ -69,5 +76,10 @@ public final class SftpVirtualFile extends AbstractVirtualFile<SftpVirtualFile> 
         } finally {
             container.unlock();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SftpVirtualFile{fullPath='%s', isDirectory=%s}".formatted(fullPath, isDirectory);
     }
 }

@@ -17,9 +17,14 @@ package org.glavo.viewer.util;
 
 import javafx.application.Platform;
 import javafx.event.Event;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import kala.function.CheckedRunnable;
+import org.glavo.viewer.annotation.FXThread;
+import org.glavo.viewer.resources.Images;
 
 public final class FXUtils {
 
@@ -35,6 +40,7 @@ public final class FXUtils {
         }
     }
 
+    @FXThread
     public static void closeTab(Tab tab) {
         Event event = new Event(tab, tab, Tab.TAB_CLOSE_REQUEST_EVENT);
         Event.fireEvent(tab, event);
@@ -52,6 +58,18 @@ public final class FXUtils {
         if (tab.getOnClosed() != null) {
             Event.fireEvent(tab, new Event(Tab.CLOSED_EVENT));
         }
+    }
+
+    @FXThread
+    public static void setLoading(TreeItem<?> item) {
+        var progressIndicator = new ProgressIndicator();
+        progressIndicator.setPrefSize(16, 16);
+        item.setGraphic(progressIndicator);
+    }
+
+    @FXThread
+    public static void setFailed(TreeItem<?> item, Throwable exception) {
+        item.setGraphic(new ImageView(Images.failed));
     }
 
     private FXUtils() {

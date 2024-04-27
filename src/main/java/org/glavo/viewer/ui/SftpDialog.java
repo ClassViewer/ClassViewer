@@ -15,7 +15,107 @@
  */
 package org.glavo.viewer.ui;
 
-import javafx.scene.control.DialogPane;
+import com.google.common.net.InternetDomainName;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import org.controlsfx.control.textfield.CustomTextField;
+import org.glavo.viewer.file.roots.sftp.SftpRoot;
+import org.glavo.viewer.resources.I18N;
+import org.glavo.viewer.util.Stylesheet;
 
-public final class SftpDialog extends DialogPane {
+public final class SftpDialog extends Dialog<SftpDialog.Result> {
+
+    public record Result(SftpRoot root, String password) {
+
+    }
+
+    public SftpDialog() {
+        DialogPane dialogPane = getDialogPane();
+        dialogPane.getStylesheets().setAll(Stylesheet.getStylesheets());
+
+        GridPane grid = new GridPane();
+        grid.setVgap(8);
+        grid.setHgap(32);
+
+        Label hostLabel = new Label(I18N.getString("sftp.host"));
+        TextField hostField = new TextField();
+        hostField.setAlignment(Pos.CENTER_RIGHT);
+        GridPane.setHalignment(hostField, HPos.RIGHT);
+
+        Label portLabel = new Label(I18N.getString("sftp.port"));
+        TextField portField = new TextField();
+        portField.setPromptText("22");
+        portField.setAlignment(Pos.CENTER_RIGHT);
+        GridPane.setHalignment(portField, HPos.RIGHT);
+        portField.setMaxWidth(100);
+
+        Label userLabel = new Label(I18N.getString("sftp.user"));
+        CustomTextField userField = new CustomTextField();
+        userField.setAlignment(Pos.CENTER_RIGHT);
+
+        Label passwordLabel = new Label(I18N.getString("sftp.password"));
+        PasswordField passwordField = new PasswordField();
+        passwordField.setAlignment(Pos.CENTER_RIGHT);
+
+
+        grid.add(hostLabel, 0, 0);
+        grid.add(hostField, 1, 0);
+        grid.add(portLabel, 0, 1);
+        grid.add(portField, 1, 1);
+        grid.add(userLabel, 0, 2);
+        grid.add(userField, 1, 2);
+        grid.add(passwordLabel, 0, 3);
+        grid.add(passwordField, 1, 3);
+
+        dialogPane.setContent(grid);
+
+        ButtonType connectButtonType = new ButtonType(I18N.getString("sftp.connect"), ButtonBar.ButtonData.OK_DONE);
+        dialogPane.getButtonTypes().setAll(connectButtonType, ButtonType.CANCEL);
+
+
+        BooleanBinding invalid = Bindings.createBooleanBinding(() -> {
+                    String host = hostField.getText();
+                    String port = portField.getText();
+
+                    if (host == null || host.isEmpty() || !InternetDomainName.isValid(host)) {
+                        return true;
+                    }
+
+                    if (port != null && !port.isEmpty()) {
+                        try {
+                            int portNumber = Integer.parseInt(port);
+
+                            if (portNumber <= 0 || portNumber > 65536) {
+                                return true;
+                            }
+                        } catch (NumberFormatException e) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                },
+                hostField.textProperty(), portField.textProperty(), userField.textProperty(), passwordField.textProperty()
+        );
+
+        dialogPane.lookupButton(connectButtonType).disableProperty().bind(invalid);
+
+        this.setResultConverter(dialogButton -> {
+            ButtonBar.ButtonData data = dialogButton == null ? null : dialogButton.getButtonData();
+            if (dialogButton != connectButtonType || invalid.get()) {
+                return null;
+            }
+
+            String host = hostField.getText();
+            String port = portField.getText();
+            String user = userField.getText();
+            String password = passwordField.getText();
+
+            return new Result(new SftpRoot(host, port == null || port.isEmpty() ? 22 : Integer.parseInt(port), user), password);
+        });
+    }
 }

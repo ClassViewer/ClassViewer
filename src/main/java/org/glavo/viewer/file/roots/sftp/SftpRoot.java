@@ -24,7 +24,7 @@ public final class SftpRoot extends VirtualRoot {
     private final int port;
     private final String userName;
 
-    SftpRoot(String host, int port, String userName) {
+    public SftpRoot(String host, int port, String userName) {
         this.host = host;
         this.port = port;
         this.userName = userName;
@@ -56,6 +56,6 @@ public final class SftpRoot extends VirtualRoot {
 
     @Override
     public String toString() {
-        return "SftpRoot{host=%s, port=%d, userName=%s}".formatted(host, port, userName);
+        return "%s@%s:%d".formatted(userName, host, port);
     }
 }

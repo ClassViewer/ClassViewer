@@ -46,6 +46,9 @@ dependencies {
 
     implementation("org.glavo:jimage:1.0.0")
 
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    implementation("com.google.guava:guava:33.1.0-jre")
+
     // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
     implementation("org.apache.commons:commons-compress:1.26.1")
 

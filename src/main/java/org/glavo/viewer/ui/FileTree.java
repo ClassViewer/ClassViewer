@@ -36,14 +36,10 @@ import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class FileTree extends TreeItem<String> {
 
-    public static FileTree createFileTree(TypedVirtualFile file, boolean isRootNode) {
-        return new FileTree(file, file.getFileName(), isRootNode);
-    }
-
     private static List<FileTree> createNodes(List<TypedVirtualFile> files) {
         return files.stream()
                 .sorted(Comparator.comparing(TypedVirtualFile::isDirectory).reversed().thenComparing(TypedVirtualFile::getFileName))
-                .map(file -> createFileTree(file, false))
+                .map(file -> new FileTree(file, false))
                 .toList();
     }
 
@@ -61,7 +57,11 @@ public final class FileTree extends TreeItem<String> {
 
     private final ImageView imageView = new ImageView();
 
-    private FileTree(TypedVirtualFile file, String name, boolean isRootNode) {
+    public FileTree(TypedVirtualFile file, boolean isRootNode) {
+        this(file, file.getFileName(), isRootNode);
+    }
+
+    public FileTree(TypedVirtualFile file, String name, boolean isRootNode) {
         this.file = file;
         this.isRootNode = isRootNode;
         this.setValue(name);
