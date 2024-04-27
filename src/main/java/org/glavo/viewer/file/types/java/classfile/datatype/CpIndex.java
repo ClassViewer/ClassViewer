@@ -17,6 +17,7 @@ package org.glavo.viewer.file.types.java.classfile.datatype;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.geometry.Insets;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -27,7 +28,6 @@ import org.glavo.viewer.file.types.java.classfile.constant.ConstantInfo;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.util.StringUtils;
-import org.glavo.viewer.util.TextUtils;
 import org.reactfx.value.Val;
 
 public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
@@ -118,7 +118,9 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
         if (idx == 0) {
             constantInfo.set(null);
 
-            Hyperlink link = TextUtils.createHyperlinkWithoutPadding(getFormattedIndex());
+            Hyperlink link1 = new Hyperlink(getFormattedIndex());
+            link1.setPadding(Insets.EMPTY);
+            Hyperlink link = link1;
             link.getStyleClass().add("cp-index-hyper-link");
             link.setDisable(true);
             infoLink.set(link);
@@ -133,7 +135,9 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
             if (type.isInstance(info)) {
                 constantInfo.set(type.cast(info));
 
-                Hyperlink link = TextUtils.createHyperlinkWithoutPadding(getFormattedIndex());
+                Hyperlink link1 = new Hyperlink(getFormattedIndex());
+                link1.setPadding(Insets.EMPTY);
+                Hyperlink link = link1;
                 link.setOnAction(event -> {
                     view.getSelectionModel().select(getConstantInfo());
                     view.scrollTo(view.getRow(getConstantInfo()));
@@ -153,10 +157,12 @@ public class CpIndex<T extends ConstantInfo> extends ClassFileComponent {
 
         constantInfo.set(null);
 
-        Hyperlink link = TextUtils.createHyperlinkWithoutPadding("%s (%s)".formatted(
+        Hyperlink link1 = new Hyperlink("%s (%s)".formatted(
                 StringUtils.formatIndex(idx, constantPool.getConstants().size()),
                 I18N.getString(validIndex ? "java.classfile.typeMismatch" : "java.classfile.invalidCpIndex")
         ));
+        link1.setPadding(Insets.EMPTY);
+        Hyperlink link = link1;
         link.setTextFill(Color.RED);
         link.getStyleClass().add("cp-index-hyper-link");
         infoLink.set(link);
