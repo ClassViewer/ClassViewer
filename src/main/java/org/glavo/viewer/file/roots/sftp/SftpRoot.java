@@ -56,6 +56,10 @@ public final class SftpRoot extends VirtualRoot {
 
     @Override
     public String toString() {
-        return "%s@%s:%d".formatted(userName, host, port);
+        if (port == 22) {
+            return "sftp://" + userName + "@" + host;
+        } else {
+            return "sftp://" + userName + "@" + host + ":" + port;
+        }
     }
 }

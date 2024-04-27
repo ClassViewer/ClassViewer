@@ -18,9 +18,11 @@
 package org.glavo.viewer.file;
 
 import kala.function.CheckedRunnable;
+import org.glavo.viewer.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -79,6 +81,34 @@ public abstract class Container {
 
     public boolean hasMultiRoots() {
         return false;
+    }
+
+    public VirtualFile getFile(String path) throws IOException {
+        if (hasMultiRoots()) {
+            throw new UnsupportedOperationException("Multi-root files are not supported");
+        }
+
+        lock();
+        try {
+            String[] pathElements = StringUtils.spiltPath(path);
+
+            VirtualFile current = getRootDirectory();
+            loop:
+            for (String pathElement : pathElements) {
+                for (VirtualFile f : current.listFiles()) {
+                    if (f.getFileName().equals(pathElement)) {
+                        current = f;
+                        continue loop;
+                    }
+                }
+
+                throw new NoSuchFileException(path);
+            }
+
+            return current;
+        } finally {
+            unlock();
+        }
     }
 
     public abstract VirtualFile getRootDirectory();

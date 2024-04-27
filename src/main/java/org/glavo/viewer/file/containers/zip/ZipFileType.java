@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ public final class ZipFileType extends ContainerFileType {
             tempFile.toFile().deleteOnExit();
 
             try (InputStream input = handle.getInputStream()) {
-                Files.copy(input, tempFile);
+                Files.copy(input, tempFile, StandardCopyOption.REPLACE_EXISTING);
             }
 
             channel = Files.newByteChannel(tempFile);

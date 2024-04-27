@@ -29,7 +29,7 @@ import org.glavo.viewer.util.Stylesheet;
 
 public final class SftpDialog extends Dialog<SftpDialog.Result> {
 
-    public record Result(SftpRoot root, String password) {
+    public record Result(SftpRoot root, String password, String initPath) {
     }
 
     public SftpDialog() {
@@ -60,6 +60,10 @@ public final class SftpDialog extends Dialog<SftpDialog.Result> {
         PasswordField passwordField = new PasswordField();
         passwordField.setAlignment(Pos.CENTER_RIGHT);
 
+        Label initPathLabel = new Label(I18N.getString("sftp.initPath"));
+        CustomTextField initPathField = new CustomTextField();
+        initPathField.setAlignment(Pos.CENTER_RIGHT);
+        initPathField.setPromptText("/");
 
         grid.add(hostLabel, 0, 0);
         grid.add(hostField, 1, 0);
@@ -69,6 +73,8 @@ public final class SftpDialog extends Dialog<SftpDialog.Result> {
         grid.add(userField, 1, 2);
         grid.add(passwordLabel, 0, 3);
         grid.add(passwordField, 1, 3);
+        grid.add(initPathLabel, 0, 4);
+        grid.add(initPathField, 1, 4);
 
         dialogPane.setContent(grid);
 
@@ -78,12 +84,12 @@ public final class SftpDialog extends Dialog<SftpDialog.Result> {
 
         BooleanBinding invalid = Bindings.createBooleanBinding(() -> {
                     String host = hostField.getText();
-                    String port = portField.getText();
 
                     if (host == null || host.isEmpty() || !InternetDomainName.isValid(host)) {
                         return true;
                     }
 
+                    String port = portField.getText();
                     if (port != null && !port.isEmpty()) {
                         try {
                             int portNumber = Integer.parseInt(port);
@@ -95,7 +101,6 @@ public final class SftpDialog extends Dialog<SftpDialog.Result> {
                             return true;
                         }
                     }
-
                     return false;
                 },
                 hostField.textProperty(), portField.textProperty(), userField.textProperty(), passwordField.textProperty()
@@ -113,8 +118,9 @@ public final class SftpDialog extends Dialog<SftpDialog.Result> {
             String port = portField.getText();
             String user = userField.getText();
             String password = passwordField.getText();
+            String initPath = initPathField.getText();
 
-            return new Result(new SftpRoot(host, port == null || port.isEmpty() ? 22 : Integer.parseInt(port), user), password);
+            return new Result(new SftpRoot(host, port == null || port.isEmpty() ? 22 : Integer.parseInt(port), user), password, initPath == null || initPath.isEmpty() ? "/" : initPath);
         });
     }
 }
