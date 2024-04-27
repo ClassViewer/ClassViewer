@@ -33,7 +33,7 @@ import org.glavo.viewer.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
-import org.glavo.viewer.ui.Schedulers;
+import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.TaskUtils;

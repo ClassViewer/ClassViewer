@@ -27,6 +27,7 @@ import org.glavo.viewer.file.FileType;
 import org.glavo.viewer.file.VirtualFile;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.util.FXUtils;
+import org.glavo.viewer.util.Schedulers;
 
 import java.util.ArrayList;
 

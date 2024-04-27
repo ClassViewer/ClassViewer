@@ -16,7 +16,6 @@
 package org.glavo.viewer.file.types;
 
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
@@ -30,6 +29,7 @@ import org.glavo.viewer.file.VirtualFile;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.*;
 import org.glavo.viewer.util.FXUtils;
+import org.glavo.viewer.util.Schedulers;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

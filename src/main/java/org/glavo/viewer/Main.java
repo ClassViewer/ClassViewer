@@ -19,7 +19,7 @@ import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.glavo.viewer.ui.Schedulers;
+import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.TaskUtils;

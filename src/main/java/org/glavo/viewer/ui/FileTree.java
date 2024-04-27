@@ -18,14 +18,13 @@
 package org.glavo.viewer.ui;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import kala.function.CheckedSupplier;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.*;
-import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.FXUtils;
+import org.glavo.viewer.util.Schedulers;
 
 import java.io.IOException;
 import java.util.*;

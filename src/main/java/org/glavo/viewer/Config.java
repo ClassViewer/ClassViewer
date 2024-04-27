@@ -22,7 +22,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.glavo.viewer.file.TypedVirtualFile;
-import org.glavo.viewer.ui.Schedulers;
+import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.FileUtils;
 import org.glavo.viewer.util.WindowDimension;
 import org.hildan.fxgson.FxGson;

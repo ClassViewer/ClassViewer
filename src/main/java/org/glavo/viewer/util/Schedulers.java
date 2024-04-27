@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.glavo.viewer.ui;
+package org.glavo.viewer.util;
 
 import javafx.application.Platform;
-import org.glavo.viewer.util.DaemonThreadFactory;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;

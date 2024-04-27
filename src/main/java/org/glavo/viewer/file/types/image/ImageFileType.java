@@ -33,7 +33,7 @@ import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.VirtualFile;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.ui.FileTab;
-import org.glavo.viewer.ui.Schedulers;
+import org.glavo.viewer.util.Schedulers;
 
 import java.io.InputStream;
 import java.util.Set;
