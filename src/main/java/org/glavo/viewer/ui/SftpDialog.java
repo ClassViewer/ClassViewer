@@ -34,7 +34,7 @@ public final class SftpDialog extends Dialog<SftpDialog.Result> {
 
     public SftpDialog() {
         DialogPane dialogPane = getDialogPane();
-        dialogPane.getStylesheets().setAll(Stylesheet.getStylesheets());
+        Stylesheet.setStylesheet(dialogPane.getStylesheets());
 
         GridPane grid = new GridPane();
         grid.setVgap(8);

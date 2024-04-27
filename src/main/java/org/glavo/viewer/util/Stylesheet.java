@@ -15,9 +15,15 @@
  */
 package org.glavo.viewer.util;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.WeakChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.text.Font;
 import kala.template.TemplateEngine;
 import org.glavo.viewer.Config;
+import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.resources.Resources;
 
 import java.io.*;
@@ -32,7 +38,9 @@ public final class Stylesheet {
     private static final String STYLE_TEMPLATE = "stylesheet/style.css";
     private static final double DEFAULT_FONT_SIZE = 16;
 
-    public static String[] getStylesheets() {
+    private static final StringProperty stylesheet = new SimpleStringProperty();
+
+    public static void init() {
         Config config = Config.getConfig();
 
         try {
@@ -91,12 +99,26 @@ public final class Stylesheet {
             }
 
             LOGGER.info("Stylesheet File: " + cssFile);
-            return new String[]{cssFile.toURI().toString()};
+
+            stylesheet.set(cssFile.toURI().toString());
         } catch (IOException e) {
             LOGGER.warning("Failed to initialize stylesheet", e);
-            return StringUtils.EMPTY_ARRAY;
+            stylesheet.set(null);
         }
 
+    }
+
+    @FXThread
+    public static void setStylesheet(ObservableList<String> target) {
+        ChangeListener<String> listener = (o, oldValue, newValue) -> {
+            if (newValue != null) {
+                target.setAll(newValue);
+            } else {
+                target.clear();
+            }
+        };
+        listener.changed(stylesheet, null, stylesheet.getValue());
+        stylesheet.addListener(new WeakChangeListener<>(listener));
     }
 
     public static final List<String> CODE_KEYWORD_CLASSES = List.of("code-keyword");

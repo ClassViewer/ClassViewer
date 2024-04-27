@@ -75,7 +75,7 @@ public final class Viewer {
             stage.setMaximized(true);
         }
 
-        scene.getStylesheets().setAll(Stylesheet.getStylesheets());
+        Stylesheet.setStylesheet(scene.getStylesheets());
 
         scene.setOnDragOver(event -> {
             Dragboard db = event.getDragboard();

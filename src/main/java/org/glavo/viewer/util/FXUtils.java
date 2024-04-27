@@ -90,6 +90,7 @@ public final class FXUtils {
 
         hyperlink.setOnAction(event -> {
             ExceptionDialog exceptionDialog = new ExceptionDialog(exception);
+            Stylesheet.setStylesheet(exceptionDialog.getDialogPane().getStylesheets());
             exceptionDialog.show();
         });
         return hyperlink;

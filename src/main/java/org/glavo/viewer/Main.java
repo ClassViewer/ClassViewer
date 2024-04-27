@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import org.glavo.viewer.file.types.TextFileType;
 import org.glavo.viewer.ui.Schedulers;
 import org.glavo.viewer.ui.Viewer;
+import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
 
@@ -49,6 +50,8 @@ public final class Main extends Application {
             config.setWindowSize(new WindowDimension(defaultWidth, defaultHeight));
         }
         // endregion
+
+        Stylesheet.init();
 
         Viewer viewer = new Viewer(stage, true);
 
