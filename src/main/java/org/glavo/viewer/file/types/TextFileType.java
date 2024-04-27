@@ -15,6 +15,7 @@
  */
 package org.glavo.viewer.file.types;
 
+import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -26,6 +27,7 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.PlainTextChange;
+import org.fxmisc.richtext.model.StyleSpans;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.VirtualFile;
@@ -36,13 +38,13 @@ import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.FileUtils;
-import org.glavo.viewer.util.TaskUtils;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.reactfx.EventStream;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -104,7 +106,16 @@ public abstract class TextFileType extends CustomFileType {
 
                 stream
                         .retainLatestUntilLater(pool)
-                        .supplyTask(() -> TaskUtils.submit(pool, () -> highlighter.computeHighlighting(area.getText())))
+                        .supplyTask(() -> {
+                            Task<StyleSpans<Collection<String>>> task = new Task<>() {
+                                @Override
+                                protected StyleSpans<Collection<String>> call() {
+                                    return highlighter.computeHighlighting(area.getText());
+                                }
+                            };
+                            pool.execute(task);
+                            return task;
+                        })
                         .awaitLatest(multiPlainChanges)
                         .filterMap(t -> {
                             if (t.isSuccess()) {

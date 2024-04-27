@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.util.Stylesheet;
-import org.glavo.viewer.util.TaskUtils;
 import org.glavo.viewer.util.WindowDimension;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
@@ -78,7 +77,6 @@ public final class Main extends Application {
             Config.getConfig().save();
         }
 
-        TaskUtils.taskPool.shutdown();
         Schedulers.shutdown();
         LOGGER.shutdown();
         app = null;
