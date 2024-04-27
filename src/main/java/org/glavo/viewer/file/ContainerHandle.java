@@ -19,11 +19,12 @@ package org.glavo.viewer.file;
 
 import kala.function.CheckedRunnable;
 import org.glavo.viewer.file.roots.local.LocalRootContainer;
-import org.glavo.viewer.util.SilentlyCloseable;
+
+import java.io.Closeable;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
-public final class ContainerHandle implements SilentlyCloseable {
+public final class ContainerHandle implements Closeable {
     private final Container container;
     private CheckedRunnable<?> onForceClose;
 
