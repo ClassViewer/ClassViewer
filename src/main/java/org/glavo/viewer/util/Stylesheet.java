@@ -28,7 +28,7 @@ import org.glavo.viewer.resources.Resources;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,69 +43,67 @@ public final class Stylesheet {
     public static void init() {
         Config config = Config.getConfig();
 
-        try {
-            File cssFile = File.createTempFile("viewer-", ".css");
-            cssFile.deleteOnExit();
+        HashMap<String, Object> table = new HashMap<>();
+        String uiFontFamily = config.getUIFontFamily();
+        double uiFontSize = config.getUIFontSize();
 
-            HashMap<String, Object> table = new HashMap<>();
-            String uiFontFamily = config.getUIFontFamily();
-            double uiFontSize = config.getUIFontSize();
+        String textFontFamily = config.getTextFontFamily();
+        double textFontSize = config.getTextFontSize();
 
-            String textFontFamily = config.getTextFontFamily();
-            double textFontSize = config.getTextFontSize();
+        if (uiFontFamily == null) {
+            uiFontFamily = Font.getDefault().getFamily();
+        }
+        if (uiFontSize <= 0) {
+            uiFontSize = 14;
+        }
 
-            if (uiFontFamily == null) {
-                uiFontFamily = Font.getDefault().getFamily();
-            }
-            if (uiFontSize <= 0) {
-                uiFontSize = 14;
+        if (textFontFamily == null) {
+            try (InputStream inputStream = Resources.class.getResourceAsStream("fonts/JetBrainsMono-Regular.ttf")) {
+                Font font = Font.loadFont(inputStream, 0);
+                if (font != null) {
+                    textFontFamily = font.getFamily();
+                } else {
+                    LOGGER.warning("Failed to load font");
+                }
+            } catch (Throwable e) {
+                LOGGER.warning("Failed to load font", e);
             }
 
             if (textFontFamily == null) {
-                try (InputStream inputStream = Resources.class.getResourceAsStream("fonts/JetBrainsMono-Regular.ttf")) {
-                    Font font = Font.loadFont(inputStream, 0);
-                    if (font != null) {
-                        textFontFamily = font.getFamily();
-                    } else {
-                        LOGGER.warning("Failed to load font");
-                    }
-                } catch (Throwable e) {
-                    LOGGER.warning("Failed to load font", e);
-                }
-
-                if (textFontFamily == null) {
-                    textFontFamily = Font.getDefault().getFamily();
-                }
+                textFontFamily = Font.getDefault().getFamily();
             }
-            if (textFontSize <= 0) {
-                textFontSize = Double.max(16, uiFontSize);
-            }
-
-            LOGGER.trace("UI Font Family: " + uiFontFamily);
-            LOGGER.trace("UI Font Size: " + uiFontSize);
-            LOGGER.trace("Text Font Family: " + textFontFamily);
-            LOGGER.trace("Text Font Size: " + textFontSize);
-
-            table.put("ui-font-family", uiFontFamily);
-            table.put("ui-font-size", uiFontSize);
-            table.put("text-font-family", textFontFamily);
-            table.put("text-font-size", textFontSize);
-
-            //noinspection ConstantConditions
-            try (Reader input = new InputStreamReader(Resources.class.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8);
-                 Writer output = Files.newBufferedWriter(cssFile.toPath())) {
-                TemplateEngine.getDefault()
-                        .process(input, output, table);
-            }
-
-            LOGGER.info("Stylesheet File: " + cssFile);
-
-            stylesheet.set(cssFile.toURI().toString());
-        } catch (IOException e) {
-            LOGGER.warning("Failed to initialize stylesheet", e);
-            stylesheet.set(null);
+        }
+        if (textFontSize <= 0) {
+            textFontSize = Double.max(16, uiFontSize);
         }
 
+        LOGGER.trace("UI Font Family: " + uiFontFamily);
+        LOGGER.trace("UI Font Size: " + uiFontSize);
+        LOGGER.trace("Text Font Family: " + textFontFamily);
+        LOGGER.trace("Text Font Size: " + textFontSize);
+
+        table.put("ui-font-family", uiFontFamily);
+        table.put("ui-font-size", uiFontSize);
+        table.put("text-font-family", textFontFamily);
+        table.put("text-font-size", textFontSize);
+
+        String uri;
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        //noinspection ConstantConditions
+        try (Reader input = new InputStreamReader(Resources.class.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8)) {
+            try (OutputStreamWriter writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
+                TemplateEngine.getDefault().process(input, writer, table);
+            }
+
+            uri = "data:text/css;base64," + Base64.getEncoder().encodeToString(output.toByteArray());
+        } catch (IOException e) {
+            LOGGER.warning("Failed to initialize stylesheet", e);
+            uri = null;
+        }
+
+        stylesheet.set(uri);
     }
 
     @FXThread
