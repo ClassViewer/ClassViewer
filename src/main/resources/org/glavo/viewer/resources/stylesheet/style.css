@@ -3,7 +3,7 @@
     -fx-font-size: ${ui-font-size};
 }
 
-.text-area, .code-area, .tooltip {
+.code-area, .monospaced-font {
     -fx-font-family: "${text-font-family}";
     -fx-font-size: ${text-font-size};
 }

@@ -45,6 +45,10 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
         textArea2 = new TextArea(hex.bytesText);
         textArea3 = new TextArea(hex.asciiString);
 
+        textArea1.getStyleClass().add("monospaced-font");
+        textArea2.getStyleClass().add("monospaced-font");
+        textArea3.getStyleClass().add("monospaced-font");
+
         initTextArea();
 
         HBox hbox = new HBox();
