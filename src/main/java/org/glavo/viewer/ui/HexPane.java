@@ -23,12 +23,4 @@ public interface HexPane {
     }
 
     void select(int offset, int length);
-
-    default Node getStatusBar() {
-        return null;
-    }
-
-    default void setStatus(String status) {
-
-    }
 }

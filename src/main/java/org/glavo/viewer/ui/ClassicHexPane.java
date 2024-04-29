@@ -21,7 +21,7 @@ import javafx.scene.layout.HBox;
 import kala.collection.primitive.ByteSeq;
 import org.glavo.viewer.util.HexText;
 
-public class ClassicHexPane extends ScrollPane {
+public class ClassicHexPane extends ScrollPane implements HexPane {
 
     private final HexText hex;
     private final TextArea textArea1;
