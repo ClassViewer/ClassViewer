@@ -36,7 +36,6 @@ import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public final class Stylesheet {
     private static final String STYLE_TEMPLATE = "stylesheet/style.css";
-    private static final double DEFAULT_FONT_SIZE = 16;
 
     private static final StringProperty stylesheet = new SimpleStringProperty();
 
@@ -54,7 +53,7 @@ public final class Stylesheet {
             uiFontFamily = Font.getDefault().getFamily();
         }
         if (uiFontSize <= 0) {
-            uiFontSize = 14;
+            uiFontSize = 15;
         }
 
         if (textFontFamily == null) {

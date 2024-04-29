@@ -117,13 +117,12 @@ public final class ViewerPane extends BorderPane {
                 bottomProperty().bind(Bindings.createObjectBinding(() -> {
                     Node bar = ((FileTab) newValue).getStatusBar();
                     return bar == null ? emptyStatusBar : bar;
-                }, ((FileTab) newValue).sideBarProperty()));
+                }, ((FileTab) newValue).statusBarProperty()));
             } else {
                 bottomProperty().unbind();
                 setBottom(null);
             }
         });
-
 
         this.setTop(menuBar);
         this.setCenter(createDefaultText());

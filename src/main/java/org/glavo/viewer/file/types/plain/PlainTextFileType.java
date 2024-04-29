@@ -35,7 +35,7 @@ public final class PlainTextFileType extends TextFileType {
                 "m", "mm", "ml", "mli",
                 "py", "pl",
                 "ruby", "rs",
-                "swift",
+                "scala", "swift",
                 "vala", "vapi",
                 "zig",
                 "sh", "bat", "ps1",

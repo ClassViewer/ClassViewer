@@ -22,20 +22,12 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.file.types.java.classfile.constant.ConstantPool;
-import org.glavo.viewer.ui.FileTab;
-import org.glavo.viewer.ui.HexPane;
 
 public class ClassFileTreeView extends TreeView<ClassFileComponent> {
 
-    public ClassFileTreeView(FileTab tab) {
+    public ClassFileTreeView() {
         this.setCellFactory(view -> new Cell());
-        this.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
-            if (newValue != null) {
-                if (tab.getContent() instanceof HexPane hexPane) {
-                    // TODO: hexPane.select(newValue.getValue().getOffset(), newValue.getValue().getLength());
-                }
-            }
-        });
+        this.getStyleClass().add("monospaced-font");
     }
 
     public ClassFile getClassFile() {

@@ -22,6 +22,7 @@ import javafx.scene.layout.StackPane;
 import kala.collection.immutable.primitive.ImmutableByteArray;
 import kala.function.CheckedSupplier;
 import kala.tuple.Tuple2;
+import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.FileHandle;
@@ -46,8 +47,8 @@ public abstract class BinaryFileType extends CustomFileType {
         super(name, image, extensions);
     }
 
-    protected Node openSideBar(FileTab tab, HexPane hexPane, byte[] bytes) throws Throwable {
-        return null;
+    @FXThread
+    protected void parseContent(BinaryPane binaryPane) {
     }
 
     @Override
@@ -58,53 +59,37 @@ public abstract class BinaryFileType extends CustomFileType {
         tab.setContent(new StackPane(indicator));
 
         CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
-                    Container container = file.getContainer();
-                    container.lock();
-                    FileHandle fileHandle = null;
-                    byte[] bytes;
-                    try {
-                        fileHandle = container.openFile(file);
-                        tab.setFileHandle(fileHandle);
+            Container container = file.getContainer();
+            container.lock();
+            FileHandle fileHandle = null;
+            byte[] bytes;
+            try {
+                fileHandle = container.openFile(file);
+                tab.setFileHandle(fileHandle);
+                bytes = fileHandle.readAllBytes();
+            } catch (Throwable e) {
+                tab.setFileHandle(null);
+                if (fileHandle != null) {
+                    fileHandle.close();
+                }
+                throw e;
+            } finally {
+                container.unlock();
+            }
 
-                        bytes = fileHandle.readAllBytes();
-                    } catch (Throwable e) {
-                        tab.setFileHandle(null);
-                        if (fileHandle != null) {
-                            fileHandle.close();
-                        }
-                        throw e;
-                    } finally {
-                        container.unlock();
-                    }
-
-                    HexPane hexPane;
-                    if (bytes.length < 200 * 1024) { // 200 KiB
-                        hexPane = new ClassicHexPane(ImmutableByteArray.Unsafe.wrap(bytes));
-                    } else {
-                        hexPane = new FallbackHexPane(ImmutableByteArray.Unsafe.wrap(bytes));
-                    }
-
-                    Node sideBar;
-
-                    try {
-                        sideBar = openSideBar(tab, hexPane, bytes);
-                    } catch (Throwable e) {
-                        LOGGER.warning("Failed to open side bar", e);
-                        sideBar = null;
-                    }
-
-                    return new Tuple2<>(hexPane, sideBar);
-                }), Schedulers.io())
-                .whenCompleteAsync((result, exception) -> {
-                    if (exception == null) {
-                        tab.setContent(result.component1().getNode());
-                        tab.setStatusBar(result.component1().getStatusBar());
-                        tab.setSideBar(result.component2());
-                    } else {
-                        LOGGER.warning("Failed to open file", exception);
-                        tab.setContent(new StackPane(FXUtils.exceptionDialogLink(I18N.getString("failed.openFile"), exception)));
-                    }
-                }, Schedulers.javafx());
+            return bytes;
+        }), Schedulers.io()).whenCompleteAsync((bytes, exception) -> {
+            if (exception == null) {
+                BinaryPane binaryPane = new BinaryPane(tab, bytes);
+                parseContent(binaryPane);
+                if (binaryPane.getView() == null) {
+                    binaryPane.setView(BinaryPane.View.BINARY);
+                }
+            } else {
+                LOGGER.warning("Failed to open file", exception);
+                tab.setContent(new StackPane(FXUtils.exceptionDialogLink(I18N.getString("failed.openFile"), exception)));
+            }
+        }, Schedulers.javafx());
 
         return tab;
     }

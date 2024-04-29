@@ -17,30 +17,19 @@ package org.glavo.viewer.ui;
 
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import kala.collection.primitive.ByteSeq;
 import org.glavo.viewer.util.HexText;
 
-import java.util.Objects;
-
-public class ClassicHexPane extends ScrollPane implements HexPane {
-
-    private final long size;
+public class ClassicHexPane extends ScrollPane {
 
     private final HexText hex;
     private final TextArea textArea1;
     private final TextArea textArea2;
     private final TextArea textArea3;
 
-    private final BorderPane statusBar;
-    private final Label statusLabel;
-
-    private final BytesBar bytesBar;
-
     public ClassicHexPane(ByteSeq seq) {
         this.hex = new HexText(seq);
-        this.size = seq.size();
         textArea1 = new TextArea(hex.rowHeaderText);
         textArea2 = new TextArea(hex.bytesText);
         textArea3 = new TextArea(hex.asciiString);
@@ -67,19 +56,8 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
         }
 
         setContent(hbox);
-
-        statusBar = new BorderPane();
-
-        statusLabel = new Label(" ");
-        statusBar.setLeft(statusLabel);
-
-        bytesBar = new BytesBar((int) size);
-        bytesBar.setMaxHeight(statusLabel.getMaxHeight());
-        bytesBar.setPrefWidth(200);
-        statusBar.setRight(bytesBar);
     }
 
-    @Override
     public void select(int offset, int length) {
         int rowIndex = offset / HexText.BYTES_PER_ROW;
         int rows = textArea3.getText().length() / (HexText.BYTES_PER_ROW + 1);
@@ -104,8 +82,6 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
                 this.setVvalue(vvalue);
             }
         }
-
-        bytesBar.select(offset, length);
     }
 
     private void initTextArea() {
@@ -142,15 +118,5 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
     private void registerTextPaneMenu(TextArea area) {
         ContextMenu menu = new ContextMenu();
         area.setContextMenu(menu);
-    }
-
-    @Override
-    public void setStatus(String status) {
-        this.statusLabel.setText(Objects.requireNonNullElse(status, " "));
-    }
-
-    @Override
-    public Node getStatusBar() {
-        return statusBar;
     }
 }
