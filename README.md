@@ -6,7 +6,7 @@ Website: [ClassViewer Homepage](https://viewer.glavo.org/)
 
 ClassViewer v3 is a lightweight Java class file viewer only depends on JDK and JavaFX, it only has a single jar file less than 250k in size, and it can work on JRE 8.
 
-OracleJDK no longer bundles JavaFX releases after OracleJDK 10, you can get the OpenJDK distribution bundled with OpenJFX 13 from [here](https://bell-sw.com/pages/java-13.0.1/).
+OracleJDK no longer bundles JavaFX releases after OracleJDK 10, you can get the OpenJDK distribution bundled with OpenJFX 22 from [here](https://bell-sw.com/pages/downloads/?version=java-22&package=jdk-full).
 
 ClassViewer v4 is under development, 
 [icon](https://icons8.com/icons/set/picasa) by [Icons8](https://icons8.com).

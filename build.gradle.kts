@@ -97,6 +97,10 @@ sourceSets {
 }
 
 tasks.compileJava {
+    javaCompiler.set(javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(22)
+    })
+
     sourceCompatibility = "21"
     targetCompatibility = "21"
     options.encoding = "UTF-8"
