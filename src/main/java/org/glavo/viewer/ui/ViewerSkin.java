@@ -33,10 +33,10 @@ import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.MappedList;
 
-public final class ViewerPane extends BorderPane {
+public final class ViewerSkin extends SkinBase<Viewer> {
     private static final double DEFAULT_DIVIDER_POSITION = 0.25;
 
-    private final Viewer viewer;
+    private final BorderPane root;
 
     private final MenuBar menuBar;
 
@@ -49,8 +49,11 @@ public final class ViewerPane extends BorderPane {
 
     private final FileTreeView fileTreeView;
 
-    public ViewerPane(Viewer viewer) {
-        this.viewer = viewer;
+    public ViewerSkin(Viewer viewer) {
+        super(viewer);
+        this.root = new BorderPane();
+        this.getChildren().add(root);
+
         this.fileTreeView = new FileTreeView(viewer);
 
         this.menuBar = createMenuBar();
@@ -114,24 +117,24 @@ public final class ViewerPane extends BorderPane {
         HBox emptyStatusBar = new HBox();
         filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
             if (newValue instanceof FileTab) {
-                bottomProperty().bind(Bindings.createObjectBinding(() -> {
+                root.bottomProperty().bind(Bindings.createObjectBinding(() -> {
                     Node bar = ((FileTab) newValue).getStatusBar();
                     return bar == null ? emptyStatusBar : bar;
                 }, ((FileTab) newValue).statusBarProperty()));
             } else {
-                bottomProperty().unbind();
-                setBottom(null);
+                root.bottomProperty().unbind();
+                root.setBottom(null);
             }
         });
 
-        this.setTop(menuBar);
-        this.setCenter(createDefaultText());
+        root.setTop(menuBar);
+        root.setCenter(createDefaultText());
         InvalidationListener l = new InvalidationListener() {
             @Override
             public void invalidated(Observable o) {
                 filesTabPane.getTabs().removeListener(this);
                 fileTreeView.getRoot().getChildren().removeListener(this);
-                ViewerPane.this.setCenter(mainPane);
+                root.setCenter(mainPane);
                 if (fileTreeView.getRoot().getChildren().isEmpty()) {
                     selectFileInfoTab();
                 }
@@ -146,18 +149,18 @@ public final class ViewerPane extends BorderPane {
         Text openFileText = new Text(I18N.getString("defaultText.openFile"));
         openFileText.setFill(Color.GRAY);
         Hyperlink openFileLink = new Hyperlink("Ctrl+O");
-        openFileLink.setOnAction(event -> viewer.openFile());
+        openFileLink.setOnAction(event -> getViewer().openFile());
 
         Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
         openFolderText.setFill(Color.GRAY);
         Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O");
-        openFolderLink.setOnAction(event -> viewer.openFolder());
+        openFolderLink.setOnAction(event -> getViewer().openFolder());
 
 
         Text remoteText = new Text(I18N.getString("defaultText.remote"));
         remoteText.setFill(Color.GRAY);
         Hyperlink remoteLink = new Hyperlink(I18N.getString("defaultText.remote.connect"));
-        remoteLink.setOnAction(event -> viewer.connect());
+        remoteLink.setOnAction(event -> getViewer().connect());
 
         TextFlow text = new TextFlow(
                 openFileText, new Text(" "), openFileLink, new Text("\n"),
@@ -181,11 +184,11 @@ public final class ViewerPane extends BorderPane {
             MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
             openFileItem.setMnemonicParsing(true);
             openFileItem.setGraphic(new ImageView(Images.menuOpen));
-            openFileItem.setOnAction(event -> viewer.openFile());
+            openFileItem.setOnAction(event -> getViewer().openFile());
 
             MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
             openFolderItem.setMnemonicParsing(true);
-            openFolderItem.setOnAction(event -> viewer.openFolder());
+            openFolderItem.setOnAction(event -> getViewer().openFolder());
 
             Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
             openRecentMenu.setMnemonicParsing(true);
@@ -193,7 +196,7 @@ public final class ViewerPane extends BorderPane {
             Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
                     file -> {
                         MenuItem item = new MenuItem(file.toString(), new ImageView(file.type().getImage()));
-                        item.setOnAction(event -> viewer.open(file));
+                        item.setOnAction(event -> getViewer().open(file));
                         return item;
                     }));
 
@@ -222,6 +225,14 @@ public final class ViewerPane extends BorderPane {
 
         menuBar.getMenus().setAll(fileMenu, editMenu, windowMenu, helpMenu);
         return menuBar;
+    }
+
+    public Viewer getViewer() {
+        return getSkinnable();
+    }
+
+    public BorderPane getRoot() {
+        return root;
     }
 
     public TabPane getFilesTabPane() {

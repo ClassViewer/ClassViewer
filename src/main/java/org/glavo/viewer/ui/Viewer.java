@@ -22,6 +22,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -47,7 +49,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
-public final class Viewer {
+public final class Viewer extends Control {
     private final Stage stage;
     private final boolean isPrimary;
 
@@ -56,8 +58,6 @@ public final class Viewer {
     private static FileChooser fileChooser;
     private static DirectoryChooser directoryChooser;
 
-    private final ViewerPane pane;
-
     private final ObjectProperty<Node> fileSideBar = new SimpleObjectProperty<>();
 
     public Viewer(Stage stage, boolean isPrimary) {
@@ -65,9 +65,8 @@ public final class Viewer {
         this.isPrimary = isPrimary;
 
         Config config = Config.getConfig();
-        this.pane = new ViewerPane(this);
 
-        Scene scene = new Scene(pane);
+        Scene scene = new Scene(this);
         stage.setWidth(config.getWindowSize().width());
         stage.setHeight(config.getWindowSize().height());
         if (config.getWindowSize().maximized()) {
@@ -117,12 +116,17 @@ public final class Viewer {
         });
     }
 
+    @Override
+    protected Skin<?> createDefaultSkin() {
+        return new ViewerSkin(this);
+    }
+
     public Stage getStage() {
         return stage;
     }
 
-    public ViewerPane getPane() {
-        return pane;
+    public ViewerSkin getViewerSkin() {
+        return (ViewerSkin) getSkin();
     }
 
     public boolean isPrimary() {
@@ -192,11 +196,11 @@ public final class Viewer {
         try {
             if (file.type() instanceof CustomFileType customFileType) {
                 FileTab fileTab = customFileType.openTab(file.file());
-                getPane().addFileTab(fileTab);
+                getViewerSkin().addFileTab(fileTab);
             } else if (file.type() instanceof DirectoryFileType || file.type() instanceof ContainerFileType) {
                 FileTree root = new FileTree(file, true);
                 root.setExpanded(true);
-                getPane().getFileTreeView().getRoot().getChildren().add(root);
+                getViewerSkin().getFileTreeView().getRoot().getChildren().add(root);
             } else {
                 throw new AssertionError("Unsupported file type " + file.type());
             }
@@ -214,7 +218,7 @@ public final class Viewer {
             TreeItem<String> node = new TreeItem<>(result.root().toString() + result.initPath());
             FXUtils.setLoading(node);
 
-            getPane().getFileTreeView().getRoot().getChildren().add(node);
+            getViewerSkin().getFileTreeView().getRoot().getChildren().add(node);
 
             AtomicReference<SftpRootContainer> holder = new AtomicReference<>();
 
@@ -229,9 +233,9 @@ public final class Viewer {
 
                 if (exception == null) {
                     FileTree newTree = new FileTree(TypedVirtualFile.of(path), node.getValue(), true);
-                    int idx = getPane().getFileTreeView().getRoot().getChildren().indexOf(node);
+                    int idx = getViewerSkin().getFileTreeView().getRoot().getChildren().indexOf(node);
                     if (idx >= 0) {
-                        getPane().getFileTreeView().getRoot().getChildren().set(idx, newTree);
+                        getViewerSkin().getFileTreeView().getRoot().getChildren().set(idx, newTree);
                         newTree.setExpanded(true);
                     } else {
                         SftpRootContainer container = holder.get();
