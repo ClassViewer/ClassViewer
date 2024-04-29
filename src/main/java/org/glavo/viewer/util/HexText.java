@@ -15,7 +15,10 @@
  */
 package org.glavo.viewer.util;
 
-import kala.collection.primitive.ByteSeq;
+
+import java.lang.foreign.MemorySegment;
+
+import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 
 /**
  * Displayed by HexPane.
@@ -72,8 +75,8 @@ public class HexText {
 
     public final String asciiString;
 
-    public HexText(ByteSeq bytes) {
-        rowHeaderText = formatRowHeader(bytes.size());
+    public HexText(MemorySegment bytes) {
+        rowHeaderText = formatRowHeader(bytes.byteSize());
         bytesText = formatBytesText(bytes);
         asciiString = formatAsciiText(bytes);
     }
@@ -92,8 +95,8 @@ public class HexText {
         return (17 * rowIndex) + (colIndex);
     }
 
-    private String formatRowHeader(int length) {
-        StringBuilder sb = new StringBuilder((length / BYTES_PER_ROW + 1) * 9);
+    private String formatRowHeader(long length) {
+        StringBuilder sb = new StringBuilder(Math.toIntExact((length / BYTES_PER_ROW + 1) * 9));
 
         for (int i = 0; i < length; i += BYTES_PER_ROW) {
             sb.append(String.format("%08X\n", i)); // row number
@@ -101,28 +104,28 @@ public class HexText {
         return sb.toString();
     }
 
-    private String formatBytesText(ByteSeq bytes) {
-        StringBuilder sb = new StringBuilder(bytes.size() * 3 + bytes.size() / BYTES_PER_ROW + 1);
-        for (int i = 0; i < bytes.size(); i += BYTES_PER_ROW) {
+    private String formatBytesText(MemorySegment bytes) {
+        StringBuilder sb = new StringBuilder(Math.toIntExact(bytes.byteSize() * 3 + bytes.byteSize() / BYTES_PER_ROW + 1));
+        for (int i = 0; i < bytes.byteSize(); i += BYTES_PER_ROW) {
             rowToHex(bytes, i, sb);
             sb.append('\n');
         }
         return sb.toString();
     }
 
-    private String formatAsciiText(ByteSeq bytes) {
-        StringBuilder sb = new StringBuilder(bytes.size() + bytes.size() / BYTES_PER_ROW);
-        for (int i = 0; i < bytes.size(); i += BYTES_PER_ROW) {
+    private String formatAsciiText(MemorySegment bytes) {
+        StringBuilder sb = new StringBuilder(Math.toIntExact(bytes.byteSize() + bytes.byteSize() / BYTES_PER_ROW));
+        for (int i = 0; i < bytes.byteSize(); i += BYTES_PER_ROW) {
             rowToAscii(bytes, i, sb);
             sb.append('\n');
         }
         return sb.toString();
     }
 
-    private void rowToHex(ByteSeq bytes, int offset, StringBuilder buf) {
+    private void rowToHex(MemorySegment bytes, int offset, StringBuilder buf) {
         for (int i = 0; i < BYTES_PER_ROW; i++) {
-            if (offset + i < bytes.size()) {
-                byte b = bytes.get(offset + i);
+            if (offset + i < bytes.byteSize()) {
+                byte b = bytes.get(JAVA_BYTE, offset + i);
                 buf.append(byteToUpperString(b));
                 buf.append(' ');
             } else {
@@ -131,10 +134,10 @@ public class HexText {
         }
     }
 
-    private void rowToAscii(ByteSeq bytes, int offset, StringBuilder buf) {
+    private void rowToAscii(MemorySegment bytes, int offset, StringBuilder buf) {
         for (int i = 0; i < BYTES_PER_ROW; i++) {
-            if (offset + i < bytes.size()) {
-                char c = (char) bytes.get(offset + i);
+            if (offset + i < bytes.byteSize()) {
+                char c = (char) bytes.get(JAVA_BYTE, offset + i);
                 if (c >= '!' && c <= '~') {
                     buf.append(c);
                 } else {

@@ -28,6 +28,7 @@ import org.glavo.viewer.util.Schedulers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.foreign.ValueLayout;
 import java.util.Set;
 
 public final class JavaClassFileType extends BinaryFileType {
@@ -49,7 +50,7 @@ public final class JavaClassFileType extends BinaryFileType {
         Schedulers.common().execute(() -> {
             ClassFileTreeView view = new ClassFileTreeView();
             ClassFile file;
-            try (ByteArrayInputStream input = new ByteArrayInputStream(binaryPane.getData())) {
+            try (ByteArrayInputStream input = new ByteArrayInputStream(binaryPane.getData().toArray(ValueLayout.JAVA_BYTE))) {
                 ClassFileReader reader = new ClassFileReader(input);
                 file = ClassFile.readFrom(view, reader);
             } catch (IOException e) {

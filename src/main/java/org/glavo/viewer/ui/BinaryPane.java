@@ -31,11 +31,13 @@ import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.foreign.MemorySegment;
+
 public final class BinaryPane {
 
     private final FileTab tab;
 
-    private final ObjectProperty<byte @NotNull []> data = new SimpleObjectProperty<>();
+    private final ObjectProperty<@NotNull MemorySegment> data = new SimpleObjectProperty<>();
     private final ObjectProperty<@NotNull View> view = new SimpleObjectProperty<>();
     private final ObjectProperty<Node> fileInfoNode = new SimpleObjectProperty<>();
 
@@ -47,7 +49,7 @@ public final class BinaryPane {
     private StackPane hexPane;
     private ClassicHexPane hexPaneImpl;
 
-    public BinaryPane(FileTab tab, byte[] data) {
+    public BinaryPane(FileTab tab, MemorySegment data) {
         this.tab = tab;
         this.data.set(data);
 
@@ -92,10 +94,10 @@ public final class BinaryPane {
             hexPane = new StackPane();
 
             InvalidationListener listener = observable -> {
-                byte[] bytes = data.get();
+                MemorySegment bytes = data.get();
                 hexPane.getChildren().setAll(new ProgressIndicator());
                 Schedulers.common().execute(() -> {
-                    ClassicHexPane classicHexPane = new ClassicHexPane(ImmutableByteArray.Unsafe.wrap(bytes));
+                    ClassicHexPane classicHexPane = new ClassicHexPane(bytes);
                     FXUtils.runLater(() -> {
                         if (data.get() == bytes) {
                             hexPaneImpl = classicHexPane;
@@ -113,7 +115,7 @@ public final class BinaryPane {
     }
 
     public void select(long offset, long length) {
-        final long byteCount = data.get().length;
+        final long byteCount = data.get().byteSize();
         final double w = byteBar.getWidth() - 4;
         final double h = byteBar.getHeight();
 
@@ -130,15 +132,15 @@ public final class BinaryPane {
         statusLabel.setText(text);
     }
 
-    public ObjectProperty<byte @NotNull []> dataProperty() {
+    public ObjectProperty<MemorySegment> dataProperty() {
         return data;
     }
 
-    public byte @NotNull [] getData() {
+    public @NotNull MemorySegment getData() {
         return data.get();
     }
 
-    public void setData(byte @NotNull [] data) {
+    public void setData(@NotNull MemorySegment data) {
         this.data.set(data);
     }
 

@@ -18,8 +18,9 @@ package org.glavo.viewer.ui;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import kala.collection.primitive.ByteSeq;
 import org.glavo.viewer.util.HexText;
+
+import java.lang.foreign.MemorySegment;
 
 public class ClassicHexPane extends ScrollPane implements HexPane {
 
@@ -28,7 +29,7 @@ public class ClassicHexPane extends ScrollPane implements HexPane {
     private final TextArea textArea2;
     private final TextArea textArea3;
 
-    public ClassicHexPane(ByteSeq seq) {
+    public ClassicHexPane(MemorySegment seq) {
         this.hex = new HexText(seq);
         textArea1 = new TextArea(hex.rowHeaderText);
         textArea2 = new TextArea(hex.bytesText);

@@ -15,13 +15,10 @@
  */
 package org.glavo.viewer.file.types;
 
-import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import kala.collection.immutable.primitive.ImmutableByteArray;
 import kala.function.CheckedSupplier;
-import kala.tuple.Tuple2;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.Container;
 import org.glavo.viewer.file.CustomFileType;
@@ -32,6 +29,7 @@ import org.glavo.viewer.ui.*;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
 
+import java.lang.foreign.MemorySegment;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -77,7 +75,7 @@ public abstract class BinaryFileType extends CustomFileType {
                 container.unlock();
             }
 
-            return bytes;
+            return MemorySegment.ofArray(bytes);
         }), Schedulers.io()).whenCompleteAsync((bytes, exception) -> {
             if (exception == null) {
                 BinaryPane binaryPane = new BinaryPane(tab, bytes);
