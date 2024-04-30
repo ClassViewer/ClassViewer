@@ -16,7 +16,6 @@
 package org.glavo.viewer.ui;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
@@ -49,14 +48,64 @@ public final class ViewerSkin extends SkinBase<Viewer> {
 
     private final FileTreeView fileTreeView;
 
+    private final BorderPane statusBar;
+
+    private final HBox statusButtons;
+
     public ViewerSkin(Viewer viewer) {
         super(viewer);
         this.root = new BorderPane();
         this.getChildren().add(root);
 
-        this.fileTreeView = new FileTreeView(viewer);
+        this.menuBar = new MenuBar();
+        {
+            Menu fileMenu = new Menu(I18N.getString("menu.file"));
+            {
+                fileMenu.setMnemonicParsing(true);
 
-        this.menuBar = createMenuBar();
+                MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
+                openFileItem.setMnemonicParsing(true);
+                openFileItem.setGraphic(new ImageView(Images.menuOpen));
+                openFileItem.setOnAction(event -> getViewer().openFile());
+
+                MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
+                openFolderItem.setMnemonicParsing(true);
+                openFolderItem.setOnAction(event -> getViewer().openFolder());
+
+                Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
+                openRecentMenu.setMnemonicParsing(true);
+
+                Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
+                        file -> {
+                            MenuItem item = new MenuItem(file.toString(), new ImageView(file.type().getImage()));
+                            item.setOnAction(event -> getViewer().open(file));
+                            return item;
+                        }));
+
+                fileMenu.getItems().setAll(openFileItem, openFolderItem, openRecentMenu);
+            }
+
+
+            Menu editMenu = new Menu(I18N.getString("menu.edit"));
+            {
+            }
+
+            Menu windowMenu = new Menu(I18N.getString("menu.window"));
+            {
+
+            }
+
+            Menu helpMenu = new Menu(I18N.getString("menu.help"));
+            {
+                helpMenu.setMnemonicParsing(true);
+
+                MenuItem aboutItem = new MenuItem(I18N.getString("menu.help.items.about"));
+
+                helpMenu.getItems().setAll(aboutItem);
+            }
+
+            menuBar.getMenus().setAll(fileMenu, editMenu, windowMenu, helpMenu);
+        }
 
         this.filesTabPane = new TabPane();
         filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
@@ -68,6 +117,8 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         });
         filesTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         filesTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
+
+        this.fileTreeView = new FileTreeView(viewer);
 
         this.sideBar = new TabPane();
         {
@@ -114,117 +165,63 @@ public final class ViewerSkin extends SkinBase<Viewer> {
             }
         }
 
-        HBox emptyStatusBar = new HBox();
-        filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
-            if (newValue instanceof FileTab) {
-                root.bottomProperty().bind(Bindings.createObjectBinding(() -> {
-                    Node bar = ((FileTab) newValue).getStatusBar();
-                    return bar == null ? emptyStatusBar : bar;
-                }, ((FileTab) newValue).statusBarProperty()));
-            } else {
-                root.bottomProperty().unbind();
-                root.setBottom(null);
-            }
-        });
+        this.statusBar = new BorderPane();
+        {
+            statusBar.setPrefHeight(24);
+
+            Label statusText = new Label();
+            statusText.textProperty().bind(viewer.statusTextProperty());
+
+            this.statusButtons = new HBox(4);
+
+            statusBar.setLeft(statusText);
+            statusBar.setRight(statusButtons);
+        }
+
+        FlowPane defaultPane = new FlowPane();{
+            defaultPane.setAlignment(Pos.CENTER);
+
+            Text openFileText = new Text(I18N.getString("defaultText.openFile"));
+            openFileText.setFill(Color.GRAY);
+            Hyperlink openFileLink = new Hyperlink("Ctrl+O");
+            openFileLink.setOnAction(event -> getViewer().openFile());
+
+            Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
+            openFolderText.setFill(Color.GRAY);
+            Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O");
+            openFolderLink.setOnAction(event -> getViewer().openFolder());
+
+
+            Text remoteText = new Text(I18N.getString("defaultText.remote"));
+            remoteText.setFill(Color.GRAY);
+            Hyperlink remoteLink = new Hyperlink(I18N.getString("defaultText.remote.connect"));
+            remoteLink.setOnAction(event -> getViewer().connect());
+
+            TextFlow text = new TextFlow(
+                    openFileText, new Text(" "), openFileLink, new Text("\n"),
+                    openFolderText, new Text(" "), openFolderLink, new Text("\n"),
+                    remoteText, new Text(" "), remoteLink
+            );
+            text.setTextAlignment(TextAlignment.LEFT);
+
+            defaultPane.getChildren().add(text);
+        }
 
         root.setTop(menuBar);
-        root.setCenter(createDefaultText());
-        InvalidationListener l = new InvalidationListener() {
-            @Override
-            public void invalidated(Observable o) {
-                filesTabPane.getTabs().removeListener(this);
-                fileTreeView.getRoot().getChildren().removeListener(this);
+        root.setCenter(defaultPane);
+        root.setBottom(statusBar);
+
+        InvalidationListener listener = observable -> {
+            if (filesTabPane.getTabs().isEmpty() && fileTreeView.getRoot().getChildren().isEmpty()) {
+                root.setCenter(defaultPane);
+                root.setBottom(null);
+            } else {
                 root.setCenter(mainPane);
-                if (fileTreeView.getRoot().getChildren().isEmpty()) {
-                    selectFileInfoTab();
-                }
+                root.setBottom(statusBar);
             }
         };
-        filesTabPane.getTabs().addListener(l);
-        fileTreeView.getRoot().getChildren().addListener(l);
-
-    }
-
-    private Pane createDefaultText() {
-        Text openFileText = new Text(I18N.getString("defaultText.openFile"));
-        openFileText.setFill(Color.GRAY);
-        Hyperlink openFileLink = new Hyperlink("Ctrl+O");
-        openFileLink.setOnAction(event -> getViewer().openFile());
-
-        Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
-        openFolderText.setFill(Color.GRAY);
-        Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O");
-        openFolderLink.setOnAction(event -> getViewer().openFolder());
-
-
-        Text remoteText = new Text(I18N.getString("defaultText.remote"));
-        remoteText.setFill(Color.GRAY);
-        Hyperlink remoteLink = new Hyperlink(I18N.getString("defaultText.remote.connect"));
-        remoteLink.setOnAction(event -> getViewer().connect());
-
-        TextFlow text = new TextFlow(
-                openFileText, new Text(" "), openFileLink, new Text("\n"),
-                openFolderText, new Text(" "), openFolderLink, new Text("\n"),
-                remoteText, new Text(" "), remoteLink
-        );
-        text.setTextAlignment(TextAlignment.LEFT);
-
-        FlowPane pane = new FlowPane(text);
-        pane.setAlignment(Pos.CENTER);
-        return pane;
-    }
-
-    private MenuBar createMenuBar() {
-        MenuBar menuBar = new MenuBar();
-
-        Menu fileMenu = new Menu(I18N.getString("menu.file"));
-        {
-            fileMenu.setMnemonicParsing(true);
-
-            MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
-            openFileItem.setMnemonicParsing(true);
-            openFileItem.setGraphic(new ImageView(Images.menuOpen));
-            openFileItem.setOnAction(event -> getViewer().openFile());
-
-            MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
-            openFolderItem.setMnemonicParsing(true);
-            openFolderItem.setOnAction(event -> getViewer().openFolder());
-
-            Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
-            openRecentMenu.setMnemonicParsing(true);
-
-            Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
-                    file -> {
-                        MenuItem item = new MenuItem(file.toString(), new ImageView(file.type().getImage()));
-                        item.setOnAction(event -> getViewer().open(file));
-                        return item;
-                    }));
-
-            fileMenu.getItems().setAll(openFileItem, openFolderItem, openRecentMenu);
-        }
-
-
-        Menu editMenu = new Menu(I18N.getString("menu.edit"));
-        {
-
-        }
-
-        Menu windowMenu = new Menu(I18N.getString("menu.window"));
-        {
-
-        }
-
-        Menu helpMenu = new Menu(I18N.getString("menu.help"));
-        {
-            helpMenu.setMnemonicParsing(true);
-
-            MenuItem aboutItem = new MenuItem(I18N.getString("menu.help.items.about"));
-
-            helpMenu.getItems().setAll(aboutItem);
-        }
-
-        menuBar.getMenus().setAll(fileMenu, editMenu, windowMenu, helpMenu);
-        return menuBar;
+        filesTabPane.getTabs().addListener(listener);
+        fileTreeView.getRoot().getChildren().addListener(listener);
     }
 
     public Viewer getViewer() {
@@ -241,6 +238,10 @@ public final class ViewerSkin extends SkinBase<Viewer> {
 
     public FileTreeView getFileTreeView() {
         return fileTreeView;
+    }
+
+    public void selectFileTreeTab() {
+        sideBar.getSelectionModel().select(treeTab);
     }
 
     public void selectFileInfoTab() {

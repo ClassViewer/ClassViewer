@@ -53,6 +53,7 @@ public final class Viewer extends Control {
     private final boolean isPrimary;
 
     private final StringProperty titleMessage = new SimpleStringProperty();
+    private final StringProperty statusText = new SimpleStringProperty();
 
     private static FileChooser fileChooser;
     private static DirectoryChooser directoryChooser;
@@ -132,16 +133,28 @@ public final class Viewer extends Control {
         return isPrimary;
     }
 
-    public String getTitleMessage() {
-        return titleMessage.get();
-    }
-
     public StringProperty titleMessageProperty() {
         return titleMessage;
     }
 
+    public String getTitleMessage() {
+        return titleMessage.get();
+    }
+
     public void setTitleMessage(String titleMessage) {
         this.titleMessage.set(titleMessage);
+    }
+
+    public StringProperty statusTextProperty() {
+        return statusText;
+    }
+
+    public String getStatusText() {
+        return statusText.get();
+    }
+
+    public void setStatusText(String statusText) {
+        this.statusText.set(statusText);
     }
 
     public void show() {
