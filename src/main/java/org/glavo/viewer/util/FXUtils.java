@@ -68,26 +68,16 @@ public final class FXUtils {
     }
 
     @FXThread
-    public static void setLoading(TreeItem<?> item) {
-        setLoading(item, ProgressIndicator.INDETERMINATE_PROGRESS);
-    }
-
-    @FXThread
-    public static ProgressIndicator setLoading(TreeItem<?> item, double process) {
-        var progressIndicator = new ProgressIndicator(process);
-        progressIndicator.setPrefSize(16, 16);
-        item.setGraphic(progressIndicator);
-        return progressIndicator;
+    public static void showExceptionDialog(String title, Throwable exception) {
+        var exceptionDialog = new ExceptionDialog(exception);
+        exceptionDialog.setTitle(title);
+        exceptionDialog.show();
     }
 
     @FXThread
     public static Hyperlink exceptionDialogLink(String message, Throwable exception) {
         Hyperlink hyperlink = new Hyperlink(message);
-        hyperlink.setOnAction(event -> {
-            ExceptionDialog exceptionDialog = new ExceptionDialog(exception);
-            exceptionDialog.setTitle(message);
-            exceptionDialog.show();
-        });
+        hyperlink.setOnAction(event -> showExceptionDialog(message, exception));
         return hyperlink;
     }
 

@@ -37,7 +37,6 @@ import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.*;
 import org.glavo.viewer.file.roots.sftp.SftpRootContainer;
 import org.glavo.viewer.resources.I18N;
-import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.Stylesheet;
@@ -216,7 +215,7 @@ public final class Viewer extends Control {
         SftpDialog.Result result = new SftpDialog().showAndWait().orElse(null);
         if (result != null) {
             TreeItem<String> node = new TreeItem<>(result.root().toString() + result.initPath());
-            FXUtils.setLoading(node);
+            FileTree.setLoading(node);
 
             getViewerSkin().getFileTreeView().getRoot().getChildren().add(node);
 

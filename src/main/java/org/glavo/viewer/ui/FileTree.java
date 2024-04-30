@@ -18,12 +18,15 @@
 package org.glavo.viewer.ui;
 
 import javafx.collections.ObservableList;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import kala.function.CheckedSupplier;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.*;
+import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
@@ -84,6 +87,19 @@ public final class FileTree extends TreeItem<String> {
     private static void setFailed(ImageView view, Throwable exception) {
         view.setImage(Images.failed);
         Tooltip.install(view, new Tooltip(StringUtils.getStackTrace(exception)));
+    }
+
+    @FXThread
+    public static void setLoading(TreeItem<?> item) {
+        setLoading(item, ProgressIndicator.INDETERMINATE_PROGRESS);
+    }
+
+    @FXThread
+    public static ProgressIndicator setLoading(TreeItem<?> item, double process) {
+        var progressIndicator = new ProgressIndicator(process);
+        progressIndicator.setPrefSize(16, 16);
+        item.setGraphic(progressIndicator);
+        return progressIndicator;
     }
 
     public TypedVirtualFile getFile() {
@@ -180,7 +196,7 @@ public final class FileTree extends TreeItem<String> {
         }
         isLoading = true;
 
-        FXUtils.setLoading(this);
+        setLoading(this);
 
         CompletableFuture.supplyAsync((CheckedSupplier<Runnable, IOException>)
                         () -> file.isDirectory() ? loadDirectory(this.getFile()) : loadContainer(), Schedulers.io())

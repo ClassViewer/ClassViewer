@@ -26,7 +26,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import kala.collection.immutable.primitive.ImmutableByteArray;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
 import org.jetbrains.annotations.NotNull;
