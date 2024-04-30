@@ -17,16 +17,13 @@ package org.glavo.viewer.ui;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
@@ -157,51 +154,52 @@ public final class ViewerSkin extends SkinBase<Viewer> {
             defaultPane.add(remoteLink, 1, 2);
         }
 
-        this.filesTabPane = new TabPane();
-        filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
-            if (newValue instanceof FileTab) {
-                viewer.setTitleMessage(((FileTab) newValue).getFile().toString());
-            } else {
-                viewer.setTitleMessage(null);
-            }
-        });
-        filesTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-        filesTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
-
-        this.fileTreeView = new FileTreeView(viewer);
-
-        this.sideBar = new TabPane();
+        this.mainPane = new SplitPane();
         {
-            sideBar.setSide(Side.LEFT);
-            sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-            sideBar.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
-            SplitPane.setResizableWithParent(sideBar, false);
-
-            this.treeTab = new Tab(I18N.getString("sideBar.fileList"));
-            treeTab.setGraphic(new ImageView(Images.folder));
-            treeTab.setContent(fileTreeView);
-
-            this.infoTab = new Tab(I18N.getString("sideBar.fileInfo"));
-            infoTab.setGraphic(new ImageView(Images.fileStructure));
-            StackPane emptyLabel = new StackPane(new Label(I18N.getString("sideBar.fileInfo.empty")));
-
-            infoTab.setContent(emptyLabel);
+            this.filesTabPane = new TabPane();
             filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
-                if (newValue instanceof FileTab fileTab) {
-                    infoTab.contentProperty().bind(Bindings.createObjectBinding(() -> {
-                        Node bar = ((FileTab) newValue).getSideBar();
-                        return bar == null ? emptyLabel : bar;
-                    }, fileTab.sideBarProperty()));
+                if (newValue instanceof FileTab) {
+                    viewer.setTitleMessage(((FileTab) newValue).getFile().toString());
                 } else {
-                    infoTab.contentProperty().unbind();
-                    infoTab.setContent(null);
+                    viewer.setTitleMessage(null);
                 }
             });
-            sideBar.getTabs().setAll(treeTab, infoTab);
-        }
+            filesTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+            filesTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
 
-        this.mainPane = new SplitPane(sideBar, filesTabPane);
-        {
+            this.sideBar = new TabPane();
+            {
+                sideBar.setSide(Side.LEFT);
+                sideBar.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+                sideBar.getStyleClass().add(TabPane.STYLE_CLASS_FLOATING);
+                SplitPane.setResizableWithParent(sideBar, false);
+
+                this.treeTab = new Tab(I18N.getString("sideBar.fileList"));
+                this.fileTreeView = new FileTreeView(viewer);
+                treeTab.setGraphic(new ImageView(Images.folder));
+                treeTab.setContent(fileTreeView);
+
+                this.infoTab = new Tab(I18N.getString("sideBar.fileInfo"));
+                infoTab.setGraphic(new ImageView(Images.fileStructure));
+                StackPane emptyLabel = new StackPane(new Label(I18N.getString("sideBar.fileInfo.empty")));
+
+                infoTab.setContent(emptyLabel);
+                filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
+                    if (newValue instanceof FileTab fileTab) {
+                        infoTab.contentProperty().bind(Bindings.createObjectBinding(() -> {
+                            Node bar = ((FileTab) newValue).getSideBar();
+                            return bar == null ? emptyLabel : bar;
+                        }, fileTab.sideBarProperty()));
+                    } else {
+                        infoTab.contentProperty().unbind();
+                        infoTab.setContent(null);
+                    }
+                });
+                sideBar.getTabs().setAll(treeTab, infoTab);
+            }
+
+            mainPane.getItems().setAll(sideBar, filesTabPane);
+
             double dp = Config.getConfig().getDividerPosition();
             if (dp <= 0 || dp >= 1) {
                 dp = DEFAULT_DIVIDER_POSITION;
