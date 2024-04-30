@@ -17,10 +17,11 @@ package org.glavo.viewer.file.containers.zip;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.glavo.chardet.DetectedCharset;
+import org.glavo.chardet.UniversalDetector;
 import org.glavo.viewer.file.ContainerFileType;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.resources.Images;
-import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,10 +85,10 @@ public final class ZipFileType extends ContainerFileType {
 
             if (detector != null) {
                 detector.dataEnd();
-                String detectedCharsetName = detector.getDetectedCharset();
+                DetectedCharset detectedCharsetName = detector.getDetectedCharset();
 
                 if (detectedCharsetName != null) {
-                    Charset detectedCharset = Charset.forName(detectedCharsetName, StandardCharsets.UTF_8);
+                    Charset detectedCharset = Charset.forName(detectedCharsetName.getName(), StandardCharsets.UTF_8);
                     if (detectedCharset != StandardCharsets.UTF_8 && detectedCharset != StandardCharsets.US_ASCII) {
                         zipFile = ZipFile.builder()
                                 .setSeekableByteChannel(channel)

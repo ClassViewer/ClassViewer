@@ -17,6 +17,7 @@ package org.glavo.viewer.file.types.java;
 
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.StackPane;
 import org.glavo.viewer.file.types.BinaryFileType;
 import org.glavo.viewer.file.types.java.classfile.ClassFile;
 import org.glavo.viewer.file.types.java.classfile.ClassFileComponent;
@@ -46,7 +47,7 @@ public final class JavaClassFileType extends BinaryFileType {
     @Override
     protected void parseContent(BinaryPane binaryPane) {
         binaryPane.setView(BinaryPane.View.INFO);
-        binaryPane.setFileInfoNode(new ProgressIndicator());
+        binaryPane.setFileInfoNode(new StackPane(new ProgressIndicator()));
         Schedulers.common().execute(() -> {
             ClassFileTreeView view = new ClassFileTreeView();
             ClassFile file;

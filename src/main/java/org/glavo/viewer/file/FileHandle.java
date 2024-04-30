@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.foreign.MemorySegment;
 import java.nio.channels.Channels;
 import java.nio.channels.SeekableByteChannel;
 
@@ -61,9 +62,9 @@ public abstract class FileHandle implements Runnable {
 
     public abstract InputStream getInputStream() throws IOException;
 
-    public byte[] readAllBytes() throws IOException {
+    public MemorySegment readAllBytes() throws IOException {
         try (InputStream in = getInputStream()) {
-            return in.readAllBytes();
+            return MemorySegment.ofArray(in.readAllBytes());
         }
     }
 

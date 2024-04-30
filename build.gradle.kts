@@ -77,8 +77,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.fxmisc.richtext/richtextfx
     implementation("org.fxmisc.richtext:richtextfx:0.11.2")
 
-    // https://mvnrepository.com/artifact/com.github.albfernandez/juniversalchardet
-    implementation("com.github.albfernandez:juniversalchardet:2.4.0")
+    // https://mvnrepository.com/artifact/org.glavo/chardet
+    implementation("org.glavo:chardet:2.4.0-beta1")
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-imaging
     implementation("org.apache.commons:commons-imaging:1.0.0-alpha4")

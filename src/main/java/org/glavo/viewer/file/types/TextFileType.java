@@ -28,6 +28,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.PlainTextChange;
 import org.fxmisc.richtext.model.StyleSpans;
+import org.glavo.chardet.UniversalDetector;
 import org.glavo.viewer.file.CustomFileType;
 import org.glavo.viewer.file.FileHandle;
 import org.glavo.viewer.file.VirtualFile;
@@ -38,9 +39,10 @@ import org.glavo.viewer.ui.FileTab;
 import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.FileUtils;
-import org.mozilla.universalchardet.UniversalDetector;
 import org.reactfx.EventStream;
 
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -76,16 +78,21 @@ public abstract class TextFileType extends CustomFileType {
         return highlighter;
     }
 
-    protected Charset detectFileEncoding(byte[] bytes) {
-        if (forceUTF8) {
+    protected Charset detectFileEncoding(MemorySegment bytes) {
+        if (forceUTF8 || bytes.byteSize() == 0) {
             return StandardCharsets.UTF_8;
         }
+
         UniversalDetector d = detector.get();
         d.reset();
-        d.handleData(bytes, 0, Integer.min(8192, bytes.length));
+        if (bytes.byteSize() > 8192) {
+            d.handleData(bytes.asSlice(0, 8192).asByteBuffer());
+        } else {
+            d.handleData(bytes.asByteBuffer());
+        }
         d.dataEnd();
 
-        Charset charset = Charset.forName(d.getDetectedCharset(), StandardCharsets.UTF_8);
+        Charset charset = Charset.forName(d.getDetectedCharset().getName(), StandardCharsets.UTF_8);
         return charset == StandardCharsets.US_ASCII ? StandardCharsets.UTF_8 : charset;
     }
 
@@ -145,7 +152,7 @@ public abstract class TextFileType extends CustomFileType {
         CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
             record Result(CodeArea area, Charset charset) {
             }
-            byte[] bytes;
+            MemorySegment bytes;
 
             file.getContainer().lock();
             FileHandle fileHandle = null;
@@ -169,7 +176,7 @@ public abstract class TextFileType extends CustomFileType {
             area.getStylesheets().clear();
             area.setParagraphGraphicFactory(LineNumberFactory.get(area));
             area.setEditable(false);
-            area.replaceText(new String(bytes, charset));
+            area.replaceText(new String(bytes.toArray(ValueLayout.JAVA_BYTE), charset)); // TODO
             applyHighlighter(tab, area);
             return new Result(area, charset);
         })).whenCompleteAsync((result, exception) -> {

@@ -60,7 +60,7 @@ public abstract class BinaryFileType extends CustomFileType {
             Container container = file.getContainer();
             container.lock();
             FileHandle fileHandle = null;
-            byte[] bytes;
+            MemorySegment bytes;
             try {
                 fileHandle = container.openFile(file);
                 tab.setFileHandle(fileHandle);
@@ -75,7 +75,7 @@ public abstract class BinaryFileType extends CustomFileType {
                 container.unlock();
             }
 
-            return MemorySegment.ofArray(bytes);
+            return bytes;
         }), Schedulers.io()).whenCompleteAsync((bytes, exception) -> {
             if (exception == null) {
                 BinaryPane binaryPane = new BinaryPane(tab, bytes);
