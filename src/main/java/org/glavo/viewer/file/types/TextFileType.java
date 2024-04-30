@@ -36,6 +36,7 @@ import org.glavo.viewer.highlighter.Highlighter;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.ui.FileTab;
+import org.glavo.viewer.util.MemoryUtils;
 import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.FileUtils;
@@ -176,7 +177,7 @@ public abstract class TextFileType extends CustomFileType {
             area.getStylesheets().clear();
             area.setParagraphGraphicFactory(LineNumberFactory.get(area));
             area.setEditable(false);
-            area.replaceText(new String(bytes.toArray(ValueLayout.JAVA_BYTE), charset)); // TODO
+            area.replaceText(MemoryUtils.newString(bytes, charset));
             applyHighlighter(tab, area);
             return new Result(area, charset);
         })).whenCompleteAsync((result, exception) -> {
