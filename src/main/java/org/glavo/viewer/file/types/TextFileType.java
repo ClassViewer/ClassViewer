@@ -190,7 +190,7 @@ public abstract class TextFileType extends CustomFileType {
                 FXUtils.runLater(() -> area.scrollToPixel(0, 0));
             } else {
                 LOGGER.warning("Failed to open file", exception);
-                tab.setContent(new StackPane(new Label(I18N.getString("failed.openFile"))));
+                tab.setContent(new StackPane(FXUtils.exceptionDialogLink(I18N.getString("failed.openFile"), exception)));
             }
         }, Schedulers.javafx());
 

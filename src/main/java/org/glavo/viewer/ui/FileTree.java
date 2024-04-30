@@ -18,13 +18,16 @@
 package org.glavo.viewer.ui;
 
 import javafx.collections.ObservableList;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import kala.function.CheckedSupplier;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.*;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
+import org.glavo.viewer.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -68,6 +71,19 @@ public final class FileTree extends TreeItem<String> {
         this.setGraphic(imageView);
         imageView.setImage(file.type().getImage());
         this.needLoad = file.isDirectory() || file.isContainer();
+    }
+
+    @FXThread
+    public static void setFailed(TreeItem<?> item, Throwable exception) {
+        ImageView view = new ImageView();
+        item.setGraphic(view);
+        setFailed(view, exception);
+    }
+
+    @FXThread
+    private static void setFailed(ImageView view, Throwable exception) {
+        view.setImage(Images.failed);
+        Tooltip.install(view, new Tooltip(StringUtils.getStackTrace(exception)));
     }
 
     public TypedVirtualFile getFile() {
@@ -177,7 +193,7 @@ public final class FileTree extends TreeItem<String> {
                     } else {
                         LOGGER.warning("Failed to load file: " + file, exception);
 
-                        FXUtils.setFailed(imageView, exception);
+                        setFailed(imageView, exception);
                         setGraphic(imageView);
                     }
                 }, Schedulers.javafx());

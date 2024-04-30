@@ -25,7 +25,7 @@ import javafx.scene.layout.GridPane;
 import org.controlsfx.control.textfield.CustomTextField;
 import org.glavo.viewer.file.roots.sftp.SftpRoot;
 import org.glavo.viewer.resources.I18N;
-import org.glavo.viewer.util.Stylesheet;
+import org.glavo.viewer.util.FXUtils;
 
 public final class SftpDialog extends Dialog<SftpDialog.Result> {
 
@@ -34,7 +34,9 @@ public final class SftpDialog extends Dialog<SftpDialog.Result> {
 
     public SftpDialog() {
         DialogPane dialogPane = getDialogPane();
-        Stylesheet.setStylesheet(dialogPane.getStylesheets());
+        FXUtils.init(dialogPane);
+
+        setTitle(I18N.getString("sftp.title"));
 
         GridPane grid = new GridPane();
         grid.setVgap(8);

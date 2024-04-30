@@ -18,13 +18,22 @@ package org.glavo.viewer.util;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import kala.function.CheckedRunnable;
-import org.controlsfx.dialog.ExceptionDialog;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.ui.ExceptionDialog;
 
 public final class FXUtils {
+
+    public static void setIcons(Stage stage) {
+        stage.getIcons().setAll(Images.logo32, Images.logo16);
+    }
+
+    public static void init(DialogPane dialogPane) {
+        setIcons(((Stage) dialogPane.getScene().getWindow()));
+        Stylesheet.setStylesheet(dialogPane.getStylesheets());
+    }
 
     public static void runLater(CheckedRunnable<?> action) {
         Platform.runLater(action);
@@ -72,25 +81,11 @@ public final class FXUtils {
     }
 
     @FXThread
-    public static void setFailed(TreeItem<?> item, Throwable exception) {
-        ImageView view = new ImageView();
-        item.setGraphic(view);
-        setFailed(view, exception);
-    }
-
-    @FXThread
-    public static void setFailed(ImageView view, Throwable exception) {
-        view.setImage(Images.failed);
-        Tooltip.install(view, new Tooltip(StringUtils.getStackTrace(exception)));
-    }
-
-    @FXThread
     public static Hyperlink exceptionDialogLink(String message, Throwable exception) {
         Hyperlink hyperlink = new Hyperlink(message);
-
         hyperlink.setOnAction(event -> {
             ExceptionDialog exceptionDialog = new ExceptionDialog(exception);
-            Stylesheet.setStylesheet(exceptionDialog.getDialogPane().getStylesheets());
+            exceptionDialog.setTitle(message);
             exceptionDialog.show();
         });
         return hyperlink;

@@ -100,7 +100,7 @@ public final class Viewer extends Control {
         });
 
         stage.setScene(scene);
-        stage.getIcons().setAll(Images.logo32, Images.logo16);
+        FXUtils.setIcons(stage);
         stage.titleProperty().bind(Bindings.createStringBinding(() -> {
             String message = titleMessage.get();
             return message == null ? "ClassViewer" : "ClassViewer - " + message;
@@ -245,7 +245,7 @@ public final class Viewer extends Control {
                     }
                 } else {
                     LOGGER.warning("Failed to connect sftp server", exception);
-                    FXUtils.setFailed(node, exception);
+                    FileTree.setFailed(node, exception);
                 }
             }, Schedulers.javafx());
         }
