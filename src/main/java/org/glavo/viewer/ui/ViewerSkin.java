@@ -17,16 +17,16 @@ package org.glavo.viewer.ui;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
@@ -37,7 +37,16 @@ public final class ViewerSkin extends SkinBase<Viewer> {
 
     private final BorderPane root;
 
+    //
+    // Top
+    //
     private final MenuBar menuBar;
+
+    //
+    // Center
+    //
+
+    private final GridPane defaultPane;
 
     private final SplitPane mainPane;
     private final TabPane filesTabPane;
@@ -48,14 +57,21 @@ public final class ViewerSkin extends SkinBase<Viewer> {
 
     private final FileTreeView fileTreeView;
 
-    private final BorderPane statusBar;
+    //
+    // Bottom
+    //
 
+    private final BorderPane statusBar;
     private final HBox statusButtons;
 
     public ViewerSkin(Viewer viewer) {
         super(viewer);
         this.root = new BorderPane();
         this.getChildren().add(root);
+
+        //
+        // Top
+        //
 
         this.menuBar = new MenuBar();
         {
@@ -105,6 +121,40 @@ public final class ViewerSkin extends SkinBase<Viewer> {
             }
 
             menuBar.getMenus().setAll(fileMenu, editMenu, windowMenu, helpMenu);
+        }
+
+        root.setTop(menuBar);
+
+        //
+        // Center
+        //
+
+        this.defaultPane = new GridPane();
+        {
+            defaultPane.setAlignment(Pos.CENTER);
+            defaultPane.setHgap(8);
+
+            var openFileText = new Label(I18N.getString("defaultText.openFile"));
+            openFileText.setTextFill(Color.GRAY);
+            Hyperlink openFileLink = new Hyperlink("Ctrl+O");
+            openFileLink.setOnAction(event -> getViewer().openFile());
+
+            var openFolderText = new Label(I18N.getString("defaultText.openFolder"));
+            openFolderText.setTextFill(Color.GRAY);
+            Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O");
+            openFolderLink.setOnAction(event -> getViewer().openFolder());
+
+            var remoteText = new Label(I18N.getString("defaultText.remote"));
+            remoteText.setTextFill(Color.GRAY);
+            Hyperlink remoteLink = new Hyperlink(I18N.getString("defaultText.remote.connect"));
+            remoteLink.setOnAction(event -> getViewer().connect());
+
+            defaultPane.add(openFileText, 0, 0);
+            defaultPane.add(openFileLink, 1, 0);
+            defaultPane.add(openFolderText, 0, 1);
+            defaultPane.add(openFolderLink, 1, 1);
+            defaultPane.add(remoteText, 0, 2);
+            defaultPane.add(remoteLink, 1, 2);
         }
 
         this.filesTabPane = new TabPane();
@@ -165,6 +215,12 @@ public final class ViewerSkin extends SkinBase<Viewer> {
             }
         }
 
+        root.setCenter(defaultPane);
+
+        //
+        // Bottom
+        //
+
         this.statusBar = new BorderPane();
         {
             statusBar.setPrefHeight(24);
@@ -178,38 +234,11 @@ public final class ViewerSkin extends SkinBase<Viewer> {
             statusBar.setRight(statusButtons);
         }
 
-        FlowPane defaultPane = new FlowPane();{
-            defaultPane.setAlignment(Pos.CENTER);
-
-            Text openFileText = new Text(I18N.getString("defaultText.openFile"));
-            openFileText.setFill(Color.GRAY);
-            Hyperlink openFileLink = new Hyperlink("Ctrl+O");
-            openFileLink.setOnAction(event -> getViewer().openFile());
-
-            Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
-            openFolderText.setFill(Color.GRAY);
-            Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O");
-            openFolderLink.setOnAction(event -> getViewer().openFolder());
-
-
-            Text remoteText = new Text(I18N.getString("defaultText.remote"));
-            remoteText.setFill(Color.GRAY);
-            Hyperlink remoteLink = new Hyperlink(I18N.getString("defaultText.remote.connect"));
-            remoteLink.setOnAction(event -> getViewer().connect());
-
-            TextFlow text = new TextFlow(
-                    openFileText, new Text(" "), openFileLink, new Text("\n"),
-                    openFolderText, new Text(" "), openFolderLink, new Text("\n"),
-                    remoteText, new Text(" "), remoteLink
-            );
-            text.setTextAlignment(TextAlignment.LEFT);
-
-            defaultPane.getChildren().add(text);
-        }
-
-        root.setTop(menuBar);
-        root.setCenter(defaultPane);
         root.setBottom(statusBar);
+
+        //
+        // ---
+        ///
 
         InvalidationListener listener = observable -> {
             if (filesTabPane.getTabs().isEmpty() && fileTreeView.getRoot().getChildren().isEmpty()) {
