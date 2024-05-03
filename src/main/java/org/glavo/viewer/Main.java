@@ -67,8 +67,7 @@ public final class Main extends Application {
         Stylesheet.init();
 
         Viewer viewer = new Viewer(stage, true);
-
-        viewer.show();
+        stage.show();
     }
 
     @Override

@@ -157,10 +157,6 @@ public final class Viewer extends Control {
         this.statusText.set(statusText);
     }
 
-    public void show() {
-        getStage().show();
-    }
-
     @FXThread
     public File showFileChooser() {
         if (fileChooser == null) {
