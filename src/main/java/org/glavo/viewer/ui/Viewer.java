@@ -15,7 +15,6 @@
  */
 package org.glavo.viewer.ui;
 
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -41,6 +40,7 @@ import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
+import org.reactfx.value.Val;
 
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
@@ -101,10 +101,8 @@ public final class Viewer extends Control {
 
         stage.setScene(scene);
         FXUtils.setIcons(stage);
-        stage.titleProperty().bind(Bindings.createStringBinding(() -> {
-            String message = titleMessage.get();
-            return message == null ? "ClassViewer" : "ClassViewer - " + message;
-        }, titleMessage));
+
+        stage.titleProperty().bind(Val.map(titleMessage, title -> title == null ? "ClassViewer" : "ClassViewer - " + title));
         stage.show();
 
         stage.setOnCloseRequest(e -> {
