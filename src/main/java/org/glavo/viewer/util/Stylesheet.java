@@ -57,7 +57,7 @@ public final class Stylesheet {
         }
 
         if (textFontFamily == null) {
-            try (InputStream inputStream = Resources.class.getResourceAsStream("fonts/JetBrainsMono-Regular.ttf")) {
+            try (InputStream inputStream = Resources.getResourceAsStream("fonts/JetBrainsMono-Regular.ttf")) {
                 Font font = Font.loadFont(inputStream, 0);
                 if (font != null) {
                     textFontFamily = font.getFamily();
@@ -91,7 +91,7 @@ public final class Stylesheet {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         //noinspection ConstantConditions
-        try (Reader input = new InputStreamReader(Resources.class.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8)) {
+        try (Reader input = new InputStreamReader(Resources.getResourceAsStream(STYLE_TEMPLATE), StandardCharsets.UTF_8)) {
             try (OutputStreamWriter writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
                 TemplateEngine.getDefault().process(input, writer, table);
             }

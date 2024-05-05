@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 public final class MarkdownFileType extends TextFileType {
     public static final MarkdownFileType TYPE = new MarkdownFileType();
 
-    private static final String stylesheet = Resources.class.getResource("stylesheet/markdown.css").toExternalForm();
+    private static final String stylesheet = Resources.getResource("stylesheet/markdown.css").toExternalForm();
 
     private final Parser parser = Parser.builder().build();
 

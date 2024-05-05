@@ -43,7 +43,6 @@ import org.glavo.viewer.util.FileUtils;
 import org.reactfx.EventStream;
 
 import java.lang.foreign.MemorySegment;
-import java.lang.foreign.ValueLayout;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -58,7 +57,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
 public abstract class TextFileType extends CustomFileType {
-    public static String codeStylesheet = Resources.class.getResource("stylesheet/code.css").toExternalForm();
+    public static String codeStylesheet = Resources.getResource("stylesheet/code.css").toExternalForm();
 
     private static final AtomicInteger count = new AtomicInteger();
 
