@@ -46,7 +46,7 @@ public final class BinaryPane {
 
     // HexPane
     private StackPane hexPane;
-    private ClassicHexPane hexPaneImpl;
+    private HexPane hexPaneImpl;
 
     public BinaryPane(FileTab tab, MemorySegment data) {
         this.tab = tab;
@@ -96,11 +96,11 @@ public final class BinaryPane {
                 MemorySegment bytes = data.get();
                 hexPane.getChildren().setAll(new ProgressIndicator());
                 Schedulers.common().execute(() -> {
-                    ClassicHexPane classicHexPane = new ClassicHexPane(bytes);
+                    var hexPane = new ClassicHexPane(bytes);
                     FXUtils.runLater(() -> {
                         if (data.get() == bytes) {
-                            hexPaneImpl = classicHexPane;
-                            hexPane.getChildren().setAll(classicHexPane);
+                            hexPaneImpl = hexPane;
+                            this.hexPane.getChildren().setAll(hexPane);
                         }
                     });
                 });

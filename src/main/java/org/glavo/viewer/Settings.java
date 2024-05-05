@@ -141,6 +141,4 @@ public final class Settings {
     };
 
     public static final Key<FontInfo, TomlTable> UI_FONT = Key.ofTable(Category.UI, "font", FONT_CONVERTER);
-
-
 }
