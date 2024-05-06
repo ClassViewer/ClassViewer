@@ -52,8 +52,7 @@ public final class Viewer extends Control {
     private final Stage stage;
     private final boolean isPrimary;
 
-    private final StringProperty titleMessage = new SimpleStringProperty();
-    private final StringProperty statusText = new SimpleStringProperty();
+    private final StringProperty titleMessage = new SimpleStringProperty("");
 
     private static FileChooser fileChooser;
     private static DirectoryChooser directoryChooser;
@@ -102,7 +101,7 @@ public final class Viewer extends Control {
         stage.setScene(scene);
         FXUtils.setIcons(stage);
 
-        stage.titleProperty().bind(Val.map(titleMessage, title -> title == null ? "ClassViewer" : "ClassViewer - " + title));
+        stage.titleProperty().bind(titleMessage.map(title -> title.isEmpty() ? "ClassViewer" : "ClassViewer - " + title));
         stage.show();
 
         stage.setOnCloseRequest(e -> {
@@ -141,18 +140,6 @@ public final class Viewer extends Control {
 
     public void setTitleMessage(String titleMessage) {
         this.titleMessage.set(titleMessage);
-    }
-
-    public StringProperty statusTextProperty() {
-        return statusText;
-    }
-
-    public String getStatusText() {
-        return statusText.get();
-    }
-
-    public void setStatusText(String statusText) {
-        this.statusText.set(statusText);
     }
 
     @FXThread

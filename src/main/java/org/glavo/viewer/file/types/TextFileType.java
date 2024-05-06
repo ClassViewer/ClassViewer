@@ -16,11 +16,9 @@
 package org.glavo.viewer.file.types;
 
 import javafx.concurrent.Task;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import kala.function.CheckedSupplier;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -145,10 +143,6 @@ public abstract class TextFileType extends CustomFileType {
 
         tab.setContent(new StackPane(new ProgressIndicator()));
 
-        HBox statusBar = new HBox();
-        statusBar.setAlignment(Pos.CENTER_RIGHT);
-        tab.setStatusBar(statusBar);
-
         CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
             record Result(CodeArea area, Charset charset) {
             }
@@ -183,7 +177,7 @@ public abstract class TextFileType extends CustomFileType {
             if (exception == null) {
                 CodeArea area = result.area();
                 tab.setContent(new VirtualizedScrollPane<>(area));
-                statusBar.getChildren().add(new Label(result.charset().toString()));
+                tab.getStatusBarItems().add(new Label(result.charset().toString()));
 
                 // https://github.com/FXMisc/RichTextFX/issues/1110
                 FXUtils.runLater(() -> area.scrollToPixel(0, 0));

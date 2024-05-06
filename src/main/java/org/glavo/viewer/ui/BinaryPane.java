@@ -21,7 +21,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
@@ -40,7 +39,6 @@ public final class BinaryPane {
     private final ObjectProperty<@NotNull View> view = new SimpleObjectProperty<>();
     private final ObjectProperty<Node> fileInfoNode = new SimpleObjectProperty<>();
 
-    private final BorderPane statusBar;
     private final Label statusLabel;
     private final Pane byteBar;
 
@@ -52,15 +50,12 @@ public final class BinaryPane {
         this.tab = tab;
         this.data.set(data);
 
-        this.statusBar = new BorderPane();
         this.statusLabel = new Label(" ");
         this.byteBar = new Pane();
         this.byteBar.setMaxHeight(statusLabel.getMaxHeight());
         this.byteBar.setPrefWidth(200);
-        this.statusBar.setLeft(statusLabel);
-        this.statusBar.setRight(byteBar);
 
-        tab.setStatusBar(statusBar);
+        tab.getStatusBarItems().add(byteBar);
 
         view.addListener((o, oldValue, newValue) -> {
             tab.sideBarProperty().unbind();
@@ -87,7 +82,6 @@ public final class BinaryPane {
         });
     }
 
-
     private Node getHexPane() {
         if (hexPane == null) {
             hexPane = new StackPane();
@@ -113,6 +107,10 @@ public final class BinaryPane {
         return hexPane;
     }
 
+    public FileTab getTab() {
+        return tab;
+    }
+
     public void select(long offset, long length) {
         final long byteCount = data.get().byteSize();
         final double w = byteBar.getWidth() - 4;
@@ -125,10 +123,6 @@ public final class BinaryPane {
         if (hexPaneImpl != null) {
             hexPaneImpl.select((int) offset, (int) length);
         }
-    }
-
-    public void setStatus(String text) {
-        statusLabel.setText(text);
     }
 
     public ObjectProperty<MemorySegment> dataProperty() {

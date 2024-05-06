@@ -17,6 +17,9 @@ package org.glavo.viewer.ui;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -36,7 +39,8 @@ public final class FileTab extends Tab {
     private final VirtualFile file;
 
     private final ObjectProperty<Node> sideBar = new SimpleObjectProperty<>();
-    private final ObjectProperty<Node> statusBar = new SimpleObjectProperty<>();
+    private final StringProperty statusText = new SimpleStringProperty();
+    private final ObservableList<Node> statusBarItems = FXCollections.observableArrayList();
 
     private volatile FileHandle fileHandle;
 
@@ -99,16 +103,20 @@ public final class FileTab extends Tab {
         this.sideBar.set(sideBar);
     }
 
-    public ObjectProperty<Node> statusBarProperty() {
-        return statusBar;
+    public String getStatusText() {
+        return statusText.get();
     }
 
-    public Node getStatusBar() {
-        return statusBar.get();
+    public void setStatusText(String text) {
+        statusText.set(text);
     }
 
-    public void setStatusBar(Node statusBar) {
-        this.statusBar.set(statusBar);
+    public StringProperty statusTextProperty() {
+        return statusText;
+    }
+
+    public ObservableList<Node> getStatusBarItems() {
+        return statusBarItems;
     }
 
     public final class TabMenu extends ContextMenu {

@@ -63,7 +63,7 @@ public final class JavaClassFileType extends BinaryFileType {
             view.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null && newValue.getParent() != null) {
                     ClassFileComponent cc = newValue.getValue();
-                    binaryPane.setStatus(cc.toString());
+                    binaryPane.getTab().setStatusText(cc.toString());
                     if (cc.getLength() > 0) {
                         binaryPane.select(cc.getOffset(), cc.getLength());
                     }

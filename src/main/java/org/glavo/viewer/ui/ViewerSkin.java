@@ -17,6 +17,7 @@ package org.glavo.viewer.ui;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -59,6 +60,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
     //
 
     private final BorderPane statusBar;
+    private final Label statusTextLabel;
     private final HBox statusButtons;
 
     public ViewerSkin(Viewer viewer) {
@@ -123,6 +125,26 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         root.setTop(menuBar);
 
         //
+        // Bottom
+        //
+
+        this.statusBar = new BorderPane();
+        {
+            statusBar.setPrefHeight(24);
+
+            this.statusTextLabel = new Label();
+            statusTextLabel.setPadding(new Insets(0, 0, 0, 4));
+
+            this.statusButtons = new HBox(4);
+            statusButtons.setAlignment(Pos.CENTER_RIGHT);
+
+            statusBar.setLeft(statusTextLabel);
+            statusBar.setRight(statusButtons);
+        }
+
+        root.setBottom(statusBar);
+
+        //
         // Center
         //
 
@@ -157,13 +179,6 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         this.mainPane = new SplitPane();
         {
             this.filesTabPane = new TabPane();
-            filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
-                if (newValue instanceof FileTab) {
-                    viewer.setTitleMessage(((FileTab) newValue).getFile().toString());
-                } else {
-                    viewer.setTitleMessage(null);
-                }
-            });
             filesTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
             filesTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
 
@@ -184,18 +199,25 @@ public final class ViewerSkin extends SkinBase<Viewer> {
                 StackPane emptyLabel = new StackPane(new Label(I18N.getString("sideBar.fileInfo.empty")));
 
                 infoTab.setContent(emptyLabel);
+
+                sideBar.getTabs().setAll(treeTab, infoTab);
+
                 filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
                     if (newValue instanceof FileTab fileTab) {
+                        viewer.setTitleMessage(fileTab.getFile().toString());
+                        statusTextLabel.textProperty().bind(fileTab.statusTextProperty());
                         infoTab.contentProperty().bind(Bindings.createObjectBinding(() -> {
                             Node bar = ((FileTab) newValue).getSideBar();
                             return bar == null ? emptyLabel : bar;
                         }, fileTab.sideBarProperty()));
                     } else {
+                        viewer.setTitleMessage("");
+                        statusTextLabel.textProperty().unbind();
+                        statusTextLabel.setText("");
                         infoTab.contentProperty().unbind();
                         infoTab.setContent(null);
                     }
                 });
-                sideBar.getTabs().setAll(treeTab, infoTab);
             }
 
             mainPane.getItems().setAll(sideBar, filesTabPane);
@@ -216,25 +238,6 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         root.setCenter(defaultPane);
 
         //
-        // Bottom
-        //
-
-        this.statusBar = new BorderPane();
-        {
-            statusBar.setPrefHeight(24);
-
-            Label statusText = new Label();
-            statusText.textProperty().bind(viewer.statusTextProperty());
-
-            this.statusButtons = new HBox(4);
-
-            statusBar.setLeft(statusText);
-            statusBar.setRight(statusButtons);
-        }
-
-        root.setBottom(statusBar);
-
-        //
         // ---
         ///
 
@@ -242,6 +245,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
             if (filesTabPane.getTabs().isEmpty() && fileTreeView.getRoot().getChildren().isEmpty()) {
                 root.setCenter(defaultPane);
                 root.setBottom(null);
+                viewer.setTitleMessage("");
             } else {
                 root.setCenter(mainPane);
                 root.setBottom(statusBar);
