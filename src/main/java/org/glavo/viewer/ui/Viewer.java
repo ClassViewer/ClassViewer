@@ -40,7 +40,6 @@ import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
-import org.reactfx.value.Val;
 
 import java.io.File;
 import java.util.concurrent.CompletableFuture;

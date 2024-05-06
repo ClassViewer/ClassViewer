@@ -137,6 +137,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
 
             this.statusButtons = new HBox(4);
             statusButtons.setAlignment(Pos.CENTER_RIGHT);
+            statusButtons.setPadding(new Insets(0, 4, 0, 0));
 
             statusBar.setLeft(statusTextLabel);
             statusBar.setRight(statusButtons);
@@ -210,12 +211,20 @@ public final class ViewerSkin extends SkinBase<Viewer> {
                             Node bar = ((FileTab) newValue).getSideBar();
                             return bar == null ? emptyLabel : bar;
                         }, fileTab.sideBarProperty()));
+
+                        Bindings.bindContent(statusButtons.getChildren(), fileTab.getStatusBarItems());
+                        statusButtons.getProperties().put("ITEMS", fileTab.getStatusBarItems());
                     } else {
                         viewer.setTitleMessage("");
                         statusTextLabel.textProperty().unbind();
                         statusTextLabel.setText("");
                         infoTab.contentProperty().unbind();
                         infoTab.setContent(null);
+
+                        Object items = statusButtons.getProperties().get("ITEMS");
+                        if (items != null) {
+                            Bindings.unbindContent(statusButtons.getChildren(), items);
+                        }
                     }
                 });
             }
