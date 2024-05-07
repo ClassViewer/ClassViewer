@@ -61,6 +61,7 @@ public final class FileTab extends Tab {
                 }
             } finally {
                 file.getContainer().unlock();
+                FXUtils.runLater(() -> Viewer.openedFiles.remove(file));
             }
         }));
     }

@@ -21,9 +21,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Control;
-import javafx.scene.control.Skin;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
@@ -42,6 +40,8 @@ import org.glavo.viewer.util.Stylesheet;
 import org.glavo.viewer.util.WindowDimension;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -57,6 +57,8 @@ public final class Viewer extends Control {
     private static DirectoryChooser directoryChooser;
 
     private final ObjectProperty<Node> fileSideBar = new SimpleObjectProperty<>();
+
+    static final Map<VirtualFile, Object /* Tab | TreeItem<String> */> openedFiles = new HashMap<>();
 
     public Viewer(Stage stage, boolean isPrimary) {
         this.stage = stage;
@@ -185,18 +187,34 @@ public final class Viewer extends Control {
             LOGGER.info("Open file " + file);
         }
 
+        Object old = openedFiles.get(file.file());
+        if (old != null) {
+            if (old instanceof Tab tab) {
+                TabPane tabPane = tab.getTabPane();
+                if (tabPane != null) {
+                    tabPane.getSelectionModel().select(tab);
+                }
+            } else {
+                @SuppressWarnings("unchecked") var item = (TreeItem<String>) old;
+                getViewerSkin().getFileTreeView().getSelectionModel().select(item);
+            }
+
+            return;
+        }
+
         try {
             if (file.type() instanceof CustomFileType customFileType) {
                 FileTab fileTab = customFileType.openTab(file.file());
                 getViewerSkin().addFileTab(fileTab);
+                openedFiles.put(file.file(), fileTab);
             } else if (file.type() instanceof DirectoryFileType || file.type() instanceof ContainerFileType) {
                 FileTree root = new FileTree(file, true);
                 root.setExpanded(true);
                 getViewerSkin().getFileTreeView().getRoot().getChildren().add(root);
+                openedFiles.put(file.file(), root);
             } else {
                 throw new AssertionError("Unsupported file type " + file.type());
             }
-
             // TODO: Config.getConfig().addRecentFile(file);
         } catch (Throwable e) {
             LOGGER.warning("Failed to open file " + file, e);
