@@ -19,12 +19,8 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import org.glavo.viewer.util.FXUtils;
 import org.glavo.viewer.util.Schedulers;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +35,6 @@ public final class BinaryPane {
     private final ObjectProperty<@NotNull View> view = new SimpleObjectProperty<>();
     private final ObjectProperty<Node> fileInfoNode = new SimpleObjectProperty<>();
 
-    private final Label statusLabel;
-    private final Pane byteBar;
-
     // HexPane
     private StackPane hexPane;
     private HexPane hexPaneImpl;
@@ -49,13 +42,6 @@ public final class BinaryPane {
     public BinaryPane(FileTab tab, MemorySegment data) {
         this.tab = tab;
         this.data.set(data);
-
-        this.statusLabel = new Label(" ");
-        this.byteBar = new Pane();
-        this.byteBar.setMaxHeight(statusLabel.getMaxHeight());
-        this.byteBar.setPrefWidth(200);
-
-        tab.getStatusBarItems().add(byteBar);
 
         view.addListener((o, oldValue, newValue) -> {
             tab.sideBarProperty().unbind();
@@ -112,14 +98,6 @@ public final class BinaryPane {
     }
 
     public void select(long offset, long length) {
-        final long byteCount = data.get().byteSize();
-        final double w = byteBar.getWidth() - 4;
-        final double h = byteBar.getHeight();
-
-        byteBar.getChildren().setAll(
-                new Line(0, h / 2, w, h / 2),
-                new Rectangle(w * offset / byteCount, 4, w * length / byteCount, h - 8));
-
         if (hexPaneImpl != null) {
             hexPaneImpl.select((int) offset, (int) length);
         }

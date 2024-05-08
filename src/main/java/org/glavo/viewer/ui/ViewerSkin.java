@@ -203,6 +203,8 @@ public final class ViewerSkin extends SkinBase<Viewer> {
 
                 sideBar.getTabs().setAll(treeTab, infoTab);
 
+                var itemsKey = new Object();
+
                 filesTabPane.getSelectionModel().selectedItemProperty().addListener((o, oldValue, newValue) -> {
                     if (newValue instanceof FileTab fileTab) {
                         viewer.setTitleMessage(fileTab.getFile().toString());
@@ -213,7 +215,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
                         }, fileTab.sideBarProperty()));
 
                         Bindings.bindContent(statusButtons.getChildren(), fileTab.getStatusBarItems());
-                        statusButtons.getProperties().put("ITEMS", fileTab.getStatusBarItems());
+                        statusButtons.getProperties().put(itemsKey, fileTab.getStatusBarItems());
                     } else {
                         viewer.setTitleMessage("");
                         statusTextLabel.textProperty().unbind();
@@ -221,7 +223,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
                         infoTab.contentProperty().unbind();
                         infoTab.setContent(null);
 
-                        Object items = statusButtons.getProperties().get("ITEMS");
+                        Object items = statusButtons.getProperties().get(itemsKey);
                         if (items != null) {
                             Bindings.unbindContent(statusButtons.getChildren(), items);
                         }
