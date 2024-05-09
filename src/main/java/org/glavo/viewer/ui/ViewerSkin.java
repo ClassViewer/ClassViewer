@@ -36,11 +36,6 @@ public final class ViewerSkin extends SkinBase<Viewer> {
     private final BorderPane root;
 
     //
-    // Top
-    //
-    private final MenuBar menuBar;
-
-    //
     // Center
     //
 
@@ -71,8 +66,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         //
         // Top
         //
-
-        this.menuBar = new MenuBar();
+        MenuBar menuBar = new MenuBar();
         {
             Menu fileMenu = new Menu(I18N.getString("menu.file"));
             {
