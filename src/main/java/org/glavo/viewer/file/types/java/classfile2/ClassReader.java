@@ -27,6 +27,8 @@ public final class ClassReader implements Closeable {
         this.input = input;
     }
 
+
+
     @Override
     public void close() throws IOException {
         if (input instanceof Closeable closeable) {

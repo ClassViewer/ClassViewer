@@ -17,15 +17,32 @@ package org.glavo.viewer.file.types.java.classfile2;
 
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.HBox;
 
 public abstract class ClassFileComponent extends TreeItem<String> {
+    protected long offset;
+    protected long length;
+
     protected Node icon;
     protected String name;
     protected Node desc;
 
-    protected void updateGraphic(ClassFileTreeView.Cell cell) {
-        cell.setGraphic(icon);
-        cell.setText("TODO");
+    public long getOffset() {
+        return offset;
+    }
+
+    public void setOffset(long offset) {
+        this.offset = offset;
+    }
+
+    public long getLength() {
+        return length;
+    }
+
+    public void setLength(long length) {
+        this.length = length;
+    }
+
+    protected void updateGraphic() {
+        // TODO
     }
 }

@@ -15,30 +15,15 @@
  */
 package org.glavo.viewer.file.types.java.classfile2;
 
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 
 public class ClassFileTreeView extends TreeView<ClassFileComponent> {
 
     public ClassFileTreeView() {
-        this.setCellFactory(view -> new Cell());
         this.getStyleClass().add("monospaced-font");
     }
 
     public ClassFile getClassFile() {
         return (ClassFile) getRoot().getValue();
-    }
-
-    public static final class Cell extends TreeCell<ClassFileComponent> {
-        @Override
-        protected void updateItem(ClassFileComponent item, boolean empty) {
-            super.updateItem(item, empty);
-            setText(null);
-            if (empty || item == null) {
-                setGraphic(null);
-            } else {
-                item.updateGraphic(this);
-            }
-        }
     }
 }
