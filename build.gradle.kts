@@ -69,7 +69,7 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.26.1")
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.11.0")
 
     // https://mvnrepository.com/artifact/org.hildan.fxgson/fx-gson
     implementation("org.hildan.fxgson:fx-gson:5.0.0")
