@@ -43,14 +43,6 @@ ClassViewer is free and open source software, if you want to support its develop
 
 * Donate via 爱发电: [Glavo - 爱发电](https://afdian.net/@Glavo)
 
-* Donate via Alipay:
-
-    ![Alipay](https://s2.ax1x.com/2020/02/04/1B9yFK.png)
-
-* Donate via Wechat:
-
-    ![Wechat](https://s2.ax1x.com/2020/02/04/1B9ro6.png)
-
 ## Especially thanks
 
 Thanks to [PLCT Lab](https://plctlab.github.io/) for supporting me.
