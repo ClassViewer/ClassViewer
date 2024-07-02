@@ -66,7 +66,7 @@ dependencies {
     implementation("com.google.guava:guava:33.1.0-jre")
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
-    implementation("org.apache.commons:commons-compress:1.26.1")
+    implementation("org.apache.commons:commons-compress:1.26.2")
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.11.0")
