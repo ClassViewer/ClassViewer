@@ -81,7 +81,7 @@ dependencies {
     implementation("org.glavo:chardet:2.4.0-beta1")
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-imaging
-    implementation("org.apache.commons:commons-imaging:1.0.0-alpha4")
+    implementation("org.apache.commons:commons-imaging:1.0.0-alpha5")
 
     // https://mvnrepository.com/artifact/org.apache.sshd/sshd-sftp
     implementation("org.apache.sshd:sshd-sftp:2.12.1")
