@@ -113,13 +113,7 @@ sourceSets {
 }
 
 tasks.compileJava {
-    // We use the FFM API but do not want to add the --enable-preview option, so we need to compile with JDK 22
-    javaCompiler.set(javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(22)
-    })
-
-    sourceCompatibility = "21"
-    targetCompatibility = "21"
+    options.release.set(22)
     options.encoding = "UTF-8"
 }
 
