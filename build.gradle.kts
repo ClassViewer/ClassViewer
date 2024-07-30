@@ -58,7 +58,7 @@ dependencies {
 
     implementation("org.glavo.kala:kala-platform:0.10.0")
     implementation("org.glavo.kala:kala-template:0.2.0")
-    implementation("org.glavo.kala:kala-common:0.70.0")
+    implementation("org.glavo.kala:kala-common:0.74.0")
 
     implementation("org.glavo:jimage:1.0.0")
 
