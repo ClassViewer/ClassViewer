@@ -37,10 +37,9 @@ public final class SftpFileHandle extends FileHandle {
         handle.close();
     }
 
-
     @Override
     public InputStream getInputStream() throws IOException {
-        SftpVirtualFile file = (SftpVirtualFile) this.file;
+        SftpFile file = (SftpFile) this.file;
         var container = ((SftpRootContainer) file.getContainer());
 
         container.lock();

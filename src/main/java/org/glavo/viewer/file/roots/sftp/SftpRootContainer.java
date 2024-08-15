@@ -72,13 +72,13 @@ public final class SftpRootContainer extends RootContainer {
     }
 
     @Override
-    public SftpVirtualFile getRootDirectory() {
-        return new SftpVirtualFile(this, null, "/", List.of(), true);
+    public SftpFile getRootDirectory() {
+        return new SftpFile(this, null, "/", List.of(), true);
     }
 
     @Override
     protected FileHandle openFileImpl(VirtualFile file) throws IOException {
-        if (!(file instanceof SftpVirtualFile sftpVirtualFile)) {
+        if (!(file instanceof SftpFile sftpFile)) {
             throw new IllegalArgumentException();
         }
 
@@ -86,6 +86,6 @@ public final class SftpRootContainer extends RootContainer {
             throw new IOException("File " + file + "is a directory");
         }
 
-        return new SftpFileHandle(file, client.open(sftpVirtualFile.getFullPath()));
+        return new SftpFileHandle(file, client.open(sftpFile.getFullPath()));
     }
 }
