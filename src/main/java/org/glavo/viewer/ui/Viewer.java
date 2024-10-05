@@ -29,6 +29,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import kala.function.CheckedFunction;
 import kala.function.CheckedSupplier;
+import kala.value.VolatileVar;
 import org.glavo.viewer.Config;
 import org.glavo.viewer.annotation.FXThread;
 import org.glavo.viewer.file.*;
@@ -43,7 +44,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.glavo.viewer.util.logging.Logger.LOGGER;
 
@@ -225,12 +225,12 @@ public final class Viewer extends Control {
     public void connect() {
         SftpDialog.Result result = new SftpDialog().showAndWait().orElse(null);
         if (result != null) {
-            TreeItem<String> node = new TreeItem<>(result.root().toString() + result.initPath());
+            var node = new TreeItem<>(result.root().toString() + result.initPath());
             FileTree.setLoading(node);
 
             getViewerSkin().getFileTreeView().getRoot().getChildren().add(node);
 
-            AtomicReference<SftpRootContainer> holder = new AtomicReference<>();
+            var holder = new VolatileVar<SftpRootContainer>();
 
             CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
                 SftpRootContainer container = SftpRootContainer.connect(result.root(), result.password());
