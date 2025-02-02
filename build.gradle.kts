@@ -4,6 +4,10 @@ plugins {
     id("org.glavo.compile-module-info-plugin") version "2.0"
 }
 
+apply {
+    plugin(jlink.JlinkPlugin::class)
+}
+
 group = "org.glavo"
 
 version = System.getenv("GITHUB_SHA")?.lowercase()?.substring(0, 7).let { shortSha ->
@@ -44,3 +48,4 @@ tasks.jar {
         "Main-Class" to viewerMainClassName
     )
 }
+
