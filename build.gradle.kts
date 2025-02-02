@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.glavo"
-version = "3.10"
+version = "3.10" + "-SNAPSHOT"
 
 val viewerModuleName = "org.glavo.viewer"
 val viewerMainClassName = "org.glavo.viewer.Main"
