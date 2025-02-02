@@ -1,7 +1,5 @@
 # ClassViewer v3
 
-[![Gitter](https://badges.gitter.im/ClassViewer/ClassViewer.svg)](https://gitter.im/ClassViewer/ClassViewer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Build Status](https://travis-ci.com/ClassViewer/ClassViewer.svg?branch=master)](https://travis-ci.com/ClassViewer/ClassViewer)
-
 Website: [ClassViewer Homepage](https://viewer.glavo.org/)
 
 ClassViewer v3 is a lightweight Java class file viewer only depends on JDK and JavaFX, it only has a single jar file less than 250k in size, and it can work on JRE 8.
@@ -12,7 +10,7 @@ ClassViewer v4 is under development, so stay tuned.
 
 ## Features
 
-* Understands class files described by [JVMS13](https://docs.oracle.com/javase/specs/jvms/se13/html/index.html)
+* Understands class files described by [JVMS23](https://docs.oracle.com/javase/specs/jvms/se23/html/index.html)
 * Displays parsed class file as tree and hex text
 * The corresponding hex text is highlighted when you select a tree node
 
