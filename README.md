@@ -26,10 +26,3 @@ Building ClassViewer v3 requires Java 11 or later (but Java 8 is sufficient at r
 ```shell
 ./gradlew run
 ```
-
-## Screenshots
-
-![Screenshot](https://glavo.oss-cn-beijing.aliyuncs.com/image/Annotation%202020-01-12%20183836.png)
-![Screenshot](https://glavo.oss-cn-beijing.aliyuncs.com/image/Annotation%202020-01-12%20184117.png)
-![Screenshot](https://glavo.oss-cn-beijing.aliyuncs.com/image/Annotation%202020-01-12%20184233.png)
-![Screenshot](https://glavo.oss-cn-beijing.aliyuncs.com/image/Annotation%202020-01-12%20184259.png)
