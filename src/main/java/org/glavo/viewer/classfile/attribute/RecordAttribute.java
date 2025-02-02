@@ -1,6 +1,7 @@
 package org.glavo.viewer.classfile.attribute;
 
 import org.glavo.viewer.classfile.ClassFileComponent;
+import org.glavo.viewer.classfile.constant.ConstantPool;
 
 public final class RecordAttribute extends AttributeInfo {
     {
@@ -10,10 +11,15 @@ public final class RecordAttribute extends AttributeInfo {
 
     public static final class RecordComponentInfo extends ClassFileComponent {
         {
-            u2("name_index");
-            u2("descriptor_index");
-            u2("attributes_count");
+            u2cp ("name_index");
+            u2cp ("descriptor_index");
+            u2   ("attributes_count");
             table("attributes", AttributeInfo.class);
+        }
+
+        @Override
+        protected void postRead(ConstantPool cp) {
+            setDesc(cp.getConstantDesc(super.getUInt("name_index")));
         }
     }
 }
