@@ -5,7 +5,17 @@ plugins {
 }
 
 group = "org.glavo"
-version = "3.10" + "-SNAPSHOT"
+
+version = System.getenv("GITHUB_SHA")?.lowercase()?.substring(0, 7).let { shortSha ->
+    val versionBase = property("viewer.version") as String
+    if (shortSha != null) {
+        "$versionBase-$shortSha"
+    } else if (findProperty("viewer.version.snapshot") == "false") {
+        versionBase
+    } else {
+        "$versionBase-SNAPSHOT"
+    }
+}
 
 val viewerModuleName = "org.glavo.viewer"
 val viewerMainClassName = "org.glavo.viewer.Main"
