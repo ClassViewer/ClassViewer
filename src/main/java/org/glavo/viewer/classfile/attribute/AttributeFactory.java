@@ -43,15 +43,12 @@ public final class AttributeFactory {
             case "Deprecated":
                 return new DeprecatedAttribute();
             case "RuntimeVisibleAnnotations":
-                return new RuntimeVisibleAnnotationsAttribute();
             case "RuntimeInvisibleAnnotations":
                 return new RuntimeVisibleAnnotationsAttribute();
             case "RuntimeVisibleParameterAnnotations":
-                return new RuntimeVisibleParameterAnnotationsAttribute();
             case "RuntimeInvisibleParameterAnnotations":
                 return new RuntimeVisibleParameterAnnotationsAttribute();
             case "RuntimeVisibleTypeAnnotations":
-                return new RuntimeVisibleTypeAnnotationsAttribute();
             case "RuntimeInvisibleTypeAnnotations":
                 return new RuntimeVisibleTypeAnnotationsAttribute();
             case "AnnotationDefault":
@@ -66,6 +63,14 @@ public final class AttributeFactory {
                 return new ModulePackagesAttribute();
             case "ModuleMainClass":
                 return new ModuleMainClassAttribute();
+            case "NestHost":
+                return new NestHostAttribute();
+            case "NestMembers":
+                return new NestMembersAttribute();
+            case "Record":
+                return new RecordAttribute();
+            case "PermittedSubclasses":
+                return new PermittedSubclassesAttribute();
         }
 
         //throw new ParseException(name);
