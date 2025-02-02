@@ -22,5 +22,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ClassViewer-${{ env.GITHUB_ACTION_SHORT_SHA }}
-          path: build/libs/ClassViewer-3-${{ env.GITHUB_ACTION_SHORT_SHA }}.jar
+          path: build/libs/ClassViewer-${{ env.GITHUB_ACTION_SHORT_SHA }}.jar
           compression-level: 0

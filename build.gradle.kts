@@ -8,7 +8,7 @@ group = "org.glavo"
 
 version = System.getenv("GITHUB_SHA")?.lowercase()?.substring(0, 7).let { shortSha ->
     if (shortSha != null) {
-        "3-$shortSha"
+        shortSha
     } else {
         val versionBase = property("viewer.version") as String
         if (findProperty("viewer.version.snapshot") == "false") {
