@@ -1,11 +1,7 @@
 name: Gradle Check
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 jobs:
   gradle-check:
     runs-on: ubuntu-24.04
