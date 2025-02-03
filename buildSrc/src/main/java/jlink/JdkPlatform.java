@@ -50,7 +50,11 @@ public final class JdkPlatform {
     public enum OS {
         WINDOWS,
         LINUX,
-        MACOS
+        MACOS;
+
+        String getArchiveExtension() {
+            return this == WINDOWS ? "zip" : "tar.gz";
+        }
     }
 
     public enum Arch {
