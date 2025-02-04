@@ -94,6 +94,7 @@ public abstract class JlinkTask extends DefaultTask {
                     if (entry.getName().endsWith("/" + module + ".jmod")) {
                         modules.remove(module);
                         Files.copy(archive, targetDir.resolve(module + ".jmod"));
+                        break;
                     }
                 }
             }

@@ -1,27 +1,18 @@
 package jlink;
 
 import de.undercouch.gradle.tasks.download.Download;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.file.RegularFile;
-import org.gradle.api.logging.Logger;
-import org.gradle.api.logging.Logging;
+import org.gradle.api.file.Directory;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.zip.GZIPInputStream;
 
 public final class JlinkPlugin implements Plugin<Project> {
-    private static final Logger LOGGER = Logging.getLogger(JlinkPlugin.class);
-
     private static final String JDK_VERSION = "21.0.6+10";
-
 
     public static String getJdkFileNameBase(JdkPlatform platform) {
         String osName = platform.os.name().toLowerCase(Locale.ROOT);
@@ -36,7 +27,7 @@ public final class JlinkPlugin implements Plugin<Project> {
     }
 
     public static String getJdkFileName(JdkPlatform platform) {
-        String ext = platform.os == JdkPlatform.OS.WINDOWS ? ".zip" : ".tar.gz";
+        String ext = platform.os == JdkPlatform.OS.LINUX ? ".tar.gz" : ".zip";
         return getJdkFileNameBase(platform) + ext;
     }
 
@@ -54,10 +45,17 @@ public final class JlinkPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        List<TaskProvider<?>> jlinkTasks = new ArrayList<>();
+
+        Provider<Directory> downloadDir = project.getLayout().getBuildDirectory().dir("download");
+
+
         for (JdkPlatform platform : JdkPlatform.PLATFORMS) {
             TaskProvider<Download> downloadJdkTask = project.getTasks().register("downloadJdk-" + platform, Download.class, task -> {
                 task.setGroup("jlink");
                 task.src(getJdkDownloadUrl(platform));
+                task.dest(downloadDir);
+                task.overwrite(false);
             });
 
             TaskProvider<Download> downloadJavaFXTask;
@@ -66,12 +64,14 @@ public final class JlinkPlugin implements Plugin<Project> {
                 downloadJavaFXTask = project.getTasks().register("downloadJavaFX-" + platform, Download.class, task -> {
                     task.setGroup("jlink");
                     task.src(javafxUrl);
+                    task.dest(downloadDir);
+                    task.overwrite(false);
                 });
             } else {
                 downloadJavaFXTask = null;
             }
 
-            project.getTasks().register("jlink-" + platform, JlinkTask.class, task -> {
+            jlinkTasks.add(project.getTasks().register("jlink-" + platform, JlinkTask.class, task -> {
                 task.setGroup("jlink");
                 task.dependsOn(downloadJdkTask, project.getTasks().getByName("jar"));
                 task.getJdkArchivePath().set(downloadJdkTask.map(it -> it.getOutputFiles().get(0).toPath()));
@@ -86,7 +86,12 @@ public final class JlinkPlugin implements Plugin<Project> {
                 task.getOutputFile().set(project.getLayout().getBuildDirectory()
                         .map(dir -> dir.dir("jlink")
                                 .file("ClassViewer-" + project.getVersion() + "-" + platform + "." + platform.os.getArchiveExtension())));
-            });
+            }));
         }
+
+        project.getTasks().register("jlink", task -> {
+            task.setGroup("jlink");
+            task.dependsOn(jlinkTasks.toArray());
+        });
     }
 }

@@ -1,8 +1,10 @@
 package jlink;
 
+import java.io.Serializable;
 import java.util.Locale;
+import java.util.Objects;
 
-public final class JdkPlatform {
+public final class JdkPlatform implements Serializable {
 
     public static final JdkPlatform[] PLATFORMS = {
             new JdkPlatform(OS.WINDOWS, Arch.X86_64),
@@ -17,34 +19,26 @@ public final class JdkPlatform {
     public final OS os;
     public final Arch arch;
 
-    public JdkPlatform(OS os, Arch arch) {
+    private JdkPlatform(OS os, Arch arch) {
         this.os = os;
         this.arch = arch;
-    }
-
-    public String getFileName(String version) {
-        String osName = os.name().toLowerCase(Locale.ROOT);
-        String archName = arch.name().toLowerCase(Locale.ROOT);
-        String ext = os == OS.WINDOWS ? "zip" : "tar.gz";
-        String suffix = arch == Arch.RISCV64 ? "" : "-full";
-
-        if (arch == Arch.X86_64) {
-            archName = "amd64";
-        }
-
-        return String.format(
-                "bellsoft-jdk%4$s-%1$s-%2$s.%3$s",
-                osName, archName, ext, version
-        );
-    }
-
-    public String getDownloadUrl(String version) {
-        return "https://download.bell-sw.com/java/" + version + "/" + getFileName(version);
     }
 
     @Override
     public String toString() {
         return os.name().toLowerCase(Locale.ROOT) + "-" + arch.name().toLowerCase(Locale.ROOT);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof JdkPlatform)) return false;
+        JdkPlatform that = (JdkPlatform) o;
+        return os == that.os && arch == that.arch;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(os, arch);
     }
 
     public enum OS {
