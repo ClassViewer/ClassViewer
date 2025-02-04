@@ -35,6 +35,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -121,6 +122,8 @@ public abstract class JlinkTask extends DefaultTask {
             throw new GradleException(jlink + " does not exist");
         }
 
+        JdkPlatform platform = getPlatform().get();
+
         Path jdkPath = getJdkArchivePath().get();
         Path javafxPath = getJavaFXArchivePath().getOrNull();
 
@@ -129,7 +132,7 @@ public abstract class JlinkTask extends DefaultTask {
 
         // run
 
-        Path tempDirectory = Files.createTempDirectory("viewer-jlink-" + getPlatform().get() + "-");
+        Path tempDirectory = Files.createTempDirectory("viewer-jlink-" + platform + "-");
 
         try {
             try (ArchiveInputStream<?> jdkArchive = openArchive(jdkPath);
@@ -148,16 +151,29 @@ public abstract class JlinkTask extends DefaultTask {
 
             Files.copy(viewerJar, tempDirectory.resolve(viewerJar.getFileName()));
 
-            String outputName = "ClassViewer-" + getProject().getVersion() + "-" + getPlatform().get();
-            Path outputDir = tempDirectory.resolve(outputName);
+            String outputName = "ClassViewer-" + getProject().getVersion() + "-" + platform;
             Path outputFile = getOutputFile().getAsFile().get().toPath();
+            Path outputDir = tempDirectory.resolve(outputName);
+
+            Files.createDirectories(outputDir);
+
+            if (platform.os == JdkPlatform.OS.WINDOWS) {
+                // TODO
+            } else {
+                try (var input = Objects.requireNonNull(JlinkTask.class.getResourceAsStream("ClassViewer.sh"))) {
+                    Path launcherFile = outputDir.resolve("ClassViewer.sh");
+                    Files.copy(input, launcherFile);
+                    //noinspection ResultOfMethodCallIgnored
+                    launcherFile.toFile().setExecutable(true, false);
+                }
+            }
 
             getProject().getProviders().exec(spec -> {
                 spec.setCommandLine(jlink,
                         "--module-path", tempDirectory,
                         "--add-modules", "ALL-MODULE-PATH",
                         "--no-header-files", "--no-man-pages",
-                        "--output", outputDir
+                        "--output", outputDir.resolve("jre")
                 );
             }).getResult().get().assertNormalExitValue();
 
