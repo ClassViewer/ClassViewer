@@ -1,17 +1,11 @@
 # ClassViewer v3
 
-Website: [ClassViewer Homepage](https://viewer.glavo.org/)
-
-ClassViewer v3 is a lightweight Java class file viewer only depends on JDK and JavaFX, it only has a single jar file less than 250k in size, and it can work on JRE 8.
-
-OracleJDK no longer bundles JavaFX releases after OracleJDK 10, you can get the OpenJDK distribution bundled with OpenJFX 13 from [here](https://bell-sw.com/pages/java-13.0.1/).
-
-ClassViewer v4 is under development, so stay tuned.
+ClassViewer is a lightweight Java class file viewer that you can use to view the structure of Java class files.
 
 ## Features
 
 * Understands class files described by [JVMS23](https://docs.oracle.com/javase/specs/jvms/se23/html/index.html)
-* Displays parsed class file as tree and hex text
+* Displays class file as tree and hex text.
 * The corresponding hex text is highlighted when you select a tree node
 
 ## Build

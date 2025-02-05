@@ -1,9 +1,8 @@
 package org.glavo.viewer;
 
 import javafx.application.Application;
-import org.glavo.viewer.gui.Options;
 import org.glavo.viewer.gui.Viewer;
-import org.glavo.viewer.util.Log;
+import org.glavo.viewer.logging.Log;
 
 public final class Main {
     public static void main(String[] args) {

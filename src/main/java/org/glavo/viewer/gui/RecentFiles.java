@@ -1,7 +1,8 @@
 package org.glavo.viewer.gui;
 
+import org.glavo.viewer.Options;
 import org.glavo.viewer.gui.filetypes.FileType;
-import org.glavo.viewer.util.Log;
+import org.glavo.viewer.logging.Log;
 
 import java.io.*;
 import java.net.MalformedURLException;

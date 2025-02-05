@@ -1,8 +1,9 @@
-package org.glavo.viewer.gui;
+package org.glavo.viewer;
 
 import javafx.scene.text.Font;
+import org.glavo.viewer.util.CrashHandler;
 import org.glavo.viewer.util.FontUtils;
-import org.glavo.viewer.util.Log;
+import org.glavo.viewer.logging.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +21,6 @@ public final class Options {
     public static Path path = Paths.get(System.getProperty("user.home")).resolve(".viewer");
     public static List<Properties> properties = new ArrayList<>();
 
-
     public static void init() {
         String p = System.getProperty("viewer.path");
         if (p != null) {
@@ -33,6 +33,10 @@ public final class Options {
         } catch (IOException e) {
             Log.error(e);
         }
+
+        Log.start(Options.path.resolve("logs"));
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.INSTANCE);
+
         if (Files.exists(path.resolve("viewer.properties"))) {
             Log.info("Load Properties file: " + path.resolve("viewer.properties"));
             try (InputStream is = Files.newInputStream(path.resolve("viewer.properties"))) {
@@ -116,7 +120,7 @@ public final class Options {
         Log.setting("viewer.disableSystemTitleBar", !useSystemTilteBar);
 
         if (defined("viewer.skin")) {
-            if (get("viewer.skin").toUpperCase().equals("CASPIAN")) {
+            if (get("viewer.skin").equalsIgnoreCase("CASPIAN")) {
                 skin = "CASPIAN";
             } else {
                 skin = "MODENA";

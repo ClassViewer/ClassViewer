@@ -5,10 +5,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.glavo.viewer.FileComponent;
 import org.glavo.viewer.gui.Viewer;
@@ -16,7 +12,7 @@ import org.glavo.viewer.gui.filetypes.binary.BytesBar;
 import org.glavo.viewer.gui.filetypes.binary.HexPane;
 import org.glavo.viewer.gui.filetypes.binary.HexText;
 import org.glavo.viewer.util.FontUtils;
-import org.glavo.viewer.util.Log;
+import org.glavo.viewer.logging.Log;
 
 /**
  * Container of TreeView, HexPane, StatusBar and BytesBar.

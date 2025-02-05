@@ -14,10 +14,11 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.glavo.viewer.Options;
 import org.glavo.viewer.gui.filetypes.FileType;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
-import org.glavo.viewer.util.Log;
+import org.glavo.viewer.logging.Log;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -94,9 +95,14 @@ public final class Viewer extends Application {
             }
             javafx.application.Platform.runLater(() -> openFiles(files));
         }
-        stage.setOnShown(event -> Log.info("show " + this + ": " + Log.format.format(System.currentTimeMillis())));
-        stage.setOnCloseRequest(event -> Log.info("close " + this));
+        stage.setOnShown(event -> Log.info("Show " + this));
+        stage.setOnCloseRequest(event -> Log.info("Slose " + this));
         stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        Log.shutdown();
     }
 
     public void openFile() {

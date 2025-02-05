@@ -1,16 +1,12 @@
 package org.glavo.viewer.gui.folder;
 
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import org.glavo.viewer.gui.*;
 import org.glavo.viewer.gui.filetypes.FileType;
 import org.glavo.viewer.gui.filetypes.classfile.ClassFileType;
 import org.glavo.viewer.gui.filetypes.jar.JarFileType;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
-import org.glavo.viewer.util.Log;
+import org.glavo.viewer.logging.Log;
 import org.glavo.viewer.util.UrlUtils;
 
 import java.io.IOException;
