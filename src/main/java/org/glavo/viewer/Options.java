@@ -15,7 +15,6 @@ import java.util.*;
 public final class Options {
     public static boolean color = false;
     public static boolean debug = false;
-    public static boolean useSystemTilteBar = true;
     public static String skin = null;
 
     public static Path path = Paths.get(System.getProperty("user.home")).resolve(".viewer");
@@ -113,11 +112,6 @@ public final class Options {
             Locale.setDefault(Locale.forLanguageTag(locale));
         }
         Log.setting("viewer.locale", Locale.getDefault());
-
-        if (defined("viewer.disableSystemTitleBar")) {
-            useSystemTilteBar = false;
-        }
-        Log.setting("viewer.disableSystemTitleBar", !useSystemTilteBar);
 
         if (defined("viewer.skin")) {
             if (get("viewer.skin").equalsIgnoreCase("CASPIAN")) {

@@ -70,9 +70,6 @@ public final class Viewer extends Application {
 
         enableDragAndDrop(scene);
 
-        if (!Options.useSystemTilteBar) {
-            stage.initStyle(StageStyle.UNDECORATED);
-        }
         stage.setScene(scene);
         stage.setTitle(TITLE);
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));

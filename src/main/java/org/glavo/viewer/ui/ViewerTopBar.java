@@ -7,7 +7,6 @@ public final class ViewerTopBar extends VBox {
 
     private Viewer viewer;
 
-    private ViewerTitleBar titleBar = null;
     private ViewerMenuBar menuBar;
     private ViewerToolBar toolBar;
 
@@ -18,12 +17,7 @@ public final class ViewerTopBar extends VBox {
         menuBar = new ViewerMenuBar(viewer);
         toolBar = new ViewerToolBar(viewer);
 
-        if (Options.useSystemTilteBar) {
-            this.getChildren().addAll(menuBar, toolBar);
-        } else {
-            this.titleBar = new ViewerTitleBar(viewer);
-            this.getChildren().addAll(titleBar, menuBar, toolBar);
-        }
+        this.getChildren().addAll(menuBar, toolBar);
     }
 
     public Viewer getViewer() {
