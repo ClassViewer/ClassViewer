@@ -5,13 +5,15 @@ project(launcher
         LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_SYSTEM_VERSION 8.1)
 
-find_package(JNI REQUIRED)
-include_directories(${JNI_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+add_definitions(/D_WIN32_WINNT=0x0A00)
 
 add_executable(ClassViewer launcher.rc launcher.h launcher.cpp)
 target_link_libraries(ClassViewer pathcch)
+
+set_property(TARGET ClassViewer PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded")
 
 if (NOT DEFINED APP_SHOW_CONSOLE)
     set_property(TARGET ClassViewer PROPERTY WIN32_EXECUTABLE true)

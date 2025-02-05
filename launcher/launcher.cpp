@@ -26,7 +26,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     }
 
     PathCchRemoveFileSpec(appName, MAX_LONG_PATH_SIZE);
-    PathCchAppendEx(appName, MAX_LONG_PATH_SIZE, APPLICATION_JRE_PATH "\\bin\\java.exe",
+    PathCchAppendEx(appName, MAX_LONG_PATH_SIZE, APPLICATION_JRE_PATH "\\bin\\" JAVA_BIN,
                     PATHCCH_ALLOW_LONG_PATHS);
 
     std::wstring cmdLine;

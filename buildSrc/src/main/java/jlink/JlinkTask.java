@@ -158,7 +158,10 @@ public abstract class JlinkTask extends DefaultTask {
             Files.createDirectories(outputDir);
 
             if (platform.os == JdkPlatform.OS.WINDOWS) {
-                // TODO
+                try (var input = Objects.requireNonNull(JlinkTask.class.getResourceAsStream("ClassViewer.exe"))) {
+                    Path launcherFile = outputDir.resolve("ClassViewer.exe");
+                    Files.copy(input, launcherFile);
+                }
             } else {
                 try (var input = Objects.requireNonNull(JlinkTask.class.getResourceAsStream("ClassViewer.sh"))) {
                     Path launcherFile = outputDir.resolve("ClassViewer.sh");
