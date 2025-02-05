@@ -40,6 +40,7 @@ java {
 
 tasks.compileJava {
     options.encoding = "UTF-8"
+    options.javaModuleMainClass.set(viewerMainClassName)
 }
 
 tasks.jar {
