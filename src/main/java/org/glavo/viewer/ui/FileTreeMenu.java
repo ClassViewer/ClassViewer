@@ -1,0 +1,29 @@
+package org.glavo.viewer.ui;
+
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.SeparatorMenuItem;
+import org.glavo.viewer.logging.Log;
+
+public class FileTreeMenu extends ContextMenu {
+    private FileTreeView view;
+
+    public FileTreeMenu(FileTreeView view) {
+        this.view = view;
+
+        this.setOnShowing(event -> {
+            Log.trace("Show Context Menu");
+            FileTreeNode node = view.getSelected();
+            if (node == null) {
+                this.getItems().clear();
+            } else {
+                try {
+                    node.updateMenu(view.getViewer(), this);
+                } catch (Exception e) {
+                    ViewerAlert.logAndShowExceptionAlert(e);
+                }
+            }
+        });
+
+        this.getItems().add(new SeparatorMenuItem());
+    }
+}
