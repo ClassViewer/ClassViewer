@@ -49,3 +49,12 @@ tasks.jar {
     )
 }
 
+val convertSVG by tasks.registering(svg.ConvertSVGTask::class) {
+    inputDirectory.set(layout.projectDirectory.dir("src/main/svg"))
+    outputDirectory.set(layout.buildDirectory.dir("generated/images"))
+}
+
+tasks.processResources {
+    dependsOn(convertSVG)
+    from(convertSVG.map { it.outputDirectory })
+}
