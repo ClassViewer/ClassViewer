@@ -23,19 +23,21 @@
  */
 package org.glavo.viewer;
 
-import javafx.application.Application;
-import org.glavo.viewer.ui.Viewer;
-import org.glavo.viewer.logging.Log;
-import org.glavo.viewer.util.CrashHandler;
+import java.nio.file.Path;
 
-public final class Main {
+public final class Metadata {
 
-    public static void main(String[] args) {
-        Log.start(Metadata.VIEWER_DIRECTORY.resolve("logs"));
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.INSTANCE);
+    public static final Path VIEWER_DIRECTORY;
 
-        Options.init();
-        Log.info("launch application");
-        Application.launch(Viewer.class, args);
+    static {
+        String viewerHome = System.getProperty("viewer.home", System.getProperty("viewer.path"));
+        if (viewerHome == null) {
+            VIEWER_DIRECTORY = Path.of(System.getProperty("user.home"), ".viewer");
+        } else {
+            VIEWER_DIRECTORY = Path.of(viewerHome).toAbsolutePath().normalize();
+        }
+    }
+
+    private Metadata() {
     }
 }

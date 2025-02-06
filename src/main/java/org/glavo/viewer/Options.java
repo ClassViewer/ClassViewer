@@ -1,15 +1,35 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2025 Glavo
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package org.glavo.viewer;
 
 import javafx.scene.text.Font;
-import org.glavo.viewer.util.CrashHandler;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.logging.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public final class Options {
@@ -17,28 +37,12 @@ public final class Options {
     public static boolean debug = false;
     public static String skin = null;
 
-    public static Path path = Paths.get(System.getProperty("user.home")).resolve(".viewer");
     public static List<Properties> properties = new ArrayList<>();
 
     public static void init() {
-        String p = System.getProperty("viewer.path");
-        if (p != null) {
-            path = Paths.get(p);
-        }
-        try {
-            if (Files.notExists(path)) {
-                Files.createDirectories(path);
-            }
-        } catch (IOException e) {
-            Log.error(e);
-        }
-
-        Log.start(Options.path.resolve("logs"));
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.INSTANCE);
-
-        if (Files.exists(path.resolve("viewer.properties"))) {
-            Log.info("Load Properties file: " + path.resolve("viewer.properties"));
-            try (InputStream is = Files.newInputStream(path.resolve("viewer.properties"))) {
+        if (Files.exists(Metadata.VIEWER_DIRECTORY.resolve("viewer.properties"))) {
+            Log.info("Load Properties file: " + Metadata.VIEWER_DIRECTORY.resolve("viewer.properties"));
+            try (InputStream is = Files.newInputStream(Metadata.VIEWER_DIRECTORY.resolve("viewer.properties"))) {
                 Properties ps = new Properties();
                 ps.load(is);
                 init(System.getProperties(), ps);
