@@ -21,21 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.glavo.viewer;
+package org.glavo.viewer.util.logging;
 
-import javafx.application.Application;
-import org.glavo.viewer.ui.Viewer;
-import org.glavo.viewer.util.logging.Log;
-import org.glavo.viewer.util.CrashHandler;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.concurrent.CountDownLatch;
 
-public final class Main {
+/**
+ * @author Glavo
+ */
+abstract class LogEvent {
+    static final class DoLog extends LogEvent {
+        final long time;
+        final String caller;
+        final Level level;
+        final String message;
+        final Throwable exception;
 
-    public static void main(String[] args) {
-        Log.start(Metadata.VIEWER_DIRECTORY.resolve("logs"));
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.INSTANCE);
+        DoLog(long time, String caller, Level level, String message, Throwable exception) {
+            this.time = time;
+            this.caller = caller;
+            this.level = level;
+            this.message = message;
+            this.exception = exception;
+        }
+    }
 
-        Options.init();
-        Log.info("launch application");
-        Application.launch(Viewer.class, args);
+    static final class ExportLog extends LogEvent {
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        final OutputStream output;
+        IOException exception;
+
+        ExportLog(OutputStream output) {
+            this.output = output;
+        }
+
+        void await() throws InterruptedException {
+            latch.await();
+        }
+    }
+
+    static final class Shutdown extends LogEvent {
     }
 }

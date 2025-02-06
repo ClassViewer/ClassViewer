@@ -21,21 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.glavo.viewer;
+package org.glavo.viewer.util.logging;
 
-import javafx.application.Application;
-import org.glavo.viewer.ui.Viewer;
-import org.glavo.viewer.util.logging.Log;
-import org.glavo.viewer.util.CrashHandler;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
-public final class Main {
+/**
+ * @author Glavo
+ */
+final class CallerFinder {
+    private static final String PACKAGE_PREFIX = CallerFinder.class.getPackageName() + ".";
+    private static final Predicate<StackWalker.StackFrame> PREDICATE = stackFrame -> !stackFrame.getClassName().startsWith(PACKAGE_PREFIX);
+    private static final Function<Stream<StackWalker.StackFrame>, Optional<StackWalker.StackFrame>> FUNCTION = stream -> stream.filter(PREDICATE).findFirst();
+    private static final Function<StackWalker.StackFrame, String> FRAME_MAPPING = frame -> frame.getClassName() + "." + frame.getMethodName();
 
-    public static void main(String[] args) {
-        Log.start(Metadata.VIEWER_DIRECTORY.resolve("logs"));
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.INSTANCE);
+    static String getCaller() {
+        return StackWalker.getInstance().walk(FUNCTION).map(FRAME_MAPPING).orElse(null);
+    }
 
-        Options.init();
-        Log.info("launch application");
-        Application.launch(Viewer.class, args);
+    private CallerFinder() {
     }
 }

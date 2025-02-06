@@ -21,21 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.glavo.viewer;
 
-import javafx.application.Application;
-import org.glavo.viewer.ui.Viewer;
-import org.glavo.viewer.util.logging.Log;
-import org.glavo.viewer.util.CrashHandler;
+.root {
+    -fx-background-radius: 20;
+}
 
-public final class Main {
+.button {
+    -fx-background-color: transparent;
+    -fx-padding: 0.333333em 0.666667em 0.333333em 0.666667em; /* 4 8 4 8 */
+}
 
-    public static void main(String[] args) {
-        Log.start(Metadata.VIEWER_DIRECTORY.resolve("logs"));
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.INSTANCE);
+.button:hover {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-background-radius: 3px, 3px, 2px, 1px;
+    -fx-padding: 0.333333em 0.666667em 0.333333em 0.666667em; /* 4 8 4 8 */
+    -fx-text-fill: -fx-text-base-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+}
 
-        Options.init();
-        Log.info("launch application");
-        Application.launch(Viewer.class, args);
-    }
+.combo-box {
+    -fx-background-color: transparent;
+}
+
+.combo-box:hover {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-text-fill: -fx-text-base-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+}
+
+.combo-box .arrow, .combo-box .arrow-button {
+    -fx-background-color: transparent;
 }

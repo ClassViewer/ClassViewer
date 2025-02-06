@@ -13,12 +13,11 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.glavo.viewer.Options;
 import org.glavo.viewer.ui.filetypes.FileType;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -66,7 +65,7 @@ public final class Viewer extends Application {
         FontUtils.setUIFont(tabPane);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        scene.getStylesheets().add(Viewer.class.getResource("/css/viewer.css").toExternalForm());
+        scene.getStylesheets().add(Viewer.class.getResource("/org/glavo/viewer/resources/css/viewer.css").toExternalForm());
 
         enableDragAndDrop(scene);
 

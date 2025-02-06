@@ -8,7 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.glavo.viewer.util.FontUtils;
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

@@ -7,7 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.glavo.viewer.util.ImageUtils;
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 
 public class ViewerAboutDialog extends BorderPane {
     public static final String homeUrl = "https://viewer.glavo.org/";

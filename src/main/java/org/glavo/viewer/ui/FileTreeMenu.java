@@ -2,7 +2,7 @@ package org.glavo.viewer.ui;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.SeparatorMenuItem;
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 
 public class FileTreeMenu extends ContextMenu {
     private FileTreeView view;

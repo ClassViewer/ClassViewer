@@ -6,7 +6,7 @@ import org.glavo.viewer.ui.filetypes.FileType;
 import org.glavo.viewer.ui.filetypes.classfile.ClassFileType;
 import org.glavo.viewer.ui.filetypes.jar.JarFileType;
 import org.glavo.viewer.util.ImageUtils;
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 import org.glavo.viewer.util.UrlUtils;
 
 import java.io.IOException;

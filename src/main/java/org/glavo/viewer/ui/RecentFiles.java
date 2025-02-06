@@ -24,9 +24,8 @@
 package org.glavo.viewer.ui;
 
 import org.glavo.viewer.Metadata;
-import org.glavo.viewer.Options;
 import org.glavo.viewer.ui.filetypes.FileType;
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 
 import java.io.*;
 import java.net.MalformedURLException;

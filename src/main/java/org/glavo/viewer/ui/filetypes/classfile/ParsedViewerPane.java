@@ -12,7 +12,7 @@ import org.glavo.viewer.ui.filetypes.binary.BytesBar;
 import org.glavo.viewer.ui.filetypes.binary.HexPane;
 import org.glavo.viewer.ui.filetypes.binary.HexText;
 import org.glavo.viewer.util.FontUtils;
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 
 /**
  * Container of TreeView, HexPane, StatusBar and BytesBar.

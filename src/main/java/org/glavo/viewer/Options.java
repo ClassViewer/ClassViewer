@@ -25,7 +25,7 @@ package org.glavo.viewer;
 
 import javafx.scene.text.Font;
 import org.glavo.viewer.util.FontUtils;
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 
 import java.io.IOException;
 import java.io.InputStream;

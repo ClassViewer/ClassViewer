@@ -1,6 +1,6 @@
 package org.glavo.viewer.util;
 
-import org.glavo.viewer.logging.Log;
+import org.glavo.viewer.util.logging.Log;
 
 public final class CrashHandler implements Thread.UncaughtExceptionHandler {
 

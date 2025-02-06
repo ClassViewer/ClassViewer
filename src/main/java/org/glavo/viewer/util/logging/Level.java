@@ -21,21 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.glavo.viewer;
+package org.glavo.viewer.util.logging;
 
-import javafx.application.Application;
-import org.glavo.viewer.ui.Viewer;
-import org.glavo.viewer.util.logging.Log;
-import org.glavo.viewer.util.CrashHandler;
-
-public final class Main {
-
-    public static void main(String[] args) {
-        Log.start(Metadata.VIEWER_DIRECTORY.resolve("logs"));
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.INSTANCE);
-
-        Options.init();
-        Log.info("launch application");
-        Application.launch(Viewer.class, args);
-    }
+/**
+ * @author Glavo
+ */
+public enum Level {
+    ERROR, WARNING, INFO, DEBUG, TRACE
 }
