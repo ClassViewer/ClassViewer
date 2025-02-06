@@ -72,7 +72,6 @@ public final class JlinkPlugin implements Plugin<Project> {
 
         Provider<Directory> downloadDir = project.getLayout().getBuildDirectory().dir("download");
 
-
         for (JdkPlatform platform : JdkPlatform.values()) {
             TaskProvider<Download> downloadJdkTask = project.getTasks().register("downloadJdk-" + platform, Download.class, task -> {
                 task.setGroup("jlink");
@@ -97,12 +96,12 @@ public final class JlinkPlugin implements Plugin<Project> {
             jlinkTasks.add(project.getTasks().register("jlink-" + platform, JlinkTask.class, task -> {
                 task.setGroup("jlink");
                 task.dependsOn(downloadJdkTask, project.getTasks().getByName("jar"));
-                task.getJdkArchivePath().set(downloadJdkTask.map(it -> it.getOutputFiles().get(0).toPath()));
+                task.getJdkArchivePath().set(downloadJdkTask.map(it -> it.getOutputFiles().getFirst().toPath()));
 
 
                 if (downloadJavaFXTask != null) {
                     task.dependsOn(downloadJavaFXTask);
-                    task.getJavaFXArchivePath().set(downloadJavaFXTask.map(it -> it.getOutputFiles().get(0).toPath()));
+                    task.getJavaFXArchivePath().set(downloadJavaFXTask.map(it -> it.getOutputFiles().getFirst().toPath()));
                 }
 
                 task.getPlatform().set(platform);
