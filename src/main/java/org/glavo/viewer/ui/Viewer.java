@@ -93,7 +93,7 @@ public final class Viewer extends Application {
             javafx.application.Platform.runLater(() -> openFiles(files));
         }
         stage.setOnShown(event -> Log.info("Show " + this));
-        stage.setOnCloseRequest(event -> Log.info("Slose " + this));
+        stage.setOnCloseRequest(event -> Log.info("Close " + this));
         stage.show();
     }
 
