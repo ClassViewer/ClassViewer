@@ -25,7 +25,6 @@
 module org.glavo.viewer {
     exports org.glavo.viewer;
     exports org.glavo.viewer.ui;
-    exports org.glavo.viewer.filetypes;
     exports org.glavo.viewer.file.types;
 
     requires javafx.controls;
