@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    id("com.gradleup.shadow") version "8.3.6"
 }
 
 apply {
@@ -27,6 +28,10 @@ val viewerMainClassName = "org.glavo.viewer.Main"
 
 repositories {
     mavenCentral()
+}
+
+dependencies {
+    implementation("org.glavo.kala:kala-template:0.1.0")
 }
 
 application {

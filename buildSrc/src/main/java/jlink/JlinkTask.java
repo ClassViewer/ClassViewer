@@ -47,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -55,11 +56,14 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
@@ -150,8 +154,7 @@ public abstract class JlinkTask extends DefaultTask {
         Path jdkPath = getJdkArchivePath().get();
         Path javafxPath = getJavaFXArchivePath().getOrNull();
 
-        Jar jarTask = (Jar) getProject().getTasks().getByName("jar");
-        Path viewerJar = jarTask.getArchiveFile().get().getAsFile().toPath();
+        Path viewerJar = ((Jar) getProject().getTasks().getByName("jar")).getArchiveFile().get().getAsFile().toPath();
 
         // run
 
@@ -171,6 +174,14 @@ public abstract class JlinkTask extends DefaultTask {
                     throw new GradleException("These modules were not found: " + String.join(", ", modules));
                 }
             }
+
+            getProject().getConfigurations().getByName("runtimeClasspath").forEach(file -> {
+                try {
+                    Files.copy(file.toPath(), tempDirectory.resolve(file.getName()));
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
 
             Files.copy(viewerJar, tempDirectory.resolve(viewerJar.getFileName()));
 
