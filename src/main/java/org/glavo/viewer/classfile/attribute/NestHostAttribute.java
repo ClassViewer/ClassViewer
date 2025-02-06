@@ -1,7 +1,0 @@
-package org.glavo.viewer.classfile.attribute;
-
-public final class NestHostAttribute extends AttributeInfo {
-    {
-        u2cp("host_class_index");
-    }
-}

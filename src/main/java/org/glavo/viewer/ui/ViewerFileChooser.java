@@ -3,7 +3,7 @@ package org.glavo.viewer.ui;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.glavo.viewer.ui.filetypes.FileType;
+import org.glavo.viewer.file.types.FileType;
 
 import java.io.File;
 

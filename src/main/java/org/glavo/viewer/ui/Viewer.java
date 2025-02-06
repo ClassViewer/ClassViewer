@@ -14,7 +14,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.glavo.viewer.Options;
-import org.glavo.viewer.ui.filetypes.FileType;
+import org.glavo.viewer.file.types.FileType;
 import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.logging.Log;
@@ -26,7 +26,7 @@ import java.util.*;
 
 public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
-    public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.ui.ViewerResources");
+    public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.ViewerResources");
 
     public static final int DEFAULT_WIDTH = 1080;
     public static final int DEFAULT_HEIGHT = 608;

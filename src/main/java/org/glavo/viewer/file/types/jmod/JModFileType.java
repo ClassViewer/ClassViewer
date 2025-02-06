@@ -21,13 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.glavo.viewer.file.types.jmod;
 
-module org.glavo.viewer {
-    exports org.glavo.viewer;
-    exports org.glavo.viewer.ui;
-    exports org.glavo.viewer.filetypes;
-    exports org.glavo.viewer.file.types;
+import javafx.stage.FileChooser;
+import org.glavo.viewer.file.types.jar.JarFileType;
+import org.glavo.viewer.util.ImageUtils;
 
-    requires javafx.controls;
-    requires jdk.zipfs;
+import java.net.URL;
+
+public final class JModFileType extends JarFileType {
+    public static final JModFileType Instance = new JModFileType();
+
+    private JModFileType() {
+        super();
+        this.icon = ImageUtils.loadImage("/icons/filetype/JModFile.png");
+        this.filter = new FileChooser.ExtensionFilter("JMode File (*.jmod)", "*.jmod");
+    }
+
+    @Override
+    public boolean accept(URL url) {
+        String s = url.toString().toLowerCase();
+        return s.endsWith(".jmod");
+    }
+
+    @Override
+    public String toString() {
+        return "JAVA_JMOD";
+    }
 }
+

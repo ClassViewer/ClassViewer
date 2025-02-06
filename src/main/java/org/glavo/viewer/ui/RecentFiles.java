@@ -24,7 +24,7 @@
 package org.glavo.viewer.ui;
 
 import org.glavo.viewer.Metadata;
-import org.glavo.viewer.ui.filetypes.FileType;
+import org.glavo.viewer.file.types.FileType;
 import org.glavo.viewer.util.logging.Log;
 
 import java.io.*;

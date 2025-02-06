@@ -1,6 +1,6 @@
 package org.glavo.viewer.ui;
 
-import org.glavo.viewer.ui.filetypes.FileType;
+import org.glavo.viewer.file.types.FileType;
 
 import java.net.URL;
 import java.util.ArrayList;

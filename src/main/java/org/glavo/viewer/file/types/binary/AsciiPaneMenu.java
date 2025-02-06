@@ -21,13 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.glavo.viewer.file.types.binary;
 
-module org.glavo.viewer {
-    exports org.glavo.viewer;
-    exports org.glavo.viewer.ui;
-    exports org.glavo.viewer.filetypes;
-    exports org.glavo.viewer.file.types;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import org.glavo.viewer.util.FontUtils;
+import org.glavo.viewer.util.ImageUtils;
 
-    requires javafx.controls;
-    requires jdk.zipfs;
+public final class AsciiPaneMenu extends ContextMenu {
+    private TextArea textArea;
+
+    public AsciiPaneMenu(TextArea textArea) {
+        this.textArea = textArea;
+        MenuItem copy = new MenuItem("_Copy");
+        this.setStyle(FontUtils.setUIFont(this.getStyle()));
+        copy.setMnemonicParsing(true);
+        copy.setOnAction(e -> {
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(textArea.getSelectedText().replace("\n", ""));
+            clipboard.setContent(content);
+        });
+        copy.setGraphic(new ImageView(ImageUtils.copyImage));
+
+        getItems().addAll(copy);
+    }
+
+
 }

@@ -21,13 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.glavo.viewer.file.types.classfile;
 
-module org.glavo.viewer {
-    exports org.glavo.viewer;
-    exports org.glavo.viewer.ui;
-    exports org.glavo.viewer.filetypes;
-    exports org.glavo.viewer.file.types;
+import org.glavo.viewer.file.types.classfile.constant.ConstantPool;
+import org.glavo.viewer.BytesReader;
 
-    requires javafx.controls;
-    requires jdk.zipfs;
+import java.nio.ByteOrder;
+
+public class ClassFileReader extends BytesReader {
+
+    private ConstantPool constantPool;
+
+    public ClassFileReader(byte[] data) {
+        super(data, ByteOrder.BIG_ENDIAN);
+    }
+
+    public ConstantPool getConstantPool() {
+        return constantPool;
+    }
+
+    public void setConstantPool(ConstantPool constantPool) {
+        this.constantPool = constantPool;
+    }
+
 }

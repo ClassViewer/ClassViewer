@@ -21,13 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.glavo.viewer.file.types.binary;
 
-module org.glavo.viewer {
-    exports org.glavo.viewer;
-    exports org.glavo.viewer.ui;
-    exports org.glavo.viewer.filetypes;
-    exports org.glavo.viewer.file.types;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import org.glavo.viewer.FileComponent;
 
-    requires javafx.controls;
-    requires jdk.zipfs;
+public class BytesBar extends Pane {
+
+    private final int byteCount;
+
+    public BytesBar(int byteCount) {
+        this.byteCount = byteCount;
+    }
+
+    public void select(FileComponent cc) {
+        getChildren().clear();
+
+        final double w = getWidth() - 4;
+        final double h = getHeight();
+
+        getChildren().add(new Line(0, h / 2, w, h / 2));
+        getChildren().add(new Rectangle(w * cc.getOffset() / byteCount, 4,
+                w * cc.getLength() / byteCount, h - 8));
+    }
+
 }
