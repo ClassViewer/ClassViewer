@@ -1,25 +1,21 @@
 package jlink;
 
-import java.io.Serializable;
 import java.util.Locale;
-import java.util.Objects;
 
-public final class JdkPlatform implements Serializable {
-
-    public static final JdkPlatform[] PLATFORMS = {
-            new JdkPlatform(OS.WINDOWS, Arch.X86_64),
-            new JdkPlatform(OS.WINDOWS, Arch.AARCH64),
-            new JdkPlatform(OS.LINUX, Arch.X86_64),
-            new JdkPlatform(OS.LINUX, Arch.AARCH64),
-            new JdkPlatform(OS.LINUX, Arch.RISCV64),
-            new JdkPlatform(OS.MACOS, Arch.X86_64),
-            new JdkPlatform(OS.MACOS, Arch.AARCH64),
-    };
+public enum JdkPlatform {
+    WINDOWS_X86_64(OS.WINDOWS, Arch.X86_64),
+    WINDOWS_AARCH64(OS.WINDOWS, Arch.AARCH64),
+    LINUX_X86_64(OS.LINUX, Arch.X86_64),
+    LINUX_AARCH64(OS.LINUX, Arch.AARCH64),
+    LINUX_RISCV64(OS.LINUX, Arch.RISCV64),
+    MACOS_X86_64(OS.MACOS, Arch.X86_64),
+    MACOS_AARCH64(OS.MACOS, Arch.AARCH64),
+    ;
 
     public final OS os;
     public final Arch arch;
 
-    private JdkPlatform(OS os, Arch arch) {
+    JdkPlatform(OS os, Arch arch) {
         this.os = os;
         this.arch = arch;
     }
@@ -27,18 +23,6 @@ public final class JdkPlatform implements Serializable {
     @Override
     public String toString() {
         return os.name().toLowerCase(Locale.ROOT) + "-" + arch.name().toLowerCase(Locale.ROOT);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof JdkPlatform)) return false;
-        JdkPlatform that = (JdkPlatform) o;
-        return os == that.os && arch == that.arch;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(os, arch);
     }
 
     public enum OS {

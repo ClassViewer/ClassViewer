@@ -50,7 +50,7 @@ public final class JlinkPlugin implements Plugin<Project> {
         Provider<Directory> downloadDir = project.getLayout().getBuildDirectory().dir("download");
 
 
-        for (JdkPlatform platform : JdkPlatform.PLATFORMS) {
+        for (JdkPlatform platform : JdkPlatform.values()) {
             TaskProvider<Download> downloadJdkTask = project.getTasks().register("downloadJdk-" + platform, Download.class, task -> {
                 task.setGroup("jlink");
                 task.src(getJdkDownloadUrl(platform));
