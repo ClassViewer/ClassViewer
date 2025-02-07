@@ -23,32 +23,18 @@
  */
 package org.glavo.viewer.ui;
 
-import javafx.beans.binding.Bindings;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
 import javafx.scene.control.Tab;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.glavo.viewer.file.types.FileType;
-import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.logging.Log;
 
@@ -58,30 +44,23 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Viewer extends BorderPane {
+public final class Viewer extends Control {
     public static final String TITLE = "ClassViewer";
 
     public static final int DEFAULT_WIDTH = 1200;
     public static final int DEFAULT_HEIGHT = 675;
 
-    private final Stage stage;
-    private final Scene scene;
-
-    private final ViewerMenuBar menuBar;
-    private final ToolBar toolBar;
-    private final Pane defaultText;
-    private final ViewerTabPane tabPane;
+    final Stage stage;
+    final Scene scene;
 
     public Viewer(Stage stage, boolean isPrimary) {
         this.stage = stage;
         this.scene = new Scene(this, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
-        Stylesheet.setStylesheet(scene);
-
         enableDragAndDrop(scene);
 
         stage.setScene(scene);
-        stage.setTitle(TITLE);
+        stage.setTitle(Viewer.TITLE);
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
         stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -93,31 +72,6 @@ public final class Viewer extends BorderPane {
                 event.consume();
             }
         });
-
-        this.menuBar = new ViewerMenuBar(this);
-        this.toolBar = new ToolBar();
-        {
-            Button openFile = new Button(null, new ImageView(ImageUtils.openFileImage));
-            openFile.setOnAction(event -> openFile());
-            Tooltip openFileTip = new Tooltip(I18N.getString("openFileButton.tooltip"));
-            openFile.setTooltip(openFileTip);
-
-            Button openFolder = new Button(null, new ImageView(ImageUtils.openFolderImage));
-            openFolder.setOnAction(event -> openFolder());
-            Tooltip openFolderTip = new Tooltip(I18N.getString("openFolderButton.tooltip"));
-            openFolder.setTooltip(openFolderTip);
-
-            toolBar.getItems().addAll(openFile, openFolder);
-        }
-
-        this.tabPane = new ViewerTabPane(this);
-        this.defaultText = createDefaultText();
-
-        this.setTop(new VBox(menuBar, toolBar));
-        this.centerProperty().bind(Bindings.createObjectBinding(
-                () -> tabPane.getTabs().isEmpty() ? defaultText : tabPane,
-                tabPane.getTabs()));
-
         stage.setOnShown(event -> Log.info("Show " + this));
         stage.setOnCloseRequest(event -> Log.info("Close " + this));
     }
@@ -150,34 +104,21 @@ public final class Viewer extends BorderPane {
         });
     }
 
-    private Pane createDefaultText() {
-        Text openFileText = new Text(I18N.getString("defaultText.openFile"));
-        openFileText.setFill(Color.GRAY);
-        Hyperlink openFileLink = new Hyperlink(menuBar.fileMenu.openFileItem.getAccelerator().getDisplayText());
-        openFileLink.setOnAction(event -> openFile());
+    ViewerSkin getViewerSkin() {
+        return (ViewerSkin) getSkin();
+    }
 
-        Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
-        openFolderText.setFill(Color.GRAY);
-        Hyperlink openFolderLink = new Hyperlink(menuBar.fileMenu.openFolderItem.getAccelerator().getDisplayText());
-        openFolderLink.setOnAction(event -> openFolder());
-
-        TextFlow text = new TextFlow(
-                openFileText, new Text(" "), openFileLink, new Text("\n"),
-                openFolderText, new Text(" "), openFolderLink
-        );
-        text.setTextAlignment(TextAlignment.LEFT);
-
-        FlowPane pane = new FlowPane(text);
-        pane.setAlignment(Pos.CENTER);
-        return pane;
+    @Override
+    protected Skin<?> createDefaultSkin() {
+        return new ViewerSkin(this);
     }
 
     public ViewerMenuBar getMenuBar() {
-        return menuBar;
+        return getViewerSkin().menuBar;
     }
 
     public ViewerTabPane getTabPane() {
-        return tabPane;
+        return getViewerSkin().tabPane;
     }
 
     public void openFile() {
