@@ -33,6 +33,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -84,24 +85,24 @@ public final class ViewerSkin extends SkinBase<Viewer> {
     }
 
     private Pane createDefaultText() {
+        var pane = new GridPane();
+        pane.setAlignment(Pos.CENTER);
+        pane.setHgap(8);
+
         Text openFileText = new Text(I18N.getString("defaultText.openFile"));
         openFileText.setFill(Color.GRAY);
-        Hyperlink openFileLink = new Hyperlink(menuBar.fileMenu.openFileItem.getAccelerator().getDisplayText());
+        Hyperlink openFileLink = new Hyperlink("Ctrl+O");
         openFileLink.setOnAction(event -> getSkinnable().openFile());
 
         Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
         openFolderText.setFill(Color.GRAY);
-        Hyperlink openFolderLink = new Hyperlink(menuBar.fileMenu.openFolderItem.getAccelerator().getDisplayText());
+        Hyperlink openFolderLink = new Hyperlink("Ctrl+Shift+O");
         openFolderLink.setOnAction(event -> getSkinnable().openFolder());
 
-        TextFlow text = new TextFlow(
-                openFileText, new Text(" "), openFileLink, new Text("\n"),
-                openFolderText, new Text(" "), openFolderLink
-        );
-        text.setTextAlignment(TextAlignment.LEFT);
-
-        FlowPane pane = new FlowPane(text);
-        pane.setAlignment(Pos.CENTER);
+        pane.add(openFileText, 0, 0);
+        pane.add(openFileLink, 1, 0);
+        pane.add(openFolderText, 0, 1);
+        pane.add(openFolderLink, 1, 1);
         return pane;
     }
 }
