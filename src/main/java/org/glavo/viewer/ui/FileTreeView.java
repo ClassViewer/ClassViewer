@@ -3,7 +3,7 @@ package org.glavo.viewer.ui;
 import javafx.scene.control.TreeView;
 
 public class FileTreeView extends TreeView<FileTreeNode> {
-    private Viewer viewer;
+    private final Viewer viewer;
 
     public FileTreeView(Viewer viewer, FileTreeNode root) {
         super(root);

@@ -29,5 +29,5 @@ module org.glavo.viewer {
 
     requires javafx.controls;
     requires jdk.zipfs;
-    requires kala.template;
+    requires kala.base;
 }

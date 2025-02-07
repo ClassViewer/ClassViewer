@@ -55,7 +55,7 @@ public class ViewerAlert extends Alert {
     }
 
     public static void logAndShowExceptionAlert(Throwable ex) {
-        Log.error(ex);
+        Log.warning("", ex);
         showExceptionAlert(ex);
     }
 

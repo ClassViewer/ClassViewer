@@ -34,8 +34,10 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
+import kala.function.CheckedSupplier;
 import org.glavo.viewer.file.types.FileType;
 import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.logging.Log;
 
 import java.io.File;
@@ -43,6 +45,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public final class Viewer extends Control {
     public static final String TITLE = "ClassViewer";
@@ -148,19 +151,31 @@ public final class Viewer extends Control {
     }
 
     public void openFile(FileType type, URL url) {
-        try {
-            Log.info("Open file: " + url);
-            if (url != null) {
-                OpenFileTask task = new OpenFileTask(this, type, url);
-                task.setOnSucceeded((ViewerTab tab) -> {
-                    addTab(tab);
-                    getMenuBar().updateRecentFiles();
-                });
-                task.startInNewThread();
-            }
-        } catch (Exception e) {
-            ViewerAlert.logAndShowExceptionAlert(e);
+        if (url == null) {
+            return;
         }
+
+        CompletableFuture.supplyAsync(CheckedSupplier.of(() -> {
+            if (type != null) {
+                return type.open(this, url);
+            } else {
+                for (FileType t : FileType.fileTypes) {
+                    if (t.accept(url)) {
+                        ViewerTab ans = t.open(this, url);
+                        RecentFiles.Instance.add(t, url);
+                        return ans;
+                    }
+                }
+            }
+            return null;
+        })).whenCompleteAsync((tab, exception) -> {
+            if (exception == null) {
+                addTab(tab);
+                getMenuBar().updateRecentFiles();
+            } else {
+                ViewerAlert.logAndShowExceptionAlert(exception);
+            }
+        }, Schedulers.javafx());
     }
 
     public void addTab(ViewerTab tab) {
@@ -185,8 +200,31 @@ public final class Viewer extends Control {
     }
 
     public void openUrls(List<URL> urls) {
-        OpenFilesTask task = new OpenFilesTask(this, urls);
-        task.setOnSucceeded(this::addTabs);
+        CompletableFuture.supplyAsync(() -> {
+            ArrayList<ViewerTab> ans = new ArrayList<>();
+
+            tag:
+            for (URL url : urls) {
+                for (FileType type : FileType.fileTypes) {
+                    try {
+                        if (type.accept(url)) {
+                            ans.add(type.open(this, url));
+                            RecentFiles.Instance.add(type, url);
+                            continue tag;
+                        }
+                    } catch (Exception ex) {
+                        ViewerAlert.logAndShowExceptionAlert(ex);
+                    }
+                }
+            }
+            return ans;
+        }).whenCompleteAsync((result, exception) -> {
+            if (exception == null) {
+                this.addTabs(result);
+            } else {
+                ViewerAlert.logAndShowExceptionAlert(exception);
+            }
+        }, Schedulers.javafx());
     }
 
     public void addTabs(List<ViewerTab> tabs) {
