@@ -4,7 +4,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.UrlUtils;
 
 import java.net.URL;
@@ -13,7 +12,6 @@ public class ViewerTab extends Tab {
     public class UserData {
         public URL url = null;
         public Runnable showOrHideSearchBar = null;
-
 
         public ViewerTab getTab() {
             return ViewerTab.this;
@@ -43,7 +41,6 @@ public class ViewerTab extends Tab {
 
     public ViewerTab(String text, Node content) {
         super(text, content);
-        this.setStyle(FontUtils.setUIFont(this.getStyle()));
         this.setUserData(new UserData());
     }
 

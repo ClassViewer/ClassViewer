@@ -13,9 +13,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.glavo.viewer.Options;
 import org.glavo.viewer.file.types.FileType;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.logging.Log;
 
@@ -28,8 +26,8 @@ public final class Viewer extends Application {
     public static final String TITLE = "ClassViewer";
     public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.ViewerResources");
 
-    public static final int DEFAULT_WIDTH = 1080;
-    public static final int DEFAULT_HEIGHT = 608;
+    public static final int DEFAULT_WIDTH = 1200;
+    public static final int DEFAULT_HEIGHT = 675;
 
     private Stage stage;
     private Scene scene;
@@ -39,12 +37,6 @@ public final class Viewer extends Application {
 
     private ViewerTopBar topBar;
     private ViewerTabPane tabPane;
-
-    @Override
-    public void init() throws Exception {
-        Application.setUserAgentStylesheet(Options.skin);
-        Log.info("info " + this);
-    }
 
     @Override
     public void start(Stage stage) {
@@ -62,10 +54,9 @@ public final class Viewer extends Application {
             }
             return tabPane;
         }, tabPane.getTabs()));
-        FontUtils.setUIFont(tabPane);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        scene.getStylesheets().add(Viewer.class.getResource("/org/glavo/viewer/resources/css/viewer.css").toExternalForm());
+        Stylesheet.setStylesheet(scene);
 
         enableDragAndDrop(scene);
 
@@ -123,7 +114,6 @@ public final class Viewer extends Application {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void openFile(URL url) {
         openFile(null, url);
     }
@@ -240,17 +230,13 @@ public final class Viewer extends Application {
 
     private Pane createDefaultText() {
         Text openFileText = new Text(resource.getString("defaultText.openFile"));
-        openFileText.setFont(FontUtils.getUiFont());
         openFileText.setFill(Color.GRAY);
         Hyperlink openFileLink = new Hyperlink(topBar.getMenuBar().fileMenu.openFileItem.getAccelerator().getDisplayText());
-        openFileLink.setFont(FontUtils.getUiFont());
         openFileLink.setOnAction(event -> openFile());
 
         Text openFolderText = new Text(resource.getString("defaultText.openFolder"));
-        openFolderText.setFont(FontUtils.getUiFont());
         openFolderText.setFill(Color.GRAY);
         Hyperlink openFolderLink = new Hyperlink(topBar.getMenuBar().fileMenu.openFolderItem.getAccelerator().getDisplayText());
-        openFolderLink.setFont(FontUtils.getUiFont());
         openFolderLink.setOnAction(event -> openFolder());
 
         TextFlow text = new TextFlow(

@@ -1,3 +1,4 @@
+
 /*
  * The MIT License (MIT)
  *
@@ -21,31 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.glavo.viewer.file.types.binary;
+package org.glavo.viewer.resources;
 
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import org.glavo.viewer.util.ImageUtils;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-public final class HexPaneMenu extends ContextMenu {
+public final class Resources {
 
-    public HexPaneMenu(TextArea textArea) {
-        MenuItem copy = new MenuItem("_Copy");
-        copy.setMnemonicParsing(true);
-        copy.setOnAction(e -> {
-            javafx.scene.input.Clipboard clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
-            ClipboardContent content = new ClipboardContent();
-            content.putString(textArea.getSelectedText().replace("\n", ""));
-            clipboard.setContent(content);
-        });
-        copy.setGraphic(new ImageView(ImageUtils.copyImage));
+    public static URL getResource(String name) {
+        URL resource = Resources.class.getResource(name);
+        if (resource == null) {
+            throw new AssertionError("Resource not found: " + name);
+        }
+        return resource;
+    }
 
+    public static InputStream getResourceAsStream(String name) {
+        InputStream stream = Resources.class.getResourceAsStream(name);
+        if (stream == null) {
+            throw new AssertionError("Resource not found: " + name);
+        }
+        return stream;
+    }
 
-        getItems().addAll(
-                copy
-        );
+    public static BufferedReader getResourceAsReader(String name) {
+        return new BufferedReader(new InputStreamReader(getResourceAsStream(name), StandardCharsets.UTF_8));
+    }
+
+    private Resources() {
     }
 }

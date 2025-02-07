@@ -1,7 +1,6 @@
 package org.glavo.viewer.ui;
 
 import javafx.scene.layout.VBox;
-import org.glavo.viewer.Options;
 
 public final class ViewerTopBar extends VBox {
 

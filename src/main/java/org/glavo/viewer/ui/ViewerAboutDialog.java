@@ -18,6 +18,7 @@ public class ViewerAboutDialog extends BorderPane {
 
         ViewerAboutDialog dialog = new ViewerAboutDialog(viewer, stage);
         Scene scene = new Scene(dialog, 300, 180);
+        Stylesheet.setStylesheet(scene);
 
         stage.setScene(scene);
         stage.setTitle("About");

@@ -30,8 +30,6 @@ import javafx.scene.control.Skinnable;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.FileComponent;
-import org.glavo.viewer.util.FontUtils;
-
 
 public class HexPane extends ScrollPane {
 
@@ -96,9 +94,9 @@ public class HexPane extends ScrollPane {
     }
 
     private void initTextArea() {
-        textArea1.setFont(FontUtils.textFont);
-        textArea2.setFont(FontUtils.textFont);
-        textArea3.setFont(FontUtils.textFont);
+        textArea1.getStyleClass().add("monospaced");
+        textArea2.getStyleClass().add("monospaced");
+        textArea3.getStyleClass().add("monospaced");
 
         textArea1.setPrefColumnCount(6);
         textArea2.setPrefColumnCount(46);

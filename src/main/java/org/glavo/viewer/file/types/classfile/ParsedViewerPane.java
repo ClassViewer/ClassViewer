@@ -34,7 +34,6 @@ import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.file.types.binary.BytesBar;
 import org.glavo.viewer.file.types.binary.HexPane;
 import org.glavo.viewer.file.types.binary.HexText;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.logging.Log;
 
 /**
@@ -71,8 +70,6 @@ public class ParsedViewerPane extends BorderPane {
         bytesBar.setMaxHeight(statusLabel.getMaxHeight());
         bytesBar.setPrefWidth(200);
 
-        FontUtils.setUIFont(statusLabel);
-
         //this.setTop(searchBar);
         this.setCenter(buildSplitPane());
         this.setBottom(buildStatusBar());
@@ -86,7 +83,6 @@ public class ParsedViewerPane extends BorderPane {
 
         TreeView<FileComponent> tree = new TreeView<>(file);
         tree.setMinWidth(200);
-        FontUtils.setUIFont(tree);
         return tree;
     }
 

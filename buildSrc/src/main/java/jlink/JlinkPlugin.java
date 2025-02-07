@@ -98,7 +98,6 @@ public final class JlinkPlugin implements Plugin<Project> {
                 task.dependsOn(downloadJdkTask, project.getTasks().getByName("jar"));
                 task.getJdkArchivePath().set(downloadJdkTask.map(it -> it.getOutputFiles().getFirst().toPath()));
 
-
                 if (downloadJavaFXTask != null) {
                     task.dependsOn(downloadJavaFXTask);
                     task.getJavaFXArchivePath().set(downloadJavaFXTask.map(it -> it.getOutputFiles().getFirst().toPath()));

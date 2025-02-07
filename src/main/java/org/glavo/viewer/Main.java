@@ -25,6 +25,7 @@ package org.glavo.viewer;
 
 import javafx.application.Application;
 import org.glavo.viewer.ui.Viewer;
+import org.glavo.viewer.util.PropertiesUtils;
 import org.glavo.viewer.util.logging.Log;
 import org.glavo.viewer.util.CrashHandler;
 
@@ -33,8 +34,8 @@ public final class Main {
     public static void main(String[] args) {
         Log.start(Metadata.VIEWER_DIRECTORY.resolve("logs"));
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler.INSTANCE);
+        PropertiesUtils.loadProperties(Metadata.VIEWER_DIRECTORY.resolve("viewer.properties"));
 
-        Options.init();
         Log.info("launch application");
         Application.launch(Viewer.class, args);
     }

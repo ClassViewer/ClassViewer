@@ -21,31 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.glavo.viewer.file.types.binary;
+package org.glavo.viewer.annotation;
 
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import org.glavo.viewer.util.ImageUtils;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public final class HexPaneMenu extends ContextMenu {
-
-    public HexPaneMenu(TextArea textArea) {
-        MenuItem copy = new MenuItem("_Copy");
-        copy.setMnemonicParsing(true);
-        copy.setOnAction(e -> {
-            javafx.scene.input.Clipboard clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
-            ClipboardContent content = new ClipboardContent();
-            content.putString(textArea.getSelectedText().replace("\n", ""));
-            clipboard.setContent(content);
-        });
-        copy.setGraphic(new ImageView(ImageUtils.copyImage));
-
-
-        getItems().addAll(
-                copy
-        );
-    }
+@Documented
+@Inherited
+@Retention(RetentionPolicy.SOURCE)
+@Target({ElementType.METHOD, ElementType.FIELD})
+public @interface FXThread {
 }

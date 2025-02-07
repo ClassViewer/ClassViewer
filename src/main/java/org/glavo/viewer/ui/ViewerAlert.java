@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.logging.Log;
 
 import java.io.PrintWriter;
@@ -25,12 +24,11 @@ public class ViewerAlert extends Alert {
         String exceptionText = sw.toString();
 
         Label label = new Label("The exception stacktrace was:");
-        FontUtils.setUIFont(label);
 
         TextArea textArea = new TextArea(exceptionText);
+        textArea.getStyleClass().add("monospaced");
         textArea.setEditable(false);
         textArea.setWrapText(true);
-        textArea.setFont(FontUtils.textFont);
 
         GridPane.setVgrow(textArea, Priority.ALWAYS);
         GridPane.setHgrow(textArea, Priority.ALWAYS);
@@ -63,11 +61,9 @@ public class ViewerAlert extends Alert {
 
     public ViewerAlert(AlertType alertType) {
         super(alertType);
-        FontUtils.setUIFont(this.getDialogPane());
     }
 
     public ViewerAlert(AlertType alertType, String contentText, ButtonType... buttons) {
         super(alertType, contentText, buttons);
-        FontUtils.setUIFont(this.getDialogPane());
     }
 }

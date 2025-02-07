@@ -12,8 +12,6 @@ import org.glavo.viewer.util.ImageUtils;
 
 import static org.glavo.viewer.ui.Viewer.resource;
 
-import static org.glavo.viewer.util.FontUtils.setUIFont;
-
 public final class ViewerMenuBar extends MenuBar {
 
 
@@ -81,8 +79,6 @@ public final class ViewerMenuBar extends MenuBar {
         this.viewer = viewer;
         this.getMenus().addAll(fileMenu, windowMenu, helpMenu);
         updateRecentFiles();
-
-        setUIFont(this);
     }
 
     public void updateRecentFiles() {

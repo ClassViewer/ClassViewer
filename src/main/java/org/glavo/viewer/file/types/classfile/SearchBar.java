@@ -31,7 +31,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 
 import java.util.ArrayList;
@@ -180,7 +179,7 @@ public final class SearchBar extends ToolBar {
         this.searchRangeBox.getSelectionModel().select(0);
         this.searcherBox.getSelectionModel().select(0);
 
-        this.setFont();
+        textField.getStyleClass().add("monospaced");
 
         this.textField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (new KeyCodeCombination(KeyCode.ENTER).match(event)) {
@@ -269,11 +268,4 @@ public final class SearchBar extends ToolBar {
         textField.setStyle(style);
     }
 
-    public void setFont() {
-        textField.setFont(FontUtils.textFont);
-        searchButton.setFont(FontUtils.uiFont);
-        FontUtils.setUIFont(searchRangeBox);
-        previousButton.setFont(FontUtils.uiFont);
-        nextButton.setFont(FontUtils.uiFont);
-    }
 }

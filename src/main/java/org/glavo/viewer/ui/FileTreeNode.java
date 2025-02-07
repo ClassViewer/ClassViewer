@@ -8,7 +8,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
-import org.glavo.viewer.util.FontUtils;
 import org.glavo.viewer.util.ImageUtils;
 
 import java.net.URL;
@@ -51,7 +50,6 @@ public class FileTreeNode extends TreeItem<FileTreeNode> {
 
     public MenuItem copyPathMenu() {
         MenuItem menu = new MenuItem("Copy path");
-        menu.setStyle(FontUtils.setUIFont(menu.getStyle()));
         menu.setGraphic(new ImageView(ImageUtils.copyImage));
         menu.setOnAction(event -> {
             Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -65,14 +63,12 @@ public class FileTreeNode extends TreeItem<FileTreeNode> {
 
     public MenuItem openInNewTabMenu(Viewer viewer) {
         MenuItem menu = new MenuItem("Open in new Tab");
-        menu.setStyle(FontUtils.setUIFont(menu.getStyle()));
         menu.setOnAction(event -> viewer.openFile(getUrl()));
         return menu;
     }
 
     public MenuItem openInNewWindowMenu(Viewer viewer) {
         MenuItem menu = new MenuItem("Open in new Window");
-        menu.setStyle(FontUtils.setUIFont(menu.getStyle()));
         menu.setOnAction(event -> {
             Viewer newViewer = new Viewer();
             viewer.start(new Stage());

@@ -1,7 +1,6 @@
 package org.glavo.viewer.ui;
 
 import javafx.scene.control.TreeView;
-import org.glavo.viewer.util.FontUtils;
 
 public class FileTreeView extends TreeView<FileTreeNode> {
     private Viewer viewer;
@@ -11,7 +10,6 @@ public class FileTreeView extends TreeView<FileTreeNode> {
         this.viewer = viewer;
         this.setContextMenu(new FileTreeMenu(this));
         root.setExpanded(true);
-        FontUtils.setUIFont(this);
     }
 
     public FileTreeNode getSelected() {
