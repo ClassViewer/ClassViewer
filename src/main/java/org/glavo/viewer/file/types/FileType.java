@@ -31,7 +31,6 @@ import org.glavo.viewer.file.types.binary.BinaryFileType;
 import org.glavo.viewer.file.types.classfile.ClassFileType;
 import org.glavo.viewer.file.types.jar.JarFileType;
 import org.glavo.viewer.file.types.jmod.JModFileType;
-import org.glavo.viewer.ui.folder.FolderType;
 
 import java.net.URL;
 

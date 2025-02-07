@@ -1,17 +1,9 @@
 package org.glavo.viewer.ui;
 
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.glavo.viewer.file.types.FileType;
 import org.glavo.viewer.util.ImageUtils;
@@ -31,29 +23,12 @@ public final class Viewer extends Application {
 
     private Stage stage;
     private Scene scene;
-    private BorderPane pane;
-
-    private Pane defaultText;
-
-    private ViewerTopBar topBar;
-    private ViewerTabPane tabPane;
+    private ViewerMainPane pane;
 
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        this.pane = new BorderPane();
-        this.topBar = new ViewerTopBar(this);
-        this.tabPane = new ViewerTabPane(this);
-        this.defaultText = this.createDefaultText();
-
-        pane.setTop(topBar);
-        pane.setCenter(defaultText);
-        pane.centerProperty().bind(Bindings.createObjectBinding(() -> {
-            if (tabPane.getTabs().isEmpty()) {
-                return defaultText;
-            }
-            return tabPane;
-        }, tabPane.getTabs()));
+        this.pane = new ViewerMainPane(this);
 
         this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         Stylesheet.setStylesheet(scene);
@@ -66,7 +41,7 @@ public final class Viewer extends Application {
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
         stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN).match(event)) {
-                ViewerTab tab = (ViewerTab) tabPane.getSelectionModel().getSelectedItem();
+                ViewerTab tab = (ViewerTab) pane.getTabPane().getSelectionModel().getSelectedItem();
                 if (tab != null) {
                     tab.showSearchBar();
                 }
@@ -125,7 +100,7 @@ public final class Viewer extends Application {
                 OpenFileTask task = new OpenFileTask(this, type, url);
                 task.setOnSucceeded((ViewerTab tab) -> {
                     addTab(tab);
-                    topBar.getMenuBar().updateRecentFiles();
+                    pane.getMenuBar().updateRecentFiles();
                 });
                 task.startInNewThread();
             }
@@ -136,8 +111,8 @@ public final class Viewer extends Application {
 
     public void addTab(ViewerTab tab) {
         if (tab != null) {
-            tabPane.getTabs().add(tabPane.getSelectionModel().getSelectedIndex() + 1, tab);
-            tabPane.getSelectionModel().select(tab);
+            pane.getTabPane().getTabs().add(pane.getTabPane().getSelectionModel().getSelectedIndex() + 1, tab);
+            pane.getTabPane().getSelectionModel().select(tab);
         }
     }
 
@@ -166,17 +141,17 @@ public final class Viewer extends Application {
         }
 
         if (tabs.size() == 1) {
-            Tab tab = tabs.get(0);
-            tabPane.getTabs().add(tabPane.getSelectionModel().getSelectedIndex() + 1, tab);
-            tabPane.getSelectionModel().select(tab);
+            Tab tab = tabs.getFirst();
+            pane.getTabPane().getTabs().add(pane.getTabPane().getSelectionModel().getSelectedIndex() + 1, tab);
+            pane.getTabPane().getSelectionModel().select(tab);
             return;
         }
 
-        tabPane.getTabs().addAll(tabPane.getSelectionModel().getSelectedIndex() + 1, tabs);
+        pane.getTabPane().getTabs().addAll(pane.getTabPane().getSelectionModel().getSelectedIndex() + 1, tabs);
     }
 
     public void removeTab(ViewerTab tab) {
-        tabPane.getTabs().remove(tab);
+        pane.getTabPane().getTabs().remove(tab);
     }
 
     private void enableDragAndDrop(Scene scene) {
@@ -216,37 +191,8 @@ public final class Viewer extends Application {
         return scene;
     }
 
-    public BorderPane getPane() {
-        return pane;
-    }
-
-    public ViewerTopBar getTopBar() {
-        return topBar;
-    }
-
     public ViewerTabPane getTabPane() {
-        return tabPane;
+        return pane.getTabPane();
     }
 
-    private Pane createDefaultText() {
-        Text openFileText = new Text(resource.getString("defaultText.openFile"));
-        openFileText.setFill(Color.GRAY);
-        Hyperlink openFileLink = new Hyperlink(topBar.getMenuBar().fileMenu.openFileItem.getAccelerator().getDisplayText());
-        openFileLink.setOnAction(event -> openFile());
-
-        Text openFolderText = new Text(resource.getString("defaultText.openFolder"));
-        openFolderText.setFill(Color.GRAY);
-        Hyperlink openFolderLink = new Hyperlink(topBar.getMenuBar().fileMenu.openFolderItem.getAccelerator().getDisplayText());
-        openFolderLink.setOnAction(event -> openFolder());
-
-        TextFlow text = new TextFlow(
-                openFileText, new Text(" "), openFileLink, new Text("\n"),
-                openFolderText, new Text(" "), openFolderLink
-        );
-        text.setTextAlignment(TextAlignment.LEFT);
-
-        FlowPane pane = new FlowPane(text);
-        pane.setAlignment(Pos.CENTER);
-        return pane;
-    }
 }

@@ -8,13 +8,13 @@ import javafx.scene.control.TabPane;
 import java.net.URL;
 
 public final class ViewerTabPane extends TabPane {
-    private Viewer viewer;
+    private final Viewer viewer;
 
     public ViewerTabPane(Viewer viewer) {
         this.viewer = viewer;
         this.getSelectionModel().selectedItemProperty().addListener(this::onChange);
         this.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
-            if(this.getTabs().isEmpty()) {
+            if (this.getTabs().isEmpty()) {
                 viewer.getStage().setTitle(Viewer.TITLE);
             }
         });
