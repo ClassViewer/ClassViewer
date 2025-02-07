@@ -29,7 +29,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.resources.Images;
 
 public final class AsciiPaneMenu extends ContextMenu {
     private TextArea textArea;
@@ -44,7 +44,7 @@ public final class AsciiPaneMenu extends ContextMenu {
             content.putString(textArea.getSelectedText().replace("\n", ""));
             clipboard.setContent(content);
         });
-        copy.setGraphic(new ImageView(ImageUtils.copyImage));
+        copy.setGraphic(new ImageView(Images.loadImage("copy")));
 
         getItems().addAll(copy);
     }

@@ -8,7 +8,7 @@ public final class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        Log.error("Uncaught exception in thread " + t.getName());
+        Log.error("Uncaught exception in thread " + t.getName(), e);
         Log.shutdown();
     }
 }

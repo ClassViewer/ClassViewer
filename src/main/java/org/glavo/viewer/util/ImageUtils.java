@@ -4,7 +4,6 @@ import java.net.URL;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 
 /**
  *
@@ -17,14 +16,6 @@ public class ImageUtils {
     public static Image loadImage(String imgName) {
         URL imgUrl = ImageUtils.class.getResource(imgName);
         return new Image(imgUrl.toString());
-    }
-
-    public static HBox images(Image... images) {
-        HBox hbox = new HBox();
-        for (Image image : images) {
-            hbox.getChildren().add(new ImageView(image));
-        }
-        return hbox;
     }
 
     public static final Image copyImage = loadImage("/icons/copy.png");

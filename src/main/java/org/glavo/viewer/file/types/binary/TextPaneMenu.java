@@ -28,7 +28,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
-import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.resources.Images;
 
 public final class TextPaneMenu extends ContextMenu {
     private TextArea textArea;
@@ -43,7 +43,7 @@ public final class TextPaneMenu extends ContextMenu {
             content.putString(textArea.getSelectedText());
             clipboard.setContent(content);
         });
-        copy.setGraphic(new ImageView(ImageUtils.copyImage));
+        copy.setGraphic(new ImageView(Images.loadImage("copy")));
 
         getItems().addAll(copy);
     }

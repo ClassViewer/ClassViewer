@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.ImageUtils;
 
 import java.net.URL;
@@ -50,7 +51,7 @@ public class FileTreeNode extends TreeItem<FileTreeNode> {
 
     public MenuItem copyPathMenu() {
         MenuItem menu = new MenuItem("Copy path");
-        menu.setGraphic(new ImageView(ImageUtils.copyImage));
+        menu.setGraphic(new ImageView(Images.loadImage("copy")));
         menu.setOnAction(event -> {
             Clipboard clipboard = Clipboard.getSystemClipboard();
             ClipboardContent content = new ClipboardContent();

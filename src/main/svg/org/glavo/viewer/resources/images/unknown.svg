@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <title>StatusUnknown</title>
+  <g>
+    <rect width="16" height="16" fill="#ffc4ff" opacity="0"/>
+    <path d="M9,12v2H7V12ZM8,2A4,4,0,0,0,4,6H6a2,2,0,0,1,4,0c0,2-3,1.75-3,5H9c0-2.25,3-2.5,3-5A4,4,0,0,0,8,2Z" fill="#6e6e6e"/>
+  </g>
+</svg>
