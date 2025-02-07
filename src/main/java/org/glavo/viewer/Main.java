@@ -24,12 +24,54 @@
 package org.glavo.viewer;
 
 import javafx.application.Application;
+import javafx.stage.Stage;
 import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.util.PropertiesUtils;
 import org.glavo.viewer.util.logging.Log;
 import org.glavo.viewer.util.CrashHandler;
 
-public final class Main {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+public final class Main extends Application {
+
+    private static Main INSTANCE;
+
+    public static Main getInstance() {
+        if (INSTANCE == null) {
+            throw new IllegalStateException("Main instance has not been created");
+        }
+
+        return INSTANCE;
+    }
+
+    @Override
+    public void init() throws Exception {
+        INSTANCE = this;
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        var viewer = new Viewer(primaryStage, true);
+
+        if (this.getParameters() != null && this.getParameters().getUnnamed() != null) {
+            List<String> args = this.getParameters().getUnnamed();
+            ArrayList<File> files = new ArrayList<>(args.size());
+            for (String arg : args) {
+                files.add(new File(arg));
+            }
+            javafx.application.Platform.runLater(() -> viewer.openFiles(files));
+        }
+
+        viewer.getStage().show();
+    }
+
+    @Override
+    public void stop() {
+        Log.shutdown();
+        INSTANCE = null;
+    }
 
     public static void main(String[] args) {
         Log.start(Metadata.VIEWER_DIRECTORY.resolve("logs"));
@@ -37,6 +79,6 @@ public final class Main {
         PropertiesUtils.loadProperties(Metadata.VIEWER_DIRECTORY.resolve("viewer.properties"));
 
         Log.info("launch application");
-        Application.launch(Viewer.class, args);
+        Application.launch(Main.class, args);
     }
 }

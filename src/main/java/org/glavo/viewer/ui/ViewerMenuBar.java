@@ -47,7 +47,7 @@ public final class ViewerMenuBar extends MenuBar {
             super(resource.getString("windowMenu.text"));
             this.setMnemonicParsing(true);
 
-            newWindowItem.setOnAction(event -> new Viewer().start(new Stage()));
+            newWindowItem.setOnAction(event -> new Viewer(new Stage(), false));
             newWindowItem.setMnemonicParsing(true);
 
             this.getItems().add(newWindowItem);

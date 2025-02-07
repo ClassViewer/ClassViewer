@@ -6,6 +6,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.glavo.viewer.Main;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.logging.Log;
 
@@ -32,7 +33,7 @@ public class ViewerAboutDialog extends BorderPane {
 
         image.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             Log.info("Open Home Page");
-            viewer.getHostServices().showDocument(homeUrl);
+            Main.getInstance().getHostServices().showDocument(homeUrl);
         });
     }
 }

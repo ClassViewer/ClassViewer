@@ -70,9 +70,8 @@ public class FileTreeNode extends TreeItem<FileTreeNode> {
     public MenuItem openInNewWindowMenu(Viewer viewer) {
         MenuItem menu = new MenuItem("Open in new Window");
         menu.setOnAction(event -> {
-            Viewer newViewer = new Viewer();
-            viewer.start(new Stage());
-            viewer.openFile(getUrl());
+            Viewer newViewer = new Viewer(new Stage(), false);
+            newViewer.openFile(getUrl());
         });
 
         return menu;

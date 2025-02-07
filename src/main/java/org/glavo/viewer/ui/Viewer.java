@@ -1,9 +1,51 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2025 Glavo
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package org.glavo.viewer.ui;
 
-import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
-import javafx.scene.input.*;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.glavo.viewer.file.types.FileType;
 import org.glavo.viewer.util.ImageUtils;
@@ -12,25 +54,29 @@ import org.glavo.viewer.util.logging.Log;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
-public final class Viewer extends Application {
+public final class Viewer extends BorderPane {
     public static final String TITLE = "ClassViewer";
     public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.ViewerResources");
 
     public static final int DEFAULT_WIDTH = 1200;
     public static final int DEFAULT_HEIGHT = 675;
 
-    private Stage stage;
-    private Scene scene;
-    private ViewerMainPane pane;
+    private final Stage stage;
+    private final Scene scene;
 
-    @Override
-    public void start(Stage stage) {
+    private final ViewerMenuBar menuBar;
+    private final ToolBar toolBar;
+    private final Pane defaultText;
+    private final ViewerTabPane tabPane;
+
+    public Viewer(Stage stage, boolean isPrimary) {
         this.stage = stage;
-        this.pane = new ViewerMainPane(this);
+        this.scene = new Scene(this, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
-        this.scene = new Scene(pane, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         Stylesheet.setStylesheet(scene);
 
         enableDragAndDrop(scene);
@@ -41,7 +87,7 @@ public final class Viewer extends Application {
         stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
         stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN).match(event)) {
-                ViewerTab tab = (ViewerTab) pane.getTabPane().getSelectionModel().getSelectedItem();
+                ViewerTab tab = (ViewerTab) getTabPane().getSelectionModel().getSelectedItem();
                 if (tab != null) {
                     tab.showSearchBar();
                 }
@@ -49,22 +95,62 @@ public final class Viewer extends Application {
             }
         });
 
-        if (this.getParameters() != null && this.getParameters().getUnnamed() != null) {
-            List<String> args = this.getParameters().getUnnamed();
-            ArrayList<File> files = new ArrayList<>(args.size());
-            for (String arg : args) {
-                files.add(new File(arg));
-            }
-            javafx.application.Platform.runLater(() -> openFiles(files));
+        this.menuBar = new ViewerMenuBar(this);
+        this.toolBar = new ToolBar();
+        {
+            Button openFile = new Button(null, new ImageView(ImageUtils.openFileImage));
+            openFile.setOnAction(event -> openFile());
+            Tooltip openFileTip = new Tooltip(resource.getString("openFileButton.tooltip"));
+            openFile.setTooltip(openFileTip);
+
+            Button openFolder = new Button(null, new ImageView(ImageUtils.openFolderImage));
+            openFolder.setOnAction(event -> openFolder());
+            Tooltip openFolderTip = new Tooltip(resource.getString("openFolderButton.tooltip"));
+            openFolder.setTooltip(openFolderTip);
+
+            toolBar.getItems().addAll(openFile, openFolder);
         }
+
+        this.tabPane = new ViewerTabPane(this);
+        this.defaultText = createDefaultText();
+
+        this.setTop(new VBox(menuBar, toolBar));
+        this.centerProperty().bind(Bindings.createObjectBinding(
+                () -> tabPane.getTabs().isEmpty() ? defaultText : tabPane,
+                tabPane.getTabs()));
+
         stage.setOnShown(event -> Log.info("Show " + this));
         stage.setOnCloseRequest(event -> Log.info("Close " + this));
-        stage.show();
     }
 
-    @Override
-    public void stop() throws Exception {
-        Log.shutdown();
+    private Pane createDefaultText() {
+        Text openFileText = new Text(Viewer.resource.getString("defaultText.openFile"));
+        openFileText.setFill(Color.GRAY);
+        Hyperlink openFileLink = new Hyperlink(menuBar.fileMenu.openFileItem.getAccelerator().getDisplayText());
+        openFileLink.setOnAction(event -> openFile());
+
+        Text openFolderText = new Text(Viewer.resource.getString("defaultText.openFolder"));
+        openFolderText.setFill(Color.GRAY);
+        Hyperlink openFolderLink = new Hyperlink(menuBar.fileMenu.openFolderItem.getAccelerator().getDisplayText());
+        openFolderLink.setOnAction(event -> openFolder());
+
+        TextFlow text = new TextFlow(
+                openFileText, new Text(" "), openFileLink, new Text("\n"),
+                openFolderText, new Text(" "), openFolderLink
+        );
+        text.setTextAlignment(TextAlignment.LEFT);
+
+        FlowPane pane = new FlowPane(text);
+        pane.setAlignment(Pos.CENTER);
+        return pane;
+    }
+
+    public ViewerMenuBar getMenuBar() {
+        return menuBar;
+    }
+
+    public ViewerTabPane getTabPane() {
+        return tabPane;
     }
 
     public void openFile() {
@@ -100,7 +186,7 @@ public final class Viewer extends Application {
                 OpenFileTask task = new OpenFileTask(this, type, url);
                 task.setOnSucceeded((ViewerTab tab) -> {
                     addTab(tab);
-                    pane.getMenuBar().updateRecentFiles();
+                    getMenuBar().updateRecentFiles();
                 });
                 task.startInNewThread();
             }
@@ -111,8 +197,8 @@ public final class Viewer extends Application {
 
     public void addTab(ViewerTab tab) {
         if (tab != null) {
-            pane.getTabPane().getTabs().add(pane.getTabPane().getSelectionModel().getSelectedIndex() + 1, tab);
-            pane.getTabPane().getSelectionModel().select(tab);
+            getTabPane().getTabs().add(getTabPane().getSelectionModel().getSelectedIndex() + 1, tab);
+            getTabPane().getSelectionModel().select(tab);
         }
     }
 
@@ -142,16 +228,16 @@ public final class Viewer extends Application {
 
         if (tabs.size() == 1) {
             Tab tab = tabs.getFirst();
-            pane.getTabPane().getTabs().add(pane.getTabPane().getSelectionModel().getSelectedIndex() + 1, tab);
-            pane.getTabPane().getSelectionModel().select(tab);
+            getTabPane().getTabs().add(getTabPane().getSelectionModel().getSelectedIndex() + 1, tab);
+            getTabPane().getSelectionModel().select(tab);
             return;
         }
 
-        pane.getTabPane().getTabs().addAll(pane.getTabPane().getSelectionModel().getSelectedIndex() + 1, tabs);
+        getTabPane().getTabs().addAll(getTabPane().getSelectionModel().getSelectedIndex() + 1, tabs);
     }
 
     public void removeTab(ViewerTab tab) {
-        pane.getTabPane().getTabs().remove(tab);
+        getTabPane().getTabs().remove(tab);
     }
 
     private void enableDragAndDrop(Scene scene) {
@@ -186,13 +272,4 @@ public final class Viewer extends Application {
     public Stage getStage() {
         return stage;
     }
-
-    public Scene getScene() {
-        return scene;
-    }
-
-    public ViewerTabPane getTabPane() {
-        return pane.getTabPane();
-    }
-
 }
