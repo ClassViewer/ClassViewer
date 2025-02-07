@@ -14,7 +14,6 @@ import static org.glavo.viewer.ui.Viewer.resource;
 
 public final class ViewerMenuBar extends MenuBar {
 
-
     public class FileMenu extends Menu {
         MenuItem openFileItem = new MenuItem(resource.getString("fileMenu.openFileItem.text"));
         MenuItem openFolderItem = new MenuItem(resource.getString("fileMenu.openFolderItem.text"));
@@ -41,8 +40,8 @@ public final class ViewerMenuBar extends MenuBar {
         }
     }
 
-    public class WindowMenu extends Menu {
-        private MenuItem newWindowItem = new MenuItem(resource.getString("windowMenu.newWindowItem.text"));
+    public static class WindowMenu extends Menu {
+        private final MenuItem newWindowItem = new MenuItem(resource.getString("windowMenu.newWindowItem.text"));
 
         public WindowMenu() {
             super(resource.getString("windowMenu.text"));
@@ -56,7 +55,7 @@ public final class ViewerMenuBar extends MenuBar {
     }
 
     public class HelpMenu extends Menu {
-        private MenuItem aboutItem = new MenuItem(resource.getString("helpMenu.aboutItem.text"));
+        private final MenuItem aboutItem = new MenuItem(resource.getString("helpMenu.aboutItem.text"));
 
         public HelpMenu() {
             super(resource.getString("helpMenu.text"));
