@@ -25,29 +25,21 @@ package org.glavo.viewer.ui;
 
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import org.glavo.viewer.resources.I18N;
-import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.resources.Images;
 
 public final class ViewerSkin extends SkinBase<Viewer> {
-    private final BorderPane rootPane;
 
-    final ViewerMenuBar menuBar;
-    final ToolBar toolBar;
     final Pane defaultText;
     final ViewerTabPane tabPane;
 
@@ -55,33 +47,68 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         super(viewer);
         Stylesheet.setStylesheet(viewer.scene);
 
-        this.menuBar = new ViewerMenuBar(viewer);
-        this.toolBar = new ToolBar();
-        {
-            Button openFile = new Button(null, new ImageView(ImageUtils.openFileImage));
-            openFile.setOnAction(event -> viewer.openFile());
-            Tooltip openFileTip = new Tooltip(I18N.getString("openFileButton.tooltip"));
-            openFile.setTooltip(openFileTip);
+        // Top
+        MenuBar menuBar = createMenuBar();
 
-            Button openFolder = new Button(null, new ImageView(ImageUtils.openFolderImage));
-            openFolder.setOnAction(event -> viewer.openFolder());
-            Tooltip openFolderTip = new Tooltip(I18N.getString("openFolderButton.tooltip"));
-            openFolder.setTooltip(openFolderTip);
-
-            toolBar.getItems().addAll(openFile, openFolder);
-        }
-
+        // Center
         this.tabPane = new ViewerTabPane(viewer);
         this.defaultText = createDefaultText();
 
-        this.rootPane = new BorderPane();
 
-        this.rootPane.setTop(new VBox(menuBar, toolBar));
-        this.rootPane.centerProperty().bind(Bindings.createObjectBinding(
+        // Root
+        BorderPane rootPane = new BorderPane();
+
+        rootPane.setTop(menuBar);
+        rootPane.centerProperty().bind(Bindings.createObjectBinding(
                 () -> tabPane.getTabs().isEmpty() ? defaultText : tabPane,
                 tabPane.getTabs()));
 
         this.getChildren().add(rootPane);
+    }
+
+    private MenuBar createMenuBar() {
+        Menu fileMenu = new Menu(I18N.getString("menu.file"));
+        fileMenu.setMnemonicParsing(true);
+        {
+            MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
+            openFileItem.setMnemonicParsing(true);
+            openFileItem.setGraphic(Images.createImageView("menu-open"));
+            openFileItem.setOnAction(event -> getSkinnable().openFile());
+
+            MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
+            openFolderItem.setMnemonicParsing(true);
+            openFolderItem.setOnAction(event -> getSkinnable().openFolder());
+
+            Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
+            openRecentMenu.setMnemonicParsing(true);
+
+            // TODO
+//                Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
+//                        file -> {
+//                            MenuItem item = new MenuItem(file.toString(), new ImageView(file.type().getImage()));
+//                            item.setOnAction(event -> getViewer().open(file));
+//                            return item;
+//                        }));
+
+            fileMenu.getItems().setAll(openFileItem, openFolderItem, openRecentMenu);
+        }
+
+
+        Menu windowMenu = new Menu(I18N.getString("menu.window"));
+        {
+            // TODO
+        }
+
+        Menu helpMenu = new Menu(I18N.getString("menu.help"));
+        helpMenu.setMnemonicParsing(true);
+        {
+
+            MenuItem aboutItem = new MenuItem(I18N.getString("menu.help.items.about"));
+
+            helpMenu.getItems().setAll(aboutItem);
+        }
+
+        return new MenuBar(fileMenu, windowMenu, helpMenu);
     }
 
     private Pane createDefaultText() {

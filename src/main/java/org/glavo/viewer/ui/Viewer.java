@@ -116,10 +116,6 @@ public final class Viewer extends Control {
         return new ViewerSkin(this);
     }
 
-    public ViewerMenuBar getMenuBar() {
-        return getViewerSkin().menuBar;
-    }
-
     public ViewerTabPane getTabPane() {
         return getViewerSkin().tabPane;
     }
@@ -171,7 +167,7 @@ public final class Viewer extends Control {
         })).whenCompleteAsync((tab, exception) -> {
             if (exception == null) {
                 addTab(tab);
-                getMenuBar().updateRecentFiles();
+                // TODO: getMenuBar().updateRecentFiles();
             } else {
                 ViewerAlert.logAndShowExceptionAlert(exception);
             }

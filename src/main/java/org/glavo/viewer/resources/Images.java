@@ -16,6 +16,7 @@
 package org.glavo.viewer.resources;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -45,6 +46,10 @@ public final class Images {
             imageCache.put(imgName, new WeakReference<>(image));
             return image;
         }
+    }
+
+    public static ImageView createImageView(String imgName) {
+        return new ImageView(loadImage(imgName));
     }
 
     private Images() {
