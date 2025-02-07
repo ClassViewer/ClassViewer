@@ -48,7 +48,7 @@ tasks.compileJava {
     options.javaModuleMainClass.set(viewerMainClassName)
 }
 
-tasks.jar {
+tasks.withType<Jar> {
     manifest.attributes(
         "Main-Class" to viewerMainClassName
     )

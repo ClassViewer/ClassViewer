@@ -48,6 +48,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.glavo.viewer.file.types.FileType;
+import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.logging.Log;
 
@@ -56,11 +57,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public final class Viewer extends BorderPane {
     public static final String TITLE = "ClassViewer";
-    public static final ResourceBundle resource = ResourceBundle.getBundle("org.glavo.viewer.ViewerResources");
 
     public static final int DEFAULT_WIDTH = 1200;
     public static final int DEFAULT_HEIGHT = 675;
@@ -100,12 +99,12 @@ public final class Viewer extends BorderPane {
         {
             Button openFile = new Button(null, new ImageView(ImageUtils.openFileImage));
             openFile.setOnAction(event -> openFile());
-            Tooltip openFileTip = new Tooltip(resource.getString("openFileButton.tooltip"));
+            Tooltip openFileTip = new Tooltip(I18N.getString("openFileButton.tooltip"));
             openFile.setTooltip(openFileTip);
 
             Button openFolder = new Button(null, new ImageView(ImageUtils.openFolderImage));
             openFolder.setOnAction(event -> openFolder());
-            Tooltip openFolderTip = new Tooltip(resource.getString("openFolderButton.tooltip"));
+            Tooltip openFolderTip = new Tooltip(I18N.getString("openFolderButton.tooltip"));
             openFolder.setTooltip(openFolderTip);
 
             toolBar.getItems().addAll(openFile, openFolder);
@@ -123,13 +122,41 @@ public final class Viewer extends BorderPane {
         stage.setOnCloseRequest(event -> Log.info("Close " + this));
     }
 
+    private void enableDragAndDrop(Scene scene) {
+        scene.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            } else {
+                event.consume();
+            }
+        });
+        // Dropping over surface
+        scene.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasFiles()) {
+                success = true;
+                for (File file : db.getFiles()) {
+                    try {
+                        openFile(file.toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        ViewerAlert.logAndShowExceptionAlert(e);
+                    }
+                }
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+    }
+
     private Pane createDefaultText() {
-        Text openFileText = new Text(Viewer.resource.getString("defaultText.openFile"));
+        Text openFileText = new Text(I18N.getString("defaultText.openFile"));
         openFileText.setFill(Color.GRAY);
         Hyperlink openFileLink = new Hyperlink(menuBar.fileMenu.openFileItem.getAccelerator().getDisplayText());
         openFileLink.setOnAction(event -> openFile());
 
-        Text openFolderText = new Text(Viewer.resource.getString("defaultText.openFolder"));
+        Text openFolderText = new Text(I18N.getString("defaultText.openFolder"));
         openFolderText.setFill(Color.GRAY);
         Hyperlink openFolderLink = new Hyperlink(menuBar.fileMenu.openFolderItem.getAccelerator().getDisplayText());
         openFolderLink.setOnAction(event -> openFolder());
@@ -238,35 +265,6 @@ public final class Viewer extends BorderPane {
 
     public void removeTab(ViewerTab tab) {
         getTabPane().getTabs().remove(tab);
-    }
-
-    private void enableDragAndDrop(Scene scene) {
-        scene.setOnDragOver(event -> {
-            Dragboard db = event.getDragboard();
-            if (db.hasFiles()) {
-                event.acceptTransferModes(TransferMode.COPY);
-            } else {
-                event.consume();
-            }
-        });
-        // Dropping over surface
-        scene.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasFiles()) {
-                success = true;
-                for (File file : db.getFiles()) {
-                    //System.out.println(file.getAbsolutePath());
-                    try {
-                        openFile(file.toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        ViewerAlert.logAndShowExceptionAlert(e);
-                    }
-                }
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
     }
 
     public Stage getStage() {

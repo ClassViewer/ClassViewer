@@ -86,8 +86,6 @@ public final class Stylesheet {
         stylesheetBuilder.append("-fx-font-size: ").append(textFontSize).append(";");
         stylesheetBuilder.append("}\n");
 
-        System.out.println(">>> " + stylesheetBuilder);
-
         return "data:text/css;charset=UTF-8;base64," + Base64.getEncoder().encodeToString(stylesheetBuilder.toString().getBytes(StandardCharsets.UTF_8));
     }
 

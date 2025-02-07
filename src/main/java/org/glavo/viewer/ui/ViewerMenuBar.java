@@ -8,19 +8,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
+import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.util.ImageUtils;
-
-import static org.glavo.viewer.ui.Viewer.resource;
 
 public final class ViewerMenuBar extends MenuBar {
 
     public class FileMenu extends Menu {
-        MenuItem openFileItem = new MenuItem(resource.getString("fileMenu.openFileItem.text"));
-        MenuItem openFolderItem = new MenuItem(resource.getString("fileMenu.openFolderItem.text"));
-        Menu openRecentMenu = new Menu(resource.getString("fileMenu.openRecentMenu.text"));
+        MenuItem openFileItem = new MenuItem(I18N.getString("fileMenu.openFileItem.text"));
+        MenuItem openFolderItem = new MenuItem(I18N.getString("fileMenu.openFolderItem.text"));
+        Menu openRecentMenu = new Menu(I18N.getString("fileMenu.openRecentMenu.text"));
 
         public FileMenu() {
-            super(resource.getString("fileMenu.text"));
+            super(I18N.getString("fileMenu.text"));
             this.setMnemonicParsing(true);
 
             openFileItem.setGraphic(new ImageView(ImageUtils.openFileImage));
@@ -41,10 +40,10 @@ public final class ViewerMenuBar extends MenuBar {
     }
 
     public static class WindowMenu extends Menu {
-        private final MenuItem newWindowItem = new MenuItem(resource.getString("windowMenu.newWindowItem.text"));
+        private final MenuItem newWindowItem = new MenuItem(I18N.getString("windowMenu.newWindowItem.text"));
 
         public WindowMenu() {
-            super(resource.getString("windowMenu.text"));
+            super(I18N.getString("windowMenu.text"));
             this.setMnemonicParsing(true);
 
             newWindowItem.setOnAction(event -> new Viewer(new Stage(), false));
@@ -55,10 +54,10 @@ public final class ViewerMenuBar extends MenuBar {
     }
 
     public class HelpMenu extends Menu {
-        private final MenuItem aboutItem = new MenuItem(resource.getString("helpMenu.aboutItem.text"));
+        private final MenuItem aboutItem = new MenuItem(I18N.getString("helpMenu.aboutItem.text"));
 
         public HelpMenu() {
-            super(resource.getString("helpMenu.text"));
+            super(I18N.getString("helpMenu.text"));
             this.setMnemonicParsing(true);
 
             aboutItem.setMnemonicParsing(true);
