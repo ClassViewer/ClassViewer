@@ -5,7 +5,8 @@ import static org.glavo.viewer.file.types.classfile.jvm.AccessFlagType.*;
 /**
  * Access and property flags of class, field, method and nested class.
  */
-public enum AccessFlags {
+//@formatter:off
+public enum AccessFlag {
 
     ACC_PUBLIC      (0x0001, AF_ALL                                ),
     ACC_PRIVATE     (0x0002, AF_FIELD | AF_METHOD | AF_NESTED_CLASS),
@@ -34,7 +35,7 @@ public enum AccessFlags {
     public final int flag;
     public final int type;
 
-    AccessFlags(int flag, int type) {
+    AccessFlag(int flag, int type) {
         this.flag = flag;
         this.type = type;
     }

@@ -23,7 +23,7 @@
  */
 package org.glavo.viewer.file.types.classfile.datatype;
 
-import org.glavo.viewer.file.types.classfile.jvm.AccessFlags;
+import org.glavo.viewer.file.types.classfile.jvm.AccessFlag;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,7 +35,7 @@ public final class U2AccessFlags extends UInt {
     }
 
     private static String describe(int flagsType, int flagsVal) {
-        return Stream.of(AccessFlags.values())
+        return Stream.of(AccessFlag.values())
                 .filter(flag -> (flag.type & flagsType) != 0)
                 .filter(flag -> (flag.flag & flagsVal) != 0)
                 .map(Object::toString)
@@ -43,38 +43,38 @@ public final class U2AccessFlags extends UInt {
     }
 
     public boolean isInterface() {
-        return (getIntValue() & AccessFlags.ACC_INTERFACE.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_INTERFACE.flag) != 0;
     }
 
     public boolean isEnum() {
-        return (getIntValue() & AccessFlags.ACC_ENUM.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_ENUM.flag) != 0;
     }
 
     public boolean isAbstract() {
-        return (getIntValue() & AccessFlags.ACC_ABSTRACT.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_ABSTRACT.flag) != 0;
     }
 
     public boolean isAnnotation() {
-        return (getIntValue() & AccessFlags.ACC_ANNOTATION.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_ANNOTATION.flag) != 0;
     }
 
     public boolean isStatic() {
-        return (getIntValue() & AccessFlags.ACC_STATIC.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_STATIC.flag) != 0;
     }
 
     public boolean isFinal() {
-        return (getIntValue() & AccessFlags.ACC_FINAL.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_FINAL.flag) != 0;
     }
 
     public boolean isPrivate() {
-        return (getIntValue() & AccessFlags.ACC_PRIVATE.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_PRIVATE.flag) != 0;
     }
 
     public boolean isProtected() {
-        return (getIntValue() & AccessFlags.ACC_PROTECTED.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_PROTECTED.flag) != 0;
     }
 
     public boolean isPublic() {
-        return (getIntValue() & AccessFlags.ACC_PUBLIC.flag)!= 0;
+        return (getIntValue() & AccessFlag.ACC_PUBLIC.flag) != 0;
     }
 }

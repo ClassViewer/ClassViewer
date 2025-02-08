@@ -23,7 +23,6 @@
  */
 package org.glavo.viewer.ui;
 
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import org.glavo.viewer.annotation.FXThread;
@@ -36,7 +35,7 @@ import java.util.Base64;
 import java.util.List;
 
 public final class Stylesheet {
-    private static final double DEFAULT_FONT_SIZE = 15;
+    private static final double DEFAULT_FONT_SIZE = 14;
 
     private static final String[] stylesheets = new String[2];
 
