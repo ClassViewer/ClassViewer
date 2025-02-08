@@ -1,10 +1,9 @@
 package org.glavo.viewer.file.types.classfile.attribute;
 
-
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.file.types.classfile.ClassFile;
 import org.glavo.viewer.file.types.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.classfile.datatype.U2CpIndex;
-import org.glavo.viewer.util.ImageUtils;
 
 /*
 Exceptions_attribute {
@@ -23,6 +22,6 @@ public final class ExceptionsAttribute extends AttributeInfo {
 
     @Override
     protected void postRead(ConstantPool cp) {
-        setGraphic(new ImageView(ImageUtils.exceptionImage));
+        setGraphic(new ImageView(ClassFile.ICON_ATTRIBUTE_EXCEPTION));
     }
 }

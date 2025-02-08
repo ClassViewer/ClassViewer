@@ -7,7 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.glavo.viewer.Main;
-import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.logging.Log;
 
 public class ViewerAboutDialog extends BorderPane {
@@ -27,7 +27,7 @@ public class ViewerAboutDialog extends BorderPane {
     }
 
     public ViewerAboutDialog(Viewer viewer, Stage stage) {
-        ImageView image = ImageUtils.createImageView("/icons/spy128.png");
+        ImageView image = Images.createImageView("spy128");
         this.setCenter(image);
         this.setOnMouseClicked(e -> stage.close());
 

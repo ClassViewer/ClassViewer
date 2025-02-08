@@ -36,7 +36,7 @@ import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
 import kala.function.CheckedSupplier;
 import org.glavo.viewer.file.types.FileType;
-import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.util.Schedulers;
 import org.glavo.viewer.util.logging.Log;
 
@@ -64,8 +64,7 @@ public final class Viewer extends Control {
 
         stage.setScene(scene);
         stage.setTitle(Viewer.TITLE);
-        stage.getIcons().add(ImageUtils.loadImage("/icons/spy16.png"));
-        stage.getIcons().add(ImageUtils.loadImage("/icons/spy32.png"));
+        stage.getIcons().add(Images.loadImage("spy32"));
         stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN).match(event)) {
                 ViewerTab tab = (ViewerTab) getTabPane().getSelectionModel().getSelectedItem();

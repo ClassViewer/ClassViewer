@@ -24,10 +24,10 @@
 package org.glavo.viewer.file.types;
 
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
 import org.glavo.viewer.file.types.classfile.ClassFileType;
 import org.glavo.viewer.file.types.jar.JarFileType;
-import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.logging.Log;
 import org.glavo.viewer.util.UrlUtils;
 
@@ -95,7 +95,7 @@ public final class FolderType extends FileType {
     }
 
     public FolderType() {
-        this.icon = ImageUtils.loadImage("/icons/folder.png");
+        this.icon = Images.loadImage("folder");
     }
 
     @Override

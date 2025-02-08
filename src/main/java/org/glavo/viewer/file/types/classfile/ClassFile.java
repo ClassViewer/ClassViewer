@@ -25,6 +25,7 @@ package org.glavo.viewer.file.types.classfile;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.file.types.classfile.attribute.AttributeInfo;
@@ -34,7 +35,8 @@ import org.glavo.viewer.file.types.classfile.datatype.U2;
 import org.glavo.viewer.file.types.classfile.datatype.U2AccessFlags;
 import org.glavo.viewer.file.types.classfile.datatype.U2CpIndex;
 import org.glavo.viewer.file.types.classfile.jvm.AccessFlagType;
-import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.resources.Images;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -59,6 +61,32 @@ ClassFile {
 }
 */
 public final class ClassFile extends ClassFileComponent {
+
+    public static final Image ICON_METHOD = Images.loadImage("java/method");
+    public static final Image ICON_CLASS_INITIALIZER = Images.loadImage("java/classInitializer");
+    public static final Image ICON_ABSTRACT_METHOD = Images.loadImage("java/abstractMethod");
+    public static final Image ICON_ANNOTATION = Images.loadImage("java/annotation");
+    public static final Image ICON_ABSTRACT_CLASS = Images.loadImage("java/abstractClass");
+    public static final Image ICON_ENUM = Images.loadImage("java/enum");
+    public static final Image ICON_FIELD = Images.loadImage("java/field");
+    public static final Image ICON_INTERFACE = Images.loadImage("java/interface");
+    public static final Image ICON_CLASS = Images.loadImage("java/class");
+    public static final Image ICON_RECORD = Images.loadImage("java/record");
+
+    public static final Image ICON_ACC_PRIVATE = Images.loadImage("java/c_private");
+    public static final Image ICON_ACC_PLOCAL = Images.loadImage("java/c_plocal");
+    public static final Image ICON_ACC_PROTECTED = Images.loadImage("java/c_protected");
+    public static final Image ICON_ACC_PUBLIC = Images.loadImage("java/c_public");
+
+    public static final Image ICON_FINAL_MARK = Images.loadImage("java/finalMark");
+    public static final Image ICON_RUNNABLE_MARK = Images.loadImage("java/runnableMark");
+    public static final Image ICON_STATIC_MARK = Images.loadImage("java/staticMark");
+
+    public static final Image ICON_ATTRIBUTE = Images.loadImage("java/classfile/attribute/attribute");
+    public static final Image ICON_ATTRIBUTE_EXCEPTION = Images.loadImage("java/classfile/attribute/exception");
+    public static final Image ICON_ATTRIBUTE_SOURCE_FILE = Images.loadImage("fileTypes/java");
+    public static final Image ICON_ATTRIBUTE_MODULE = Images.loadImage("java/classfile/attribute/module");
+
     {
         U2 cpCount = new U2();
 
@@ -91,51 +119,51 @@ public final class ClassFile extends ClassFileComponent {
         if (acc != null) {
 
             HBox box = new HBox();
-            boolean isKt = isKotlin();
-            Node view = null;
-
-            if (acc.isAnnotation()) {
-                view = new ImageView(ImageUtils.annotationImage);
-            } else if (acc.isEnum()) {
-                view = new ImageView(ImageUtils.enumImage);
-            } else if (acc.isInterface()) {
-                view = new ImageView(ImageUtils.interfaceImage);
-            } else if (acc.isAbstract()) {
-                view = new ImageView(ImageUtils.abstractClassImage);
-            } else {
-                view = new ImageView(ImageUtils.classImage);
-            }
-
-            if (acc.isFinal()) {
-                view = new Group(view, new ImageView(ImageUtils.finalMarkImage));
-            }
-
-            if (acc.isStatic()) {
-                view = new Group(view, new ImageView(ImageUtils.staticMarkImage));
-            }
-
-            if (isRunnable()) {
-                view = new Group(view, new ImageView(ImageUtils.runnableMarkImage));
-            }
+            Node view = getNode(acc);
 
             box.getChildren().add(view);
 
             if (acc.isPrivate()) {
-                box.getChildren().add(new ImageView(ImageUtils.privateImage));
+                box.getChildren().add(new ImageView(ICON_ACC_PRIVATE));
             } else if (acc.isProtected()) {
-                box.getChildren().add(new ImageView(ImageUtils.protectedImage));
+                box.getChildren().add(new ImageView(ICON_ACC_PROTECTED));
             } else if (acc.isPublic()) {
-                box.getChildren().add(new ImageView(ImageUtils.publicImage));
+                box.getChildren().add(new ImageView(ICON_ACC_PUBLIC));
             } else {
-                box.getChildren().add(new ImageView(ImageUtils.plocalImage));
+                box.getChildren().add(new ImageView(ICON_ACC_PLOCAL));
             }
 
             setGraphic(box);
         }
     }
 
-    private boolean isKotlin() {
-        return false; //todo
+    private @NotNull Node getNode(U2AccessFlags acc) {
+        Node view;
+
+        if (acc.isAnnotation()) {
+            view = new ImageView(ICON_ANNOTATION);
+        } else if (acc.isEnum()) {
+            view = new ImageView(ICON_ENUM);
+        } else if (acc.isInterface()) {
+            view = new ImageView(ICON_INTERFACE);
+        } else if (acc.isAbstract()) {
+            view = new ImageView(ICON_ABSTRACT_CLASS);
+        } else {
+            view = new ImageView(ICON_CLASS);
+        }
+
+        if (acc.isFinal()) {
+            view = new Group(view, new ImageView(ICON_FINAL_MARK));
+        }
+
+        if (acc.isStatic()) {
+            view = new Group(view, new ImageView(ICON_STATIC_MARK));
+        }
+
+        if (isRunnable()) {
+            view = new Group(view, new ImageView(ICON_RUNNABLE_MARK));
+        }
+        return view;
     }
 
     @SuppressWarnings("unchecked")

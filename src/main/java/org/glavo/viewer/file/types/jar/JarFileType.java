@@ -25,10 +25,10 @@ package org.glavo.viewer.file.types.jar;
 
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
 import org.glavo.viewer.file.types.FileType;
 import org.glavo.viewer.file.types.classfile.ClassFileType;
-import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.logging.Log;
 import org.glavo.viewer.util.UrlUtils;
 
@@ -65,7 +65,7 @@ public class JarFileType extends FileType {
             public FileVisitResult visitFile(Path subPath, BasicFileAttributes attrs) throws IOException {
                 if (Files.isDirectory(subPath)) {
                     FileTreeNode subNode = path2node(subPath);
-                    subNode.setGraphic(new ImageView(ImageUtils.packageImage));
+                    subNode.setGraphic(new ImageView(Images.ICON_PACKAGE));
                     if (!subNode.getChildren().isEmpty()) {
                         node.getChildren().add(subNode);
                     }
@@ -86,7 +86,7 @@ public class JarFileType extends FileType {
     }
 
     protected JarFileType() {
-        this.icon = ImageUtils.loadImage("/icons/filetype/JarFile.png");
+        this.icon = Images.ICON_ARCHIVE_FILE;
         this.filter = new FileChooser.ExtensionFilter("Jar or Zip File (*.jar, *.zip)", "*.jar", "*.zip");
     }
 

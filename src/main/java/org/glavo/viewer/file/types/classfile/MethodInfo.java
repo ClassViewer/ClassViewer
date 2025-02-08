@@ -31,7 +31,6 @@ import org.glavo.viewer.file.types.classfile.attribute.AttributeInfo;
 import org.glavo.viewer.file.types.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.classfile.datatype.U2AccessFlags;
 import org.glavo.viewer.file.types.classfile.jvm.AccessFlagType;
-import org.glavo.viewer.util.ImageUtils;
 
 /*
 method_info {
@@ -66,29 +65,29 @@ public class MethodInfo extends ClassFileComponent {
             Node view;
 
             if (acc.isAbstract()) {
-                view = new ImageView(ImageUtils.abstractMethodImage);
+                view = new ImageView(ClassFile.ICON_ABSTRACT_METHOD);
             } else if (("<init>".equals(this.getDesc()) || "<clinit>".equals(this.getDesc()))) {
-                view = new ImageView(ImageUtils.classInitializerImage);
+                view = new ImageView(ClassFile.ICON_CLASS_INITIALIZER);
             } else {
-                view = new ImageView(ImageUtils.methodImage);
+                view = new ImageView(ClassFile.ICON_METHOD);
             }
 
             if (acc.isFinal()) {
-                view = new Group(view, new ImageView(ImageUtils.finalMarkImage));
+                view = new Group(view, new ImageView(ClassFile.ICON_FINAL_MARK));
             } else if (acc.isStatic()) {
-                view = new Group(view, new ImageView(ImageUtils.staticMarkImage));
+                view = new Group(view, new ImageView(ClassFile.ICON_STATIC_MARK));
             }
 
             box.getChildren().add(view);
 
             if (acc.isPrivate()) {
-                box.getChildren().add(new ImageView(ImageUtils.privateImage));
+                box.getChildren().add(new ImageView(ClassFile.ICON_ACC_PRIVATE));
             } else if (acc.isProtected()) {
-                box.getChildren().add(new ImageView(ImageUtils.protectedImage));
+                box.getChildren().add(new ImageView(ClassFile.ICON_ACC_PROTECTED));
             } else if (acc.isPublic()) {
-                box.getChildren().add(new ImageView(ImageUtils.publicImage));
+                box.getChildren().add(new ImageView(ClassFile.ICON_ACC_PUBLIC));
             } else {
-                box.getChildren().add(new ImageView(ImageUtils.plocalImage));
+                box.getChildren().add(new ImageView(ClassFile.ICON_ACC_PLOCAL));
             }
 
             setGraphic(box);

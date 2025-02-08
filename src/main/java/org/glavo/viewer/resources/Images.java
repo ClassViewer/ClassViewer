@@ -18,34 +18,14 @@ package org.glavo.viewer.resources;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-
 public final class Images {
 
-    private static final HashMap<String, WeakReference<Image>> imageCache = new HashMap<>();
-
-    private static Image loadImageImpl(String imgName) {
-        return new Image(Resources.getResource("/org/glavo/viewer/resources/images/" + imgName + ".png").toExternalForm());
-    }
+    public static final Image ICON_PACKAGE = loadImage("package");
+    public static final Image ICON_ARCHIVE_FILE = loadImage("fileTypes/archive");
+    public static final Image ICON_UNKNOWN_FILE = loadImage("fileTypes/unknown");
 
     public static Image loadImage(String imgName) {
-        WeakReference<Image> reference = imageCache.get(imgName);
-        Image image;
-        if (reference != null && (image = reference.get()) != null) {
-            return image;
-        }
-
-        synchronized (imageCache) {
-            reference = imageCache.get(imgName);
-            if (reference != null && (image = reference.get()) != null) {
-                return image;
-            }
-
-            image = loadImageImpl(imgName);
-            imageCache.put(imgName, new WeakReference<>(image));
-            return image;
-        }
+        return new Image(Resources.getResource("/org/glavo/viewer/resources/images/" + imgName + ".png").toExternalForm());
     }
 
     public static ImageView createImageView(String imgName) {

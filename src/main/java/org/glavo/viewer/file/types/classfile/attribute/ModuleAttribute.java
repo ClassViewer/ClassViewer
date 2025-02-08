@@ -2,11 +2,11 @@ package org.glavo.viewer.file.types.classfile.attribute;
 
 
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.file.types.classfile.ClassFile;
 import org.glavo.viewer.file.types.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.classfile.datatype.U2CpIndex;
 import org.glavo.viewer.file.types.classfile.jvm.AccessFlagType;
-import org.glavo.viewer.util.ImageUtils;
 
 /*
 Module_attribute {
@@ -68,7 +68,7 @@ public final class ModuleAttribute extends AttributeInfo {
     @Override
     protected void postRead(ConstantPool cp) {
         super.postRead(cp);
-        setGraphic(new ImageView(ImageUtils.javaModuleImage));
+        setGraphic(new ImageView(ClassFile.ICON_ATTRIBUTE_MODULE));
     }
 
     public static class Require extends ClassFileComponent {

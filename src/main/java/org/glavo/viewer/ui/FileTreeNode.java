@@ -9,7 +9,6 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Stage;
 import org.glavo.viewer.resources.Images;
-import org.glavo.viewer.util.ImageUtils;
 
 import java.net.URL;
 import java.util.function.BiConsumer;

@@ -1,10 +1,9 @@
 package org.glavo.viewer.file.types.classfile.attribute;
 
-
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.file.types.classfile.ClassFile;
 import org.glavo.viewer.file.types.classfile.ClassFileComponent;
 import org.glavo.viewer.file.types.classfile.constant.ConstantPool;
-import org.glavo.viewer.util.ImageUtils;
 
 /*
 attribute_info {
@@ -22,6 +21,6 @@ public abstract class AttributeInfo extends ClassFileComponent {
 
     @Override
     protected void postRead(ConstantPool cp) {
-        setGraphic(new ImageView(ImageUtils.attributeImage));
+        setGraphic(new ImageView(ClassFile.ICON_ATTRIBUTE));
     }
 }

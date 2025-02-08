@@ -30,4 +30,5 @@ module org.glavo.viewer {
     requires javafx.controls;
     requires jdk.zipfs;
     requires kala.base;
+    requires org.jetbrains.annotations;
 }

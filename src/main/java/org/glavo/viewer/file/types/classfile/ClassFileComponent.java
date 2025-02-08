@@ -23,12 +23,9 @@
  */
 package org.glavo.viewer.file.types.classfile;
 
-
 import org.glavo.viewer.file.types.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.classfile.datatype.*;
 import org.glavo.viewer.FileComponent;
-
-import java.util.List;
 
 /**
  * Base class for all class file components.
@@ -97,13 +94,13 @@ public abstract class ClassFileComponent extends FileComponent {
 
     protected final void table(String name,
                                Class<? extends ClassFileComponent> entryClass) {
-        UInt length = (UInt) getComponents().get(getComponents().size() - 1);
+        UInt length = (UInt) getComponents().getLast();
         Table table = new Table(length, entryClass);
         this.add(name, table);
     }
 
     protected final void bytes(String name) {
-        UInt count = (UInt) getComponents().get(getComponents().size() - 1);
+        UInt count = (UInt) getComponents().getLast();
         Bytes bytes = new Bytes(count);
         this.add(name, bytes);
     }
@@ -112,12 +109,11 @@ public abstract class ClassFileComponent extends FileComponent {
         this.add(null, subComponent);
     }
 
-    @SuppressWarnings("unchecked")
     public final void walkComponentTree(java.util.function.Consumer<ClassFileComponent> f) {
         f.accept(this);
-        for (ClassFileComponent component : (List<ClassFileComponent>) (List) getComponents()) {
+        for (FileComponent component : getComponents()) {
             if (component != null) {
-                component.walkComponentTree(f);
+                ((ClassFileComponent) component).walkComponentTree(f);
             }
         }
     }

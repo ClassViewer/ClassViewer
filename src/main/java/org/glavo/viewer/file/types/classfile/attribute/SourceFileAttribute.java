@@ -1,8 +1,8 @@
 package org.glavo.viewer.file.types.classfile.attribute;
 
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.file.types.classfile.ClassFile;
 import org.glavo.viewer.file.types.classfile.constant.ConstantPool;
-import org.glavo.viewer.util.ImageUtils;
 
 /*
 SourceFile_attribute {
@@ -19,6 +19,6 @@ public final class SourceFileAttribute extends AttributeInfo {
 
     @Override
     protected void postRead(ConstantPool cp) {
-        setGraphic(new ImageView(ImageUtils.javaSourceImage));
+        setGraphic(new ImageView(ClassFile.ICON_ATTRIBUTE_SOURCE_FILE));
     }
 }

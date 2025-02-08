@@ -26,10 +26,10 @@ package org.glavo.viewer.file.types.classfile;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
 import org.glavo.viewer.file.types.FileType;
 import org.glavo.viewer.file.types.binary.HexText;
-import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.UrlUtils;
 
 import java.net.URL;
@@ -40,7 +40,7 @@ public final class ClassFileType extends FileType {
 
     private ClassFileType() {
         this.filter = new FileChooser.ExtensionFilter("Java Class File (*.class)", "*.class");
-        this.icon = ImageUtils.loadImage("/icons/filetype/ClassFile.png");
+        this.icon = Images.loadImage("fileTypes/java-class");
     }
 
     @Override

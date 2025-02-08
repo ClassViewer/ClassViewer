@@ -26,12 +26,11 @@ package org.glavo.viewer.file.types.classfile;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
-import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.resources.Images;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,8 +134,8 @@ public final class SearchBar extends ToolBar {
                 }
             }
         };
-        StringConverter<?> converter;
-        String name;
+        final StringConverter<?> converter;
+        final String name;
 
         Searcher(String name, StringConverter<?> converter) {
             this.name = name;
@@ -158,13 +157,13 @@ public final class SearchBar extends ToolBar {
     private ListIterator<ClassFileComponent> iterator = null;
     private ClassFileComponent selected = null;
 
-    private ComboBox<Searcher> searcherBox = new ComboBox<>(FXCollections.observableArrayList(Searcher.values()));
-    private TextField textField = new TextField();
-    private Button searchButton = new Button(null, new ImageView(ImageUtils.searchImage));
-    private ComboBox<SearchRange> searchRangeBox = new ComboBox<>(FXCollections.observableArrayList(SearchRange.values()));
-    private Button previousButton = new Button(null, new ImageView(ImageUtils.previousOccurenceImage));
-    private Button nextButton = new Button(null, new ImageView(ImageUtils.nextOccurenceImage));
-    private Label count = new Label("");
+    private final ComboBox<Searcher> searcherBox = new ComboBox<>(FXCollections.observableArrayList(Searcher.values()));
+    private final TextField textField = new TextField();
+    private final Button searchButton = new Button(null, Images.createImageView("search"));
+    private final ComboBox<SearchRange> searchRangeBox = new ComboBox<>(FXCollections.observableArrayList(SearchRange.values()));
+    private final Button previousButton = new Button(null, Images.createImageView("previousOccurence"));
+    private final Button nextButton = new Button(null, Images.createImageView("nextOccurence"));
+    private final Label count = new Label("");
 
     public SearchBar(ParsedViewerPane pane) {
         this.pane = pane;

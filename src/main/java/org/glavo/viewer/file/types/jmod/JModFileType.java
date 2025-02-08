@@ -25,7 +25,7 @@ package org.glavo.viewer.file.types.jmod;
 
 import javafx.stage.FileChooser;
 import org.glavo.viewer.file.types.jar.JarFileType;
-import org.glavo.viewer.util.ImageUtils;
+import org.glavo.viewer.resources.Images;
 
 import java.net.URL;
 
@@ -34,7 +34,7 @@ public final class JModFileType extends JarFileType {
 
     private JModFileType() {
         super();
-        this.icon = ImageUtils.loadImage("/icons/filetype/JModFile.png");
+        this.icon = Images.ICON_ARCHIVE_FILE;
         this.filter = new FileChooser.ExtensionFilter("JMode File (*.jmod)", "*.jmod");
     }
 

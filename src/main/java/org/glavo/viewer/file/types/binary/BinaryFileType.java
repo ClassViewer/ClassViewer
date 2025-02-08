@@ -25,9 +25,9 @@ package org.glavo.viewer.file.types.binary;
 
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
+import org.glavo.viewer.resources.Images;
 import org.glavo.viewer.ui.*;
 import org.glavo.viewer.file.types.FileType;
-import org.glavo.viewer.util.ImageUtils;
 import org.glavo.viewer.util.UrlUtils;
 
 import java.net.URL;
@@ -37,7 +37,7 @@ public class BinaryFileType extends FileType {
 
     private BinaryFileType() {
         this.filter = null;
-        this.icon = ImageUtils.loadImage("/icons/filetype/UnknownFile.png");
+        this.icon = Images.ICON_UNKNOWN_FILE;
     }
 
     @Override
