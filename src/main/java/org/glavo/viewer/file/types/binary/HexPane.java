@@ -68,6 +68,8 @@ public final class HexPane extends ScrollPane {
         }
 
         setContent(hbox);
+
+        this.getStyleClass().add("monospaced");
     }
 
     public void select(FileComponent cc) {
@@ -99,10 +101,6 @@ public final class HexPane extends ScrollPane {
     }
 
     private void initTextArea() {
-        textArea1.getStyleClass().add("monospaced");
-        textArea2.getStyleClass().add("monospaced");
-        textArea3.getStyleClass().add("monospaced");
-
         textArea1.setPrefColumnCount(6);
         textArea2.setPrefColumnCount(46);
         textArea3.setPrefColumnCount(16);
