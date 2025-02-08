@@ -158,7 +158,7 @@ public final class Viewer extends Control {
                 for (FileType t : FileType.fileTypes) {
                     if (t.accept(url)) {
                         ViewerTab ans = t.open(this, url);
-                        RecentFiles.Instance.add(t, url);
+                        RecentFile.addRecentFile(t, url);
                         return ans;
                     }
                 }
@@ -167,7 +167,6 @@ public final class Viewer extends Control {
         })).whenCompleteAsync((tab, exception) -> {
             if (exception == null) {
                 addTab(tab);
-                // TODO: getMenuBar().updateRecentFiles();
             } else {
                 ViewerAlert.logAndShowExceptionAlert(exception);
             }
@@ -205,7 +204,7 @@ public final class Viewer extends Control {
                     try {
                         if (type.accept(url)) {
                             ans.add(type.open(this, url));
-                            RecentFiles.Instance.add(type, url);
+                            RecentFile.addRecentFile(type, url);
                             continue tag;
                         }
                     } catch (Exception ex) {

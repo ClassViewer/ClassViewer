@@ -54,19 +54,18 @@ public final class ClassFileType extends FileType {
         ViewerTab tab = ViewerTab.create(url);
         tab.setGraphic(new ImageView(icon));
 
-        ViewerTask<Void> task = new ViewerTask<Void>() {
+        ViewerTask<Void> task = new ViewerTask<>() {
             @Override
             protected Void call() throws Exception {
                 byte[] bytes = UrlUtils.readData(url);
                 ClassFile classFile = new ClassFileParser().parse(bytes);
-                RecentFiles.Instance.add(Instance, url);
                 HexText text = new HexText(bytes);
                 Platform.runLater(() -> {
                     ParsedViewerPane pane = new ParsedViewerPane(viewer, classFile, text);
                     ((ClassFileComponent) pane.getTree().getRoot()).setName(UrlUtils.getClassName(url));
                     tab.setContent(pane);
                     tab.getUserData().showOrHideSearchBar = pane::showOrHideSearchBar;
-                    RecentFiles.Instance.add(Instance, url);
+                    RecentFile.addRecentFile(Instance, url);
                 });
                 return null;
             }

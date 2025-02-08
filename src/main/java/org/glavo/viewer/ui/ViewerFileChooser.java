@@ -23,7 +23,7 @@ public final class ViewerFileChooser {
             }
         }
 
-        File lastOpenFile = RecentFiles.Instance.getLastOpenFile();
+        File lastOpenFile = RecentFile.getLastFile();
         if (lastOpenFile != null && lastOpenFile.getParentFile().isDirectory()) {
             fileChooser.setInitialDirectory(lastOpenFile.getParentFile());
         }
@@ -36,7 +36,7 @@ public final class ViewerFileChooser {
             directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Open folder");
         }
-        File lastOpenFile = RecentFiles.Instance.getLastOpenFile();
+        File lastOpenFile = RecentFile.getLastFile();
         if (lastOpenFile != null && lastOpenFile.getParentFile().isDirectory()) {
             directoryChooser.setInitialDirectory(lastOpenFile.getParentFile());
         }

@@ -312,14 +312,6 @@ public final class Log {
         log(level, CallerFinder.getCaller(), msg, exception);
     }
 
-    public static void setting(String name, Object value) {
-        info(name + "=" + value); // TODO
-    }
-
-    public static void error(Throwable exception) { // TODO
-        log(Level.ERROR, CallerFinder.getCaller(), null, exception);
-    }
-
     public static void error(String msg) {
         log(Level.ERROR, CallerFinder.getCaller(), msg, null);
     }

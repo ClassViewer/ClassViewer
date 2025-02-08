@@ -50,7 +50,7 @@ public final class PropertiesUtils {
         if (locale != null) {
             Locale.setDefault(Locale.forLanguageTag(locale));
         }
-        Log.setting("viewer.locale", Locale.getDefault());
+        Log.info("Locale: " + Locale.getDefault());
     }
 
     public static String getString(String key) {

@@ -30,6 +30,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SkinBase;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -37,6 +38,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
+import org.glavo.viewer.util.MappedList;
 
 public final class ViewerSkin extends SkinBase<Viewer> {
 
@@ -59,9 +61,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         BorderPane rootPane = new BorderPane();
 
         rootPane.setTop(menuBar);
-        rootPane.centerProperty().bind(Bindings.createObjectBinding(
-                () -> tabPane.getTabs().isEmpty() ? defaultText : tabPane,
-                tabPane.getTabs()));
+        rootPane.centerProperty().bind(Bindings.createObjectBinding(() -> tabPane.getTabs().isEmpty() ? defaultText : tabPane, tabPane.getTabs()));
 
         this.getChildren().add(rootPane);
     }
@@ -82,13 +82,11 @@ public final class ViewerSkin extends SkinBase<Viewer> {
             Menu openRecentMenu = new Menu(I18N.getString("menu.file.items.openRecent"));
             openRecentMenu.setMnemonicParsing(true);
 
-            // TODO
-//                Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(Config.getConfig().getRecentFiles(),
-//                        file -> {
-//                            MenuItem item = new MenuItem(file.toString(), new ImageView(file.type().getImage()));
-//                            item.setOnAction(event -> getViewer().open(file));
-//                            return item;
-//                        }));
+            Bindings.bindContent(openRecentMenu.getItems(), new MappedList<>(RecentFile.getRecentFiles(), file -> {
+                MenuItem item = new MenuItem(file.url().toString(), new ImageView(file.type().icon));
+                item.setOnAction(event -> getSkinnable().openFile(file.type(), file.url()));
+                return item;
+            }));
 
             fileMenu.getItems().setAll(openFileItem, openFolderItem, openRecentMenu);
         }

@@ -59,7 +59,7 @@ public class BinaryFileType extends FileType {
         };
         task.setOnSucceeded((HexText text) -> Platform.runLater(() -> {
             tab.setContent(new HexPane(text));
-            RecentFiles.Instance.add(this, url);
+            RecentFile.addRecentFile(this, url);
         }));
 
         task.setOnFailed((Throwable ex) -> {

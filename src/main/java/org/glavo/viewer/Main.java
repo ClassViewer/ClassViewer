@@ -25,6 +25,7 @@ package org.glavo.viewer;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.glavo.viewer.ui.RecentFile;
 import org.glavo.viewer.ui.Viewer;
 import org.glavo.viewer.util.PropertiesUtils;
 import org.glavo.viewer.util.logging.Log;
@@ -69,6 +70,7 @@ public final class Main extends Application {
 
     @Override
     public void stop() {
+        RecentFile.saveRecentFiles();
         Log.shutdown();
         INSTANCE = null;
     }
