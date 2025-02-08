@@ -23,15 +23,21 @@
  */
 package org.glavo.viewer.file.types.binary;
 
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SkinBase;
 import javafx.scene.control.Skinnable;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.FileComponent;
+import org.glavo.viewer.resources.Images;
 
-public class HexPane extends ScrollPane {
+public final class HexPane extends ScrollPane {
 
     private final HexText hex;
     private final TextArea textArea1;
@@ -107,15 +113,27 @@ public class HexPane extends ScrollPane {
         textArea2.setPrefRowCount(rowCount);
         textArea3.setPrefRowCount(rowCount);
 
-        textArea1.setContextMenu(new AsciiPaneMenu(textArea1));
-        textArea2.setContextMenu(new HexPaneMenu(textArea2));
-        textArea3.setContextMenu(new TextPaneMenu(textArea3));
+        installContext(textArea2);
+        installContext(textArea3);
 
         textArea1.setEditable(false);
         textArea2.setEditable(false);
         textArea3.setEditable(false);
 
-        textArea1.setStyle("-fx-text-fill: grey;");
+        textArea1.setDisable(true);
+    }
+
+    private static void installContext(TextArea textArea) {
+        MenuItem copy = new MenuItem("_Copy");
+        copy.setMnemonicParsing(true);
+        copy.setOnAction(e -> {
+            javafx.scene.input.Clipboard clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(textArea.getSelectedText());
+            clipboard.setContent(content);
+        });
+        copy.setGraphic(new ImageView(Images.loadImage("copy")));
+        textArea.setContextMenu(new ContextMenu(copy));
     }
 
     private int calcBytesTextPosition(int byteOffset) {
