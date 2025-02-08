@@ -28,7 +28,9 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import org.glavo.viewer.FileComponent;
 import org.glavo.viewer.file.types.classfile.attribute.AttributeInfo;
+import org.glavo.viewer.file.types.classfile.attribute.RecordAttribute;
 import org.glavo.viewer.file.types.classfile.constant.ConstantPool;
 import org.glavo.viewer.file.types.classfile.datatype.Table;
 import org.glavo.viewer.file.types.classfile.datatype.U2;
@@ -148,6 +150,8 @@ public final class ClassFile extends ClassFileComponent {
             view = new ImageView(ICON_INTERFACE);
         } else if (acc.isAbstract()) {
             view = new ImageView(ICON_ABSTRACT_CLASS);
+        } else if (isRecord()) {
+            view = new ImageView(ICON_RECORD);
         } else {
             view = new ImageView(ICON_CLASS);
         }
@@ -166,15 +170,15 @@ public final class ClassFile extends ClassFileComponent {
         return view;
     }
 
-    @SuppressWarnings("unchecked")
     private boolean isRunnable() {
-        Table methods = (Table) get("methods");
-        if (methods == null)
+        var methods = (Table) get("methods");
+        if (methods == null) {
             return false;
-        for (MethodInfo method : (List<MethodInfo>) (List) methods.getComponents()) {
-            if (method != null
-                    && "main".equals(method.getDesc())
-                    && "([Ljava/lang/String;)V".equals(getConstantPool().getUtf8String(
+        }
+        for (var component : methods.getComponents()) {
+            if (component instanceof MethodInfo method
+                && "main".equals(method.getDesc())
+                && "([Ljava/lang/String;)V".equals(getConstantPool().getUtf8String(
                     method.getUInt("descriptor_index"))))
                 return true;
         }
@@ -182,5 +186,19 @@ public final class ClassFile extends ClassFileComponent {
         return false;
     }
 
+    private boolean isRecord() {
+        var attributes = (Table) get("attributes");
+        if (attributes == null) {
+            return false;
+        }
+
+        for (var component : attributes.getComponents()) {
+            if (component instanceof AttributeInfo attribute && attribute instanceof RecordAttribute) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }
