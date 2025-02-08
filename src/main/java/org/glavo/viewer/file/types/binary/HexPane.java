@@ -23,7 +23,6 @@
  */
 package org.glavo.viewer.file.types.binary;
 
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -51,7 +50,6 @@ public final class HexPane extends ScrollPane {
         textArea2 = new TextArea(hex.bytesText);
         textArea3 = new TextArea(hex.asciiString);
 
-        //textArea1.select
         initTextArea();
 
         HBox hbox = new HBox();
