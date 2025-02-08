@@ -18,11 +18,7 @@ public class ImageUtils {
         return new Image(imgUrl.toString());
     }
 
-    public static final Image copyImage = loadImage("/icons/copy.png");
-    public static final Image openFileImage = loadImage("/icons/open.png");
-    public static final Image openFolderImage = loadImage("/icons/openFolder.png");
     public static final Image packageImage = loadImage("/icons/package.png");
-    public static final Image helpImage = loadImage("/icons/help.png");
 
     //searchImage
     public static final Image searchImage = loadImage("/icons/search.png");
@@ -49,13 +45,7 @@ public class ImageUtils {
     public static final Image publicImage = loadImage("/icons/classfile/c_public.png");
 
     public static final Image finalMarkImage = loadImage("/icons/finalMark.png");
-    public static final Image errorMarkImage = loadImage("/icons/errorMark.png");
-    public static final Image junitTestMarkImage = loadImage("/icons/junitTestMark.png");
     public static final Image runnableMarkImage = loadImage("/icons/runnableMark.png");
     public static final Image staticMarkImage = loadImage("/icons/staticMark.png");
 
-    public static final Image maximizeImage = loadImage("/icons/maximize.png");
-    public static final Image minimizeImage = loadImage("/icons/minimize.png");
-    public static final Image closeImage = loadImage("/icons/close.png");
-    public static final Image restoreImage = loadImage("/icons/restore.png");
 }
