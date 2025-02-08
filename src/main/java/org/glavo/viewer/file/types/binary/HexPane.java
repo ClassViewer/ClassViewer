@@ -35,6 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import org.glavo.viewer.FileComponent;
+import org.glavo.viewer.resources.I18N;
 import org.glavo.viewer.resources.Images;
 
 public final class HexPane extends ScrollPane {
@@ -124,7 +125,7 @@ public final class HexPane extends ScrollPane {
     }
 
     private static void installContext(TextArea textArea) {
-        MenuItem copy = new MenuItem("_Copy");
+        MenuItem copy = new MenuItem(I18N.getString("menu.copy"));
         copy.setMnemonicParsing(true);
         copy.setOnAction(e -> {
             javafx.scene.input.Clipboard clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
