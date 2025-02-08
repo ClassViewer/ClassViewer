@@ -33,14 +33,12 @@ import org.glavo.viewer.util.StringUtils;
  * 00000010| 00 28 07 00 29 0A 00 03 00 27 07 00 2A 07 00 2B |.(..)....'..*..+
  * ...
  */
-public class HexText {
+public final class HexText {
 
     public static final int BYTES_PER_ROW = 16;
 
     public final String rowHeaderText;
-
     public final String bytesText;
-
     public final String asciiString;
 
     public HexText(byte[] bytes) {
