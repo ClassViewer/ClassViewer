@@ -30,9 +30,9 @@ import org.glavo.viewer.resources.Resources;
 import org.glavo.viewer.util.PropertiesUtils;
 import org.glavo.viewer.util.logging.Log;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.List;
 
 public final class Stylesheet {
     private static final double DEFAULT_FONT_SIZE = 14;
@@ -52,20 +52,14 @@ public final class Stylesheet {
         double textFontSize = PropertiesUtils.getDouble("viewer.fonts.text.size", DEFAULT_FONT_SIZE);
 
         if (textFontFamily == null) {
-            List<String> fonts = Font.getFamilies();
-
-            for (String font : new String[]{
-                    "Consolas", "Source Code Pro", "Fira Code", "DejaVu Sans Mono"
-            }) {
-                if (fonts.contains(font)) {
-                    textFontFamily = font;
-                    break;
-                }
+            Font textFont;
+            try (var input = Resources.getResourceAsStream("fonts/monospaced.ttf")) {
+                textFont = Font.loadFont(input, DEFAULT_FONT_SIZE);
+            } catch (IOException e) {
+                throw new AssertionError("Unreachable", e);
             }
 
-            if (textFontFamily == null) {
-                textFontFamily = "Monospaced";
-            }
+            textFontFamily = textFont.getFamily();
         }
 
         Log.info("UI Font Family: " + uiFontFamily);

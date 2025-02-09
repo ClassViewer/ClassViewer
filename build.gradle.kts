@@ -1,3 +1,5 @@
+import java.util.zip.ZipFile
+
 plugins {
     java
     application
@@ -60,7 +62,26 @@ val convertSVG by tasks.registering(svg.ConvertSVGTask::class) {
     outputDirectory.set(layout.buildDirectory.dir("generated/images"))
 }
 
+val downloadFont by tasks.registering(de.undercouch.gradle.tasks.download.Download::class) {
+    src("https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip")
+    dest(layout.buildDirectory.dir("download"))
+    overwrite(false)
+}
+
 tasks.processResources {
-    dependsOn(convertSVG)
+    dependsOn(convertSVG, downloadFont)
+
     from(convertSVG.map { it.outputDirectory })
+
+    from(downloadFont.map { zipTree(it.outputFiles[0]) }) {
+        include("**/JetBrainsMonoNL-Regular.ttf")
+        includeEmptyDirs = false
+
+        eachFile(object : Action<FileCopyDetails> {
+            override fun execute(details: FileCopyDetails) {
+                details.relativePath = RelativePath(true,
+                    *"org/glavo/viewer/resources/fonts/monospaced.ttf".split('/').toTypedArray())
+            }
+        })
+    }
 }
