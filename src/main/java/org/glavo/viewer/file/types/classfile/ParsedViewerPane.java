@@ -76,8 +76,6 @@ public class ParsedViewerPane extends BorderPane {
         this.setRight(rightLabel);
 
         tree.getSelectionModel().getSelectedItems().addListener(this::selectItemAction);
-
-        this.getStyleClass().add("monospaced");
     }
 
     private static TreeView<FileComponent> buildClassTree(FileComponent file) {
