@@ -1,4 +1,4 @@
-# ClassViewer v3
+# ClassViewer
 
 ClassViewer is a lightweight Java class file viewer that you can use to view the structure of Java class files.
 
