@@ -51,7 +51,9 @@ public class ViewerAlert extends Alert {
     }
 
     public static void showExceptionAlert(Throwable ex) {
-        exceptionAlert(ex).show();
+        Platform.runLater(() -> {
+            exceptionAlert(ex).show();
+        });
     }
 
     public static void logAndShowExceptionAlert(Throwable ex) {
