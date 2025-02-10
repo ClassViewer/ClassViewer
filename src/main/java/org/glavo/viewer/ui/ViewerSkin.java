@@ -102,7 +102,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         {
 
             MenuItem aboutItem = new MenuItem(I18N.getString("menu.help.items.about"));
-            aboutItem.setOnAction(event -> ViewerAboutDialog.showAboutDialog(getSkinnable()));
+            aboutItem.setOnAction(event -> new ViewerAboutDialog(getSkinnable()).show());
 
             helpMenu.getItems().setAll(aboutItem);
         }

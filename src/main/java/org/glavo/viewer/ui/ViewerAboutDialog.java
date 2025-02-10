@@ -42,13 +42,11 @@ import org.glavo.viewer.util.logging.Log;
 public final class ViewerAboutDialog extends BorderPane {
     public static final String HOME_URL = "https://github.com/ClassViewer/ClassViewer";
 
-    public static void showAboutDialog(Viewer viewer) {
-        Stage stage = new Stage();
-        ViewerAboutDialog dialog = new ViewerAboutDialog(viewer, stage);
-        stage.show();
-    }
+    private final Stage stage;
 
-    public ViewerAboutDialog(Viewer viewer, Stage stage) {
+    public ViewerAboutDialog(Viewer viewer) {
+        this.stage = new Stage();
+
         stage.setTitle(I18N.getString("about.title"));
         stage.getIcons().add(Images.loadImage("spy32"));
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -84,5 +82,9 @@ public final class ViewerAboutDialog extends BorderPane {
         }
 
         this.setBottom(label);
+    }
+
+    public void show() {
+        stage.show();
     }
 }
