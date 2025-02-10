@@ -72,7 +72,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         {
             MenuItem openFileItem = new MenuItem(I18N.getString("menu.file.items.openFile"));
             openFileItem.setMnemonicParsing(true);
-            openFileItem.setGraphic(Images.createImageView("menu-open"));
+            openFileItem.setGraphic(new ImageView(Images.loadImage("menu-open")));
             openFileItem.setOnAction(event -> getSkinnable().openFile());
 
             MenuItem openFolderItem = new MenuItem(I18N.getString("menu.file.items.openFolder"));
@@ -102,6 +102,7 @@ public final class ViewerSkin extends SkinBase<Viewer> {
         {
 
             MenuItem aboutItem = new MenuItem(I18N.getString("menu.help.items.about"));
+            aboutItem.setOnAction(event -> ViewerAboutDialog.showAboutDialog(getSkinnable()));
 
             helpMenu.getItems().setAll(aboutItem);
         }

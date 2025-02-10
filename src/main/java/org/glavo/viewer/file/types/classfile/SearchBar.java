@@ -26,6 +26,7 @@ package org.glavo.viewer.file.types.classfile;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
@@ -159,10 +160,10 @@ public final class SearchBar extends ToolBar {
 
     private final ComboBox<Searcher> searcherBox = new ComboBox<>(FXCollections.observableArrayList(Searcher.values()));
     private final TextField textField = new TextField();
-    private final Button searchButton = new Button(null, Images.createImageView("search"));
+    private final Button searchButton = new Button(null, new ImageView(Images.loadImage("search")));
     private final ComboBox<SearchRange> searchRangeBox = new ComboBox<>(FXCollections.observableArrayList(SearchRange.values()));
-    private final Button previousButton = new Button(null, Images.createImageView("previousOccurence"));
-    private final Button nextButton = new Button(null, Images.createImageView("nextOccurence"));
+    private final Button previousButton = new Button(null, new ImageView(Images.loadImage("previousOccurence")));
+    private final Button nextButton = new Button(null, new ImageView(Images.loadImage("nextOccurence")));
     private final Label count = new Label("");
 
     public SearchBar(ParsedViewerPane pane) {

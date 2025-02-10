@@ -1,4 +1,4 @@
-import java.util.zip.ZipFile
+import java.util.Properties
 
 plugins {
     java
@@ -68,8 +68,30 @@ val downloadFont by tasks.registering(de.undercouch.gradle.tasks.download.Downlo
     overwrite(false)
 }
 
+val metadataFile = layout.buildDirectory.file("generated/metadata.properties")
+val createMetadata by tasks.registering {
+    val properties = mapOf(
+        "viewer.version" to project.version.toString(),
+    )
+
+    inputs.properties(properties)
+    outputs.file(metadataFile)
+
+    doLast {
+        val file = metadataFile.get().asFile
+        file.parentFile.mkdirs()
+        file.delete()
+
+        file.writer().use { writer ->
+            val p = Properties()
+            properties.forEach { (k, v) -> p.setProperty(k, v) }
+            p.store(writer, null)
+        }
+    }
+}
+
 tasks.processResources {
-    dependsOn(convertSVG, downloadFont)
+    dependsOn(convertSVG, downloadFont, createMetadata)
 
     from(convertSVG.map { it.outputDirectory })
 
@@ -79,9 +101,15 @@ tasks.processResources {
 
         eachFile(object : Action<FileCopyDetails> {
             override fun execute(details: FileCopyDetails) {
-                details.relativePath = RelativePath(true,
-                    *"org/glavo/viewer/resources/fonts/monospaced.ttf".split('/').toTypedArray())
+                details.relativePath = RelativePath(
+                    true,
+                    *"org/glavo/viewer/resources/fonts/monospaced.ttf".split('/').toTypedArray()
+                )
             }
         })
+    }
+
+    into("org/glavo/viewer/resources/") {
+        from(metadataFile)
     }
 }

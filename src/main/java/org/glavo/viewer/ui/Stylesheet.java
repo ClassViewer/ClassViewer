@@ -79,6 +79,10 @@ public final class Stylesheet {
         stylesheetBuilder.append("-fx-font-size: ").append(textFontSize).append(";");
         stylesheetBuilder.append("}\n");
 
+        stylesheetBuilder.append(".about-title {");
+        stylesheetBuilder.append("-fx-font-size: ").append(uiFontSize + 2).append(";");
+        stylesheetBuilder.append("}\n");
+
         return "data:text/css;charset=UTF-8;base64," + Base64.getEncoder().encodeToString(stylesheetBuilder.toString().getBytes(StandardCharsets.UTF_8));
     }
 

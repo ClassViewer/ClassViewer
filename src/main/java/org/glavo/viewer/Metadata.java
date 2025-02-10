@@ -23,11 +23,17 @@
  */
 package org.glavo.viewer;
 
+import org.glavo.viewer.resources.Resources;
+import org.glavo.viewer.util.logging.Log;
+
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Properties;
 
 public final class Metadata {
 
     public static final Path VIEWER_DIRECTORY;
+    private static final Properties PROPERTIES = new Properties();
 
     static {
         String viewerHome = System.getProperty("viewer.home", System.getProperty("viewer.path"));
@@ -36,6 +42,16 @@ public final class Metadata {
         } else {
             VIEWER_DIRECTORY = Path.of(viewerHome).toAbsolutePath().normalize();
         }
+
+        try (var reader = Resources.getResourceAsReader("metadata.properties")) {
+            PROPERTIES.load(reader);
+        } catch (IOException e) {
+            Log.warning("Failed to load metadata", e);
+        }
+    }
+
+    public static String getAttribute(String key, String defaultValue) {
+        return PROPERTIES.getProperty(key, defaultValue);
     }
 
     private Metadata() {

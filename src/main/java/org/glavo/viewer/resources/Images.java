@@ -16,7 +16,6 @@
 package org.glavo.viewer.resources;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public final class Images {
 
@@ -26,10 +25,6 @@ public final class Images {
 
     public static Image loadImage(String imgName) {
         return new Image(Resources.getResource("/org/glavo/viewer/resources/images/" + imgName + ".png").toExternalForm());
-    }
-
-    public static ImageView createImageView(String imgName) {
-        return new ImageView(loadImage(imgName));
     }
 
     private Images() {
