@@ -22,7 +22,7 @@ public final class ViewerTabPane extends TabPane {
 
     private void onChange(ObservableValue<? extends Tab> observable, Tab oldTab, Tab newTab) {
         if (newTab != null) {
-            URL url = ((ViewerTab) newTab).getUserData().url;
+            URL url = ((ViewerTab) newTab).getUrl();
             if (url == null) {
                 viewer.getStage().setTitle(Viewer.TITLE);
             } else {

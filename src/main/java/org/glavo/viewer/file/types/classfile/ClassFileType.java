@@ -64,7 +64,7 @@ public final class ClassFileType extends FileType {
                     ParsedViewerPane pane = new ParsedViewerPane(viewer, classFile, text);
                     ((ClassFileComponent) pane.getTree().getRoot()).setName(UrlUtils.getClassName(url));
                     tab.setContent(pane);
-                    tab.getUserData().showOrHideSearchBar = pane::showOrHideSearchBar;
+                    tab.showOrHideSearchBar = pane::showOrHideSearchBar;
                     RecentFile.addRecentFile(Instance, url);
                 });
                 return null;

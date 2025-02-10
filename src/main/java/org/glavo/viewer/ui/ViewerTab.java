@@ -9,14 +9,8 @@ import org.glavo.viewer.util.UrlUtils;
 import java.net.URL;
 
 public class ViewerTab extends Tab {
-    public class UserData {
-        public URL url = null;
-        public Runnable showOrHideSearchBar = null;
-
-        public ViewerTab getTab() {
-            return ViewerTab.this;
-        }
-    }
+    public URL url = null;
+    public Runnable showOrHideSearchBar = null;
 
     public static ViewerTab create(String text) {
         ProgressIndicator progressIndicator = new ProgressIndicator();
@@ -27,7 +21,7 @@ public class ViewerTab extends Tab {
 
     public static ViewerTab create(URL url) {
         ViewerTab tab = create(UrlUtils.getFileName(url));
-        tab.getUserData().url = url;
+        tab.url = url;
         return tab;
     }
 
@@ -41,22 +35,15 @@ public class ViewerTab extends Tab {
 
     public ViewerTab(String text, Node content) {
         super(text, content);
-        this.setUserData(new UserData());
     }
 
     public void showSearchBar() {
-        UserData data = getUserData();
-        if(data.showOrHideSearchBar != null) {
-            data.showOrHideSearchBar.run();
+        if(showOrHideSearchBar != null) {
+            showOrHideSearchBar.run();
         }
     }
 
-    @Override
-    public UserData getUserData() {
-        return (UserData) super.getUserData();
-    }
-
     public URL getUrl() {
-        return getUserData().url;
+        return url;
     }
 }
