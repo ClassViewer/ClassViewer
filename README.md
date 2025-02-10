@@ -17,7 +17,7 @@ ClassViewer is a lightweight Java class file viewer that you can use to view the
 
 ## Build
 
-Building ClassViewer v3 requires JDK 11 (or later) with JavaFX bundled. 
+Building ClassViewer requires JDK 21 (or later) with JavaFX bundled. 
 
 ```shell
 ./gradlew jar
