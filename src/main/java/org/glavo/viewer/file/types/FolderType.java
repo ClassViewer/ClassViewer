@@ -57,7 +57,7 @@ public final class FolderType extends FileType {
         node.setUrl(UrlUtils.pathToUrl(p));
         node.setDesc(UrlUtils.getFileName(node.getUrl()));
 
-        Files.walkFileTree(p, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(p, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path subPath, BasicFileAttributes attrs) throws IOException {
                 URL subUrl = UrlUtils.pathToUrl(subPath);
@@ -108,7 +108,7 @@ public final class FolderType extends FileType {
         ViewerTab tab = ViewerTab.create(url);
         tab.setGraphic(new ImageView(icon));
 
-        ViewerTask<FileTreeNode> task = new ViewerTask<FileTreeNode>() {
+        ViewerTask<FileTreeNode> task = new ViewerTask<>() {
             @Override
             protected FileTreeNode call() throws Exception {
                 FileTreeNode root = load(url);
