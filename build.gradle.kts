@@ -34,7 +34,7 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains:annotations:26.0.2")
-    implementation("org.glavo.kala:kala-base:0.80.0")
+    implementation("org.glavo.kala:kala-base:0.82.0")
 }
 
 application {
