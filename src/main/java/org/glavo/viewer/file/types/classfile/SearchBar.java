@@ -151,9 +151,7 @@ public final class SearchBar extends ToolBar {
         }
     }
 
-    private static final Pattern textFill = Pattern.compile("-fx-text-fill:[^;]*;");
-
-    private ParsedViewerPane pane;
+    private final ParsedViewerPane pane;
 
     private ListIterator<ClassFileComponent> iterator = null;
     private ClassFileComponent selected = null;
@@ -255,17 +253,6 @@ public final class SearchBar extends ToolBar {
         }
 
         this.iterator = ans.listIterator();
-    }
-
-    public void setColor(String color) {
-        String style = textField.getStyle() == null ? "" : textField.getStyle();
-        Matcher m = textFill.matcher(style);
-        if (!m.find()) {
-            style += "-fx-text-fill: " + color + ";";
-        } else {
-            style = m.replaceAll("-fx-text-fill: " + color + ";");
-        }
-        textField.setStyle(style);
     }
 
 }

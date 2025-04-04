@@ -48,7 +48,7 @@ import org.glavo.viewer.util.logging.Log;
  */
 public class ParsedViewerPane extends BorderPane {
 
-    private Viewer viewer;
+    private final Viewer viewer;
 
     private final TreeView<FileComponent> tree;
     private final SearchBar searchBar;
